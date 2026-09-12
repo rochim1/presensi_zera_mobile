@@ -1,0 +1,74 @@
+name: Build Dev APK
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Extract Flutter version
+        id: fvm-config
+        run: echo "FLUTTER_VERSION=$(jq -r '.flutter' .fvmrc)" >> $GITHUB_OUTPUT
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ steps.fvm-config.outputs.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Create environment variables file
+        run: |
+          echo "${{ secrets.ENV_DEVELOPMENT }}" > .env.development
+          echo "${{ secrets.ENV_STAGING }}" > .env.production
+
+      - name: Resolve project dependencies
+        run: |
+          flutter pub get
+          cd packages/presensi_data && flutter pub get
+
+      - name: Generate build runner files
+        run: |
+          dart run build_runner build --delete-conflicting-outputs
+          cd packages/presensi_data && dart run build_runner build --delete-conflicting-outputs
+
+      - name: Decode signing keystore
+        run: echo "${{ secrets.STAGING_KEYSTORE_BASE64 }}" | base64 --decode > android/app/staging-keystore.jks
+
+      - name: Create key.properties
+        run: |
+          echo "storePassword=${{ secrets.STAGING_STORE_PASSWORD }}" > android/key.properties
+          echo "keyPassword=${{ secrets.STAGING_KEY_PASSWORD }}" >> android/key.properties
+          echo "keyAlias=${{ secrets.STAGING_KEY_ALIAS }}" >> android/key.properties
+          echo "storeFile=staging-keystore.jks" >> android/key.properties
+
+      - name: Build development APK
+        run: flutter build apk --debug --flavor development --target lib/main_development.dart
+
+      - name: Build staging APK
+        run: flutter build apk --split-per-abi --release --flavor production --target lib/main_production.dart
+
+      - name: Upload Development APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pantoo-dev.apk
+          path: build/app/outputs/flutter-apk/app-development-debug.apk
+
+      - name: Upload Staging APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pantoo-staging.apk
+          path: build/app/outputs/flutter-apk/app-*-production-release.apk

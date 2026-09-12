@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+    This is a placeholder for base href that will be replaced by the value of
+    the `--base-href` argument provided to `flutter build`.
+  -->
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="Pantoo HR — presensi dan operasional perusahaan.">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Pantoo HR">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>Pantoo HR</title>
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Required by google_maps_flutter_web. Browser API keys are public by
+       design and must be restricted to the Pantoo web origins in Google Cloud. -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBSRWwYcIGC1-9a01r9jjrOkdjVuXUpNIM"></script>
+
+  <!-- MediaPipe is loaded only by the Web build, so it does not affect the
+       Android/iOS application download size. -->
+  <script type="module">
+    let faceDetectorPromise;
+
+    const loadFaceDetector = async () => {
+      const { FaceDetector, FilesetResolver } = await import(
+        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.0.1/vision_bundle.mjs"
+      );
+      const visionFiles = await FilesetResolver.forVisionTasks(
+        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.0.1/wasm"
+      );
+      const modelAssetPath =
+        "https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/latest/blaze_face_short_range.tflite";
+      const createDetector = (delegate) => FaceDetector.createFromOptions(
+        visionFiles,
+        {
+          baseOptions: { modelAssetPath, delegate },
+          runningMode: "IMAGE",
+          minDetectionConfidence: 0.65,
+          minSuppressionThreshold: 0.3
+        }
+      );
+
+      try {
+        return await createDetector("GPU");
+      } catch (_) {
+        return createDetector("CPU");
+      }
+    };
+
+    window.pantooDetectFaces = async (imageDataUrl) => {
+      // Load the relatively large vision runtime only when the camera needs it.
+      faceDetectorPromise ??= loadFaceDetector();
+      const faceDetector = await faceDetectorPromise;
+      const response = await fetch(imageDataUrl);
+      const imageBlob = await response.blob();
+      const bitmap = await createImageBitmap(imageBlob);
+      try {
+        return faceDetector.detect(bitmap).detections.length;
+      } finally {
+        bitmap.close();
+      }
+    };
+  </script>
+
+</head>
+<body>
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>

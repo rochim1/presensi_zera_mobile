@@ -1,0 +1,105 @@
+name: Deploy to Google Play
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  verify-branch:
+    name: Verify release branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify tag is on release branch
+        run: |
+          git fetch origin release
+          if git merge-base --is-ancestor HEAD origin/release; then
+            echo "Tag is on release branch"
+          else
+            echo "Error: Tag must be on release branch"
+            exit 1
+          fi
+
+  build-and-deploy:
+    name: Build and Deploy AAB
+    needs: verify-branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          TAG=${GITHUB_REF_NAME#v}
+          echo "VERSION_NAME=$TAG" >> "$GITHUB_OUTPUT"
+
+          MAJOR=$(echo "$TAG" | cut -d. -f1)
+          MINOR=$(echo "$TAG" | cut -d. -f2)
+          PATCH=$(echo "$TAG" | cut -d. -f3)
+          VERSION_CODE=$((MAJOR * 1000000 + MINOR * 1000 + PATCH))
+
+          echo "VERSION_CODE=$VERSION_CODE" >> "$GITHUB_OUTPUT"
+          echo "Version: $TAG+$VERSION_CODE"
+
+      - name: Update pubspec.yaml version
+        run: |
+          sed -i "s/^version: .*/version: ${{ steps.version.outputs.VERSION_NAME }}+${{ steps.version.outputs.VERSION_CODE }}/" pubspec.yaml
+          grep "^version:" pubspec.yaml
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Extract Flutter version
+        id: fvm-config
+        run: echo "FLUTTER_VERSION=$(jq -r '.flutter' .fvmrc)" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ steps.fvm-config.outputs.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Create environment variables file
+        run: |
+          echo "${{ secrets.ENV_PRODUCTION }}" > .env.production
+
+      - name: Resolve project dependencies
+        run: |
+          flutter pub get
+          cd packages/presensi_data && flutter pub get
+
+      - name: Generate build runner files
+        run: |
+          dart run build_runner build --delete-conflicting-outputs
+          cd packages/presensi_data && dart run build_runner build --delete-conflicting-outputs
+
+      - name: Decode production keystore
+        run: echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 --decode > android/app/release-keystore.jks
+
+      - name: Create key.properties
+        run: |
+          echo "storePassword=${{ secrets.RELEASE_STORE_PASSWORD }}" > android/key.properties
+          echo "keyPassword=${{ secrets.RELEASE_KEY_PASSWORD }}" >> android/key.properties
+          echo "keyAlias=${{ secrets.RELEASE_KEY_ALIAS }}" >> android/key.properties
+          echo "storeFile=release-keystore.jks" >> android/key.properties
+
+      - name: Build production AAB
+        run: flutter build appbundle --release --flavor production --target lib/main_production.dart
+
+      - name: Upload AAB to Google Play
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: com.pantoo.presensi
+          releaseFiles: build/app/outputs/bundle/productionRelease/app-production-release.aab
+          track: production
+          status: completed

@@ -1,0 +1,25 @@
+export 'login_graphql.dart';
+export 'user_grapql.dart';
+export 'reimbursement_graphql.dart';
+export 'presensi_graphql.dart';
+export 'global_graphql.dart';
+export 'tasks_graphql.dart';
+export 'apotek_graphql.dart';
+export 'leave_grapql.dart';
+export 'attendance_request_grapql.dart';
+export 'shift_grapql.dart';
+export 'overtime_grapql.dart';
+export 'notification_grapql.dart';
+export 'payroll_grapql.dart';
+export 'announcement_graphql.dart';
+export 'setting_grapql.dart';
+export 'survey_graphql.dart';
+export 'attendance_grapql.dart';
+export 'approval_grapql.dart';
+export 'kalender_graphql.dart';
+export 'logbook_graphql.dart';
+
+export 'order_graphql.dart';
+export 'inventory_graphql.dart';
+export 'kpi_graphql.dart';
+export 'delivery_order_graphql.dart';

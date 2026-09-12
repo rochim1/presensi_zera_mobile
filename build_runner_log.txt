@@ -1,0 +1,8 @@
+Running build hooks...Running build hooks...  0s freezed on 487 inputs; lib/app.dart
+  0s freezed on 487 inputs: 1 skipped; lib/bootstrap.dart
+  0s freezed on 487 inputs: 487 skipped
+  0s auto_route_generator on 974 inputs; lib/app.dart
+  0s auto_route_generator on 974 inputs: 974 skipped
+  0s auto_route_generator:auto_router_generator on 974 inputs; lib/app.dart
+  0s auto_route_generator:auto_router_generator on 974 inputs: 974 skipped
+  Built with build_runner/jit in 2s; wrote 0 outputs.

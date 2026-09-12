@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "packages/presensi_data"
+		},
+		{
+			"path": "packages/presensi_domain"
+		}
+	],
+	"settings": {}
+}

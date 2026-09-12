@@ -1,0 +1,21 @@
+name: presensi_domain
+description: A new Flutter package project.
+version: 0.0.1
+publish_to: none
+
+environment:
+  sdk: "^3.11.1"
+
+dependencies:
+  # packages local
+  presensi_data:
+    path: ../presensi_data
+
+  # dependency injection
+  dartz: ^0.10.1
+  # equality comparisons
+  equatable: ^2.0.8
+  http: ^1.6.0
+
+dev_dependencies:
+  flutter_lints: ^6.0.0

@@ -1,0 +1,228 @@
+  1s compiling builders/jit
+  2s compiling builders/jit
+  3s compiling builders/jit
+  4s compiling builders/jit
+  5s compiling builders/jit
+  5s compiling builders/jit
+Running build hooks...Running build hooks...  0s freezed on 487 inputs; lib/app.dart
+  0s freezed on 487 inputs: 1 no-op; lib/bootstrap.dart
+  freezed on lib/core/bloc/base_paginated_state.dart:
+  Running FreezedGenerator
+  31s freezed on 487 inputs: 1 same, 3 no-op; spent 21s analyzing, 8s resolving, 2s reading; lib/core/bloc/base_state.dart
+  freezed on lib/core/bloc/base_state.dart:
+  Running FreezedGenerator
+  freezed on lib/core/routers/app_router.dart:
+  Running FreezedGenerator
+  40s freezed on 487 inputs: 2 same, 18 no-op; spent 27s analyzing, 10s resolving, 3s reading; lib/core/themes/_themes.dart
+  freezed on lib/presentation/bloc/app/app_state.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/apotek/apotek_add_form.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/apotek/apotek_detail_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/apotek/apotek_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/apotek/apotek_search_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/attendance/attendance_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/attendance/bloc/attendance_state.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/attendance/check_in/bloc/check_in_state.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/attendance/check_in/check_in_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/attendance/check_in/form/check_in_form.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/attendance/check_out/bloc/check_out_state.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/attendance/check_out/check_out_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/attendance/check_out/form/check_out_form.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/attendance/detail/attendance_detail_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/attendance/detail/bloc/attendance_detail_state.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/attendance/tabs/attendances/attendances_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/attendance/tabs/attendances/bloc/attendances_state.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/attendance/tabs/my_attendance/bloc/my_attendance_state.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/attendance/tabs/my_attendance/my_attendance_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/attendance_request/attendance_request_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/attendance_request/bloc/attendance_request_state.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/attendance_request/request_form/bloc/request_state.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/attendance_request/request_form/formz/request_form.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/attendance_request/request_form/request_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/attendance_request/tabs/approval/approval_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/attendance_request/tabs/approval/bloc/approval_state.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/attendance_request/tabs/my_request/bloc/my_request_state.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/attendance_request/tabs/my_request/my_request_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/common/app_camera/app_camera_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/common/app_camera/bloc/app_camera_state.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/consignment/consignment_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/delivery/delivery_add_form.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/delivery/delivery_canceled_form.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/delivery/delivery_checking_form.dart:
+  Running FreezedGenerator
+  41s freezed on 487 inputs: 17 same, 172 no-op; spent 28s analyzing, 10s resolving, 3s reading; lib/presentation/pages/delivery/delivery_detail_page.dart
+  freezed on lib/presentation/pages/delivery/delivery_detail_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/delivery/delivery_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/development/development_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/global/global_camera/global_camera_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/global/global_pdf_viewer/global_pdf_viewer_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/global/in_app_browser_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/global/location_picker_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/home/bloc/home_state.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/home/home_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/intro/intro_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/kalender/kalender_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/leave/bloc/leave_state.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/leave/leave_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/leave/request/bloc/request_state.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/leave/request/formz/request_form.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/leave/request/request_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/leave/tabs/approval/approval_tab.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/leave/tabs/approval/bloc/approval_state.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/leave/tabs/my_leave/bloc/my_leave_state.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/leave/tabs/my_leave/my_leave_tab.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/logbook/logbook_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/login/login_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/login/register_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/main/main_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/notification/bloc/notification_state.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/notification/notification_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/overtime/bloc/overtime_state.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/overtime/overtime_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/overtime/request_form/bloc/request_state.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/overtime/request_form/formz/request_form.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/overtime/request_form/request_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/overtime/tabs/approval/approval_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/overtime/tabs/approval/bloc/approval_state.dart:
+  Running FreezedGenerator
+  42s freezed on 487 inputs: 28 same, 245 no-op; spent 29s analyzing, 10s resolving, 3s reading; lib/presentation/pages/overtime/tabs/approval/formz/reason_input.dart
+  freezed on lib/presentation/pages/overtime/tabs/my_request/bloc/my_request_state.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/overtime/tabs/my_request/my_request_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/payroll/bloc/payroll_state.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/payroll/detail/bloc/payroll_detail_state.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/payroll/detail/payroll_detail_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/payroll/download/payroll_download_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/payroll/payroll_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/profile/profile_account_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/profile/profile_inventory_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/profile/profile_office_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/profile/profile_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/profile/profile_user_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/reimbursement/bloc/reimbursement_state.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/reimbursement/reimbursement_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/reimbursement/request_form/bloc/request_state.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/reimbursement/request_form/formz/request_form.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/reimbursement/request_form/request_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/reimbursement/tabs/approval_reimbursement/approval_reimbursement_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/reimbursement/tabs/approval_reimbursement/bloc/approval_reimbursement_state.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/reimbursement/tabs/my_reimbursement/bloc/my_reimbursement_state.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/reimbursement/tabs/my_reimbursement/my_reimbursement_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/shift/bloc/shift_state.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/shift/request_form/bloc/shift_swap_request_form_state.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/shift/request_form/formz/request_form.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/shift/request_form/shift_swap_request_form_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/shift/shift_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/shift/tabs/approval_shift_swap/approval_shift_swap_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/shift/tabs/approval_shift_swap/bloc/approval_shift_swap_state.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/shift/tabs/my_shift/bloc/my_shift_state.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/shift/tabs/my_shift/my_shift_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/shift/tabs/my_shift_swap/bloc/my_shift_swap_state.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/shift/tabs/my_shift_swap/my_shift_swap_page.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/survey/bloc/survey_state.dart:
+  Running FreezedGenerator
+  freezed on lib/presentation/pages/survey/survey_page.dart:
+  Running FreezedGenerator
+  43s freezed on 487 inputs: 43 same, 444 no-op; spent 29s analyzing, 10s resolving, 3s reading
+  0s auto_route_generator on 974 inputs; lib/app.dart
+  1s auto_route_generator on 974 inputs: 110 skipped, 1 output, 116 no-op; spent 1s analyzing; lib/presentation/pages/apotek/apotek_add_form.freezed.dart
+  2s auto_route_generator on 974 inputs: 266 skipped, 51 output, 280 no-op; spent 1s analyzing; lib/presentation/pages/reimbursement/reimbursement_page.freezed.dart
+  3s auto_route_generator on 974 inputs: 444 skipped, 60 output, 470 no-op; spent 1s analyzing, 1s building
+  0s auto_route_generator:auto_router_generator on 974 inputs; lib/app.dart
+  0s auto_route_generator:auto_router_generator on 974 inputs: 444 skipped, 1 output, 529 no-op
+  Built with build_runner/jit in 54s; wrote 104 outputs.
