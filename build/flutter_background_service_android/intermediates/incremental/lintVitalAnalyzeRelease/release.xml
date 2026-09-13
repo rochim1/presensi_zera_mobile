@@ -1,0 +1,32 @@
+<variant
+    name="release"
+    package="id.flutter.flutter_background_service"
+    minSdkVersion="16"
+    targetSdkVersion="16"
+    mergedManifest="D:\my node app\zera\mobile_zera\build\flutter_background_service_android\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml"
+    proguardFiles="D:\my node app\zera\mobile_zera\build\flutter_background_service_android\intermediates\default_proguard_files\global\proguard-android.txt-8.11.1"
+    consumerProguardFiles="proguard-rules.pro"
+    partialResultsDir="D:\my node app\zera\mobile_zera\build\flutter_background_service_android\intermediates\lint_vital_partial_results\release\lintVitalAnalyzeRelease\out"
+    desugaredMethodsFiles="D:\.gradle\caches\8.14\transforms\0d77ae79251adf5d67de5b669c06b81e\transformed\D8BackportedDesugaredMethods.txt">
+  <buildFeatures
+      namespacing="REQUIRED"/>
+  <sourceProviders>
+    <sourceProvider
+        manifests="src\main\AndroidManifest.xml"
+        javaDirectories="src\main\java;src\release\java;src\main\kotlin;src\release\kotlin"
+        resDirectories="src\main\res;src\release\res"
+        assetsDirectories="src\main\assets;src\release\assets"/>
+  </sourceProviders>
+  <testSourceProviders>
+  </testSourceProviders>
+  <testFixturesSourceProviders>
+  </testFixturesSourceProviders>
+  <artifact
+      classOutputs="D:\my node app\zera\mobile_zera\build\flutter_background_service_android\intermediates\javac\release\compileReleaseJavaWithJavac\classes;D:\my node app\zera\mobile_zera\build\flutter_background_service_android\tmp\kotlin-classes\release;D:\my node app\zera\mobile_zera\build\flutter_background_service_android\intermediates\compile_r_class_jar\release\generateReleaseRFile\R.jar"
+      type="MAIN"
+      applicationId="id.flutter.flutter_background_service"
+      generatedSourceFolders="D:\my node app\zera\mobile_zera\build\flutter_background_service_android\generated\ap_generated_sources\release\out"
+      generatedResourceFolders="D:\my node app\zera\mobile_zera\build\flutter_background_service_android\generated\res\resValues\release"
+      desugaredMethodsFiles="D:\.gradle\caches\8.14\transforms\0d77ae79251adf5d67de5b669c06b81e\transformed\D8BackportedDesugaredMethods.txt">
+  </artifact>
+</variant>

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dartz/dartz.dart';
 import 'package:logger/logger.dart';
 import 'package:presensi_domain/presensi_domain.dart';
@@ -84,14 +86,26 @@ class LoginRepositoryImpl extends LoginRepository {
   @override
   Future<Either<Failure, bool>> signOut() async {
     try {
-      final result = await remoteDatasource.signOut();
+      // Logout tidak boleh tertahan oleh queryRequestTimeout global yang pada
+      // production dapat sangat panjang. Sesi lokal tetap harus dibersihkan
+      // walaupun server sedang tidak dapat dijangkau.
+      final result = await remoteDatasource.signOut().timeout(
+        const Duration(seconds: 10),
+      );
       await localDatasource.signOut();
 
       return Right(result);
     } catch (e, s) {
       await localDatasource.signOut();
       log.e(e.toString(), stackTrace: s);
-      if (e is GraphQlException) {
+      if (e is TimeoutException) {
+        return Left(
+          ServerFailure(
+            message: 'Server tidak merespons. Sesi lokal telah dihapus.',
+            code: 'LOGOUT_TIMEOUT',
+          ),
+        );
+      } else if (e is GraphQlException) {
         return Left(ServerFailure(message: e.message, code: e.code));
       } else if (e is CacheException) {
         return Left(CacheFailure());

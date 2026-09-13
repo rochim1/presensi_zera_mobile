@@ -16,15 +16,18 @@ class TasksGetAllPendingCubit extends Cubit<TasksGetAllPendingState> {
   TasksGetAllPendingCubit(this.tasksGetAllData)
     : super(const TasksGetAllPendingState());
 
-  Future<void> getAllData() async {
+  Future<void> getAllData([DateTime? date]) async {
     if (state.hasMax!) return;
 
     if (state.status.isInitial) emit(state.copyWith(status: TypeState.loading));
 
-    if (state.status.isLoading) return initLoadAllData();
+    if (state.status.isLoading) return initLoadAllData(date);
 
     final params = isPending.copyWith(
-      taskDateAssigned: DateTime.now().toIso8601String(),
+      taskDateAssigned:
+          date?.toIso8601String() ??
+          state.filter?.taskDateAssigned ??
+          DateTime.now().toIso8601String(),
       pagination: GlobalPaginationEntity(page: state.tasks?.length),
     );
 
@@ -52,10 +55,12 @@ class TasksGetAllPendingCubit extends Cubit<TasksGetAllPendingState> {
     );
   }
 
-  Future<void> initLoadAllData() async {
+  Future<void> initLoadAllData([DateTime? date]) async {
     final params = isPending.copyWith(
-      taskDateAssigned: DateTime.now().toIso8601String(),
+      taskDateAssigned: (date ?? DateTime.now()).toIso8601String(),
     );
+
+    emit(state.copyWith(status: TypeState.loading, filter: params, tasks: []));
 
     final Either<Failure, List<TasksEntity>> data = await tasksGetAllData.call(
       params,

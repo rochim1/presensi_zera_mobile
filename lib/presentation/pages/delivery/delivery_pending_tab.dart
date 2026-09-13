@@ -2,7 +2,11 @@ part of 'delivery_page.dart';
 
 @RoutePage()
 class DeliveryPendingTab extends StatefulWidget {
-  const DeliveryPendingTab({super.key});
+  const DeliveryPendingTab({super.key, this.dateFilter});
+
+  final DateTime? dateFilter;
+
+  DateTime get effectiveDateFilter => dateFilter ?? DateTime.now();
 
   @override
   State<DeliveryPendingTab> createState() => _DeliveryPendingTabState();
@@ -18,7 +22,9 @@ class _DeliveryPendingTabState extends State<DeliveryPendingTab> {
 
     scrollController.addListener(() {
       if (AppUtility.isBottomInfinity(scrollController)) {
-        context.read<TasksGetAllPendingCubit>().getAllData();
+        context.read<TasksGetAllPendingCubit>().getAllData(
+          widget.effectiveDateFilter,
+        );
       }
     });
   }
@@ -56,7 +62,7 @@ class _DeliveryPendingTabState extends State<DeliveryPendingTab> {
                         onRefresh: () {
                           ctxPending
                               .read<TasksGetAllPendingCubit>()
-                              .initLoadAllData();
+                              .initLoadAllData(widget.effectiveDateFilter);
                           ctxPending.read<SalesTargetCubit>().loadMyTarget();
                           refreshController.refreshCompleted();
                         },
@@ -111,7 +117,8 @@ class _DeliveryPendingTabState extends State<DeliveryPendingTab> {
                   context,
                   emptyState: EmptyState.confirmation,
                   contentTitle: 'Peringatan',
-                  contentSubtitle: 'Anda sudah pulang. Tekan tombol "Mulai Lembur" di Beranda terlebih dahulu jika ingin membatalkan Kunjungan.',
+                  contentSubtitle:
+                      'Anda sudah pulang. Tekan tombol "Mulai Lembur" di Beranda terlebih dahulu jika ingin membatalkan Kunjungan.',
                   hasActionPop: true,
                 );
                 return;
@@ -158,7 +165,8 @@ class _DeliveryPendingTabState extends State<DeliveryPendingTab> {
                   context,
                   emptyState: EmptyState.confirmation,
                   contentTitle: 'Peringatan',
-                  contentSubtitle: 'Anda sudah pulang. Tekan tombol "Mulai Lembur" di Beranda terlebih dahulu jika ingin mengerjakan Kunjungan.',
+                  contentSubtitle:
+                      'Anda sudah pulang. Tekan tombol "Mulai Lembur" di Beranda terlebih dahulu jika ingin mengerjakan Kunjungan.',
                   hasActionPop: true,
                 );
                 return;

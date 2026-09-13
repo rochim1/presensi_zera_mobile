@@ -1,0 +1,19 @@
+<lint-module
+    format="1"
+    dir="D:\pub_cache\hosted\pub.dev\mobile_scanner-7.4.1\android"
+    name=":mobile_scanner"
+    type="LIBRARY"
+    maven="dev.steenbakker.mobile_scanner:mobile_scanner:1.0-SNAPSHOT"
+    agpVersion="8.11.1"
+    buildFolder="D:\my node app\zera\mobile_zera\build\mobile_scanner"
+    bootClassPath="C:\Users\LENOVO\AppData\Local\Android\Sdk\platforms\android-36\android.jar;C:\Users\LENOVO\AppData\Local\Android\Sdk\build-tools\35.0.0\core-lambda-stubs.jar"
+    javaSourceLevel="17"
+    compileTarget="android-36"
+    neverShrinking="true">
+  <lintOptions
+      abortOnError="true"
+      absolutePaths="true"
+      checkReleaseBuilds="true"
+      explainIssues="true"/>
+  <variant name="release"/>
+</lint-module>

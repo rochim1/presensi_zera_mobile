@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:presensi_data/presensi_data.dart';
 import 'package:presensi_domain/presensi_domain.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -16,26 +19,56 @@ class LoginSignOutCubit extends Cubit<LoginSignOutState> {
   LoginSignOutCubit(this.loginSignOut) : super(const LoginSignOutState());
 
   Future<void> logout() async {
+    if (state.status.isLoading) return;
     emit(state.copyWith(status: TypeState.loading));
-    final data = await loginSignOut.call(NoParams());
+    try {
+      final data = await loginSignOut
+          .call(NoParams())
+          .timeout(const Duration(seconds: 12));
 
-    data.fold(
-      (failure) =>
-          emit(state.copyWith(status: TypeState.notLoaded, failure: failure)),
-      (value) async {
-        // ── Putuskan WebSocket saat logout ──
-        WebSocketService.instance.disconnect();
-        await BackgroundLocationService.stop();
-        // ── Reset state di AppCubit ──
-        await sl<AppCubit>().clearStateOnLogout();
-        // ──────────────────────────────────────────
-        emit(state.copyWith(status: TypeState.loaded, isSuccessed: value));
-        //! Analytics Logs the logout event.
-        await fa.logEvent(
-          name: 'Logout',
-          parameters: {'status': value.toString()},
+      await _clearRuntimeSession();
+      data.fold(
+        (failure) =>
+            emit(state.copyWith(status: TypeState.notLoaded, failure: failure)),
+        (value) {
+          emit(state.copyWith(status: TypeState.loaded, isSuccessed: value));
+          if (!kIsWeb) {
+            unawaited(
+              fa.logEvent(
+                name: 'Logout',
+                parameters: {'status': value.toString()},
+              ),
+            );
+          }
+        },
+      );
+    } catch (error) {
+      await _clearRuntimeSession();
+      emit(
+        state.copyWith(
+          status: TypeState.notLoaded,
+          failure: UnknownFailure(
+            message: error is TimeoutException
+                ? 'Logout timeout. Sesi pada perangkat telah dibersihkan.'
+                : 'Logout gagal: $error',
+          ),
+        ),
+      );
+    }
+  }
+
+  Future<void> _clearRuntimeSession() async {
+    WebSocketService.instance.disconnect();
+    sl<FlavorConfig>().token = null;
+    if (!kIsWeb) {
+      try {
+        await BackgroundLocationService.stop().timeout(
+          const Duration(seconds: 5),
         );
-      },
-    );
+      } catch (_) {
+        // Pembersihan sesi dan navigasi tidak boleh tertahan service native.
+      }
+    }
+    await sl<AppCubit>().clearStateOnLogout();
   }
 }

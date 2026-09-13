@@ -1,0 +1,31 @@
+<variant
+    name="release"
+    package="de.ffuf.in_app_update"
+    minSdkVersion="16"
+    targetSdkVersion="16"
+    mergedManifest="D:\my node app\zera\mobile_zera\build\in_app_update\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml"
+    manifestMergeReport="D:\my node app\zera\mobile_zera\build\in_app_update\outputs\logs\manifest-merger-release-report.txt"
+    proguardFiles="D:\my node app\zera\mobile_zera\build\in_app_update\intermediates\default_proguard_files\global\proguard-android.txt-8.11.1"
+    partialResultsDir="D:\my node app\zera\mobile_zera\build\in_app_update\intermediates\lint_vital_partial_results\release\lintVitalAnalyzeRelease\out">
+  <buildFeatures
+      namespacing="REQUIRED"/>
+  <sourceProviders>
+    <sourceProvider
+        manifests="src\main\AndroidManifest.xml"
+        javaDirectories="src\main\java;src\main\kotlin;src\release\java;src\release\kotlin"
+        resDirectories="src\main\res;src\release\res"
+        assetsDirectories="src\main\assets;src\release\assets"/>
+  </sourceProviders>
+  <testSourceProviders>
+  </testSourceProviders>
+  <testFixturesSourceProviders>
+  </testFixturesSourceProviders>
+  <artifact
+      classOutputs="D:\my node app\zera\mobile_zera\build\in_app_update\intermediates\javac\release\compileReleaseJavaWithJavac\classes;D:\my node app\zera\mobile_zera\build\in_app_update\tmp\kotlin-classes\release;D:\my node app\zera\mobile_zera\build\in_app_update\intermediates\compile_r_class_jar\release\generateReleaseRFile\R.jar"
+      type="MAIN"
+      applicationId="de.ffuf.in_app_update"
+      generatedSourceFolders="D:\my node app\zera\mobile_zera\build\in_app_update\generated\ap_generated_sources\release\out"
+      generatedResourceFolders="D:\my node app\zera\mobile_zera\build\in_app_update\generated\res\resValues\release"
+      desugaredMethodsFiles="D:\.gradle\caches\8.14\transforms\0d77ae79251adf5d67de5b669c06b81e\transformed\D8BackportedDesugaredMethods.txt">
+  </artifact>
+</variant>

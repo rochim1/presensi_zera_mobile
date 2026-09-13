@@ -2,7 +2,11 @@ part of 'delivery_page.dart';
 
 @RoutePage()
 class DeliveryCanceledTab extends StatefulWidget {
-  const DeliveryCanceledTab({super.key});
+  const DeliveryCanceledTab({super.key, this.dateFilter});
+
+  final DateTime? dateFilter;
+
+  DateTime get effectiveDateFilter => dateFilter ?? DateTime.now();
 
   @override
   State<DeliveryCanceledTab> createState() => _DeliveryCanceledTabState();
@@ -18,7 +22,9 @@ class _DeliveryCanceledTabState extends State<DeliveryCanceledTab> {
 
     scrollController.addListener(() {
       if (AppUtility.isBottomInfinity(scrollController)) {
-        context.read<TasksGetAllCanceledCubit>().getAllData();
+        context.read<TasksGetAllCanceledCubit>().getAllData(
+          widget.effectiveDateFilter,
+        );
       }
     });
   }
@@ -37,7 +43,9 @@ class _DeliveryCanceledTabState extends State<DeliveryCanceledTab> {
       builder: (context, state) => SmartRefresher(
         controller: refreshController,
         onRefresh: () {
-          context.read<TasksGetAllCanceledCubit>().initLoadAllData();
+          context.read<TasksGetAllCanceledCubit>().initLoadAllData(
+            widget.effectiveDateFilter,
+          );
           context.read<SalesTargetCubit>().loadMyTarget();
           refreshController.refreshCompleted();
         },
@@ -54,9 +62,8 @@ class _DeliveryCanceledTabState extends State<DeliveryCanceledTab> {
             : state.tasks!.length + 1,
         padding: const EdgeInsets.all(AppDimens.paddingMediumX),
         itemBuilder: (_, index) {
-          final task = state.tasks?[index];
-
           if (index >= state.tasks!.length) return const ShimmerInfinity();
+          final task = state.tasks?[index];
           if (task == null) return const SizedBox.shrink();
 
           return DeliveryTaskItemCard(

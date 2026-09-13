@@ -1,0 +1,19 @@
+<lint-module
+    format="1"
+    dir="D:\pub_cache\hosted\pub.dev\flutter_image_compress_common-1.1.1\android"
+    name=":flutter_image_compress_common"
+    type="LIBRARY"
+    maven="com.fluttercandies.flutter_image_compress:flutter_image_compress_common:1.0-SNAPSHOT"
+    agpVersion="8.11.1"
+    buildFolder="D:\my node app\zera\mobile_zera\build\flutter_image_compress_common"
+    bootClassPath="C:\Users\LENOVO\AppData\Local\Android\Sdk\platforms\android-34\android.jar;C:\Users\LENOVO\AppData\Local\Android\Sdk\build-tools\35.0.0\core-lambda-stubs.jar"
+    javaSourceLevel="17"
+    compileTarget="android-34"
+    neverShrinking="true">
+  <lintOptions
+      abortOnError="true"
+      absolutePaths="true"
+      checkReleaseBuilds="true"
+      explainIssues="true"/>
+  <variant name="release"/>
+</lint-module>

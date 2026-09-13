@@ -1,0 +1,26 @@
+-- Merging decision tree log ---
+manifest
+ADDED from D:\pub_cache\hosted\pub.dev\mobile_scanner-7.4.1\android\src\main\AndroidManifest.xml:1:1-5:12
+INJECTED from D:\pub_cache\hosted\pub.dev\mobile_scanner-7.4.1\android\src\main\AndroidManifest.xml:1:1-5:12
+	package
+		INJECTED from D:\pub_cache\hosted\pub.dev\mobile_scanner-7.4.1\android\src\main\AndroidManifest.xml
+	xmlns:android
+		ADDED from D:\pub_cache\hosted\pub.dev\mobile_scanner-7.4.1\android\src\main\AndroidManifest.xml:1:11-69
+uses-permission#android.permission.CAMERA
+ADDED from D:\pub_cache\hosted\pub.dev\mobile_scanner-7.4.1\android\src\main\AndroidManifest.xml:3:5-65
+	android:name
+		ADDED from D:\pub_cache\hosted\pub.dev\mobile_scanner-7.4.1\android\src\main\AndroidManifest.xml:3:22-62
+uses-feature#android.hardware.camera
+ADDED from D:\pub_cache\hosted\pub.dev\mobile_scanner-7.4.1\android\src\main\AndroidManifest.xml:4:5-85
+	android:required
+		ADDED from D:\pub_cache\hosted\pub.dev\mobile_scanner-7.4.1\android\src\main\AndroidManifest.xml:4:58-82
+	android:name
+		ADDED from D:\pub_cache\hosted\pub.dev\mobile_scanner-7.4.1\android\src\main\AndroidManifest.xml:4:19-57
+uses-sdk
+INJECTED from D:\pub_cache\hosted\pub.dev\mobile_scanner-7.4.1\android\src\main\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from D:\pub_cache\hosted\pub.dev\mobile_scanner-7.4.1\android\src\main\AndroidManifest.xml
+INJECTED from D:\pub_cache\hosted\pub.dev\mobile_scanner-7.4.1\android\src\main\AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from D:\pub_cache\hosted\pub.dev\mobile_scanner-7.4.1\android\src\main\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from D:\pub_cache\hosted\pub.dev\mobile_scanner-7.4.1\android\src\main\AndroidManifest.xml

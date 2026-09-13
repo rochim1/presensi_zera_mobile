@@ -2,7 +2,11 @@ part of 'delivery_page.dart';
 
 @RoutePage()
 class DeliverySuccessTab extends StatefulWidget {
-  const DeliverySuccessTab({super.key});
+  const DeliverySuccessTab({super.key, this.dateFilter});
+
+  final DateTime? dateFilter;
+
+  DateTime get effectiveDateFilter => dateFilter ?? DateTime.now();
 
   @override
   State<DeliverySuccessTab> createState() => _DeliverySuccessTabState();
@@ -18,7 +22,9 @@ class _DeliverySuccessTabState extends State<DeliverySuccessTab> {
 
     scrollController.addListener(() {
       if (AppUtility.isBottomInfinity(scrollController)) {
-        context.read<TasksGetAllSuccessCubit>().getAllData();
+        context.read<TasksGetAllSuccessCubit>().getAllData(
+          widget.effectiveDateFilter,
+        );
       }
     });
   }
@@ -37,7 +43,9 @@ class _DeliverySuccessTabState extends State<DeliverySuccessTab> {
       builder: (context, state) => SmartRefresher(
         controller: refreshController,
         onRefresh: () {
-          context.read<TasksGetAllSuccessCubit>().initLoadAllData();
+          context.read<TasksGetAllSuccessCubit>().initLoadAllData(
+            widget.effectiveDateFilter,
+          );
           context.read<SalesTargetCubit>().loadMyTarget();
           refreshController.refreshCompleted();
         },

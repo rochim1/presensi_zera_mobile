@@ -19,6 +19,7 @@ class _HomeFeatureGridState extends State<HomeFeatureGrid>
     with AutomaticKeepAliveClientMixin {
   final PageController _pageController = PageController();
   int _currentPage = 0;
+  int _lastPageCount = 0;
 
   @override
   bool get wantKeepAlive => true;
@@ -208,11 +209,20 @@ class _HomeFeatureGridState extends State<HomeFeatureGrid>
       );
     }
 
-    if (_currentPage >= pages.length) {
-      _currentPage = pages.isEmpty ? 0 : pages.length - 1;
+    final safePage = pages.isEmpty
+        ? 0
+        : _currentPage.clamp(0, pages.length - 1);
+    if (_lastPageCount != pages.length || safePage != _currentPage) {
+      _lastPageCount = pages.length;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted || !_pageController.hasClients) return;
-        _pageController.jumpToPage(_currentPage);
+        if (!mounted) return;
+        if (_currentPage != safePage) {
+          setState(() => _currentPage = safePage);
+        }
+        if (_pageController.hasClients &&
+            _pageController.page?.round() != safePage) {
+          _pageController.jumpToPage(safePage);
+        }
       });
     }
 
@@ -278,12 +288,21 @@ class _HomeFeatureGridState extends State<HomeFeatureGrid>
                         physics: const BouncingScrollPhysics(),
                         allowImplicitScrolling: true,
                         onPageChanged: (index) {
+                          if (pages.isEmpty) return;
+                          final nextPage = index.clamp(0, pages.length - 1);
+                          if (_currentPage == nextPage) return;
                           setState(() {
-                            _currentPage = index;
+                            _currentPage = nextPage;
                           });
                         },
                         itemCount: pages.length,
                         itemBuilder: (context, pageIndex) {
+                          // Permission user dapat mengubah jumlah halaman
+                          // ketika PageView masih menyelesaikan frame lama.
+                          // Jangan pernah mengakses indeks dari snapshot lama.
+                          if (pageIndex < 0 || pageIndex >= pages.length) {
+                            return const SizedBox.shrink();
+                          }
                           final pageItems = pages[pageIndex];
                           return GridView.builder(
                             key: ValueKey('home-feature-page-$pageIndex'),

@@ -19,6 +19,7 @@ class LoginSignInCubit extends Cubit<LoginSignInState> {
     : super(const LoginSignInState());
 
   Future<void> login(LoginParamsEntity params) async {
+    if (state.status.isLoading) return;
     emit(state.copyWith(status: AuthState.loading));
 
     try {
@@ -34,7 +35,7 @@ class LoginSignInCubit extends Cubit<LoginSignInState> {
       final newParams = params.copyWith(macAddress: deviceIdentifier);
       final data = await loginSignIn
           .call(newParams)
-          .timeout(const Duration(seconds: 30));
+          .timeout(Duration(seconds: kIsWeb ? 20 : 30));
 
       data.fold(
         (failure) => emit(
