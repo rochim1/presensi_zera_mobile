@@ -38,7 +38,11 @@ migrate_working_dir/
 .packages
 .pub-cache/
 .pub/
-# /build/
+# Ignore all generated build artifacts by default, but keep the production
+# Flutter Web output available for deployment through Git.
+/build/*
+!/build/web/
+!/build/web/**
 
 # Symbolication related
 app.*.symbols

@@ -204,10 +204,7 @@ class _HomeViewState extends State<HomeView> {
               flex: 5,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const UnsyncedDataBanner(),
-                  HomeFeatureGrid(isLoading: appState.user.isLoading),
-                ],
+                children: [const UnsyncedDataBanner(), const HomeFeatureGrid()],
               ),
             ),
           ],
@@ -238,7 +235,7 @@ class _HomeViewState extends State<HomeView> {
         _buildAttendanceCard(context, appState),
         const SizedBox(height: 16),
         const UnsyncedDataBanner(),
-        HomeFeatureGrid(isLoading: appState.user.isLoading),
+        const HomeFeatureGrid(),
         const SizedBox(height: 16),
         AnnouncementSection(state: state),
         const SizedBox(height: 16),
