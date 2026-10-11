@@ -53,6 +53,17 @@ class _AnnouncementViewState extends State<AnnouncementView>
     super.dispose();
   }
 
+  bool _isUpcoming(Announcement announcement) {
+    return announcement.isUpcomingAt(DateTime.now());
+  }
+
+  bool _isEnded(Announcement announcement) {
+    return announcement.isEndedAt(DateTime.now());
+  }
+
+  bool _isActive(Announcement announcement) =>
+      announcement.isActiveAt(DateTime.now());
+
   @override
   Widget build(BuildContext context) {
     final canCreateAnnouncement = context.select<AppCubit, bool>(
@@ -264,22 +275,9 @@ class _AnnouncementViewState extends State<AnnouncementView>
               controller: _tabController,
               children: [
                 buildList((_) => true),
-                buildList((a) {
-                  final status = a.status.toLowerCase();
-                  return status.contains('aktif') ||
-                      status.contains('berjalan');
-                }),
-                buildList((a) {
-                  final status = a.status.toLowerCase();
-                  return status.contains('akan datang') ||
-                      status.contains('upcoming');
-                }),
-                buildList((a) {
-                  final status = a.status.toLowerCase();
-                  return status.contains('berakhir') ||
-                      status.contains('ended') ||
-                      status.contains('selesai');
-                }),
+                buildList(_isActive),
+                buildList(_isUpcoming),
+                buildList(_isEnded),
               ],
             ),
           );

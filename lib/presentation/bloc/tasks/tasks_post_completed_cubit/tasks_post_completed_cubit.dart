@@ -13,16 +13,34 @@ class TasksPostCompletedCubit extends Cubit<TasksPostCompletedState> {
     : super(const TasksPostCompletedState());
 
   Future<void> postCompleted(TasksCompletedParamsEntity params) async {
-    if (state.status == TypeState.loading) return;
-    emit(state.copyWith(status: TypeState.loading));
-    final Either<Failure, TasksEntity> data = await tasksPostCompleted.call(
-      params,
-    );
+    if (isClosed ||
+        state.status == TypeState.loading ||
+        state.status == TypeState.loaded) {
+      return;
+    }
+    try {
+      emit(state.copyWith(status: TypeState.loading));
+      final Either<Failure, TasksEntity> data = await tasksPostCompleted.call(
+        params,
+      );
 
-    data.fold(
-      (failure) =>
-          emit(state.copyWith(status: TypeState.notLoaded, failure: failure)),
-      (value) => emit(state.copyWith(status: TypeState.loaded, data: value)),
-    );
+      if (isClosed) return;
+      data.fold(
+        (failure) =>
+            emit(state.copyWith(status: TypeState.notLoaded, failure: failure)),
+        (value) => emit(state.copyWith(status: TypeState.loaded, data: value)),
+      );
+    } catch (_) {
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            status: TypeState.notLoaded,
+            failure: UnknownFailure(
+              message: 'Kunjungan gagal diproses, silakan coba lagi',
+            ),
+          ),
+        );
+      }
+    }
   }
 }

@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/presentation/interaction_gate.dart';
 import 'dart:convert';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,6 +12,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'app_state.dart';
 
 class AppCubit extends Cubit<AppState> {
+  final attendanceFlow = InteractionGate();
+  final overtimeAction = InteractionGate();
   static const _settingCacheKeyPrefix = 'organization_setting_cache';
   final GetActiveAttendance getActiveAttendanceUseCase;
   final GetAttendances getAttendancesUseCase;
@@ -477,60 +480,69 @@ class AppCubit extends Cubit<AppState> {
 
   /// Returns `null` on success, otherwise the failure message from backend.
   Future<String?> startOvertime() async {
-    final prefs = await SharedPreferences.getInstance();
-    final userId = state.user.data?.id;
-    if (userId == null) return 'Data pengguna tidak ditemukan';
+    if (!overtimeAction.tryAcquire()) return 'Proses lembur sedang berjalan';
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = state.user.data?.id;
+      if (userId == null) return 'Data pengguna tidak ditemukan';
 
-    // Revalidate immediately before starting overtime. Do not trust the local
-    // checkout marker because it can outlive a failed/stale attendance refresh.
-    final attendanceResult = await getActiveAttendanceUseCase.call(NoParams());
-    final attendanceError = attendanceResult.fold<String?>(
-      (failure) => failure is NotFoundFailure
-          ? null
-          : _failureMessage(
-              failure,
-              'Status presensi belum dapat diverifikasi. Silakan muat ulang.',
-            ),
-      (attendance) {
-        if (attendance.jamPulang == null) {
-          return 'Anda masih memiliki presensi aktif. Lakukan presensi pulang sebelum memulai lembur.';
-        }
-        return null;
-      },
-    );
-    if (attendanceError != null) return attendanceError;
+      // Revalidate immediately before starting overtime. Do not trust the local
+      // checkout marker because it can outlive a failed/stale attendance refresh.
+      final attendanceResult = await getActiveAttendanceUseCase.call(
+        NoParams(),
+      );
+      final attendanceError = attendanceResult.fold<String?>(
+        (failure) => failure is NotFoundFailure
+            ? null
+            : _failureMessage(
+                failure,
+                'Status presensi belum dapat diverifikasi. Silakan muat ulang.',
+              ),
+        (attendance) {
+          if (attendance.jamPulang == null) {
+            return 'Anda masih memiliki presensi aktif. Lakukan presensi pulang sebelum memulai lembur.';
+          }
+          return null;
+        },
+      );
+      if (attendanceError != null) return attendanceError;
 
-    final checkoutVerified = await syncTodayAttendanceFromServer();
-    if (!checkoutVerified || !state.hasCheckedOutToday) {
-      return 'Presensi pulang hari ini belum ditemukan. Lakukan presensi pulang sebelum memulai lembur.';
+      final checkoutVerified = await syncTodayAttendanceFromServer();
+      if (!checkoutVerified || !state.hasCheckedOutToday) {
+        return 'Presensi pulang hari ini belum ditemukan. Lakukan presensi pulang sebelum memulai lembur.';
+      }
+
+      final now = DateTime.now();
+      final result = await startOvertimeSessionUseCase.call(
+        StartOvertimeSessionParams(
+          date: now,
+          startTime: now,
+          reason: 'Lembur setelah presensi pulang',
+        ),
+      );
+
+      return await result.fold(
+        (failure) async {
+          return _failureMessage(
+            failure,
+            'Gagal memulai lembur. Silakan coba lagi.',
+          );
+        },
+        (session) async {
+          final start =
+              _combineOvertimeDateTime(session.date, session.startTime) ?? now;
+          final startIso = start.toIso8601String();
+          await prefs.setString('active_overtime_id_$userId', session.id);
+          await prefs.setString('overtime_start_time_$userId', startIso);
+          emit(state.copyWith(overtimeStartTime: startIso));
+          return null;
+        },
+      );
+    } catch (_) {
+      return 'Proses lembur gagal, silakan coba lagi';
+    } finally {
+      overtimeAction.release();
     }
-
-    final now = DateTime.now();
-    final result = await startOvertimeSessionUseCase.call(
-      StartOvertimeSessionParams(
-        date: now,
-        startTime: now,
-        reason: 'Lembur setelah presensi pulang',
-      ),
-    );
-
-    return await result.fold(
-      (failure) async {
-        return _failureMessage(
-          failure,
-          'Gagal memulai lembur. Silakan coba lagi.',
-        );
-      },
-      (session) async {
-        final start =
-            _combineOvertimeDateTime(session.date, session.startTime) ?? now;
-        final startIso = start.toIso8601String();
-        await prefs.setString('active_overtime_id_$userId', session.id);
-        await prefs.setString('overtime_start_time_$userId', startIso);
-        emit(state.copyWith(overtimeStartTime: startIso));
-        return null;
-      },
-    );
   }
 
   Future<void> endOvertime() async {
@@ -556,65 +568,79 @@ class AppCubit extends Cubit<AppState> {
     String reason, {
     List<String> attachmentPaths = const [],
   }) async {
-    final prefs = await SharedPreferences.getInstance();
-    final userId = state.user.data?.id;
-    if (userId == null) return 'Data pengguna tidak ditemukan';
+    if (!overtimeAction.tryAcquire()) return 'Proses lembur sedang berjalan';
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = state.user.data?.id;
+      if (userId == null) return 'Data pengguna tidak ditemukan';
 
-    final overtimeId = prefs.getString('active_overtime_id_$userId');
-    final startTimeStr =
-        state.overtimeStartTime ??
-        prefs.getString('overtime_start_time_$userId');
-    if (startTimeStr == null) return 'Waktu mulai lembur tidak ditemukan';
+      final overtimeId = prefs.getString('active_overtime_id_$userId');
+      final startTimeStr =
+          state.overtimeStartTime ??
+          prefs.getString('overtime_start_time_$userId');
+      if (startTimeStr == null) return 'Waktu mulai lembur tidak ditemukan';
 
-    final startTime = DateTime.tryParse(startTimeStr);
-    if (startTime == null) return 'Waktu mulai lembur tidak valid';
+      final startTime = DateTime.tryParse(startTimeStr);
+      if (startTime == null) return 'Waktu mulai lembur tidak valid';
 
-    final result = await finishOvertimeSessionUseCase.call(
-      FinishOvertimeSessionParams(
-        overtimeId: overtimeId,
-        date: startTime,
-        startTime: startTime,
-        endTime: DateTime.now(),
-        reason: reason,
-        attachments: attachmentPaths.map(AppUtility.toMultipartFile).toList(),
-      ),
-    );
+      final result = await finishOvertimeSessionUseCase.call(
+        FinishOvertimeSessionParams(
+          overtimeId: overtimeId,
+          date: startTime,
+          startTime: startTime,
+          endTime: DateTime.now(),
+          reason: reason,
+          attachments: attachmentPaths.map(AppUtility.toMultipartFile).toList(),
+        ),
+      );
 
-    return await result.fold(
-      (failure) async {
-        return _failureMessage(
-          failure,
-          'Gagal menyimpan lembur. Silakan coba lagi.',
-        );
-      },
-      (_) async {
-        await endOvertime();
-        return null;
-      },
-    );
+      return await result.fold(
+        (failure) async {
+          return _failureMessage(
+            failure,
+            'Gagal menyimpan lembur. Silakan coba lagi.',
+          );
+        },
+        (_) async {
+          await endOvertime();
+          return null;
+        },
+      );
+    } catch (_) {
+      return 'Proses lembur gagal, silakan coba lagi';
+    } finally {
+      overtimeAction.release();
+    }
   }
 
   /// Returns `null` on success, otherwise the failure message from backend.
   Future<String?> cancelOvertime() async {
-    final prefs = await SharedPreferences.getInstance();
-    final userId = state.user.data?.id;
-    if (userId == null) return 'Data pengguna tidak ditemukan';
+    if (!overtimeAction.tryAcquire()) return 'Proses lembur sedang berjalan';
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = state.user.data?.id;
+      if (userId == null) return 'Data pengguna tidak ditemukan';
 
-    final overtimeId = prefs.getString('active_overtime_id_$userId');
-    if (overtimeId != null) {
-      final result = await cancelOvertimeSessionUseCase.call(overtimeId);
-      final errorMessage = result.fold<String?>(
-        (failure) => _failureMessage(
-          failure,
-          'Gagal membatalkan lembur. Silakan coba lagi.',
-        ),
-        (_) => null,
-      );
-      if (errorMessage != null) return errorMessage;
+      final overtimeId = prefs.getString('active_overtime_id_$userId');
+      if (overtimeId != null) {
+        final result = await cancelOvertimeSessionUseCase.call(overtimeId);
+        final errorMessage = result.fold<String?>(
+          (failure) => _failureMessage(
+            failure,
+            'Gagal membatalkan lembur. Silakan coba lagi.',
+          ),
+          (_) => null,
+        );
+        if (errorMessage != null) return errorMessage;
+      }
+
+      await endOvertime();
+      return null;
+    } catch (_) {
+      return 'Proses lembur gagal, silakan coba lagi';
+    } finally {
+      overtimeAction.release();
     }
-
-    await endOvertime();
-    return null;
   }
 
   DateTime? _combineOvertimeDateTime(DateTime? date, DateTime? time) {
@@ -652,5 +678,12 @@ class AppCubit extends Cubit<AppState> {
     await loadOvertimeState();
     await Future.wait([getActiveAttendance(), getEffectiveScheduleToday()]);
     await syncTodayAttendanceFromServer();
+  }
+
+  @override
+  Future<void> close() {
+    attendanceFlow.dispose();
+    overtimeAction.dispose();
+    return super.close();
   }
 }

@@ -26,6 +26,7 @@ class CheckInCubit extends Cubit<CheckInState> {
   }) : super(const CheckInState());
 
   Future<void> submit() async {
+    if (isClosed || state.checkIn.isLoading || state.checkIn.isSuccess) return;
     final mode = state.attendanceMode;
     final form = state.form.copyWith(
       location: LocationInput.dirty(state.form.location.value),
@@ -111,6 +112,7 @@ class CheckInCubit extends Cubit<CheckInState> {
   }
 
   Future<void> getCurrentAddress() async {
+    if (isClosed || state.currentAddress.isLoading) return;
     emit(state.copyWith(currentAddress: BaseState.loading()));
 
     try {
@@ -160,6 +162,11 @@ class CheckInCubit extends Cubit<CheckInState> {
         currentTime: DateFormat('hh:mm:ss a').format(DateTime.now()),
       ),
     );
+  }
+
+  @override
+  void emit(CheckInState state) {
+    if (!isClosed) super.emit(state);
   }
 
   @override

@@ -28,6 +28,8 @@ class ChatCreateGroupState {
 }
 
 class ChatCreateGroupCubit extends Cubit<ChatCreateGroupState> {
+  bool _isSubmittingAction = false;
+
   final ChatSearchUsersUseCase searchUsersUseCase;
   final ChatCreateConversationUseCase createConversationUseCase;
 
@@ -52,15 +54,19 @@ class ChatCreateGroupCubit extends Cubit<ChatCreateGroupState> {
   }
 
   void toggleUserSelection(ChatParticipantEntity user) {
-    final currentSelected = List<ChatParticipantEntity>.from(state.selectedUsers);
-    
-    final existingIndex = currentSelected.indexWhere((element) => element.id == user.id);
+    final currentSelected = List<ChatParticipantEntity>.from(
+      state.selectedUsers,
+    );
+
+    final existingIndex = currentSelected.indexWhere(
+      (element) => element.id == user.id,
+    );
     if (existingIndex != -1) {
       currentSelected.removeAt(existingIndex);
     } else {
       currentSelected.add(user);
     }
-    
+
     emit(state.copyWith(selectedUsers: currentSelected));
   }
 
@@ -68,34 +74,68 @@ class ChatCreateGroupCubit extends Cubit<ChatCreateGroupState> {
     required String groupName,
     String? groupDescription,
   }) async {
-    if (state.selectedUsers.isEmpty) {
-      emit(state.copyWith(createStatus: BaseState.failure(CustomFailure(message: 'Silakan pilih minimal 1 anggota'))));
+    if (_isSubmittingAction || isClosed || state.createStatus.isSuccess) {
       return;
     }
-    
-    if (groupName.trim().isEmpty) {
-      emit(state.copyWith(createStatus: BaseState.failure(CustomFailure(message: 'Nama grup tidak boleh kosong'))));
-      return;
+    _isSubmittingAction = true;
+    try {
+      if (state.selectedUsers.isEmpty) {
+        emit(
+          state.copyWith(
+            createStatus: BaseState.failure(
+              CustomFailure(message: 'Silakan pilih minimal 1 anggota'),
+            ),
+          ),
+        );
+        return;
+      }
+
+      if (groupName.trim().isEmpty) {
+        emit(
+          state.copyWith(
+            createStatus: BaseState.failure(
+              CustomFailure(message: 'Nama grup tidak boleh kosong'),
+            ),
+          ),
+        );
+        return;
+      }
+
+      emit(state.copyWith(createStatus: const BaseState.loading()));
+
+      final participantIds = state.selectedUsers
+          .map((e) => e.id ?? '')
+          .where((id) => id.isNotEmpty)
+          .toList();
+
+      final result = await createConversationUseCase(
+        type: 'group',
+        groupName: groupName,
+        groupDescription: groupDescription,
+        participantIds: participantIds,
+      );
+
+      if (isClosed) return;
+      result.fold(
+        (failure) {
+          emit(state.copyWith(createStatus: BaseState.failure(failure)));
+        },
+        (data) {
+          emit(state.copyWith(createStatus: BaseState.success(data)));
+        },
+      );
+    } catch (_) {
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            createStatus: BaseState.failure(
+              UnknownFailure(message: 'Grup gagal dibuat, silakan coba lagi'),
+            ),
+          ),
+        );
+      }
+    } finally {
+      _isSubmittingAction = false;
     }
-
-    emit(state.copyWith(createStatus: const BaseState.loading()));
-
-    final participantIds = state.selectedUsers.map((e) => e.id ?? '').where((id) => id.isNotEmpty).toList();
-
-    final result = await createConversationUseCase(
-      type: 'group',
-      groupName: groupName,
-      groupDescription: groupDescription,
-      participantIds: participantIds,
-    );
-
-    result.fold(
-      (failure) {
-        emit(state.copyWith(createStatus: BaseState.failure(failure)));
-      },
-      (data) {
-        emit(state.copyWith(createStatus: BaseState.success(data)));
-      },
-    );
   }
 }

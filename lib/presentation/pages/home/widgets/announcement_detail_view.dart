@@ -156,9 +156,9 @@ class AnnouncementDetailView extends StatelessWidget {
             ),
           ),
 
-          if (announcement.linkUrl.isNotEmpty) ...[
+          if (announcement.safeLinkUrl.isNotEmpty) ...[
             SizedBox(height: AppDimens.h16),
-            _LinkTile(url: announcement.linkUrl),
+            _LinkTile(url: announcement.safeLinkUrl),
           ],
 
           SizedBox(height: AppDimens.h20),

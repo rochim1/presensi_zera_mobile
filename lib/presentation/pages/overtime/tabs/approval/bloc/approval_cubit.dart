@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+import 'package:presensi_data/presensi_data.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:presensi_domain/presensi_domain.dart';
@@ -7,6 +9,10 @@ import '../formz/reason_input.dart';
 import 'approval_state.dart';
 
 class OvertimeRequestApprovalCubit extends Cubit<OvertimeRequestApprovalState> {
+  bool _isSubmittingAction = false;
+  final approvalBusy = ValueNotifier<bool>(false);
+  final _completedApprovalIds = <String>{};
+
   final GetMyPendingApprovals getMyPendingApprovalsUseCase;
   final GetOvertimeRequestById getOvertimeRequestByIdUseCase;
   final CreateApproval createApprovalUseCase;
@@ -110,34 +116,60 @@ class OvertimeRequestApprovalCubit extends Cubit<OvertimeRequestApprovalState> {
     );
   }
 
-  void submitApproval(OvertimeRequest request) async {
-    final approvalAction = state.approvalAction;
-    final reasonInput = ReasonInput.dirty(
-      state.reasonInput.value,
-      action: approvalAction,
-    );
+  Future<void> submitApproval(OvertimeRequest request) async {
+    if (_isSubmittingAction ||
+        isClosed ||
+        _completedApprovalIds.contains(request.id)) {
+      return;
+    }
+    _isSubmittingAction = true;
+    approvalBusy.value = true;
+    try {
+      final approvalAction = state.approvalAction;
+      final reasonInput = ReasonInput.dirty(
+        state.reasonInput.value,
+        action: approvalAction,
+      );
 
-    if (!approvalAction.isNone && reasonInput.isNotValid) return;
+      if (!approvalAction.isNone && reasonInput.isNotValid) return;
 
-    emit(state.copyWith(approvalSubmit: BaseState.loading()));
+      emit(state.copyWith(approvalSubmit: BaseState.loading()));
 
-    final params = CreateApprovalParams(
-      requestId: request.id,
-      requestType: ApprovalRequestType.lembur,
-      action: approvalAction,
-      reason: reasonInput.value,
-    );
-    final result = await createApprovalUseCase.call(params);
+      final params = CreateApprovalParams(
+        requestId: request.id,
+        requestType: ApprovalRequestType.lembur,
+        action: approvalAction,
+        reason: reasonInput.value,
+      );
+      final result = await createApprovalUseCase.call(params);
 
-    result.fold(
-      (failure) {
-        emit(state.copyWith(approvalSubmit: BaseState.failure(failure)));
-      },
-      (_) {
-        emit(state.copyWith(approvalSubmit: BaseState.success(null)));
-        getOvertimeRequests();
-      },
-    );
+      if (isClosed) return;
+      result.fold(
+        (failure) {
+          emit(state.copyWith(approvalSubmit: BaseState.failure(failure)));
+        },
+        (_) {
+          _completedApprovalIds.add(request.id);
+          emit(state.copyWith(approvalSubmit: BaseState.success(null)));
+          getOvertimeRequests();
+        },
+      );
+    } catch (_) {
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            approvalSubmit: BaseState.failure(
+              UnknownFailure(
+                message: 'Approval gagal diproses, silakan coba lagi',
+              ),
+            ),
+          ),
+        );
+      }
+    } finally {
+      _isSubmittingAction = false;
+      if (!isClosed) approvalBusy.value = false;
+    }
   }
 
   void onChangeFilterDate(DateTime? date) {
@@ -146,10 +178,16 @@ class OvertimeRequestApprovalCubit extends Cubit<OvertimeRequestApprovalState> {
   }
 
   void onChangeApprovalAction(AttendanceRequestApprovalAction value) {
+    if (_isSubmittingAction || isClosed) {
+      return;
+    }
     emit(state.copyWith(approvalAction: value));
   }
 
   void onChangeReason(String? value) {
+    if (_isSubmittingAction || isClosed) {
+      return;
+    }
     emit(
       state.copyWith(
         reasonInput: ReasonInput.dirty(value, action: state.approvalAction),
@@ -184,5 +222,11 @@ class OvertimeRequestApprovalCubit extends Cubit<OvertimeRequestApprovalState> {
     );
 
     return resolved.whereType<OvertimeRequest>().toList();
+  }
+
+  @override
+  Future<void> close() async {
+    await super.close();
+    approvalBusy.dispose();
   }
 }

@@ -1,4 +1,3 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,12 +6,17 @@ import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:presensi_domain/presensi_domain.dart';
 import 'package:presensi_mobile/core/_core.dart';
 import 'package:presensi_mobile/presentation/pages/home/bloc/home_cubit.dart';
+import 'package:presensi_mobile/presentation/bloc/app/app_cubit.dart';
 import 'package:presensi_mobile/presentation/widgets/_widgets.dart';
 import 'package:presensi_mobile/presentation/pages/home/bloc/home_state.dart';
 import 'package:presensi_mobile/presentation/pages/home/widgets/_widgets.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'announcement_expiry_guard.dart';
 
-/// ensure only shown once
-bool _hasShownPopupSession = false;
+final Set<String> _popupChecksInFlight = <String>{};
+
+String _localDateKey(DateTime value) =>
+    '${value.year.toString().padLeft(4, '0')}-${value.month.toString().padLeft(2, '0')}-${value.day.toString().padLeft(2, '0')}';
 
 class AnnouncementSection extends StatelessWidget {
   final HomeState state;
@@ -21,37 +25,28 @@ class AnnouncementSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void showAnnouncementsPopup(List<Announcement> announcements) {
+    Future<void> showAnnouncementsPopup(
+      List<Announcement> announcements, [
+      void Function(List<Announcement>)? onShown,
+    ]) async {
       if (announcements.isEmpty) return;
-
-      if (announcements.length == 1) {
-        AppBottomSheet.show(
-          context: context,
-          title: Text(announcements.first.judul),
-          child: AnnouncementDetailView(announcement: announcements.first),
-          actions: [
-            AppButtonNew(
-              onPressed: () => context.router.pop(),
-              text: 'Tutup',
-              variant: AppButtonNewVariant.tertiary,
-              style: AppButtonNewStyle.ghost,
-            ),
-          ],
-        );
-      } else {
-        AppBottomSheet.show(
-          context: context,
-          child: _AnnouncementSlider(announcements: announcements),
-          actions: [
-            AppButtonNew(
-              onPressed: () => context.router.pop(),
-              text: 'Tutup',
-              variant: AppButtonNewVariant.tertiary,
-              style: AppButtonNewStyle.ghost,
-            ),
-          ],
-        );
-      }
+      await AppBottomSheet.show<void>(
+        context: context,
+        child: AnnouncementExpiryGuard(
+          announcements: announcements,
+          onShown: onShown ?? (_) {},
+          builder: (sheetContext, active) => _AnnouncementSlider(
+            key: ValueKey(active.map((item) => item.id).join(':')),
+            announcements: active,
+          ),
+        ),
+        actionsBuilder: (sheetContext) => AppButtonNew(
+          onPressed: () => Navigator.of(sheetContext).pop(),
+          text: 'Tutup',
+          variant: AppButtonNewVariant.tertiary,
+          style: AppButtonNewStyle.ghost,
+        ),
+      );
     }
 
     return BlocListener<HomeCubit, HomeState>(
@@ -59,50 +54,53 @@ class AnnouncementSection extends StatelessWidget {
         return previous.announcements.isLoading &&
             !current.announcements.isLoading;
       },
-      listener: (context, state) {
-        if (_hasShownPopupSession) return;
-
+      listener: (context, state) async {
         final data = state.announcements.data;
         if (data != null && data.isNotEmpty) {
-          final popupItems = data.where((e) {
-            if (!e.showPopup) return false;
-            if (e.tanggalBerakhir != null) {
-              final endOfDay = DateTime(
-                e.tanggalBerakhir!.year,
-                e.tanggalBerakhir!.month,
-                e.tanggalBerakhir!.day,
-                23,
-                59,
-                59,
-              );
-              if (DateTime.now().isAfter(endOfDay)) return false;
+          final user = context.read<AppCubit>().state.user.data;
+          if (user == null) return;
+          final userId = user.id;
+          if (!_popupChecksInFlight.add(userId)) return;
+          try {
+            final preferences = await SharedPreferences.getInstance();
+            await WidgetsBinding.instance.endOfFrame;
+            if (!context.mounted || ModalRoute.of(context)?.isCurrent != true) {
+              return;
             }
-            return true;
-          }).toList();
+            if (context.read<AppCubit>().state.user.data?.id != userId) return;
+            final now = DateTime.now();
+            final today = _localDateKey(now);
+            final popupItems = data.where((e) {
+              if (!e.showPopup) return false;
+              if (!e.isActiveAt(now)) return false;
+              return preferences.getString(
+                    'announcement_popup_seen:$userId:${e.id}',
+                  ) !=
+                  today;
+            }).toList();
 
-          if (popupItems.isNotEmpty) {
-            _hasShownPopupSession = true;
-            // Give the UI a micro-tick to settle before opening popup
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              showAnnouncementsPopup(popupItems);
-            });
+            if (popupItems.isNotEmpty) {
+              await showAnnouncementsPopup(popupItems, (shown) {
+                final shownDay = _localDateKey(DateTime.now());
+                for (final item in shown) {
+                  preferences.setString(
+                    'announcement_popup_seen:$userId:${item.id}',
+                    shownDay,
+                  );
+                }
+              });
+            }
+          } finally {
+            _popupChecksInFlight.remove(userId);
           }
         }
       },
       child: Builder(
         builder: (context) {
-          final validAnnouncements = state.announcements.data?.where((e) {
-            if (e.tanggalBerakhir == null) return true;
-            final endOfDay = DateTime(
-              e.tanggalBerakhir!.year,
-              e.tanggalBerakhir!.month,
-              e.tanggalBerakhir!.day,
-              23,
-              59,
-              59,
-            );
-            return !DateTime.now().isAfter(endOfDay);
-          }).toList();
+          final now = DateTime.now();
+          final validAnnouncements = state.announcements.data
+              ?.where((e) => e.isActiveAt(now))
+              .toList();
 
           return Container(
             padding: const EdgeInsets.symmetric(vertical: 20),
@@ -264,7 +262,7 @@ class AnnouncementSection extends StatelessWidget {
 
 class _AnnouncementSlider extends StatefulWidget {
   final List<Announcement> announcements;
-  const _AnnouncementSlider({required this.announcements});
+  const _AnnouncementSlider({super.key, required this.announcements});
 
   @override
   State<_AnnouncementSlider> createState() => _AnnouncementSliderState();

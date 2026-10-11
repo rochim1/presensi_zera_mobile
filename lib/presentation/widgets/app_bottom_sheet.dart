@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -12,6 +13,7 @@ class AppBottomSheet extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
   final WidgetBuilder? actionsBuilder;
   final VoidCallback? onClose;
+  final ValueListenable<bool>? busyListenable;
 
   const AppBottomSheet({
     super.key,
@@ -23,6 +25,7 @@ class AppBottomSheet extends StatelessWidget {
     this.padding,
     this.actionsBuilder,
     this.onClose,
+    this.busyListenable,
   });
 
   static Future<T?> show<T>({
@@ -37,37 +40,49 @@ class AppBottomSheet extends StatelessWidget {
     EdgeInsetsGeometry? padding,
     WidgetBuilder? actionsBuilder,
     VoidCallback? onClose,
+    ValueListenable<bool>? busyListenable,
   }) {
     return showModalBottomSheet<T>(
       context: context,
       isScrollControlled: isScrollControlled,
-      isDismissible: isDismissible,
-      enableDrag: enableDrag,
+      isDismissible: busyListenable == null && isDismissible,
+      enableDrag: busyListenable == null && enableDrag,
       useSafeArea: useSafeArea,
       barrierColor: AppColors.modalBarrier,
       backgroundColor: Colors.transparent,
       elevation: 0,
-      builder: (context) => Align(
-        alignment: Alignment.bottomCenter,
-        heightFactor: 1,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxWidth: MediaQuery.sizeOf(context).width >= 600
-                ? 480
-                : double.infinity,
+      builder: (context) {
+        Widget sheet(bool busy) => PopScope(
+          canPop: !busy,
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            heightFactor: 1,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.sizeOf(context).width >= 600
+                    ? 480
+                    : double.infinity,
+              ),
+              child: AppBottomSheet(
+                title: title,
+                actions: actions,
+                actionsBuilder: actionsBuilder,
+                isDismissible: isDismissible && !busy,
+                enableDrag: enableDrag,
+                padding: padding,
+                onClose: onClose,
+                busyListenable: busyListenable,
+                child: child,
+              ),
+            ),
           ),
-          child: AppBottomSheet(
-            title: title,
-            actions: actions,
-            actionsBuilder: actionsBuilder,
-            isDismissible: isDismissible,
-            enableDrag: enableDrag,
-            padding: padding,
-            onClose: onClose,
-            child: child,
-          ),
-        ),
-      ),
+        );
+        if (busyListenable == null) return sheet(false);
+        return ValueListenableBuilder<bool>(
+          valueListenable: busyListenable,
+          builder: (_, busy, child) => sheet(busy),
+        );
+      },
     ).whenComplete(() {
       if (onClose != null) onClose();
     });
@@ -243,7 +258,10 @@ class AppBottomSheet extends StatelessWidget {
                       color: AppColors.labelSecondary,
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
-                      onPressed: () => Navigator.of(context).pop(),
+                      onPressed: () {
+                        if (busyListenable?.value == true) return;
+                        Navigator.of(context).pop();
+                      },
                     ),
                 ],
               ),

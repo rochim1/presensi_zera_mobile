@@ -10,8 +10,9 @@ part 'app_router.gr.dart';
 @AutoRouterConfig(replaceInRouteName: 'Page,Route,Tab,Global,Form')
 class AppRouter extends RootStackRouter {
   final AppGuard auth;
+  final GuestOnlyGuard guestOnly;
 
-  AppRouter({required this.auth, super.navigatorKey});
+  AppRouter({required this.auth, required this.guestOnly, super.navigatorKey});
 
   @override
   List<AutoRoute> get routes => [
@@ -237,7 +238,7 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: NotificationPageRoute.page, path: notificationPath),
 
     // Auth
-    AutoRoute(page: LoginPageRoute.page, path: loginPath),
+    AutoRoute(page: LoginPageRoute.page, path: loginPath, guards: [guestOnly]),
     AutoRoute(page: RegisterPageRoute.page, path: registerPath),
     AutoRoute(page: InstansiSetupPageRoute.page, path: instansiSetupPath),
 

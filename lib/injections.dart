@@ -158,6 +158,7 @@ void _external(FlavorConfig flavor) {
   );
   // Login route
   sl.registerFactory<AppGuard>(() => AppGuard(sl()));
+  sl.registerFactory<GuestOnlyGuard>(() => GuestOnlyGuard(sl()));
   // Network Info
   sl.registerFactory<NetworkInfo>(() => NetworkInfoImpl(sl()));
 }

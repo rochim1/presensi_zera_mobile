@@ -20,6 +20,8 @@ class FloatingPhotoInput extends StatelessWidget {
   final String label;
   final String? errorText;
   final double width;
+  final bool isLoading;
+  final bool isDisabled;
 
   const FloatingPhotoInput({
     super.key,
@@ -30,6 +32,8 @@ class FloatingPhotoInput extends StatelessWidget {
     this.label = 'Selfie',
     this.errorText,
     this.width = 100,
+    this.isLoading = false,
+    this.isDisabled = false,
   });
 
   @override
@@ -39,7 +43,7 @@ class FloatingPhotoInput extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         GestureDetector(
-          onTap: onTap,
+          onTap: isLoading || isDisabled ? null : onTap,
           child: Container(
             width: width,
             height: 125,
@@ -60,7 +64,9 @@ class FloatingPhotoInput extends StatelessWidget {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(14),
-              child: hasImage
+              child: isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : hasImage
                   ? kIsWeb
                         ? _WebPhotoPreview(file: imageFile ?? XFile(imagePath!))
                         : Image.file(
@@ -96,7 +102,7 @@ class FloatingPhotoInput extends StatelessWidget {
             ),
           ),
         ),
-        if (hasImage)
+        if (hasImage && !isLoading && !isDisabled)
           Positioned(
             top: -4,
             right: -4,

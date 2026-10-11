@@ -58,7 +58,9 @@ class ApprovalReimbursementView extends StatelessWidget {
               final cubit = context.read<ApprovalReimbursementCubit>();
 
               void onTapReimbursementCard(Reimbursement reimbursement) {
+                if (cubit.approvalBusy.value) return;
                 AppBottomSheet.show(
+                  busyListenable: cubit.approvalBusy,
                   context: context,
                   onClose: () {
                     cubit.onChangeApprovalAction(

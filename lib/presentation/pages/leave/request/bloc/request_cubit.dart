@@ -10,6 +10,8 @@ import '../formz/_formz.dart';
 import 'request_state.dart';
 
 class LeaveRequestCubit extends Cubit<LeaveRequestState> {
+  bool _isSubmittingAction = false;
+
   final GetLeaveCategories getLeaveCategoriesUseCase;
   final GetUsers getUsersUseCase;
   final CreateLeaveRequest createLeaveRequestUseCase;
@@ -106,64 +108,85 @@ class LeaveRequestCubit extends Cubit<LeaveRequestState> {
     );
   }
 
-  void submit() async {
-    final form = state.form;
-    final dirtyForm = form.copyWith(
-      category: LeaveCategoryInput.dirty(form.category.value),
-      mode: LeaveModeInput.dirty(form.mode.value, isRequired: form.needsMode),
-      startDate: StartDateInput.dirty(form.startDate.value),
-      endDate: EndDateInput.dirty(
-        form.endDate.value,
-        startDate: form.startDate.value,
-        isRequired: !form.isHalfDay,
-      ),
-      reason: ReasonInput.dirty(form.reason.value),
-      emergencyContact: EmergencyContactInput.dirty(
-        form.emergencyContact.value,
-      ),
-      attachment: AttachmentInput.dirty(
-        form.attachment.value,
-        isRequired:
-            form.needsAttachment && (_request?.fileIzin?.isNotEmpty != true),
-      ),
-    );
-    emit(state.copyWith(form: dirtyForm));
-
-    if (dirtyForm.isNotValid) return;
-
-    emit(state.copyWith(submit: BaseState.loading()));
-
-    MultipartFile? attachment;
-    try {
-      attachment = form.attachment.value.isNotEmpty
-          ? AppUtility.toPickedMultipartFile(form.attachment.value.first)
-          : null;
-    } on Failure catch (failure) {
-      emit(state.copyWith(submit: BaseState.failure(failure)));
+  Future<void> submit() async {
+    if (_isSubmittingAction || isClosed || state.submit.isSuccess) {
       return;
     }
+    _isSubmittingAction = true;
+    try {
+      final form = state.form;
+      final dirtyForm = form.copyWith(
+        category: LeaveCategoryInput.dirty(form.category.value),
+        mode: LeaveModeInput.dirty(form.mode.value, isRequired: form.needsMode),
+        startDate: StartDateInput.dirty(form.startDate.value),
+        endDate: EndDateInput.dirty(
+          form.endDate.value,
+          startDate: form.startDate.value,
+          isRequired: !form.isHalfDay,
+        ),
+        reason: ReasonInput.dirty(form.reason.value),
+        emergencyContact: EmergencyContactInput.dirty(
+          form.emergencyContact.value,
+        ),
+        attachment: AttachmentInput.dirty(
+          form.attachment.value,
+          isRequired:
+              form.needsAttachment && (_request?.fileIzin?.isNotEmpty != true),
+        ),
+      );
+      emit(state.copyWith(form: dirtyForm));
 
-    final params = CreateLeaveRequestParams(
-      tipeCuti: form.category.value!.id,
-      alasan: form.reason.value ?? '',
-      tanggalIzin: form.startDate.value!,
-      tanggalMasuk: form.isHalfDay
-          ? form.startDate.value!
-          : form.endDate.value!,
-      isHalfDay: form.isHalfDay,
-      halfDayType: form.mode.value?.toHalfDayType(),
-      delegasiKepada: form.delegation.value?.id,
-      attachment: attachment,
-    );
+      if (dirtyForm.isNotValid) return;
 
-    final result = _request == null
-        ? await createLeaveRequestUseCase.call(params)
-        : await leaveRepository.updateLeaveRequest(_request!.id, params);
+      emit(state.copyWith(submit: BaseState.loading()));
 
-    result.fold(
-      (failure) => emit(state.copyWith(submit: BaseState.failure(failure))),
-      (_) => emit(state.copyWith(submit: BaseState.success(null))),
-    );
+      MultipartFile? attachment;
+      try {
+        attachment = form.attachment.value.isNotEmpty
+            ? AppUtility.toPickedMultipartFile(form.attachment.value.first)
+            : null;
+      } on Failure catch (failure) {
+        emit(state.copyWith(submit: BaseState.failure(failure)));
+        return;
+      }
+
+      final params = CreateLeaveRequestParams(
+        tipeCuti: form.category.value!.id,
+        alasan: form.reason.value ?? '',
+        tanggalIzin: form.startDate.value!,
+        tanggalMasuk: form.isHalfDay
+            ? form.startDate.value!
+            : form.endDate.value!,
+        isHalfDay: form.isHalfDay,
+        halfDayType: form.mode.value?.toHalfDayType(),
+        delegasiKepada: form.delegation.value?.id,
+        attachment: attachment,
+      );
+
+      final result = _request == null
+          ? await createLeaveRequestUseCase.call(params)
+          : await leaveRepository.updateLeaveRequest(_request!.id, params);
+
+      if (isClosed) return;
+      result.fold(
+        (failure) => emit(state.copyWith(submit: BaseState.failure(failure))),
+        (_) => emit(state.copyWith(submit: BaseState.success(null))),
+      );
+    } catch (_) {
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            submit: BaseState.failure(
+              UnknownFailure(
+                message: 'Pengajuan gagal diproses, silakan coba lagi',
+              ),
+            ),
+          ),
+        );
+      }
+    } finally {
+      _isSubmittingAction = false;
+    }
   }
 
   void onChangeCategory(LeaveCategory? value) {

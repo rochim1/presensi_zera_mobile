@@ -16,7 +16,7 @@ class AnnouncementCubit extends Cubit<AnnouncementState> {
 
   static const int _limit = 10;
 
-  GetAnnouncementsParams _params({int page = 0}) {
+  GetAnnouncementsParams _params({int page = 1}) {
     return GetAnnouncementsParams(page: page, limit: _limit);
   }
 
@@ -38,7 +38,7 @@ class AnnouncementCubit extends Cubit<AnnouncementState> {
           state.copyWith(
             announcements: BasePaginatedState.success(
               data: value,
-              page: 0,
+              page: 1,
               hasReachedMax: value.length < _limit,
             ),
           ),

@@ -26,153 +26,175 @@ class AppCameraPage extends StatelessWidget {
   }
 }
 
-class AppCameraView extends StatelessWidget {
+class AppCameraView extends StatefulWidget {
   const AppCameraView({super.key});
+
+  @override
+  State<AppCameraView> createState() => _AppCameraViewState();
+}
+
+class _AppCameraViewState extends State<AppCameraView> {
+  bool _isLeaving = false;
+
+  Future<void> _finish(XFile? file) async {
+    if (_isLeaving || context.read<AppCameraCubit>().isBusy) return;
+    setState(() => _isLeaving = true);
+    try {
+      final popped = await context.router.maybePop<XFile?>(file);
+      if (!popped && mounted) setState(() => _isLeaving = false);
+    } catch (_) {
+      if (mounted) setState(() => _isLeaving = false);
+      rethrow;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<AppCameraCubit>();
     return BlocBuilder<AppCameraCubit, AppCameraState>(
       builder: (context, state) {
-        return Scaffold(
-          backgroundColor: Colors.black,
-          extendBodyBehindAppBar: true,
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            centerTitle: true,
-            title: Text(
-              state.type.title,
-              style: context.textStyle.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+        return PopScope(
+          canPop: !cubit.isBusy,
+          child: Scaffold(
+            backgroundColor: Colors.black,
+            extendBodyBehindAppBar: true,
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              centerTitle: true,
+              title: Text(
+                state.type.title,
+                style: context.textStyle.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
+              automaticallyImplyLeading: false,
             ),
-            automaticallyImplyLeading: false,
-          ),
-          body: BlocConsumer<AppCameraCubit, AppCameraState>(
-            listener: (context, state) {
-              if (state.status == AppCameraStatus.failure &&
-                  state.errorMessage != null) {
-                AppSnackbar.showError(context, state.errorMessage ?? '');
-              }
-            },
-            builder: (context, state) {
-              return Center(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxWidth: kIsWeb ? 520 : double.infinity,
-                  ),
-                  child: Stack(
-                    children: [
-                      // Camera Preview or Captured File
-                      if (state.capturedFile != null)
-                        Positioned.fill(
-                          child: Transform(
-                            alignment: Alignment.center,
-                            transform: Matrix4.rotationY(
-                              !kIsWeb &&
-                                      state.lensDirection ==
-                                          CameraLensDirection.front
-                                  ? 3.14159
-                                  : 0,
+            body: BlocConsumer<AppCameraCubit, AppCameraState>(
+              listener: (context, state) {
+                if (state.status == AppCameraStatus.failure &&
+                    state.errorMessage != null) {
+                  AppSnackbar.showError(context, state.errorMessage ?? '');
+                }
+              },
+              builder: (context, state) {
+                return Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth: kIsWeb ? 520 : double.infinity,
+                    ),
+                    child: Stack(
+                      children: [
+                        // Camera Preview or Captured File
+                        if (state.capturedFile != null)
+                          Positioned.fill(
+                            child: Transform(
+                              alignment: Alignment.center,
+                              transform: Matrix4.rotationY(
+                                !kIsWeb &&
+                                        state.lensDirection ==
+                                            CameraLensDirection.front
+                                    ? 3.14159
+                                    : 0,
+                              ),
+                              child: kIsWeb
+                                  ? FutureBuilder<Uint8List>(
+                                      future: state.capturedFile!.readAsBytes(),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasError) {
+                                          return const Center(
+                                            child: Icon(
+                                              Icons.broken_image_outlined,
+                                              color: Colors.white,
+                                              size: 48,
+                                            ),
+                                          );
+                                        }
+                                        if (!snapshot.hasData) {
+                                          return const Center(
+                                            child: CircularProgressIndicator(),
+                                          );
+                                        }
+                                        return Image.memory(
+                                          snapshot.data!,
+                                          // Desktop webcams are usually
+                                          // landscape; keep the complete frame.
+                                          fit: BoxFit.contain,
+                                        );
+                                      },
+                                    )
+                                  : Image.file(
+                                      File(state.capturedFile!.path),
+                                      fit: BoxFit.cover,
+                                    ),
                             ),
-                            child: kIsWeb
-                                ? FutureBuilder<Uint8List>(
-                                    future: state.capturedFile!.readAsBytes(),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.hasError) {
-                                        return const Center(
-                                          child: Icon(
-                                            Icons.broken_image_outlined,
-                                            color: Colors.white,
-                                            size: 48,
-                                          ),
-                                        );
-                                      }
-                                      if (!snapshot.hasData) {
-                                        return const Center(
-                                          child: CircularProgressIndicator(),
-                                        );
-                                      }
-                                      return Image.memory(
-                                        snapshot.data!,
-                                        // Desktop webcams are usually
-                                        // landscape; keep the complete frame.
-                                        fit: BoxFit.contain,
-                                      );
-                                    },
-                                  )
-                                : Image.file(
-                                    File(state.capturedFile!.path),
-                                    fit: BoxFit.cover,
+                          )
+                        else
+                          Positioned.fill(
+                            child: _buildCameraPreview(cubit, state),
+                          ),
+
+                        // Scanning Overlay (only show if not previewing)
+                        if (state.capturedFile == null)
+                          Positioned.fill(
+                            child: CustomPaint(
+                              painter: AppCameraOverlay(
+                                isFaceDetected: state.isFaceDetected,
+                              ),
+                            ),
+                          ),
+
+                        // Instructions (only show if not previewing)
+                        if (state.capturedFile == null)
+                          Positioned(
+                            bottom: 150,
+                            left: 0,
+                            right: 0,
+                            child: Center(
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withValues(alpha: 0.5),
+                                  borderRadius: BorderRadius.circular(
+                                    AppDimens.r20,
                                   ),
-                          ),
-                        )
-                      else
-                        Positioned.fill(
-                          child: _buildCameraPreview(cubit, state),
-                        ),
-
-                      // Scanning Overlay (only show if not previewing)
-                      if (state.capturedFile == null)
-                        Positioned.fill(
-                          child: CustomPaint(
-                            painter: AppCameraOverlay(
-                              isFaceDetected: state.isFaceDetected,
+                                ),
+                                child: Text(
+                                  kIsWeb
+                                      ? 'Pastikan wajah terlihat jelas, lalu ambil foto'
+                                      : state.isFaceDetected
+                                      ? 'Wajah Terdeteksi'
+                                      : state.type.instruction,
+                                  style: context.textStyle.bodySmall?.copyWith(
+                                    color: !kIsWeb && state.isFaceDetected
+                                        ? Colors.green
+                                        : Colors.white,
+                                    fontWeight: !kIsWeb && state.isFaceDetected
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
-                        ),
 
-                      // Instructions (only show if not previewing)
-                      if (state.capturedFile == null)
+                        // Action Buttons (floating)
                         Positioned(
-                          bottom: 150,
+                          bottom: 0,
                           left: 0,
                           right: 0,
-                          child: Center(
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.black.withValues(alpha: 0.5),
-                                borderRadius: BorderRadius.circular(
-                                  AppDimens.r20,
-                                ),
-                              ),
-                              child: Text(
-                                kIsWeb
-                                    ? 'Pastikan wajah terlihat jelas, lalu ambil foto'
-                                    : state.isFaceDetected
-                                    ? 'Wajah Terdeteksi'
-                                    : state.type.instruction,
-                                style: context.textStyle.bodySmall?.copyWith(
-                                  color: !kIsWeb && state.isFaceDetected
-                                      ? Colors.green
-                                      : Colors.white,
-                                  fontWeight: !kIsWeb && state.isFaceDetected
-                                      ? FontWeight.bold
-                                      : FontWeight.normal,
-                                ),
-                              ),
-                            ),
-                          ),
+                          child: _buildActionButtons(context, cubit, state),
                         ),
-
-                      // Action Buttons (floating)
-                      Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        child: _buildActionButtons(context, cubit, state),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
         );
       },
@@ -217,6 +239,7 @@ class AppCameraView extends StatelessWidget {
     AppCameraCubit cubit,
     AppCameraState state,
   ) {
+    final busy = cubit.isBusy || _isLeaving;
     final bottomPadding = MediaQuery.paddingOf(context).bottom;
     if (state.capturedFile != null && state.status == AppCameraStatus.success) {
       return Container(
@@ -230,7 +253,7 @@ class AppCameraView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             IconButton(
-              onPressed: () => cubit.retake(),
+              onPressed: busy ? null : () => cubit.retake(),
               icon: Icon(
                 PhosphorIcons.arrowsClockwise,
                 size: AppDimens.iconLarge,
@@ -240,7 +263,7 @@ class AppCameraView extends StatelessWidget {
 
             // Shutter Button
             GestureDetector(
-              onTap: () => context.router.pop<XFile?>(state.capturedFile),
+              onTap: busy ? null : () => _finish(state.capturedFile),
               child: Opacity(
                 opacity: 1.0,
                 child: Container(
@@ -262,11 +285,16 @@ class AppCameraView extends StatelessWidget {
                         shape: BoxShape.circle,
                         color: AppColors.green,
                       ),
-                      child: Icon(
-                        PhosphorIcons.check,
-                        color: AppColors.white,
-                        size: AppDimens.sizeXL,
-                      ),
+                      child: _isLeaving
+                          ? const CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            )
+                          : Icon(
+                              PhosphorIcons.check,
+                              color: AppColors.white,
+                              size: AppDimens.sizeXL,
+                            ),
                     ),
                   ),
                 ),
@@ -284,9 +312,12 @@ class AppCameraView extends StatelessWidget {
     // must therefore allow manual capture; native front cameras keep the face
     // detection requirement.
     final bool canCapture =
-        kIsWeb ||
-        state.lensDirection == CameraLensDirection.back ||
-        state.isFaceDetected;
+        !busy &&
+        (state.status == AppCameraStatus.ready ||
+            state.status == AppCameraStatus.failure) &&
+        (kIsWeb ||
+            state.lensDirection == CameraLensDirection.back ||
+            state.isFaceDetected);
 
     return Container(
       padding: EdgeInsets.fromLTRB(
@@ -301,7 +332,7 @@ class AppCameraView extends StatelessWidget {
           // Switch Camera
           if (!state.type.onlyFront)
             IconButton(
-              onPressed: () => cubit.switchCamera(),
+              onPressed: busy ? null : () => cubit.switchCamera(),
               icon: Icon(PhosphorIcons.cameraRotate, size: AppDimens.iconLarge),
               color: Colors.white,
             )
@@ -310,7 +341,7 @@ class AppCameraView extends StatelessWidget {
 
           // Shutter Button
           GestureDetector(
-            onTapDown: canCapture ? (_) => cubit.takePicture() : null,
+            onTap: canCapture ? () => cubit.takePicture() : null,
             child: Opacity(
               opacity: canCapture ? 1.0 : 0.5,
               child: Container(
@@ -332,11 +363,16 @@ class AppCameraView extends StatelessWidget {
                       shape: BoxShape.circle,
                       color: AppColors.orange,
                     ),
-                    child: Icon(
-                      PhosphorIcons.apertureFill,
-                      color: AppColors.white,
-                      size: AppDimens.sizeXL,
-                    ),
+                    child: busy
+                        ? const CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          )
+                        : Icon(
+                            PhosphorIcons.apertureFill,
+                            color: AppColors.white,
+                            size: AppDimens.sizeXL,
+                          ),
                   ),
                 ),
               ),
@@ -348,7 +384,7 @@ class AppCameraView extends StatelessWidget {
             width: 48,
             height: 48,
             child: IconButton(
-              onPressed: () => context.router.pop<XFile?>(null),
+              onPressed: busy ? null : () => _finish(null),
               padding: const EdgeInsets.all(12),
               iconSize: 20,
               icon: const Icon(PhosphorIcons.x),

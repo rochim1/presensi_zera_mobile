@@ -5,7 +5,7 @@ import '../models/app_camera_type.dart';
 
 part 'app_camera_state.freezed.dart';
 
-enum AppCameraStatus { initial, loading, ready, success, failure }
+enum AppCameraStatus { initial, loading, ready, capturing, success, failure }
 
 @freezed
 abstract class AppCameraState with _$AppCameraState {

@@ -29,6 +29,13 @@ class LoginRepositoryImpl extends LoginRepository {
     } catch (e, s) {
       if (e is! CacheException) log.e(e.toString(), stackTrace: s);
       if (e is GraphQlException) {
+        if (e.code == 'CAPTCHA_REQUIRED') {
+          final challenge = LoginCaptchaFailure.fromExtensions(
+            e.extensions,
+            message: e.message,
+          );
+          if (challenge != null) return Left(challenge);
+        }
         return Left(ServerFailure(message: e.message, code: e.code));
       } else if (e is CacheException) {
         return Left(CacheFailure());

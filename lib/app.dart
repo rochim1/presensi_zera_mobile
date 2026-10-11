@@ -36,6 +36,7 @@ class _AppState extends State<App> {
     _lightTheme = AppTheme.light();
     _appRouter = AppRouter(
       auth: sl<AppGuard>(),
+      guestOnly: sl<GuestOnlyGuard>(),
       navigatorKey: ChuckerFlutter.navigatorKey,
     );
     _routerDelegate = AutoRouterDelegate(

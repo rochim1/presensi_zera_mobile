@@ -60,11 +60,18 @@ class AttendanceRequestApprovalView extends StatelessWidget {
               final cubit = context.read<AttendanceRequestApprovalCubit>();
 
               void onTapLeaveRequestCard(ApprovalHistory approval) {
+                if (context
+                    .read<AttendanceRequestApprovalCubit>()
+                    .approvalBusy
+                    .value) {
+                  return;
+                }
                 final request = approval.attendanceRequest;
                 if (request == null) return;
                 final cubit = context.read<AttendanceRequestApprovalCubit>();
 
                 AppBottomSheet.show(
+                  busyListenable: cubit.approvalBusy,
                   context: context,
                   onClose: () {
                     cubit.onChangeApprovalAction(

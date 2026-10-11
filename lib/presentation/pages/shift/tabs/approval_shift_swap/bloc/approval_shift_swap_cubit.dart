@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+import 'package:presensi_data/presensi_data.dart';
 import 'package:bloc/bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:presensi_domain/presensi_domain.dart';
@@ -7,6 +9,10 @@ import '../formz/reason_input.dart';
 import 'approval_shift_swap_state.dart';
 
 class ApprovalShiftSwapCubit extends Cubit<ApprovalShiftSwapState> {
+  bool _isSubmittingAction = false;
+  final approvalBusy = ValueNotifier<bool>(false);
+  final _completedApprovalIds = <String>{};
+
   final Logger logger;
   final GetShiftSwapRequests getShiftSwapRequestsUseCase;
   final CreateShiftSwapRequestApproval createShiftSwapRequestApprovalUseCase;
@@ -107,37 +113,63 @@ class ApprovalShiftSwapCubit extends Cubit<ApprovalShiftSwapState> {
   }
 
   Future<void> submitApproval(ShiftSwapRequest request) async {
-    final approvalAction = state.approvalAction;
-    if (approvalAction == null) return;
+    if (_isSubmittingAction ||
+        isClosed ||
+        _completedApprovalIds.contains(request.id)) {
+      return;
+    }
+    _isSubmittingAction = true;
+    approvalBusy.value = true;
+    try {
+      final approvalAction = state.approvalAction;
+      if (approvalAction == null) return;
 
-    final reasonInput = ReasonInput.dirty(
-      state.reasonInput.value,
-      action: approvalAction,
-    );
-    final rejectedReason = reasonInput.value?.trim();
-    emit(state.copyWith(reasonInput: reasonInput));
-    if (reasonInput.isNotValid) return;
+      final reasonInput = ReasonInput.dirty(
+        state.reasonInput.value,
+        action: approvalAction,
+      );
+      final rejectedReason = reasonInput.value?.trim();
+      emit(state.copyWith(reasonInput: reasonInput));
+      if (reasonInput.isNotValid) return;
 
-    emit(state.copyWith(approvalSubmit: BaseState.loading()));
+      emit(state.copyWith(approvalSubmit: BaseState.loading()));
 
-    final params = CreateShiftSwapRequestApprovalParams(
-      swapRequestId: request.id,
-      status: approvalAction,
-      rejectedReason: approvalAction == RequestStatus.rejected
-          ? rejectedReason
-          : null,
-    );
-    final result = await createShiftSwapRequestApprovalUseCase.call(params);
+      final params = CreateShiftSwapRequestApprovalParams(
+        swapRequestId: request.id,
+        status: approvalAction,
+        rejectedReason: approvalAction == RequestStatus.rejected
+            ? rejectedReason
+            : null,
+      );
+      final result = await createShiftSwapRequestApprovalUseCase.call(params);
 
-    result.fold(
-      (failure) {
-        emit(state.copyWith(approvalSubmit: BaseState.failure(failure)));
-      },
-      (_) {
-        emit(state.copyWith(approvalSubmit: BaseState.success(null)));
-        getShiftSwapRequests();
-      },
-    );
+      if (isClosed) return;
+      result.fold(
+        (failure) {
+          emit(state.copyWith(approvalSubmit: BaseState.failure(failure)));
+        },
+        (_) {
+          _completedApprovalIds.add(request.id);
+          emit(state.copyWith(approvalSubmit: BaseState.success(null)));
+          getShiftSwapRequests();
+        },
+      );
+    } catch (_) {
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            approvalSubmit: BaseState.failure(
+              UnknownFailure(
+                message: 'Approval gagal diproses, silakan coba lagi',
+              ),
+            ),
+          ),
+        );
+      }
+    } finally {
+      _isSubmittingAction = false;
+      if (!isClosed) approvalBusy.value = false;
+    }
   }
 
   void onChangeFilterDate(DateTime? value) {
@@ -146,6 +178,9 @@ class ApprovalShiftSwapCubit extends Cubit<ApprovalShiftSwapState> {
   }
 
   void onChangeApprovalAction(RequestStatus? value) {
+    if (_isSubmittingAction || isClosed) {
+      return;
+    }
     emit(
       state.copyWith(
         approvalAction: value,
@@ -156,6 +191,9 @@ class ApprovalShiftSwapCubit extends Cubit<ApprovalShiftSwapState> {
   }
 
   void onChangeReason(String? value) {
+    if (_isSubmittingAction || isClosed) {
+      return;
+    }
     emit(
       state.copyWith(
         reasonInput: ReasonInput.dirty(value, action: state.approvalAction),
@@ -170,5 +208,11 @@ class ApprovalShiftSwapCubit extends Cubit<ApprovalShiftSwapState> {
 
   Future<void> onRefresh() async {
     await getShiftSwapRequests();
+  }
+
+  @override
+  Future<void> close() async {
+    await super.close();
+    approvalBusy.dispose();
   }
 }

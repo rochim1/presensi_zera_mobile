@@ -44,9 +44,10 @@ class ApprovalShiftSwapView extends StatelessWidget {
           final cubit = context.read<ApprovalShiftSwapCubit>();
 
           void onTapSwapCard(ShiftSwapRequest request) {
-            final cubit = context.read<ApprovalShiftSwapCubit>();
+            if (cubit.approvalBusy.value) return;
 
             AppBottomSheet.show(
+              busyListenable: cubit.approvalBusy,
               context: context,
               onClose: () {
                 cubit.onChangeApprovalAction(null);

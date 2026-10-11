@@ -4,7 +4,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:presensi_mobile/service/camera_access.dart';
 import 'package:presensi_data/presensi_data.dart';
 import 'package:presensi_mobile/core/_core.dart';
 import 'package:presensi_mobile/service/web_face_detection_stub.dart'
@@ -18,6 +18,17 @@ class AppCameraCubit extends Cubit<AppCameraState> {
   CameraController? _controller;
   bool _isImageStreamRunning = false;
   bool _isTakingPicture = false;
+  bool _isInitializing = false;
+  bool _isClosing = false;
+  int _cameraGeneration = 0;
+
+  bool get isBusy => _isTakingPicture || _isInitializing || _isClosing;
+
+  @override
+  void emit(AppCameraState state) {
+    if (!_isClosing && !isClosed) super.emit(state);
+  }
+
   final FaceDetector _faceDetector = FaceDetector(
     options: FaceDetectorOptions(enableContours: true, enableLandmarks: false),
   );
@@ -28,6 +39,9 @@ class AppCameraCubit extends Cubit<AppCameraState> {
     required AppCameraType type,
     CameraLensDirection? lensDirection,
   }) async {
+    if (isBusy || isClosed) return;
+    _isInitializing = true;
+    _cameraGeneration++;
     try {
       final direction = lensDirection ?? type.initialDirection;
       emit(
@@ -36,11 +50,29 @@ class AppCameraCubit extends Cubit<AppCameraState> {
           type: type,
           lensDirection: direction,
           enabledFaceDetection: !kIsWeb && type.enabledFaceDetection,
+          capturedFile: null,
+          isFaceDetected: false,
+          isBusyDetector: false,
+          errorMessage: null,
         ),
       );
 
-      final status = await Permission.camera.request();
-      if (status.isDenied || status.isPermanentlyDenied) {
+      await _controller?.dispose();
+      _controller = null;
+      _isImageStreamRunning = false;
+      final environmentError = cameraEnvironmentError();
+      if (environmentError != null) {
+        emit(
+          state.copyWith(
+            status: AppCameraStatus.failure,
+            errorMessage: environmentError,
+          ),
+        );
+        return;
+      }
+      final granted = await requestNativeCameraAccess();
+      if (_isClosing) return;
+      if (!granted) {
         emit(
           state.copyWith(
             status: AppCameraStatus.failure,
@@ -51,6 +83,16 @@ class AppCameraCubit extends Cubit<AppCameraState> {
       }
 
       final cameras = await availableCameras();
+      if (_isClosing) return;
+      if (cameras.isEmpty) {
+        emit(
+          state.copyWith(
+            status: AppCameraStatus.failure,
+            errorMessage: 'Kamera tidak ditemukan pada perangkat ini.',
+          ),
+        );
+        return;
+      }
       final camera = cameras.firstWhere(
         (c) => c.lensDirection == direction,
         orElse: () => cameras.first,
@@ -66,6 +108,7 @@ class AppCameraCubit extends Cubit<AppCameraState> {
       );
 
       await _controller!.initialize();
+      if (_isClosing) return;
 
       // camera_web does not guarantee zoom support. Querying its zoom range
       // can itself throw zoomLevelNotSupported on desktop browsers.
@@ -76,15 +119,6 @@ class AppCameraCubit extends Cubit<AppCameraState> {
         zoomMax = await _controller?.getMaxZoomLevel() ?? 1.0;
       }
 
-      emit(
-        state.copyWith(
-          status: AppCameraStatus.ready,
-          minZoomLevel: zoomMin,
-          maxZoomLevel: zoomMax,
-          currentZoomLevel: zoomMin,
-        ),
-      );
-
       // Start image stream for face detection if enabled for this type and current lens is front
       if (!kIsWeb &&
           type.enabledFaceDetection &&
@@ -94,13 +128,24 @@ class AppCameraCubit extends Cubit<AppCameraState> {
         );
         _isImageStreamRunning = true;
       }
+      if (_isClosing) return;
+      emit(
+        state.copyWith(
+          status: AppCameraStatus.ready,
+          minZoomLevel: zoomMin,
+          maxZoomLevel: zoomMax,
+          currentZoomLevel: zoomMin,
+        ),
+      );
     } catch (e) {
       emit(
         state.copyWith(
           status: AppCameraStatus.failure,
-          errorMessage: e.toString(),
+          errorMessage: cameraAccessError(e),
         ),
       );
+    } finally {
+      _isInitializing = false;
     }
   }
 
@@ -109,19 +154,21 @@ class AppCameraCubit extends Cubit<AppCameraState> {
         ? CameraLensDirection.back
         : CameraLensDirection.front;
 
-    await _controller?.dispose();
-    _controller = null;
+    if (isBusy || isClosed) return;
     await initialize(type: state.type, lensDirection: newDirection);
   }
 
   Future<void> takePicture() async {
-    if (_isTakingPicture ||
+    if (isBusy ||
+        isClosed ||
+        state.capturedFile != null ||
         _controller == null ||
         !_controller!.value.isInitialized) {
       return;
     }
 
     _isTakingPicture = true;
+    emit(state.copyWith(status: AppCameraStatus.capturing));
     try {
       if (state.lensDirection == CameraLensDirection.front &&
           state.enabledFaceDetection &&
@@ -172,7 +219,7 @@ class AppCameraCubit extends Cubit<AppCameraState> {
       emit(
         state.copyWith(
           status: AppCameraStatus.failure,
-          errorMessage: e.toString(),
+          errorMessage: cameraAccessError(e),
         ),
       );
     } finally {
@@ -181,11 +228,7 @@ class AppCameraCubit extends Cubit<AppCameraState> {
   }
 
   Future<void> retake() async {
-    await _controller?.dispose();
-    _controller = null;
-    _isImageStreamRunning = false;
-    _isTakingPicture = false;
-    emit(state.copyWith(status: AppCameraStatus.initial, capturedFile: null));
+    if (isBusy || isClosed) return;
     await initialize(type: state.type, lensDirection: state.lensDirection);
   }
 
@@ -245,27 +288,38 @@ class AppCameraCubit extends Cubit<AppCameraState> {
   }
 
   Future<void> _processFaceDetector(InputImage inputImage) async {
-    if (state.isBusyDetector) return;
-
+    if (state.isBusyDetector || isBusy || isClosed) return;
+    final generation = _cameraGeneration;
     emit(state.copyWith(isBusyDetector: true));
-    final faces = await _faceDetector.processImage(inputImage);
-    final isFaceDetected = faces.isNotEmpty;
-
-    if (isFaceDetected &&
-        state.type.enabledFaceDetection &&
-        state.lensDirection == CameraLensDirection.front &&
-        _isImageStreamRunning) {
-      try {
-        await _controller?.stopImageStream();
-        _isImageStreamRunning = false;
-      } catch (_) {}
+    try {
+      final faces = await _faceDetector.processImage(inputImage);
+      if (_isClosing || isClosed || generation != _cameraGeneration) return;
+      final isFaceDetected = faces.isNotEmpty;
+      if (isFaceDetected &&
+          !isBusy &&
+          state.type.enabledFaceDetection &&
+          state.lensDirection == CameraLensDirection.front &&
+          _isImageStreamRunning) {
+        try {
+          await _controller?.stopImageStream();
+          _isImageStreamRunning = false;
+        } catch (_) {}
+      }
+      if (generation == _cameraGeneration) {
+        emit(state.copyWith(isFaceDetected: isFaceDetected));
+      }
+    } catch (_) {
+      // A disposed detector or failed frame must not escape as an async error.
+    } finally {
+      if (generation == _cameraGeneration) {
+        emit(state.copyWith(isBusyDetector: false));
+      }
     }
-
-    emit(state.copyWith(isFaceDetected: isFaceDetected, isBusyDetector: false));
   }
 
   @override
   Future<void> close() async {
+    _isClosing = true;
     try {
       if (state.lensDirection == CameraLensDirection.front &&
           state.enabledFaceDetection &&

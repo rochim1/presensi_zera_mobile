@@ -51,3 +51,29 @@ class AppGuard extends AutoRouteGuard {
     );
   }
 }
+
+/// Prevents an authenticated user from returning to the login screen, for
+/// example by using the browser's Back button on web.
+class GuestOnlyGuard extends AutoRouteGuard {
+  final LoginCheck loginCheck;
+
+  GuestOnlyGuard(this.loginCheck);
+
+  @override
+  void onNavigation(NavigationResolver resolver, StackRouter router) async {
+    final data = await loginCheck.call(NoParams());
+
+    data.fold(
+      (_) => resolver.next(),
+      (user) => user == null ? resolver.next() : null,
+    );
+
+    final user = data.fold((_) => null, (user) => user);
+    if (user != null) {
+      resolver.next(false);
+      await router.replaceAll(const [
+        MainPageRoute(children: [HomePageRoute()]),
+      ]);
+    }
+  }
+}

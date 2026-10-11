@@ -13,8 +13,8 @@ mutation DeletePengumuman($id: ID!) {
 }''';
 
   String get getAnnouncementsQuery =>
-      r'''query GetAllPengumuman($pagination: pagination) {
-  GetAllPengumuman(pagination: $pagination) {
+      r'''query GetAllPengumuman($pagination: pagination, $filter: FilterPengumuman) {
+  GetAllPengumuman(pagination: $pagination, filter: $filter) {
     pengumuman {
       _id
       judul

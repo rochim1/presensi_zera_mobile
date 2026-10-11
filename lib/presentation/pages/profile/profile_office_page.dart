@@ -26,7 +26,7 @@ class ProfileOfficePage extends StatelessWidget {
                   stateLocal.data?.user?.instansiId;
               return Scaffold(
                 backgroundColor: AppColors.bgPrimary,
-                appBar: const AppTopBar(title: 'Detail Perusahaan'),
+                appBar: const AppTopBar(title: 'Detail Instansi/Organisasi'),
                 body: Stack(
                   children: [
                     SingleChildScrollView(
@@ -38,7 +38,7 @@ class ProfileOfficePage extends StatelessWidget {
                             AppCard(
                               showHeaderDivider: true,
                               header: Text(
-                                'Informasi Perusahaan',
+                                'Informasi Instansi/Organisasi',
                                 style: context.textStyle.titleMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
                                   color: AppColors.primary,
@@ -58,7 +58,7 @@ class ProfileOfficePage extends StatelessWidget {
                                   ),
                                   AppDimens.size3M.hSpace,
                                   ProfileFieldRow(
-                                    title: 'Nama Perusahaan',
+                                    title: 'Nama Instansi/Organisasi',
                                     value: AppUtility.nullHandler(
                                       userInstance?.namaInstansi,
                                       fallback: '-',
@@ -73,7 +73,7 @@ class ProfileOfficePage extends StatelessWidget {
                                   ),
                                   const _SubscriptionStatusWidget(),
                                   ProfileFieldRow(
-                                    title: 'Nomor Telepon',
+                                    title: 'Nomor Telepon Instansi/Organisasi',
                                     value: AppUtility.nullHandler(
                                       userInstance?.telponNumber,
                                       fallback: '-',
@@ -111,7 +111,7 @@ class ProfileOfficePage extends StatelessWidget {
                                     ),
                                   ),
                                   ProfileFieldRow(
-                                    title: 'Kegiatan Usaha',
+                                    title: 'Kegiatan Utama',
                                     value: AppUtility.nullHandler(
                                       userInstance?.kegiatanUsaha,
                                       fallback: '-',

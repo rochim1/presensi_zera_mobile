@@ -219,28 +219,46 @@ class _CheckInViewState extends State<CheckInView> {
     );
   }
 
-  void onTapPhoto() async {
-    final result = await context.router.push<XFile?>(
-      AppCameraPageRoute(type: AppCameraType.selfie),
-    );
+  bool _isOpeningPhoto = false;
+  bool _isOpeningAttachment = false;
 
-    if (mounted) {
-      context.read<CheckInCubit>().onChangePhoto(result);
+  void onTapPhoto() async {
+    if (_isOpeningPhoto ||
+        _isOpeningAttachment ||
+        context.read<CheckInCubit>().state.checkIn.isLoading) {
+      return;
+    }
+    setState(() => _isOpeningPhoto = true);
+    try {
+      final result = await context.router.push<XFile?>(
+        AppCameraPageRoute(type: AppCameraType.selfie),
+      );
+      if (mounted && result != null) {
+        context.read<CheckInCubit>().onChangePhoto(result);
+      }
+    } finally {
+      if (mounted) setState(() => _isOpeningPhoto = false);
     }
   }
 
   void onTapAttachment(BuildContext context) async {
-    final result = await AppUtility.fileAttachment(
-      true,
-      AttachmentInput.allowedExtensions,
-      FileType.custom,
-    );
-    if (result.isEmpty) return;
-
-    if (context.mounted) {
-      context.read<CheckInCubit>().onChangeAttachment(
-        result.map((e) => e).toList(),
+    if (_isOpeningAttachment ||
+        _isOpeningPhoto ||
+        context.read<CheckInCubit>().state.checkIn.isLoading) {
+      return;
+    }
+    setState(() => _isOpeningAttachment = true);
+    try {
+      final result = await AppUtility.fileAttachment(
+        true,
+        AttachmentInput.allowedExtensions,
+        FileType.custom,
       );
+      if (context.mounted && result.isNotEmpty) {
+        context.read<CheckInCubit>().onChangeAttachment(result.toList());
+      }
+    } finally {
+      if (mounted) setState(() => _isOpeningAttachment = false);
     }
   }
 
@@ -444,7 +462,10 @@ class _CheckInViewState extends State<CheckInView> {
                 AppButton(
                   onPressed: cubit.submit,
                   text: 'Check In',
-                  isLoading: state.checkIn.isLoading,
+                  isLoading:
+                      state.checkIn.isLoading ||
+                      _isOpeningPhoto ||
+                      _isOpeningAttachment,
                 ),
               ],
             ),

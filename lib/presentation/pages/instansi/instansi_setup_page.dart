@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:presensi_data/presensi_data.dart';
@@ -11,6 +12,7 @@ import 'package:presensi_mobile/presentation/_presentation.dart';
 
 import '../../../service/location_service.dart';
 import '../../bloc/app/app_cubit.dart';
+import 'instansi_setup_validation.dart';
 
 @RoutePage()
 class InstansiSetupPage extends StatefulWidget {
@@ -51,25 +53,6 @@ class _InstansiSetupPageState extends State<InstansiSetupPage> {
     _latitudeController.dispose();
     _longitudeController.dispose();
     super.dispose();
-  }
-
-  String? _required(String? value) =>
-      value == null || value.trim().isEmpty ? 'Wajib diisi' : null;
-
-  String? _emailValidator(String? value) {
-    final required = _required(value);
-    if (required != null) return required;
-    return RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(value!.trim())
-        ? null
-        : 'Format email tidak valid';
-  }
-
-  String? _coordinateValidator(String? value) {
-    final required = _required(value);
-    if (required != null) return required;
-    return double.tryParse(value!.trim()) == null
-        ? 'Masukkan angka koordinat yang valid'
-        : null;
   }
 
   Future<void> _useCurrentLocation() async {
@@ -150,11 +133,12 @@ class _InstansiSetupPageState extends State<InstansiSetupPage> {
   }
 
   Future<void> _submit() async {
+    if (_isSubmitting) return;
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
     setState(() => _isSubmitting = true);
     try {
-      await sl<GraphQlService>().mutation(
+      final response = await sl<GraphQlService>().mutation(
         mutation:
             r'''mutation CreateInstansi($input: InstansiInput, $logo: Upload) {
           CreateInstansi(input: $input, logo_perusahaan: $logo) { _id nama_instansi }
@@ -177,6 +161,11 @@ class _InstansiSetupPageState extends State<InstansiSetupPage> {
           },
         },
       );
+      final created = response is Map ? response['CreateInstansi'] : null;
+      final instansiId = created is Map ? created['_id']?.toString() : null;
+      if (instansiId == null || instansiId.isEmpty) {
+        throw StateError('Instansi belum berhasil dibuat. Silakan coba lagi.');
+      }
       if (!mounted) return;
       await AppModalBottom.showDefault(
         context,
@@ -219,14 +208,14 @@ class _InstansiSetupPageState extends State<InstansiSetupPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Buat instansi untuk melanjutkan',
+                      'Buat instansi atau organisasi untuk melanjutkan',
                       style: context.textStyle.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     AppDimens.h8.hSpace,
                     Text(
-                      'Isi data wajib berikut. Data lain dapat dilengkapi nanti melalui web.',
+                      'Isi data dasar berikut. Data lain dapat dilengkapi nanti melalui web.',
                       style: context.textStyle.bodyMedium,
                     ),
                   ],
@@ -258,7 +247,7 @@ class _InstansiSetupPageState extends State<InstansiSetupPage> {
                             onPressed: _pickLogo,
                             child: Text(
                               _logo == null
-                                  ? 'Unggah Logo (opsional)'
+                                  ? 'Unggah Logo Instansi/Organisasi (opsional)'
                                   : 'Ganti Logo',
                             ),
                           ),
@@ -267,26 +256,36 @@ class _InstansiSetupPageState extends State<InstansiSetupPage> {
                     ),
                     _field(
                       controller: _nameController,
-                      label: 'Nama Instansi',
-                      validator: _required,
+                      label: 'Nama Instansi/Organisasi',
+                      validator: InstansiSetupValidation.requiredText,
                       textCapitalization: TextCapitalization.words,
                     ),
                     _field(
                       controller: _emailController,
-                      label: 'Email',
-                      validator: _emailValidator,
+                      label: 'Email Instansi/Organisasi',
+                      helperText:
+                          'Email kontak aktif. Boleh memakai email pendaftar sementara.',
+                      validator: InstansiSetupValidation.email,
                       keyboardType: TextInputType.emailAddress,
+                      autofillHints: const [AutofillHints.email],
                     ),
                     _field(
                       controller: _phoneController,
-                      label: 'Telepon',
-                      validator: _required,
+                      label: 'Nomor Telepon Instansi/Organisasi',
+                      helperText:
+                          'Boleh memakai nomor penanggung jawab sementara.',
+                      validator: InstansiSetupValidation.phone,
                       keyboardType: TextInputType.phone,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      maxLength: 15,
+                      autofillHints: const [AutofillHints.telephoneNumber],
                     ),
                     _field(
                       controller: _businessController,
-                      label: 'Kegiatan Usaha',
-                      validator: _required,
+                      label: 'Kegiatan Utama',
+                      helperText:
+                          'Contoh: pendidikan, layanan sosial, atau perdagangan.',
+                      validator: InstansiSetupValidation.requiredText,
                       maxLines: 3,
                     ),
                     _selectionField(
@@ -313,7 +312,7 @@ class _InstansiSetupPageState extends State<InstansiSetupPage> {
                     ),
                     AppDimens.h16.hSpace,
                     Text(
-                      'Lokasi Instansi *',
+                      'Lokasi Instansi/Organisasi *',
                       style: context.textStyle.titleSmall,
                     ),
                     Align(
@@ -345,7 +344,10 @@ class _InstansiSetupPageState extends State<InstansiSetupPage> {
                     _field(
                       controller: _latitudeController,
                       label: 'Latitude',
-                      validator: _coordinateValidator,
+                      validator: (value) => InstansiSetupValidation.coordinate(
+                        value,
+                        isLatitude: true,
+                      ),
                       keyboardType: const TextInputType.numberWithOptions(
                         decimal: true,
                         signed: true,
@@ -354,7 +356,10 @@ class _InstansiSetupPageState extends State<InstansiSetupPage> {
                     _field(
                       controller: _longitudeController,
                       label: 'Longitude',
-                      validator: _coordinateValidator,
+                      validator: (value) => InstansiSetupValidation.coordinate(
+                        value,
+                        isLatitude: false,
+                      ),
                       keyboardType: const TextInputType.numberWithOptions(
                         decimal: true,
                         signed: true,
@@ -385,16 +390,27 @@ class _InstansiSetupPageState extends State<InstansiSetupPage> {
     required TextEditingController controller,
     required String label,
     required String? Function(String?) validator,
+    String? helperText,
     TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
+    Iterable<String>? autofillHints,
+    int? maxLength,
     TextCapitalization textCapitalization = TextCapitalization.none,
     int maxLines = 1,
   }) => Padding(
     padding: const EdgeInsets.only(bottom: AppDimens.paddingMedium),
     child: TextFormField(
       controller: controller,
-      decoration: InputDecoration(labelText: '$label *'),
+      decoration: InputDecoration(
+        labelText: '$label *',
+        helperText: helperText,
+        helperMaxLines: 2,
+      ),
       validator: validator,
       keyboardType: keyboardType,
+      inputFormatters: inputFormatters,
+      autofillHints: autofillHints,
+      maxLength: maxLength,
       textCapitalization: textCapitalization,
       maxLines: maxLines,
     ),

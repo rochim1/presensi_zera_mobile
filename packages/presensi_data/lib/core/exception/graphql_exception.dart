@@ -10,6 +10,7 @@ class GraphQlException implements Exception {
   final StackTrace? stacktrace;
   final String? error;
   final String? dataE;
+  final Map<String, dynamic>? extensions;
 
   GraphQlException({
     this.code,
@@ -17,6 +18,7 @@ class GraphQlException implements Exception {
     this.message,
     this.error,
     this.dataE,
+    this.extensions,
   });
 
   GraphQlException fromGraphQlError(OperationException exception) {
@@ -27,6 +29,7 @@ class GraphQlException implements Exception {
       final firstError = errors.first;
       throw GraphQlException(
         message: firstError.message,
+        extensions: firstError.extensions,
         code: firstError.extensions?['code']?.toString() ?? E001,
         error:
             '\n|--- path: [${firstError.path?.first}],\n|--- console: ${firstError.message},\n|--- extensions: ${firstError.extensions}',
@@ -132,6 +135,14 @@ class GraphQlException implements Exception {
   ) {
     if (error == null)
       throw GraphQlException(message: E007 + EXCEPTION_UNKNOWN, code: E007);
+
+    if (error.extensions?['code'] == 'CAPTCHA_REQUIRED') {
+      throw GraphQlException(
+        code: 'CAPTCHA_REQUIRED',
+        message: error.message,
+        extensions: error.extensions,
+      );
+    }
 
     if (error.extensions!.isEmpty) {
       throw GraphQlException(message: error.message);

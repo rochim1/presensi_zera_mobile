@@ -1,8 +1,11 @@
+import 'package:presensi_data/presensi_data.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presensi_domain/presensi_domain.dart';
 import 'incidental_report_form_state.dart';
 
 class IncidentalReportFormCubit extends Cubit<IncidentalReportFormState> {
+  bool _isSubmittingAction = false;
+
   final AddIncidentalReportUseCase addIncidentalReportUseCase;
   final GetInventarisUmumUseCase getInventarisUmumUseCase;
 
@@ -16,22 +19,40 @@ class IncidentalReportFormCubit extends Cubit<IncidentalReportFormState> {
       GetInventarisUmumParams(limit: 15, search: query),
     );
 
-    return result.fold(
-      (failure) => [],
-      (items) => items,
-    );
+    return result.fold((failure) => [], (items) => items);
   }
 
   Future<void> submitReport(Map<String, dynamic> input) async {
-    emit(state.copyWith(isSubmitting: true, failure: null));
+    if (_isSubmittingAction || isClosed || state.isSuccess) {
+      return;
+    }
+    _isSubmittingAction = true;
+    try {
+      emit(state.copyWith(isSubmitting: true, failure: null));
 
-    final result = await addIncidentalReportUseCase(
-      AddIncidentalReportParams(input: input),
-    );
+      final result = await addIncidentalReportUseCase(
+        AddIncidentalReportParams(input: input),
+      );
 
-    result.fold(
-      (failure) => emit(state.copyWith(isSubmitting: false, failure: failure)),
-      (_) => emit(state.copyWith(isSubmitting: false, isSuccess: true)),
-    );
+      if (isClosed) return;
+      result.fold(
+        (failure) =>
+            emit(state.copyWith(isSubmitting: false, failure: failure)),
+        (_) => emit(state.copyWith(isSubmitting: false, isSuccess: true)),
+      );
+    } catch (_) {
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            isSubmitting: false,
+            failure: UnknownFailure(
+              message: 'Laporan gagal diproses, silakan coba lagi',
+            ),
+          ),
+        );
+      }
+    } finally {
+      _isSubmittingAction = false;
+    }
   }
 }

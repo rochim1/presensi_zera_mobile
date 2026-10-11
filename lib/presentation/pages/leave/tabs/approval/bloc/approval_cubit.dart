@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+import 'package:presensi_data/presensi_data.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:presensi_domain/presensi_domain.dart';
@@ -7,6 +9,10 @@ import 'package:presensi_mobile/presentation/pages/leave/tabs/approval/formz/rea
 import 'approval_state.dart';
 
 class LeaveApprovalCubit extends Cubit<LeaveApprovalState> {
+  bool _isSubmittingAction = false;
+  final approvalBusy = ValueNotifier<bool>(false);
+  final _completedApprovalIds = <String>{};
+
   final GetMyPendingApprovals getMyPendingApprovalsUseCase;
   final GetLeaveRequestById getLeaveRequestByIdUseCase;
   final CreateApproval createApprovalUseCase;
@@ -111,34 +117,60 @@ class LeaveApprovalCubit extends Cubit<LeaveApprovalState> {
     );
   }
 
-  void submitApproval(LeaveRequest request) async {
-    final approvalAction = state.approvalAction;
-    final reasonInput = ReasonInput.dirty(
-      state.reasonInput.value,
-      approvalAction: approvalAction,
-    );
+  Future<void> submitApproval(LeaveRequest request) async {
+    if (_isSubmittingAction ||
+        isClosed ||
+        _completedApprovalIds.contains(request.id)) {
+      return;
+    }
+    _isSubmittingAction = true;
+    approvalBusy.value = true;
+    try {
+      final approvalAction = state.approvalAction;
+      final reasonInput = ReasonInput.dirty(
+        state.reasonInput.value,
+        approvalAction: approvalAction,
+      );
 
-    if (!approvalAction.isNone && reasonInput.isNotValid) return;
+      if (!approvalAction.isNone && reasonInput.isNotValid) return;
 
-    emit(state.copyWith(approvalSubmit: BaseState.loading()));
+      emit(state.copyWith(approvalSubmit: BaseState.loading()));
 
-    final params = CreateApprovalParams(
-      requestId: request.id,
-      requestType: ApprovalRequestType.cuti,
-      action: approvalAction.toAttendanceRequestApprovalAction(),
-      reason: reasonInput.value,
-    );
-    final result = await createApprovalUseCase.call(params);
+      final params = CreateApprovalParams(
+        requestId: request.id,
+        requestType: ApprovalRequestType.cuti,
+        action: approvalAction.toAttendanceRequestApprovalAction(),
+        reason: reasonInput.value,
+      );
+      final result = await createApprovalUseCase.call(params);
 
-    result.fold(
-      (failure) {
-        emit(state.copyWith(approvalSubmit: BaseState.failure(failure)));
-      },
-      (_) {
-        emit(state.copyWith(approvalSubmit: BaseState.success(null)));
-        getLeaveRequests();
-      },
-    );
+      if (isClosed) return;
+      result.fold(
+        (failure) {
+          emit(state.copyWith(approvalSubmit: BaseState.failure(failure)));
+        },
+        (_) {
+          _completedApprovalIds.add(request.id);
+          emit(state.copyWith(approvalSubmit: BaseState.success(null)));
+          getLeaveRequests();
+        },
+      );
+    } catch (_) {
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            approvalSubmit: BaseState.failure(
+              UnknownFailure(
+                message: 'Approval gagal diproses, silakan coba lagi',
+              ),
+            ),
+          ),
+        );
+      }
+    } finally {
+      _isSubmittingAction = false;
+      if (!isClosed) approvalBusy.value = false;
+    }
   }
 
   void onChangeFilterDate(DateTime? date) {
@@ -147,12 +179,18 @@ class LeaveApprovalCubit extends Cubit<LeaveApprovalState> {
   }
 
   void onChangeApprovalAction(LeaveApprovalAction value) {
+    if (_isSubmittingAction || isClosed) {
+      return;
+    }
     emit(
       state.copyWith(approvalAction: value, reasonInput: ReasonInput.pure()),
     );
   }
 
   void onChangeReason(String? value) {
+    if (_isSubmittingAction || isClosed) {
+      return;
+    }
     emit(
       state.copyWith(
         reasonInput: ReasonInput.dirty(
@@ -190,5 +228,11 @@ class LeaveApprovalCubit extends Cubit<LeaveApprovalState> {
     );
 
     return resolved.whereType<LeaveRequest>().toList();
+  }
+
+  @override
+  Future<void> close() async {
+    await super.close();
+    approvalBusy.dispose();
   }
 }

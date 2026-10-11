@@ -11,6 +11,8 @@ import 'request_state.dart';
 
 class ReimbursementRequestFormCubit
     extends Cubit<ReimbursementRequestFormState> {
+  bool _isSubmittingAction = false;
+
   final CreateReimbursement createReimbursementUseCase;
   final GetReimbursementCategories getReimbursementCategoriesUseCase;
   final Logger logger;
@@ -59,54 +61,75 @@ class ReimbursementRequestFormCubit
     );
   }
 
-  void submit() async {
-    final form = state.form.copyWith(
-      category: CategoryInput.dirty(state.form.category.value),
-      title: TitleInput.dirty(state.form.title.value),
-      description: DescriptionInput.dirty(state.form.description.value),
-      date: ReimbursementDateInput.dirty(state.form.date.value),
-      currency: CurrencyInput.dirty(state.form.currency.value),
-      nominal: NominalInput.dirty(state.form.nominal.value),
-      attachments: ReimbursementAttachmentsInput.dirty(
-        state.form.attachments.value,
-        isRequired: _request?.buktiPembayaran?.isNotEmpty != true,
-      ),
-      notes: NotesInput.dirty(state.form.notes.value),
-    );
-    emit(state.copyWith(form: form));
-
-    if (form.isNotValid) return;
-
-    emit(state.copyWith(submit: BaseState.loading()));
-
-    late final List<MultipartFile> attachments;
-    try {
-      attachments = form.attachments.value
-          .map(AppUtility.toPickedMultipartFile)
-          .toList();
-    } on Failure catch (failure) {
-      emit(state.copyWith(submit: BaseState.failure(failure)));
+  Future<void> submit() async {
+    if (_isSubmittingAction || isClosed || state.submit.isSuccess) {
       return;
     }
+    _isSubmittingAction = true;
+    try {
+      final form = state.form.copyWith(
+        category: CategoryInput.dirty(state.form.category.value),
+        title: TitleInput.dirty(state.form.title.value),
+        description: DescriptionInput.dirty(state.form.description.value),
+        date: ReimbursementDateInput.dirty(state.form.date.value),
+        currency: CurrencyInput.dirty(state.form.currency.value),
+        nominal: NominalInput.dirty(state.form.nominal.value),
+        attachments: ReimbursementAttachmentsInput.dirty(
+          state.form.attachments.value,
+          isRequired: _request?.buktiPembayaran?.isNotEmpty != true,
+        ),
+        notes: NotesInput.dirty(state.form.notes.value),
+      );
+      emit(state.copyWith(form: form));
 
-    final params = CreateReimbursementParams(
-      kategori: form.category.value!.value,
-      judul: form.title.value ?? '',
-      deskripsi: form.description.value,
-      tanggal: form.date.value,
-      nominal: form.nominal.value,
-      mataUang: form.currency.value?.name,
-      catatanPengaju: form.notes.value,
-      attachments: attachments,
-    );
-    final result = _request == null
-        ? await createReimbursementUseCase.call(params)
-        : await repository.updateReimbursement(_request!.id, params);
+      if (form.isNotValid) return;
 
-    result.fold(
-      (failure) => emit(state.copyWith(submit: BaseState.failure(failure))),
-      (_) => emit(state.copyWith(submit: BaseState.success(null))),
-    );
+      emit(state.copyWith(submit: BaseState.loading()));
+
+      late final List<MultipartFile> attachments;
+      try {
+        attachments = form.attachments.value
+            .map(AppUtility.toPickedMultipartFile)
+            .toList();
+      } on Failure catch (failure) {
+        emit(state.copyWith(submit: BaseState.failure(failure)));
+        return;
+      }
+
+      final params = CreateReimbursementParams(
+        kategori: form.category.value!.value,
+        judul: form.title.value ?? '',
+        deskripsi: form.description.value,
+        tanggal: form.date.value,
+        nominal: form.nominal.value,
+        mataUang: form.currency.value?.name,
+        catatanPengaju: form.notes.value,
+        attachments: attachments,
+      );
+      final result = _request == null
+          ? await createReimbursementUseCase.call(params)
+          : await repository.updateReimbursement(_request!.id, params);
+
+      if (isClosed) return;
+      result.fold(
+        (failure) => emit(state.copyWith(submit: BaseState.failure(failure))),
+        (_) => emit(state.copyWith(submit: BaseState.success(null))),
+      );
+    } catch (_) {
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            submit: BaseState.failure(
+              UnknownFailure(
+                message: 'Pengajuan gagal diproses, silakan coba lagi',
+              ),
+            ),
+          ),
+        );
+      }
+    } finally {
+      _isSubmittingAction = false;
+    }
   }
 
   void onChangeCategory(ReimbursementCategory? value) {

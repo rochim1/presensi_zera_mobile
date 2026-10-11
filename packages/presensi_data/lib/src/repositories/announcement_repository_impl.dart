@@ -25,25 +25,30 @@ class AnnouncementRepositoryImpl implements AnnouncementRepository {
         limit: params.limit,
       );
 
-      final response = await remoteDatasource.getAnnouncements(pagination);
+      final response = await remoteDatasource.getAnnouncements(
+        pagination,
+        statusWaktu: params.statusWaktu,
+      );
       final announcements = response
           .map((v) => mapper.convert<AnnouncementResponse, Announcement>(v))
           .toList();
 
       return Right(announcements);
     } on GraphQlException catch (e, stackTrace) {
-      if (e is! CacheException) logger.e(
-        "AnnouncementRepositoryImpl.getAnnouncements graphQL",
-        error: e,
-        stackTrace: stackTrace,
-      );
+      if (e is! CacheException)
+        logger.e(
+          "AnnouncementRepositoryImpl.getAnnouncements graphQL",
+          error: e,
+          stackTrace: stackTrace,
+        );
       return Left(ServerFailure(message: e.message, code: e.code));
     } catch (e, stackTrace) {
-      if (e is! CacheException) logger.e(
-        "AnnouncementRepositoryImpl.getAnnouncements unknown",
-        error: e,
-        stackTrace: stackTrace,
-      );
+      if (e is! CacheException)
+        logger.e(
+          "AnnouncementRepositoryImpl.getAnnouncements unknown",
+          error: e,
+          stackTrace: stackTrace,
+        );
       return Left(UnknownFailure());
     }
   }

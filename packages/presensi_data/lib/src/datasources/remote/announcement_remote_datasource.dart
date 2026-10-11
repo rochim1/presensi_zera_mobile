@@ -7,8 +7,9 @@ abstract class AnnouncementRemoteDatasource {
   Future<void> deleteAnnouncement(String id);
 
   Future<List<AnnouncementResponse>> getAnnouncements(
-    PaginationRequest pagination,
-  );
+    PaginationRequest pagination, {
+    String? statusWaktu,
+  });
 }
 
 class AnnouncementRemoteDatasourceImpl
@@ -45,18 +46,19 @@ class AnnouncementRemoteDatasourceImpl
 
   @override
   Future<List<AnnouncementResponse>> getAnnouncements(
-    PaginationRequest pagination,
-  ) async {
+    PaginationRequest pagination, {
+    String? statusWaktu,
+  }) async {
     logger.d(
       "AnnouncementRemoteDatasourceImpl.getAnnouncements pagination: ${pagination.toJson()}",
     );
 
     final response = await gql.query(
       query: getAnnouncementsQuery,
-      variables: {"pagination": pagination.toJson()},
-    );
-    logger.d(
-      "AnnouncementRemoteDatasourceImpl.getAnnouncements response: $response",
+      variables: {
+        "pagination": pagination.toJson(),
+        "filter": statusWaktu == null ? null : {"status_waktu": statusWaktu},
+      },
     );
 
     final getAllPengumuman = response?["GetAllPengumuman"];
@@ -67,6 +69,11 @@ class AnnouncementRemoteDatasourceImpl
 
     final announcements = pengumuman as List<dynamic>;
 
-    return announcements.map((v) => AnnouncementResponse.fromJson(v)).toList();
+    return announcements.map((value) {
+      final json = Map<String, dynamic>.from(value as Map);
+      json['created_by'] ??= {'_id': '', 'name': 'Sistem'};
+      json['instansi_id'] ??= '';
+      return AnnouncementResponse.fromJson(json);
+    }).toList();
   }
 }

@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:presensi_mobile/service/camera_access.dart';
 import 'package:presensi_data/presensi_data.dart';
 import 'package:presensi_mobile/core/_core.dart';
 import 'package:camera/camera.dart';
@@ -36,12 +36,19 @@ class GlobalCameraCubit extends Cubit<GlobalCameraState> {
   bool get isInitialized => _controller?.value.isInitialized ?? false;
 
   void getPermissionStatus([CameraLensDirection? cameraLensDirection]) async {
-    await Permission.camera.request();
-    var status = await Permission.camera.status;
-
-    if (status.isGranted) {
+    final environmentError = cameraEnvironmentError();
+    if (environmentError != null) {
+      emit(
+        state.copyWith(
+          typeState: TypeState.notLoaded,
+          isCameraGranted: false,
+          message: environmentError,
+        ),
+      );
+      return;
+    }
+    if (await requestNativeCameraAccess()) {
       onCameraInitial(cameraLensDirection);
-      emit(state.copyWith(typeState: TypeState.loaded, isCameraGranted: true));
     } else {
       emit(
         state.copyWith(
@@ -57,11 +64,13 @@ class GlobalCameraCubit extends Cubit<GlobalCameraState> {
     try {
       final cameras = await availableCameras();
 
-      final camera = cameras.firstWhereOrNull(
+      final preferredCamera = cameras.firstWhereOrNull(
         (camera) =>
             camera.lensDirection ==
             (cameraLensDirection ?? state.cameraLensDirection),
       );
+
+      final camera = preferredCamera ?? (kIsWeb ? cameras.firstOrNull : null);
 
       //! if camera not found or not available
       if (camera == null) {
@@ -84,11 +93,13 @@ class GlobalCameraCubit extends Cubit<GlobalCameraState> {
 
       await _controller?.initialize();
 
-      final zoomMin = await _controller?.getMinZoomLevel();
-      final zoomMax = await _controller?.getMaxZoomLevel();
+      final zoomMin = kIsWeb ? 1.0 : await _controller?.getMinZoomLevel();
+      final zoomMax = kIsWeb ? 1.0 : await _controller?.getMaxZoomLevel();
 
       emit(
         state.copyWith(
+          typeState: TypeState.loaded,
+          isCameraGranted: true,
           cameraState:
               !kIsWeb && cameraLensDirection == CameraLensDirection.front
               ? rc.getFaceDetector
@@ -116,7 +127,7 @@ class GlobalCameraCubit extends Cubit<GlobalCameraState> {
         state.copyWith(
           typeState: TypeState.notLoaded,
           cameraState: CameraState.failure,
-          message: e.description,
+          message: cameraAccessError(e),
         ),
       );
     }
@@ -157,7 +168,7 @@ class GlobalCameraCubit extends Cubit<GlobalCameraState> {
           state.copyWith(
             typeState: TypeState.notLoaded,
             cameraState: CameraState.failure,
-            message: e.description,
+            message: cameraAccessError(e),
           ),
         );
       }

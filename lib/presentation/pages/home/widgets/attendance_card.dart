@@ -20,6 +20,7 @@ class HomeAttendanceCard extends StatefulWidget {
   final Setting? setting;
   final bool isLoading;
   final bool isStartingOvertime;
+  final bool isOpeningAttendance;
   final bool hasCheckedOutToday;
 
   final String? sliderText;
@@ -42,6 +43,7 @@ class HomeAttendanceCard extends StatefulWidget {
     this.setting,
     this.isLoading = false,
     this.isStartingOvertime = false,
+    this.isOpeningAttendance = false,
     this.hasCheckedOutToday = false,
   });
 
@@ -689,12 +691,16 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
     required bool isCheckOut,
   }) {
     final showLoading =
-        widget.isStartingOvertime && widget.actionButtonLabel == 'Mulai Lembur';
+        widget.isOpeningAttendance ||
+        (widget.isStartingOvertime &&
+            widget.actionButtonLabel == 'Mulai Lembur');
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: widget.isStartingOvertime ? null : widget.onTapActionButton,
+        onTap: widget.isStartingOvertime || widget.isOpeningAttendance
+            ? null
+            : widget.onTapActionButton,
         borderRadius: BorderRadius.circular(18),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
@@ -735,7 +741,7 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
                 ),
               const SizedBox(width: 8),
               Text(
-                showLoading ? 'Memulai...' : widget.actionButtonLabel,
+                showLoading ? 'Memproses...' : widget.actionButtonLabel,
                 style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w600,
@@ -779,7 +785,7 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: widget.isStartingOvertime
+        onTap: widget.isStartingOvertime || widget.isOpeningAttendance
             ? null
             : widget.onTapSecondaryActionButton,
         borderRadius: BorderRadius.circular(16),

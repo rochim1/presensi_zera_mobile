@@ -109,8 +109,21 @@ class _CreateAnnouncementSheetState extends State<CreateAnnouncementSheet> {
     if (!_formKey.currentState!.validate()) return;
     final link = _link.text.trim();
     final parsedLink = Uri.tryParse(link);
-    if (link.isNotEmpty && (parsedLink == null || !parsedLink.isAbsolute)) {
-      AppSnackbar.showError(context, 'Link harus berupa URL lengkap');
+    if (link.isNotEmpty &&
+        (parsedLink == null ||
+            !parsedLink.isAbsolute ||
+            !{'http', 'https'}.contains(parsedLink.scheme.toLowerCase()))) {
+      AppSnackbar.showError(
+        context,
+        'Link harus berupa URL http atau https yang lengkap',
+      );
+      return;
+    }
+    if (_end != null && _end!.isBefore(_start)) {
+      AppSnackbar.showError(
+        context,
+        'Tanggal berakhir tidak boleh lebih awal dari tanggal mulai',
+      );
       return;
     }
     setState(() => _submitting = true);
@@ -119,8 +132,8 @@ class _CreateAnnouncementSheetState extends State<CreateAnnouncementSheet> {
       'isi': _content.text.trim(),
       'kategori': _category,
       'prioritas': _priority,
-      'tanggal_mulai': _start.toIso8601String(),
-      'tanggal_berakhir': _end?.toIso8601String(),
+      'tanggal_mulai': _start.toUtc().toIso8601String(),
+      'tanggal_berakhir': _end?.toUtc().toIso8601String(),
       'link_url': link.isEmpty ? null : link,
       'banner_image': null,
       'lampiran': <Map<String, dynamic>>[],

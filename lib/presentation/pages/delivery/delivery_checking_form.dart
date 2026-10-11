@@ -1,3 +1,4 @@
+import 'delivery_submission_controller.dart';
 import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:camera/camera.dart';
@@ -72,27 +73,61 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
   late List<XFile>? fotoPrimary = [];
   late List<XFile>? fotoSecondary = [];
 
-  void _takeFotoPrimary(bool isMarketing) async {
-    final result = await context.router.push<XFile?>(
-      AppCameraPageRoute(type: AppCameraType.selfie),
-    );
-    if (result != null) {
-      setState(() {
-        fotoPrimary = [result];
-      });
+  final _submission = DeliverySubmissionController();
+  SalesOrderParamsEntity? _pendingOrderParams;
+
+  bool _isOpeningPrimaryPhoto = false;
+  bool _isOpeningSecondaryPhoto = false;
+
+  bool get _isOpeningPhoto =>
+      _isOpeningPrimaryPhoto || _isOpeningSecondaryPhoto;
+
+  Future<void> _openPhoto(
+    BuildContext cameraContext, {
+    required bool primary,
+  }) async {
+    if (_submission.value ||
+        _submission.isComplete ||
+        _submission.visitCompleted ||
+        _isOpeningPhoto ||
+        !mounted ||
+        cameraContext.read<TasksPostCompletedCubit>().state.status.isLoading ||
+        cameraContext.read<OrderCreateCubit>().state.status.isLoading) {
+      return;
+    }
+    setState(() {
+      _isOpeningPrimaryPhoto = primary;
+      _isOpeningSecondaryPhoto = !primary;
+    });
+    try {
+      final result = await cameraContext.router.push<XFile?>(
+        AppCameraPageRoute(
+          type: primary ? AppCameraType.selfie : AppCameraType.general,
+        ),
+      );
+      if (mounted && result != null) {
+        setState(() {
+          if (primary) {
+            fotoPrimary = [result];
+          } else {
+            fotoSecondary = [result];
+          }
+        });
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isOpeningPrimaryPhoto = false;
+          _isOpeningSecondaryPhoto = false;
+        });
+      }
     }
   }
 
-  void _takeFotoSecondary() async {
-    final result = await context.router.push<XFile?>(
-      AppCameraPageRoute(type: AppCameraType.general),
-    );
-    if (result != null) {
-      setState(() {
-        fotoSecondary = [result];
-      });
-    }
-  }
+  void _takeFotoPrimary(BuildContext cameraContext, bool isMarketing) =>
+      _openPhoto(cameraContext, primary: true);
+  void _takeFotoSecondary(BuildContext cameraContext) =>
+      _openPhoto(cameraContext, primary: false);
 
   void onMapCreate(BuildContext ctxMap, GoogleMapController ctrl) async {
     _controller.complete(ctrl);
@@ -323,6 +358,7 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
 
   @override
   void dispose() {
+    _submission.dispose();
     super.dispose();
     catatan.dispose();
     diskonController.dispose();
@@ -338,246 +374,849 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) => sl<GlobalMapCubit>()..getPermissionStatus(),
-        ),
-        BlocProvider(create: (context) => sl<UserGetLocalCubit>()..getData()),
-        BlocProvider(create: (context) => sl<TasksPostCompletedCubit>()),
-        BlocProvider(create: (context) => sl<OrderCreateCubit>()),
-      ],
-      child: BlocListener<AppCubit, AppState>(
-        listener: (context, state) {
-          if (state.setting.isSuccess) {
-            final newHybrid = state.setting.data?.isHybridMode ?? false;
-            if (newHybrid != isHybridMode) {
-              setState(() {
-                isHybridMode = newHybrid;
-              });
-            }
-          }
-        },
-        child: BlocConsumer<GlobalMapCubit, GlobalMapState>(
-          listener: (context, mapState) {
-            if (mapState.typeState.isNotLoaded) {
-              Fluttertoast.showToast(msg: mapState.message!);
-            }
-          },
-          builder: (ctxMap, mapState) {
-            final apotek = widget.tasks?.aktivitas?.apotikId;
-            final destination = widget.tasks?.aktivitas?.destination;
-            final outlet = widget.tasks?.aktivitas?.outlet;
-            LatLng? outletPos;
-
-            // Coba dari apotek
-            if (apotek?.latitude != null &&
-                apotek?.longitude != null &&
-                apotek!.latitude!.isNotEmpty &&
-                apotek.longitude!.isNotEmpty) {
-              final lat = double.tryParse(apotek.latitude!);
-              final lng = double.tryParse(apotek.longitude!);
-              if (lat != null && lng != null) {
-                outletPos = LatLng(lat, lng);
+    return AnimatedBuilder(
+      animation: _submission,
+      builder: (context, _) {
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (context) => sl<GlobalMapCubit>()..getPermissionStatus(),
+            ),
+            BlocProvider(
+              create: (context) => sl<UserGetLocalCubit>()..getData(),
+            ),
+            BlocProvider(create: (context) => sl<TasksPostCompletedCubit>()),
+            BlocProvider(create: (context) => sl<OrderCreateCubit>()),
+          ],
+          child: BlocListener<AppCubit, AppState>(
+            listener: (context, state) {
+              if (state.setting.isSuccess) {
+                final newHybrid = state.setting.data?.isHybridMode ?? false;
+                if (newHybrid != isHybridMode) {
+                  setState(() {
+                    isHybridMode = newHybrid;
+                  });
+                }
               }
-            }
+            },
+            child: BlocConsumer<GlobalMapCubit, GlobalMapState>(
+              listener: (context, mapState) {
+                if (mapState.typeState.isNotLoaded) {
+                  Fluttertoast.showToast(msg: mapState.message!);
+                }
+              },
+              builder: (ctxMap, mapState) {
+                final apotek = widget.tasks?.aktivitas?.apotikId;
+                final destination = widget.tasks?.aktivitas?.destination;
+                final outlet = widget.tasks?.aktivitas?.outlet;
+                LatLng? outletPos;
 
-            // Jika apotek kosong, coba dari outlet
-            if (outletPos == null &&
-                outlet?.latitude != null &&
-                outlet?.longitude != null &&
-                outlet!.latitude!.isNotEmpty &&
-                outlet.longitude!.isNotEmpty) {
-              final lat = double.tryParse(outlet.latitude!);
-              final lng = double.tryParse(outlet.longitude!);
-              if (lat != null && lng != null) {
-                outletPos = LatLng(lat, lng);
-              }
-            }
+                // Coba dari apotek
+                if (apotek?.latitude != null &&
+                    apotek?.longitude != null &&
+                    apotek!.latitude!.isNotEmpty &&
+                    apotek.longitude!.isNotEmpty) {
+                  final lat = double.tryParse(apotek.latitude!);
+                  final lng = double.tryParse(apotek.longitude!);
+                  if (lat != null && lng != null) {
+                    outletPos = LatLng(lat, lng);
+                  }
+                }
 
-            // Jika outlet kosong, coba dari destination
-            if (outletPos == null &&
-                destination?.latitude != null &&
-                destination?.longitude != null &&
-                destination!.latitude!.isNotEmpty &&
-                destination.longitude!.isNotEmpty) {
-              final lat = double.tryParse(destination.latitude!);
-              final lng = double.tryParse(destination.longitude!);
-              if (lat != null && lng != null) {
-                outletPos = LatLng(lat, lng);
-              }
-            }
+                // Jika apotek kosong, coba dari outlet
+                if (outletPos == null &&
+                    outlet?.latitude != null &&
+                    outlet?.longitude != null &&
+                    outlet!.latitude!.isNotEmpty &&
+                    outlet.longitude!.isNotEmpty) {
+                  final lat = double.tryParse(outlet.latitude!);
+                  final lng = double.tryParse(outlet.longitude!);
+                  if (lat != null && lng != null) {
+                    outletPos = LatLng(lat, lng);
+                  }
+                }
 
-            return UnfocuserForm(
-              child: Scaffold(
-                appBar: const AppTopBar(title: 'Pemeriksaan Kunjungan'),
-                body: SingleChildScrollView(
-                  padding: const EdgeInsets.all(AppDimens.paddingMediumX),
-                  child: Column(
-                    children: [
-                      Stack(
+                // Jika outlet kosong, coba dari destination
+                if (outletPos == null &&
+                    destination?.latitude != null &&
+                    destination?.longitude != null &&
+                    destination!.latitude!.isNotEmpty &&
+                    destination.longitude!.isNotEmpty) {
+                  final lat = double.tryParse(destination.latitude!);
+                  final lng = double.tryParse(destination.longitude!);
+                  if (lat != null && lng != null) {
+                    outletPos = LatLng(lat, lng);
+                  }
+                }
+
+                return UnfocuserForm(
+                  child: Scaffold(
+                    appBar: const AppTopBar(title: 'Pemeriksaan Kunjungan'),
+                    body: SingleChildScrollView(
+                      padding: const EdgeInsets.all(AppDimens.paddingMediumX),
+                      child: Column(
                         children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(
-                              AppDimens.radiusMedium,
-                            ),
-                            child: MapViewWidget(
-                              initialCameraPosition: CameraPosition(
-                                target: mapState.targetPosition!,
+                          Stack(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(
+                                  AppDimens.radiusMedium,
+                                ),
+                                child: MapViewWidget(
+                                  initialCameraPosition: CameraPosition(
+                                    target: mapState.targetPosition!,
+                                  ),
+                                  onMapCreated: (controller) =>
+                                      onMapCreate(ctxMap, controller),
+                                  position: mapState.targetPosition!,
+                                  outletPosition: outletPos,
+                                  onMyLocation: () {
+                                    ctxMap.read<GlobalMapCubit>().updateTarget(
+                                      mapState.targetPosition!,
+                                    );
+                                    _controller.future.then((ctrl) {
+                                      ctrl.animateCamera(
+                                        CameraUpdate.newCameraPosition(
+                                          CameraPosition(
+                                            target: mapState.targetPosition!,
+                                            zoom: 15,
+                                          ),
+                                        ),
+                                      );
+                                    });
+                                  },
+                                ),
                               ),
-                              onMapCreated: (controller) =>
-                                  onMapCreate(ctxMap, controller),
-                              position: mapState.targetPosition!,
-                              outletPosition: outletPos,
-                              onMyLocation: () {
-                                ctxMap.read<GlobalMapCubit>().updateTarget(
-                                  mapState.targetPosition!,
-                                );
-                                _controller.future.then((ctrl) {
-                                  ctrl.animateCamera(
-                                    CameraUpdate.newCameraPosition(
-                                      CameraPosition(
-                                        target: mapState.targetPosition!,
-                                        zoom: 15,
+                              Positioned(
+                                top: 8,
+                                left: 8,
+                                child: Material(
+                                  color: Colors.white.withValues(alpha: 0.9),
+                                  borderRadius: BorderRadius.circular(20),
+                                  elevation: 2,
+                                  child: InkWell(
+                                    onTap: () =>
+                                        _handleOutletCoordinateMismatch(
+                                          outletPos,
+                                        ),
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 6,
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.report_problem_outlined,
+                                            size: 14,
+                                            color: Colors.blue.shade700,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            'Koordinat tidak sesuai?',
+                                            style: TextStyle(
+                                              color: Colors.blue.shade700,
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                  );
-                                });
-                              },
-                            ),
-                          ),
-                          Positioned(
-                            top: 8,
-                            left: 8,
-                            child: Material(
-                              color: Colors.white.withValues(alpha: 0.9),
-                              borderRadius: BorderRadius.circular(20),
-                              elevation: 2,
-                              child: InkWell(
-                                onTap: () =>
-                                    _handleOutletCoordinateMismatch(outletPos),
-                                borderRadius: BorderRadius.circular(20),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 6,
                                   ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        Icons.report_problem_outlined,
-                                        size: 14,
-                                        color: Colors.blue.shade700,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        'Koordinat tidak sesuai?',
-                                        style: TextStyle(
-                                          color: Colors.blue.shade700,
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          AppDimens.size3M.hSpace,
+                          BlocBuilder<UserGetLocalCubit, UserGetLocalState>(
+                            builder: (_, usrState) {
+                              final task = widget.tasks;
+
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  StreamBuilder(
+                                    stream: Stream.periodic(
+                                      const Duration(seconds: 1),
+                                      (i) => i,
+                                    ),
+                                    builder: (context, snapshot) {
+                                      return DeliveryCardWidget(
+                                        title: 'Tiba ditempat',
+                                        titleTime: 'Waktu tiba',
+                                        dateNow: DateTime.now().toEEEdMMMy,
+                                        timeNow: DateTime.now().toHHmmss,
+                                        isLoading: mapState.typeState.isLoading,
+                                        addreass: mapState.address?.toString(),
+                                      );
+                                    },
+                                  ),
+                                  if (task != null) ...[
+                                    AppDimens.size3M.hSpace,
+                                    DeliveryTaskItemCard(task: task),
+                                  ],
+
+                                  if (widget
+                                          .tasks
+                                          ?.aktivitas
+                                          ?.tujuanPenawaran ==
+                                      true) ...[
+                                    AppDimens.size3M.hSpace,
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        border: Border.all(
+                                          color: Colors.grey.shade300,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                          AppDimens.radiusMedium,
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      AppDimens.size3M.hSpace,
-                      BlocBuilder<UserGetLocalCubit, UserGetLocalState>(
-                        builder: (_, usrState) {
-                          final task = widget.tasks;
-
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              StreamBuilder(
-                                stream: Stream.periodic(
-                                  const Duration(seconds: 1),
-                                  (i) => i,
-                                ),
-                                builder: (context, snapshot) {
-                                  return DeliveryCardWidget(
-                                    title: 'Tiba ditempat',
-                                    titleTime: 'Waktu tiba',
-                                    dateNow: DateTime.now().toEEEdMMMy,
-                                    timeNow: DateTime.now().toHHmmss,
-                                    isLoading: mapState.typeState.isLoading,
-                                    addreass: mapState.address?.toString(),
-                                  );
-                                },
-                              ),
-                              if (task != null) ...[
-                                AppDimens.size3M.hSpace,
-                                DeliveryTaskItemCard(task: task),
-                              ],
-
-                              if (widget.tasks?.aktivitas?.tujuanPenawaran ==
-                                  true) ...[
-                                AppDimens.size3M.hSpace,
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(
-                                      color: Colors.grey.shade300,
-                                    ),
-                                    borderRadius: BorderRadius.circular(
-                                      AppDimens.radiusMedium,
-                                    ),
-                                  ),
-                                  padding: const EdgeInsets.all(
-                                    AppDimens.paddingMedium,
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: [
-                                      Text(
-                                        'Data Order',
-                                        style: context.textStyle.titleMedium!
-                                            .copyWith(
-                                              fontWeight: FontWeight.w500,
-                                            ),
+                                      padding: const EdgeInsets.all(
+                                        AppDimens.paddingMedium,
                                       ),
-                                      const SizedBox(height: 4),
-                                      TextFieldDropdown<String>(
-                                        title: 'Tipe Call',
-                                        required:
-                                            widget
-                                                .tasks
-                                                ?.aktivitas
-                                                ?.tujuanPenawaran ==
-                                            true,
-                                        hint: 'Pilih Tipe Call',
-                                        items: const [
-                                          'effective_call',
-                                          'noc',
-                                          'productive_call',
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.stretch,
+                                        children: [
+                                          Text(
+                                            'Data Order',
+                                            style: context
+                                                .textStyle
+                                                .titleMedium!
+                                                .copyWith(
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          TextFieldDropdown<String>(
+                                            title: 'Tipe Call',
+                                            required:
+                                                widget
+                                                    .tasks
+                                                    ?.aktivitas
+                                                    ?.tujuanPenawaran ==
+                                                true,
+                                            hint: 'Pilih Tipe Call',
+                                            items: const [
+                                              'effective_call',
+                                              'noc',
+                                              'productive_call',
+                                            ],
+                                            itemAsString: (item) => item
+                                                .replaceAll('_', ' ')
+                                                .toUpperCase(),
+                                            onChanged: (val) => setState(() {
+                                              tipeCall = val;
+                                              if (val != 'effective_call') {
+                                                tipeOrder = null;
+                                                kategoriOrder = null;
+                                                metodePembayaran = null;
+                                                selectedProducts.clear();
+                                                jadwalPembayaran.clear();
+                                              }
+                                            }),
+                                          ),
+                                          if (tipeCall == 'effective_call') ...[
+                                            AppDimens.size3M.hSpace,
+                                            if (isHybridMode) ...[
+                                              TextFieldBasic(
+                                                controller:
+                                                    nominalManualController,
+                                                title: 'Nominal Transaksi (Rp)',
+                                                hint:
+                                                    'Masukkan Nominal (Misal: 150000)',
+                                                colorTitle:
+                                                    AppColors.labelSecondary,
+                                                inputType: TextInputType.number,
+                                                onChanged: (val) {
+                                                  setState(() {
+                                                    nominalManual =
+                                                        double.tryParse(
+                                                          val.replaceAll(
+                                                            '.',
+                                                            '',
+                                                          ),
+                                                        ) ??
+                                                        0;
+                                                  });
+                                                },
+                                                inputFormatters: [
+                                                  IdrTextInputFormatter(),
+                                                ],
+                                              ),
+                                            ] else ...[
+                                              TextFieldDropdown<String>(
+                                                title: 'Tipe Order',
+                                                hint: 'Pilih Tipe Order',
+                                                items: const [
+                                                  'indent',
+                                                  'canvas',
+                                                ],
+                                                itemAsString: (item) {
+                                                  if (item == 'indent')
+                                                    return 'INDENT / PRE ORDER (PO)';
+                                                  if (item == 'canvas')
+                                                    return 'CANVAS (JUAL LANGSUNG)';
+                                                  return item
+                                                      .replaceAll('_', ' ')
+                                                      .toUpperCase();
+                                                },
+                                                onChanged: (val) => setState(
+                                                  () => tipeOrder = val,
+                                                ),
+                                              ),
+                                              AppDimens.size3M.hSpace,
+                                              TextFieldDropdown<String>(
+                                                title: 'Kategori Order',
+                                                hint: 'Pilih Kategori',
+                                                items: () {
+                                                  final outlet = widget
+                                                      .tasks
+                                                      ?.aktivitas
+                                                      ?.apotikId;
+                                                  final totalValue =
+                                                      outlet?.totalValue ?? 0;
+                                                  final lastOrderDate =
+                                                      outlet?.lastOrderDate;
+
+                                                  if (totalValue > 0 ||
+                                                      (lastOrderDate != null &&
+                                                          lastOrderDate
+                                                              .isNotEmpty)) {
+                                                    return [
+                                                      'repeat_order',
+                                                      'top_up',
+                                                    ];
+                                                  }
+                                                  return ['noo'];
+                                                }(),
+                                                itemAsString: (item) {
+                                                  if (item == 'noo')
+                                                    return 'NOO (NEW OPEN OUTLET)';
+                                                  return item
+                                                      .replaceAll('_', ' ')
+                                                      .toUpperCase();
+                                                },
+                                                onChanged: (val) => setState(
+                                                  () => kategoriOrder = val,
+                                                ),
+                                              ),
+                                              if (kategoriOrder != null) ...[
+                                                AppDimens.size1X.hSpace,
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: AppDimens
+                                                            .paddingSmall,
+                                                      ),
+                                                  child: Text(
+                                                    kategoriOrder == 'noo'
+                                                        ? '* NOO: Pemesanan pertama kali dari outlet yang belum pernah order sebelumnya.'
+                                                        : kategoriOrder ==
+                                                              'repeat_order'
+                                                        ? '* Repeat Order: Pemesanan ulang rutin sesuai siklus belanja normal outlet.'
+                                                        : '* Top Up: Pemesanan tambahan sisipan di luar jadwal rutin outlet (stok cepat habis).',
+                                                    style: context
+                                                        .textStyle
+                                                        .bodySmall
+                                                        ?.copyWith(
+                                                          color: AppColors
+                                                              .labelSecondary,
+                                                          fontStyle:
+                                                              FontStyle.italic,
+                                                        ),
+                                                  ),
+                                                ),
+                                              ],
+                                              AppDimens.size3M.hSpace,
+                                              TextFieldDropdown<String>(
+                                                title: 'Metode Pembayaran',
+                                                hint: 'Pilih Metode',
+                                                items: const [
+                                                  'cash',
+                                                  'cod',
+                                                  'kredit_7',
+                                                  'kredit_14',
+                                                  'kredit_30',
+                                                  'termin',
+                                                ],
+                                                itemAsString: (item) {
+                                                  final map = {
+                                                    'cash': 'Cash / Lunas',
+                                                    'cod':
+                                                        'Cash On Delivery (COD)',
+                                                    'kredit_7':
+                                                        'Tempo / Kredit 7 Hari',
+                                                    'kredit_14':
+                                                        'Tempo / Kredit 14 Hari',
+                                                    'kredit_30':
+                                                        'Tempo / Kredit 30 Hari',
+                                                    'termin':
+                                                        'Termin (Cicilan Berjangka)',
+                                                  };
+                                                  return map[item] ??
+                                                      item
+                                                          .replaceAll('_', ' ')
+                                                          .toUpperCase();
+                                                },
+                                                onChanged: (val) {
+                                                  setState(() {
+                                                    metodePembayaran = val;
+                                                    generateJadwalPembayaran();
+                                                  });
+                                                },
+                                              ),
+                                              if (metodePembayaran ==
+                                                  'termin') ...[
+                                                AppDimens.size3M.hSpace,
+                                                TextFieldDropdown<int>(
+                                                  title: 'Jumlah Termin',
+                                                  hint: 'Pilih Jumlah',
+                                                  items: const [2, 3, 4, 6],
+                                                  itemAsString: (item) =>
+                                                      '$item x Cicilan',
+                                                  onChanged: (val) {
+                                                    setState(() {
+                                                      jumlahTermin = val ?? 2;
+                                                      generateJadwalPembayaran();
+                                                    });
+                                                  },
+                                                ),
+                                              ],
+                                              AppDimens.size3M.hSpace,
+                                              ListTile(
+                                                contentPadding: EdgeInsets.zero,
+                                                title: const Text(
+                                                  'Produk Pesanan',
+                                                ),
+                                                subtitle: Text(
+                                                  '${selectedProducts.length} produk',
+                                                ),
+                                                trailing: SizedBox(
+                                                  width: 100,
+                                                  child: AppButton(
+                                                    text: 'Pilih',
+                                                    onPressed: () async {
+                                                      final result =
+                                                          await showModalBottomSheet<
+                                                            List<
+                                                              SalesOrderItemParamsEntity
+                                                            >?
+                                                          >(
+                                                            context: context,
+                                                            isScrollControlled:
+                                                                true,
+                                                            builder: (_) => ProductSelectionSheet(
+                                                              initialItems:
+                                                                  selectedProducts,
+                                                              priceLevel: widget
+                                                                  .tasks
+                                                                  ?.aktivitas
+                                                                  ?.outlet
+                                                                  ?.priceLevel,
+                                                            ),
+                                                          );
+                                                      if (result != null) {
+                                                        setState(() {
+                                                          selectedProducts =
+                                                              result;
+                                                          generateJadwalPembayaran();
+                                                        });
+                                                      }
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                              if (selectedProducts
+                                                  .isNotEmpty) ...[
+                                                AppDimens.size2X.hSpace,
+                                                TextFieldBasic(
+                                                  controller: diskonController,
+                                                  title: 'Diskon (Rp)',
+                                                  hint: 'Masukkan Diskon',
+                                                  colorTitle:
+                                                      AppColors.labelSecondary,
+                                                  inputType:
+                                                      TextInputType.number,
+                                                  onChanged: (val) {
+                                                    setState(() {
+                                                      diskon =
+                                                          double.tryParse(
+                                                            val.replaceAll(
+                                                              '.',
+                                                              '',
+                                                            ),
+                                                          ) ??
+                                                          0;
+                                                      generateJadwalPembayaran();
+                                                    });
+                                                  },
+                                                  inputFormatters: [
+                                                    IdrTextInputFormatter(),
+                                                  ],
+                                                ),
+                                                AppDimens.size2X.hSpace,
+                                                Container(
+                                                  padding: const EdgeInsets.all(
+                                                    AppDimens.paddingMedium,
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.blue
+                                                        .withValues(alpha: 0.1),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          AppDimens
+                                                              .radiusMedium,
+                                                        ),
+                                                  ),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          const Text(
+                                                            'Gross Sales',
+                                                          ),
+                                                          Text(
+                                                            'Rp ${grossSales.toInt().textDecimalDigit}',
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      const SizedBox(height: 4),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          const Text('Diskon'),
+                                                          Text(
+                                                            '- Rp ${diskon.toInt().textDecimalDigit}',
+                                                            style:
+                                                                const TextStyle(
+                                                                  color: Colors
+                                                                      .red,
+                                                                ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      const Divider(),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          const Text(
+                                                            'Net Sales',
+                                                            style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            'Rp ${netSales.toInt().textDecimalDigit}',
+                                                            style:
+                                                                const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                if (jadwalPembayaran
+                                                    .isNotEmpty) ...[
+                                                  AppDimens.size3M.hSpace,
+                                                  Text(
+                                                    'Jadwal Pembayaran',
+                                                    style: context
+                                                        .textStyle
+                                                        .titleSmall!
+                                                        .copyWith(
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                  ),
+                                                  AppDimens.size1X.hSpace,
+                                                  ...jadwalPembayaran.map((j) {
+                                                    final date =
+                                                        DateTime.tryParse(
+                                                          j.dueDate ?? '',
+                                                        );
+                                                    return Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                            bottom: 8.0,
+                                                          ),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Text(
+                                                            'Termin ${j.noTermin} (${date?.toEEEdMMMy})',
+                                                          ),
+                                                          Text(
+                                                            'Rp ${(j.amount ?? 0).toInt().textDecimalDigit}',
+                                                            style:
+                                                                const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  }),
+                                                ],
+                                              ],
+                                            ],
+                                          ],
                                         ],
-                                        itemAsString: (item) => item
-                                            .replaceAll('_', ' ')
-                                            .toUpperCase(),
-                                        onChanged: (val) => setState(() {
-                                          tipeCall = val;
-                                          if (val != 'effective_call') {
-                                            tipeOrder = null;
-                                            kategoriOrder = null;
-                                            metodePembayaran = null;
-                                            selectedProducts.clear();
-                                            jadwalPembayaran.clear();
-                                          }
-                                        }),
                                       ),
-                                      if (tipeCall == 'effective_call') ...[
-                                        AppDimens.size3M.hSpace,
-                                        if (isHybridMode) ...[
+                                    ),
+                                  ],
+
+                                  if (widget
+                                          .tasks
+                                          ?.aktivitas
+                                          ?.tujuanPenagihan ==
+                                      true) ...[
+                                    AppDimens.size3M.hSpace,
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        border: Border.all(
+                                          color: Colors.grey.shade300,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                          AppDimens.radiusMedium,
+                                        ),
+                                      ),
+                                      padding: const EdgeInsets.all(
+                                        AppDimens.paddingMedium,
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.stretch,
+                                        children: [
+                                          Text(
+                                            'Data Penagihan',
+                                            style: context
+                                                .textStyle
+                                                .titleMedium!
+                                                .copyWith(
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          if (isHybridMode) ...[
+                                            TextFieldBasic(
+                                              controller:
+                                                  noReferensiPenagihanController,
+                                              title: 'No Referensi / Faktur',
+                                              hint: 'Ketik lalu Enter/Koma',
+                                              colorTitle:
+                                                  AppColors.labelSecondary,
+                                              onSubmitted: (val) {
+                                                if (val.trim().isNotEmpty) {
+                                                  setState(() {
+                                                    noReferensiPenagihanPills
+                                                        .add(val.trim());
+                                                    noReferensiPenagihanController
+                                                        .clear();
+                                                  });
+                                                }
+                                              },
+                                            ),
+                                            if (noReferensiPenagihanPills
+                                                .isNotEmpty) ...[
+                                              const SizedBox(height: 8),
+                                              Wrap(
+                                                spacing: 8,
+                                                runSpacing: 4,
+                                                children: noReferensiPenagihanPills
+                                                    .asMap()
+                                                    .entries
+                                                    .map((entry) {
+                                                      return InputChip(
+                                                        label: Text(
+                                                          entry.value,
+                                                          style:
+                                                              const TextStyle(
+                                                                fontSize: 12,
+                                                              ),
+                                                        ),
+                                                        onPressed: () =>
+                                                            SalesOrderDetailSheet.show(
+                                                              context,
+                                                              entry.value,
+                                                            ),
+                                                        onDeleted: () {
+                                                          setState(() {
+                                                            noReferensiPenagihanPills
+                                                                .removeAt(
+                                                                  entry.key,
+                                                                );
+                                                          });
+                                                        },
+                                                      );
+                                                    })
+                                                    .toList(),
+                                              ),
+                                            ],
+                                          ] else ...[
+                                            Builder(
+                                              builder: (context) {
+                                                final refs =
+                                                    widget
+                                                        .tasks
+                                                        ?.aktivitas
+                                                        ?.noReferensi
+                                                        ?.where(
+                                                          (ref) =>
+                                                              !ref
+                                                                  .toUpperCase()
+                                                                  .startsWith(
+                                                                    'DO-',
+                                                                  ) &&
+                                                              !ref
+                                                                  .toUpperCase()
+                                                                  .startsWith(
+                                                                    'SJ-',
+                                                                  ),
+                                                        )
+                                                        .toList() ??
+                                                    [];
+                                                if (refs.isNotEmpty) {
+                                                  return Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .stretch,
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets.only(
+                                                              bottom: 8,
+                                                            ),
+                                                        child: Text(
+                                                          'No Referensi dari Admin:',
+                                                          style: context
+                                                              .textStyle
+                                                              .bodySmall
+                                                              ?.copyWith(
+                                                                color: AppColors
+                                                                    .labelSecondary,
+                                                              ),
+                                                        ),
+                                                      ),
+                                                      Wrap(
+                                                        spacing: 8,
+                                                        runSpacing: 4,
+                                                        children: refs
+                                                            .map(
+                                                              (
+                                                                ref,
+                                                              ) => ActionChip(
+                                                                label: Text(
+                                                                  ref,
+                                                                  style:
+                                                                      const TextStyle(
+                                                                        fontSize:
+                                                                            12,
+                                                                      ),
+                                                                ),
+                                                                backgroundColor:
+                                                                    AppColors
+                                                                        .primary
+                                                                        .withValues(
+                                                                          alpha:
+                                                                              0.08,
+                                                                        ),
+                                                                onPressed: () =>
+                                                                    SalesOrderDetailSheet.show(
+                                                                      context,
+                                                                      ref,
+                                                                    ),
+                                                              ),
+                                                            )
+                                                            .toList(),
+                                                      ),
+                                                      const SizedBox(height: 8),
+                                                      Text(
+                                                        'Klik nomor referensi untuk melihat detail tagihan',
+                                                        style: TextStyle(
+                                                          fontSize: 11,
+                                                          color: Colors
+                                                              .grey
+                                                              .shade500,
+                                                          fontStyle:
+                                                              FontStyle.italic,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  );
+                                                }
+                                                return Container(
+                                                  padding: const EdgeInsets.all(
+                                                    12,
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.orange
+                                                        .withValues(
+                                                          alpha: 0.08,
+                                                        ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          8,
+                                                        ),
+                                                  ),
+                                                  child: Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.info_outline,
+                                                        color: Colors
+                                                            .orange
+                                                            .shade700,
+                                                        size: 18,
+                                                      ),
+                                                      const SizedBox(width: 8),
+                                                      Expanded(
+                                                        child: Text(
+                                                          'Belum ada referensi tagihan yang ditetapkan admin.',
+                                                          style: TextStyle(
+                                                            fontSize: 12,
+                                                            color: Colors
+                                                                .orange
+                                                                .shade700,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ],
+                                          AppDimens.size3M.hSpace,
                                           TextFieldBasic(
-                                            controller: nominalManualController,
-                                            title: 'Nominal Transaksi (Rp)',
+                                            controller:
+                                                nominalPenagihanController,
+                                            title:
+                                                'Nominal Berhasil Ditagih (Rp)',
                                             hint:
                                                 'Masukkan Nominal (Misal: 150000)',
                                             colorTitle:
@@ -585,7 +1224,7 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                             inputType: TextInputType.number,
                                             onChanged: (val) {
                                               setState(() {
-                                                nominalManual =
+                                                nominalPenagihan =
                                                     double.tryParse(
                                                       val.replaceAll('.', ''),
                                                     ) ??
@@ -596,872 +1235,391 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                               IdrTextInputFormatter(),
                                             ],
                                           ),
-                                        ] else ...[
-                                          TextFieldDropdown<String>(
-                                            title: 'Tipe Order',
-                                            hint: 'Pilih Tipe Order',
-                                            items: const ['indent', 'canvas'],
-                                            itemAsString: (item) {
-                                              if (item == 'indent')
-                                                return 'INDENT / PRE ORDER (PO)';
-                                              if (item == 'canvas')
-                                                return 'CANVAS (JUAL LANGSUNG)';
-                                              return item
-                                                  .replaceAll('_', ' ')
-                                                  .toUpperCase();
-                                            },
-                                            onChanged: (val) =>
-                                                setState(() => tipeOrder = val),
-                                          ),
-                                          AppDimens.size3M.hSpace,
-                                          TextFieldDropdown<String>(
-                                            title: 'Kategori Order',
-                                            hint: 'Pilih Kategori',
-                                            items: () {
-                                              final outlet = widget
-                                                  .tasks
-                                                  ?.aktivitas
-                                                  ?.apotikId;
-                                              final totalValue =
-                                                  outlet?.totalValue ?? 0;
-                                              final lastOrderDate =
-                                                  outlet?.lastOrderDate;
-
-                                              if (totalValue > 0 ||
-                                                  (lastOrderDate != null &&
-                                                      lastOrderDate
-                                                          .isNotEmpty)) {
-                                                return [
-                                                  'repeat_order',
-                                                  'top_up',
-                                                ];
-                                              }
-                                              return ['noo'];
-                                            }(),
-                                            itemAsString: (item) {
-                                              if (item == 'noo')
-                                                return 'NOO (NEW OPEN OUTLET)';
-                                              return item
-                                                  .replaceAll('_', ' ')
-                                                  .toUpperCase();
-                                            },
-                                            onChanged: (val) => setState(
-                                              () => kategoriOrder = val,
-                                            ),
-                                          ),
-                                          if (kategoriOrder != null) ...[
-                                            AppDimens.size1X.hSpace,
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal:
-                                                        AppDimens.paddingSmall,
-                                                  ),
-                                              child: Text(
-                                                kategoriOrder == 'noo'
-                                                    ? '* NOO: Pemesanan pertama kali dari outlet yang belum pernah order sebelumnya.'
-                                                    : kategoriOrder ==
-                                                          'repeat_order'
-                                                    ? '* Repeat Order: Pemesanan ulang rutin sesuai siklus belanja normal outlet.'
-                                                    : '* Top Up: Pemesanan tambahan sisipan di luar jadwal rutin outlet (stok cepat habis).',
-                                                style: context
-                                                    .textStyle
-                                                    .bodySmall
-                                                    ?.copyWith(
-                                                      color: AppColors
-                                                          .labelSecondary,
-                                                      fontStyle:
-                                                          FontStyle.italic,
-                                                    ),
-                                              ),
-                                            ),
-                                          ],
-                                          AppDimens.size3M.hSpace,
-                                          TextFieldDropdown<String>(
-                                            title: 'Metode Pembayaran',
-                                            hint: 'Pilih Metode',
-                                            items: const [
-                                              'cash',
-                                              'cod',
-                                              'kredit_7',
-                                              'kredit_14',
-                                              'kredit_30',
-                                              'termin',
-                                            ],
-                                            itemAsString: (item) {
-                                              final map = {
-                                                'cash': 'Cash / Lunas',
-                                                'cod': 'Cash On Delivery (COD)',
-                                                'kredit_7':
-                                                    'Tempo / Kredit 7 Hari',
-                                                'kredit_14':
-                                                    'Tempo / Kredit 14 Hari',
-                                                'kredit_30':
-                                                    'Tempo / Kredit 30 Hari',
-                                                'termin':
-                                                    'Termin (Cicilan Berjangka)',
-                                              };
-                                              return map[item] ??
-                                                  item
-                                                      .replaceAll('_', ' ')
-                                                      .toUpperCase();
-                                            },
-                                            onChanged: (val) {
-                                              setState(() {
-                                                metodePembayaran = val;
-                                                generateJadwalPembayaran();
-                                              });
-                                            },
-                                          ),
-                                          if (metodePembayaran == 'termin') ...[
-                                            AppDimens.size3M.hSpace,
-                                            TextFieldDropdown<int>(
-                                              title: 'Jumlah Termin',
-                                              hint: 'Pilih Jumlah',
-                                              items: const [2, 3, 4, 6],
-                                              itemAsString: (item) =>
-                                                  '$item x Cicilan',
-                                              onChanged: (val) {
-                                                setState(() {
-                                                  jumlahTermin = val ?? 2;
-                                                  generateJadwalPembayaran();
-                                                });
-                                              },
-                                            ),
-                                          ],
-                                          AppDimens.size3M.hSpace,
-                                          ListTile(
-                                            contentPadding: EdgeInsets.zero,
-                                            title: const Text('Produk Pesanan'),
-                                            subtitle: Text(
-                                              '${selectedProducts.length} produk',
-                                            ),
-                                            trailing: SizedBox(
-                                              width: 100,
-                                              child: AppButton(
-                                                text: 'Pilih',
-                                                onPressed: () async {
-                                                  final result =
-                                                      await showModalBottomSheet<
-                                                        List<
-                                                          SalesOrderItemParamsEntity
-                                                        >?
-                                                      >(
-                                                        context: context,
-                                                        isScrollControlled:
-                                                            true,
-                                                        builder: (_) =>
-                                                            ProductSelectionSheet(
-                                                              initialItems:
-                                                                  selectedProducts,
-                                                              priceLevel: widget
-                                                                  .tasks
-                                                                  ?.aktivitas
-                                                                  ?.outlet
-                                                                  ?.priceLevel,
-                                                            ),
-                                                      );
-                                                  if (result != null) {
-                                                    setState(() {
-                                                      selectedProducts = result;
-                                                      generateJadwalPembayaran();
-                                                    });
-                                                  }
-                                                },
-                                              ),
-                                            ),
-                                          ),
-                                          if (selectedProducts.isNotEmpty) ...[
-                                            AppDimens.size2X.hSpace,
-                                            TextFieldBasic(
-                                              controller: diskonController,
-                                              title: 'Diskon (Rp)',
-                                              hint: 'Masukkan Diskon',
-                                              colorTitle:
-                                                  AppColors.labelSecondary,
-                                              inputType: TextInputType.number,
-                                              onChanged: (val) {
-                                                setState(() {
-                                                  diskon =
-                                                      double.tryParse(
-                                                        val.replaceAll('.', ''),
-                                                      ) ??
-                                                      0;
-                                                  generateJadwalPembayaran();
-                                                });
-                                              },
-                                              inputFormatters: [
-                                                IdrTextInputFormatter(),
-                                              ],
-                                            ),
-                                            AppDimens.size2X.hSpace,
-                                            Container(
-                                              padding: const EdgeInsets.all(
-                                                AppDimens.paddingMedium,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                color: Colors.blue.withValues(
-                                                  alpha: 0.1,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                      AppDimens.radiusMedium,
-                                                    ),
-                                              ),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      const Text('Gross Sales'),
-                                                      Text(
-                                                        'Rp ${grossSales.toInt().textDecimalDigit}',
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  const SizedBox(height: 4),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      const Text('Diskon'),
-                                                      Text(
-                                                        '- Rp ${diskon.toInt().textDecimalDigit}',
-                                                        style: const TextStyle(
-                                                          color: Colors.red,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  const Divider(),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      const Text(
-                                                        'Net Sales',
-                                                        style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      Text(
-                                                        'Rp ${netSales.toInt().textDecimalDigit}',
-                                                        style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            if (jadwalPembayaran
-                                                .isNotEmpty) ...[
-                                              AppDimens.size3M.hSpace,
-                                              Text(
-                                                'Jadwal Pembayaran',
-                                                style: context
-                                                    .textStyle
-                                                    .titleSmall!
-                                                    .copyWith(
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                    ),
-                                              ),
-                                              AppDimens.size1X.hSpace,
-                                              ...jadwalPembayaran.map((j) {
-                                                final date = DateTime.tryParse(
-                                                  j.dueDate ?? '',
-                                                );
-                                                return Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                        bottom: 8.0,
-                                                      ),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Text(
-                                                        'Termin ${j.noTermin} (${date?.toEEEdMMMy})',
-                                                      ),
-                                                      Text(
-                                                        'Rp ${(j.amount ?? 0).toInt().textDecimalDigit}',
-                                                        style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
-                                              }),
-                                            ],
-                                          ],
-                                        ],
-                                      ],
-                                    ],
-                                  ),
-                                ),
-                              ],
-
-                              if (widget.tasks?.aktivitas?.tujuanPenagihan ==
-                                  true) ...[
-                                AppDimens.size3M.hSpace,
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(
-                                      color: Colors.grey.shade300,
-                                    ),
-                                    borderRadius: BorderRadius.circular(
-                                      AppDimens.radiusMedium,
-                                    ),
-                                  ),
-                                  padding: const EdgeInsets.all(
-                                    AppDimens.paddingMedium,
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: [
-                                      Text(
-                                        'Data Penagihan',
-                                        style: context.textStyle.titleMedium!
-                                            .copyWith(
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      if (isHybridMode) ...[
-                                        TextFieldBasic(
-                                          controller:
-                                              noReferensiPenagihanController,
-                                          title: 'No Referensi / Faktur',
-                                          hint: 'Ketik lalu Enter/Koma',
-                                          colorTitle: AppColors.labelSecondary,
-                                          onSubmitted: (val) {
-                                            if (val.trim().isNotEmpty) {
-                                              setState(() {
-                                                noReferensiPenagihanPills.add(
-                                                  val.trim(),
-                                                );
-                                                noReferensiPenagihanController
-                                                    .clear();
-                                              });
-                                            }
-                                          },
-                                        ),
-                                        if (noReferensiPenagihanPills
-                                            .isNotEmpty) ...[
-                                          const SizedBox(height: 8),
-                                          Wrap(
-                                            spacing: 8,
-                                            runSpacing: 4,
-                                            children: noReferensiPenagihanPills
-                                                .asMap()
-                                                .entries
-                                                .map((entry) {
-                                                  return InputChip(
-                                                    label: Text(
-                                                      entry.value,
-                                                      style: const TextStyle(
-                                                        fontSize: 12,
-                                                      ),
-                                                    ),
-                                                    onPressed: () =>
-                                                        SalesOrderDetailSheet.show(
-                                                          context,
-                                                          entry.value,
-                                                        ),
-                                                    onDeleted: () {
-                                                      setState(() {
-                                                        noReferensiPenagihanPills
-                                                            .removeAt(
-                                                              entry.key,
-                                                            );
-                                                      });
-                                                    },
-                                                  );
-                                                })
-                                                .toList(),
-                                          ),
-                                        ],
-                                      ] else ...[
-                                        Builder(
-                                          builder: (context) {
-                                            final refs =
-                                                widget
-                                                    .tasks
-                                                    ?.aktivitas
-                                                    ?.noReferensi
-                                                    ?.where(
-                                                      (ref) =>
-                                                          !ref
-                                                              .toUpperCase()
-                                                              .startsWith(
-                                                                'DO-',
-                                                              ) &&
-                                                          !ref
-                                                              .toUpperCase()
-                                                              .startsWith(
-                                                                'SJ-',
-                                                              ),
-                                                    )
-                                                    .toList() ??
-                                                [];
-                                            if (refs.isNotEmpty) {
-                                              return Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.stretch,
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                          bottom: 8,
-                                                        ),
-                                                    child: Text(
-                                                      'No Referensi dari Admin:',
-                                                      style: context
-                                                          .textStyle
-                                                          .bodySmall
-                                                          ?.copyWith(
-                                                            color: AppColors
-                                                                .labelSecondary,
-                                                          ),
-                                                    ),
-                                                  ),
-                                                  Wrap(
-                                                    spacing: 8,
-                                                    runSpacing: 4,
-                                                    children: refs
-                                                        .map(
-                                                          (ref) => ActionChip(
-                                                            label: Text(
-                                                              ref,
-                                                              style:
-                                                                  const TextStyle(
-                                                                    fontSize:
-                                                                        12,
-                                                                  ),
-                                                            ),
-                                                            backgroundColor:
-                                                                AppColors
-                                                                    .primary
-                                                                    .withValues(
-                                                                      alpha:
-                                                                          0.08,
-                                                                    ),
-                                                            onPressed: () =>
-                                                                SalesOrderDetailSheet.show(
-                                                                  context,
-                                                                  ref,
-                                                                ),
-                                                          ),
-                                                        )
-                                                        .toList(),
-                                                  ),
-                                                  const SizedBox(height: 8),
-                                                  Text(
-                                                    'Klik nomor referensi untuk melihat detail tagihan',
-                                                    style: TextStyle(
-                                                      fontSize: 11,
-                                                      color:
-                                                          Colors.grey.shade500,
-                                                      fontStyle:
-                                                          FontStyle.italic,
-                                                    ),
-                                                  ),
-                                                ],
-                                              );
-                                            }
-                                            return Container(
-                                              padding: const EdgeInsets.all(12),
-                                              decoration: BoxDecoration(
-                                                color: Colors.orange.withValues(
-                                                  alpha: 0.08,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                              ),
-                                              child: Row(
-                                                children: [
-                                                  Icon(
-                                                    Icons.info_outline,
-                                                    color:
-                                                        Colors.orange.shade700,
-                                                    size: 18,
-                                                  ),
-                                                  const SizedBox(width: 8),
-                                                  Expanded(
-                                                    child: Text(
-                                                      'Belum ada referensi tagihan yang ditetapkan admin.',
-                                                      style: TextStyle(
-                                                        fontSize: 12,
-                                                        color: Colors
-                                                            .orange
-                                                            .shade700,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ],
-                                      AppDimens.size3M.hSpace,
-                                      TextFieldBasic(
-                                        controller: nominalPenagihanController,
-                                        title: 'Nominal Berhasil Ditagih (Rp)',
-                                        hint:
-                                            'Masukkan Nominal (Misal: 150000)',
-                                        colorTitle: AppColors.labelSecondary,
-                                        inputType: TextInputType.number,
-                                        onChanged: (val) {
-                                          setState(() {
-                                            nominalPenagihan =
-                                                double.tryParse(
-                                                  val.replaceAll('.', ''),
-                                                ) ??
-                                                0;
-                                          });
-                                        },
-                                        inputFormatters: [
-                                          IdrTextInputFormatter(),
                                         ],
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-
-                              if (widget.tasks?.aktivitas?.tujuanPengantaran ==
-                                  true) ...[
-                                AppDimens.size3M.hSpace,
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(
-                                      color: Colors.grey.shade300,
-                                    ),
-                                    borderRadius: BorderRadius.circular(
-                                      AppDimens.radiusMedium,
-                                    ),
-                                  ),
-                                  padding: const EdgeInsets.all(
-                                    AppDimens.paddingMedium,
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: [
-                                      Text(
-                                        'Data Pengantaran',
-                                        style: context.textStyle.titleMedium!
-                                            .copyWith(
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      TextFieldDropdown<String>(
-                                        title: 'Status Pengantaran',
-                                        hint: 'Pilih Status',
-                                        items: const ['none', 'noc'],
-                                        selectedItem:
-                                            tipeCall == 'none' ||
-                                                tipeCall == null
-                                            ? 'none'
-                                            : tipeCall,
-                                        itemAsString: (item) {
-                                          if (item == 'none')
-                                            return 'BERHASIL TERKIRIM';
-                                          if (item == 'noc')
-                                            return 'GAGAL (TOKO TUTUP / DITOLAK)';
-                                          return item.toUpperCase();
-                                        },
-                                        onChanged: (val) =>
-                                            setState(() => tipeCall = val),
-                                      ),
-                                      AppDimens.size3M.hSpace,
-                                      if (isHybridMode) ...[
-                                        TextFieldBasic(
-                                          controller:
-                                              noReferensiPengantaranController,
-                                          title: 'No Referensi DO',
-                                          hint: 'Ketik lalu Enter/Koma',
-                                          colorTitle: AppColors.labelSecondary,
-                                          onSubmitted: (val) {
-                                            if (val.trim().isNotEmpty) {
-                                              setState(() {
-                                                noReferensiPengantaranPills.add(
-                                                  val.trim(),
-                                                );
-                                                noReferensiPengantaranController
-                                                    .clear();
-                                              });
-                                            }
-                                          },
-                                        ),
-                                        if (noReferensiPengantaranPills
-                                            .isNotEmpty) ...[
-                                          const SizedBox(height: 8),
-                                          Wrap(
-                                            spacing: 8,
-                                            runSpacing: 4,
-                                            children: noReferensiPengantaranPills
-                                                .asMap()
-                                                .entries
-                                                .map((entry) {
-                                                  return InputChip(
-                                                    label: Text(
-                                                      entry.value,
-                                                      style: const TextStyle(
-                                                        fontSize: 12,
-                                                      ),
-                                                    ),
-                                                    onPressed: () =>
-                                                        DeliveryOrderDetailSheet.show(
-                                                          context,
-                                                          entry.value,
-                                                        ),
-                                                    onDeleted: () {
-                                                      setState(() {
-                                                        noReferensiPengantaranPills
-                                                            .removeAt(
-                                                              entry.key,
-                                                            );
-                                                      });
-                                                    },
-                                                  );
-                                                })
-                                                .toList(),
-                                          ),
-                                        ],
-                                      ] else ...[
-                                        Builder(
-                                          builder: (context) {
-                                            final refs =
-                                                widget
-                                                    .tasks
-                                                    ?.aktivitas
-                                                    ?.noReferensi
-                                                    ?.where(
-                                                      (ref) =>
-                                                          ref
-                                                              .toUpperCase()
-                                                              .startsWith(
-                                                                'DO-',
-                                                              ) ||
-                                                          ref
-                                                              .toUpperCase()
-                                                              .startsWith(
-                                                                'SJ-',
-                                                              ),
-                                                    )
-                                                    .toList() ??
-                                                [];
-                                            if (refs.isNotEmpty) {
-                                              return Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.stretch,
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                          bottom: 8,
-                                                        ),
-                                                    child: Text(
-                                                      'No Referensi dari Admin:',
-                                                      style: context
-                                                          .textStyle
-                                                          .bodySmall
-                                                          ?.copyWith(
-                                                            color: AppColors
-                                                                .labelSecondary,
-                                                          ),
-                                                    ),
-                                                  ),
-                                                  Wrap(
-                                                    spacing: 8,
-                                                    runSpacing: 4,
-                                                    children: refs
-                                                        .map(
-                                                          (ref) => ActionChip(
-                                                            label: Text(
-                                                              ref,
-                                                              style:
-                                                                  const TextStyle(
-                                                                    fontSize:
-                                                                        12,
-                                                                  ),
-                                                            ),
-                                                            backgroundColor:
-                                                                Colors.teal
-                                                                    .withValues(
-                                                                      alpha:
-                                                                          0.08,
-                                                                    ),
-                                                            onPressed: () =>
-                                                                DeliveryOrderDetailSheet.show(
-                                                                  context,
-                                                                  ref,
-                                                                ),
-                                                          ),
-                                                        )
-                                                        .toList(),
-                                                  ),
-                                                  const SizedBox(height: 8),
-                                                  Text(
-                                                    'Klik nomor referensi untuk melihat detail DO',
-                                                    style: TextStyle(
-                                                      fontSize: 11,
-                                                      color:
-                                                          Colors.grey.shade500,
-                                                      fontStyle:
-                                                          FontStyle.italic,
-                                                    ),
-                                                  ),
-                                                ],
-                                              );
-                                            }
-                                            return Container(
-                                              padding: const EdgeInsets.all(12),
-                                              decoration: BoxDecoration(
-                                                color: Colors.orange.withValues(
-                                                  alpha: 0.08,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                              ),
-                                              child: Row(
-                                                children: [
-                                                  Icon(
-                                                    Icons.info_outline,
-                                                    color:
-                                                        Colors.orange.shade700,
-                                                    size: 18,
-                                                  ),
-                                                  const SizedBox(width: 8),
-                                                  Expanded(
-                                                    child: Text(
-                                                      'Belum ada referensi pengantaran (DO) yang ditetapkan admin.',
-                                                      style: TextStyle(
-                                                        fontSize: 12,
-                                                        color: Colors
-                                                            .orange
-                                                            .shade700,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ],
-                                    ],
-                                  ),
-                                ),
-                              ],
-                              AppDimens.size3M.hSpace,
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.all(
-                                    color: Colors.grey.shade300,
-                                  ),
-                                  borderRadius: BorderRadius.circular(
-                                    AppDimens.radiusMedium,
-                                  ),
-                                ),
-                                padding: const EdgeInsets.all(
-                                  AppDimens.paddingMedium,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    Text(
-                                      'Bukti Kunjungan',
-                                      style: context.textStyle.titleMedium!
-                                          .copyWith(
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: FloatingPhotoInput(
-                                            width: double.infinity,
-                                            imagePath:
-                                                (fotoPrimary?.isNotEmpty ??
-                                                    false)
-                                                ? fotoPrimary!.first.path
-                                                : null,
-                                            label: 'Foto Bukti',
-                                            onTap: () => _takeFotoPrimary(
-                                              usrState.isMarketing,
-                                            ),
-                                            onDelete: () => setState(
-                                              () => fotoPrimary = [],
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 16),
-                                        Expanded(
-                                          child: FloatingPhotoInput(
-                                            width: double.infinity,
-                                            imagePath:
-                                                (fotoSecondary?.isNotEmpty ??
-                                                    false)
-                                                ? fotoSecondary!.first.path
-                                                : null,
-                                            label: 'Foto Pendukung / Nota',
-                                            onTap: _takeFotoSecondary,
-                                            onDelete: () => setState(
-                                              () => fotoSecondary = [],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    AppDimens.size3M.hSpace,
-                                    TextFieldBasic(
-                                      controller: catatan,
-                                      title: 'Catatan',
-                                      colorTitle: AppColors.labelSecondary,
-                                      hint: 'Masukan Catatan (Optional)',
-                                      multiline: true,
                                     ),
                                   ],
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      ),
 
-                      AppDimens.size1X.hSpace,
-                      _buildConfirmButton(mapState),
-                    ],
+                                  if (widget
+                                          .tasks
+                                          ?.aktivitas
+                                          ?.tujuanPengantaran ==
+                                      true) ...[
+                                    AppDimens.size3M.hSpace,
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        border: Border.all(
+                                          color: Colors.grey.shade300,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                          AppDimens.radiusMedium,
+                                        ),
+                                      ),
+                                      padding: const EdgeInsets.all(
+                                        AppDimens.paddingMedium,
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.stretch,
+                                        children: [
+                                          Text(
+                                            'Data Pengantaran',
+                                            style: context
+                                                .textStyle
+                                                .titleMedium!
+                                                .copyWith(
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          TextFieldDropdown<String>(
+                                            title: 'Status Pengantaran',
+                                            hint: 'Pilih Status',
+                                            items: const ['none', 'noc'],
+                                            selectedItem:
+                                                tipeCall == 'none' ||
+                                                    tipeCall == null
+                                                ? 'none'
+                                                : tipeCall,
+                                            itemAsString: (item) {
+                                              if (item == 'none')
+                                                return 'BERHASIL TERKIRIM';
+                                              if (item == 'noc')
+                                                return 'GAGAL (TOKO TUTUP / DITOLAK)';
+                                              return item.toUpperCase();
+                                            },
+                                            onChanged: (val) =>
+                                                setState(() => tipeCall = val),
+                                          ),
+                                          AppDimens.size3M.hSpace,
+                                          if (isHybridMode) ...[
+                                            TextFieldBasic(
+                                              controller:
+                                                  noReferensiPengantaranController,
+                                              title: 'No Referensi DO',
+                                              hint: 'Ketik lalu Enter/Koma',
+                                              colorTitle:
+                                                  AppColors.labelSecondary,
+                                              onSubmitted: (val) {
+                                                if (val.trim().isNotEmpty) {
+                                                  setState(() {
+                                                    noReferensiPengantaranPills
+                                                        .add(val.trim());
+                                                    noReferensiPengantaranController
+                                                        .clear();
+                                                  });
+                                                }
+                                              },
+                                            ),
+                                            if (noReferensiPengantaranPills
+                                                .isNotEmpty) ...[
+                                              const SizedBox(height: 8),
+                                              Wrap(
+                                                spacing: 8,
+                                                runSpacing: 4,
+                                                children: noReferensiPengantaranPills
+                                                    .asMap()
+                                                    .entries
+                                                    .map((entry) {
+                                                      return InputChip(
+                                                        label: Text(
+                                                          entry.value,
+                                                          style:
+                                                              const TextStyle(
+                                                                fontSize: 12,
+                                                              ),
+                                                        ),
+                                                        onPressed: () =>
+                                                            DeliveryOrderDetailSheet.show(
+                                                              context,
+                                                              entry.value,
+                                                            ),
+                                                        onDeleted: () {
+                                                          setState(() {
+                                                            noReferensiPengantaranPills
+                                                                .removeAt(
+                                                                  entry.key,
+                                                                );
+                                                          });
+                                                        },
+                                                      );
+                                                    })
+                                                    .toList(),
+                                              ),
+                                            ],
+                                          ] else ...[
+                                            Builder(
+                                              builder: (context) {
+                                                final refs =
+                                                    widget
+                                                        .tasks
+                                                        ?.aktivitas
+                                                        ?.noReferensi
+                                                        ?.where(
+                                                          (ref) =>
+                                                              ref
+                                                                  .toUpperCase()
+                                                                  .startsWith(
+                                                                    'DO-',
+                                                                  ) ||
+                                                              ref
+                                                                  .toUpperCase()
+                                                                  .startsWith(
+                                                                    'SJ-',
+                                                                  ),
+                                                        )
+                                                        .toList() ??
+                                                    [];
+                                                if (refs.isNotEmpty) {
+                                                  return Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .stretch,
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets.only(
+                                                              bottom: 8,
+                                                            ),
+                                                        child: Text(
+                                                          'No Referensi dari Admin:',
+                                                          style: context
+                                                              .textStyle
+                                                              .bodySmall
+                                                              ?.copyWith(
+                                                                color: AppColors
+                                                                    .labelSecondary,
+                                                              ),
+                                                        ),
+                                                      ),
+                                                      Wrap(
+                                                        spacing: 8,
+                                                        runSpacing: 4,
+                                                        children: refs
+                                                            .map(
+                                                              (
+                                                                ref,
+                                                              ) => ActionChip(
+                                                                label: Text(
+                                                                  ref,
+                                                                  style:
+                                                                      const TextStyle(
+                                                                        fontSize:
+                                                                            12,
+                                                                      ),
+                                                                ),
+                                                                backgroundColor: Colors
+                                                                    .teal
+                                                                    .withValues(
+                                                                      alpha:
+                                                                          0.08,
+                                                                    ),
+                                                                onPressed: () =>
+                                                                    DeliveryOrderDetailSheet.show(
+                                                                      context,
+                                                                      ref,
+                                                                    ),
+                                                              ),
+                                                            )
+                                                            .toList(),
+                                                      ),
+                                                      const SizedBox(height: 8),
+                                                      Text(
+                                                        'Klik nomor referensi untuk melihat detail DO',
+                                                        style: TextStyle(
+                                                          fontSize: 11,
+                                                          color: Colors
+                                                              .grey
+                                                              .shade500,
+                                                          fontStyle:
+                                                              FontStyle.italic,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  );
+                                                }
+                                                return Container(
+                                                  padding: const EdgeInsets.all(
+                                                    12,
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.orange
+                                                        .withValues(
+                                                          alpha: 0.08,
+                                                        ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          8,
+                                                        ),
+                                                  ),
+                                                  child: Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.info_outline,
+                                                        color: Colors
+                                                            .orange
+                                                            .shade700,
+                                                        size: 18,
+                                                      ),
+                                                      const SizedBox(width: 8),
+                                                      Expanded(
+                                                        child: Text(
+                                                          'Belum ada referensi pengantaran (DO) yang ditetapkan admin.',
+                                                          style: TextStyle(
+                                                            fontSize: 12,
+                                                            color: Colors
+                                                                .orange
+                                                                .shade700,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ],
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                  AppDimens.size3M.hSpace,
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      border: Border.all(
+                                        color: Colors.grey.shade300,
+                                      ),
+                                      borderRadius: BorderRadius.circular(
+                                        AppDimens.radiusMedium,
+                                      ),
+                                    ),
+                                    padding: const EdgeInsets.all(
+                                      AppDimens.paddingMedium,
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        Text(
+                                          'Bukti Kunjungan',
+                                          style: context.textStyle.titleMedium!
+                                              .copyWith(
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: FloatingPhotoInput(
+                                                width: double.infinity,
+                                                imagePath:
+                                                    (fotoPrimary?.isNotEmpty ??
+                                                        false)
+                                                    ? fotoPrimary!.first.path
+                                                    : null,
+                                                label: 'Foto Bukti',
+                                                isLoading:
+                                                    _isOpeningPrimaryPhoto,
+                                                isDisabled:
+                                                    _submission.value ||
+                                                    _submission
+                                                        .visitCompleted ||
+                                                    _isOpeningPhoto ||
+                                                    ctxMap
+                                                        .watch<
+                                                          TasksPostCompletedCubit
+                                                        >()
+                                                        .state
+                                                        .status
+                                                        .isLoading ||
+                                                    ctxMap
+                                                        .watch<
+                                                          OrderCreateCubit
+                                                        >()
+                                                        .state
+                                                        .status
+                                                        .isLoading,
+                                                onTap: () => _takeFotoPrimary(
+                                                  ctxMap,
+                                                  usrState.isMarketing,
+                                                ),
+                                                onDelete: () => setState(
+                                                  () => fotoPrimary = [],
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(width: 16),
+                                            Expanded(
+                                              child: FloatingPhotoInput(
+                                                width: double.infinity,
+                                                imagePath:
+                                                    (fotoSecondary
+                                                            ?.isNotEmpty ??
+                                                        false)
+                                                    ? fotoSecondary!.first.path
+                                                    : null,
+                                                label: 'Foto Pendukung / Nota',
+                                                isLoading:
+                                                    _isOpeningSecondaryPhoto,
+                                                isDisabled:
+                                                    _submission.value ||
+                                                    _submission
+                                                        .visitCompleted ||
+                                                    _isOpeningPhoto ||
+                                                    ctxMap
+                                                        .watch<
+                                                          TasksPostCompletedCubit
+                                                        >()
+                                                        .state
+                                                        .status
+                                                        .isLoading ||
+                                                    ctxMap
+                                                        .watch<
+                                                          OrderCreateCubit
+                                                        >()
+                                                        .state
+                                                        .status
+                                                        .isLoading,
+                                                onTap: () =>
+                                                    _takeFotoSecondary(ctxMap),
+                                                onDelete: () => setState(
+                                                  () => fotoSecondary = [],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        AppDimens.size3M.hSpace,
+                                        TextFieldBasic(
+                                          controller: catatan,
+                                          title: 'Catatan',
+                                          colorTitle: AppColors.labelSecondary,
+                                          hint: 'Masukan Catatan (Optional)',
+                                          multiline: true,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+
+                          AppDimens.size1X.hSpace,
+                          _buildConfirmButton(mapState),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            );
-          },
-        ),
-      ),
+                );
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -1494,22 +1652,7 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
             >(
               listener: (context, state) async {
                 if (state.status.isLoaded) {
-                  // If we need to create an order, do it now
-                  if (!isHybridMode &&
-                      tipeCall == 'effective_call' &&
-                      selectedProducts.isNotEmpty) {
-                    final orderParams = SalesOrderParamsEntity(
-                      outletId: widget.tasks?.aktivitas?.apotikId?.id,
-                      outletNama: widget.tasks?.aktivitas?.apotikId?.namaApotik,
-                      tipeOrder: tipeOrder ?? 'repeat_order',
-                      tanggal: DateTime.now().toIso8601String(),
-                      diskon: diskon,
-                      catatan: catatan.text,
-                      metodePembayaran: metodePembayaran,
-                      items: selectedProducts,
-                    );
-                    context.read<OrderCreateCubit>().submit(orderParams);
-                  } else {
+                  if (_pendingOrderParams == null) {
                     await AppModalBottom.showDefault(
                       context,
                       contentTitle: 'Pemeriksaan Kunjungan Berhasil',
@@ -1531,8 +1674,26 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
               builder: (context, state) {
                 return AppButton(
                   onPressed: () {
-                    if (state.status.isLoading || orderState.status.isLoading)
+                    if (_submission.value ||
+                        _submission.isComplete ||
+                        _isOpeningPhoto ||
+                        state.status.isLoading ||
+                        orderState.status.isLoading) {
                       return;
+                    }
+
+                    if (_submission.visitCompleted &&
+                        _pendingOrderParams != null) {
+                      _submission.submit(
+                        submitVisit: () async => true,
+                        submitOrder: () async {
+                          final cubit = context.read<OrderCreateCubit>();
+                          await cubit.submit(_pendingOrderParams!);
+                          return !cubit.isClosed && cubit.state.status.isLoaded;
+                        },
+                      );
+                      return;
+                    }
 
                     if (mapState.typeState.isLoading) {
                       Fluttertoast.showToast(msg: kMapWaiting);
@@ -1600,16 +1761,52 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                         }(),
                       );
 
-                      Debounce.debounce(kDebForm, kDurSubmit, () async {
-                        context.read<TasksPostCompletedCubit>().postCompleted(
-                          params,
-                        );
-                      });
+                      _pendingOrderParams =
+                          !isHybridMode &&
+                              tipeCall == 'effective_call' &&
+                              selectedProducts.isNotEmpty
+                          ? SalesOrderParamsEntity(
+                              outletId: widget.tasks?.aktivitas?.apotikId?.id,
+                              outletNama:
+                                  widget.tasks?.aktivitas?.apotikId?.namaApotik,
+                              tipeOrder: tipeOrder ?? 'repeat_order',
+                              tanggal: DateTime.now().toIso8601String(),
+                              diskon: diskon,
+                              catatan: catatan.text,
+                              metodePembayaran: metodePembayaran,
+                              items: List.unmodifiable(selectedProducts),
+                            )
+                          : null;
+                      final taskCubit = context.read<TasksPostCompletedCubit>();
+                      final orderCubit = context.read<OrderCreateCubit>();
+                      _submission.submit(
+                        submitVisit: () async {
+                          await taskCubit.postCompleted(params);
+                          return !taskCubit.isClosed &&
+                              taskCubit.state.status.isLoaded;
+                        },
+                        submitOrder: _pendingOrderParams == null
+                            ? null
+                            : () async {
+                                if (!mounted || orderCubit.isClosed) {
+                                  return false;
+                                }
+                                await orderCubit.submit(_pendingOrderParams!);
+                                return !orderCubit.isClosed &&
+                                    orderCubit.state.status.isLoaded;
+                              },
+                      );
                     }
                   },
-                  text: 'Konfirmasi',
+                  text: _submission.visitCompleted && !_submission.isComplete
+                      ? 'Coba Lagi Order'
+                      : 'Konfirmasi',
                   isLoading:
-                      state.status.isLoading || orderState.status.isLoading,
+                      _submission.value ||
+                      _submission.isComplete ||
+                      _isOpeningPhoto ||
+                      state.status.isLoading ||
+                      orderState.status.isLoading,
                 );
               },
             );

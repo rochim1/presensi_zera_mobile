@@ -10,6 +10,8 @@ import '../formz/_formz.dart';
 import 'request_state.dart';
 
 class OvertimeRequestFormCubit extends Cubit<OvertimeRequestFormState> {
+  bool _isSubmittingAction = false;
+
   final CreateOvertimeRequest createOvertimeRequestUseCase;
   final UpdateOvertimeRequest updateOvertimeRequestUseCase;
   final Logger logger;
@@ -21,52 +23,73 @@ class OvertimeRequestFormCubit extends Cubit<OvertimeRequestFormState> {
     required this.updateOvertimeRequestUseCase,
   }) : super(const OvertimeRequestFormState());
 
-  void submit({bool isAttachmentRequired = false}) async {
-    final form = state.form.copyWith(
-      date: DateInput.dirty(state.form.date.value),
-      startTime: StartTimeInput.dirty(state.form.startTime.value),
-      endTime: EndTimeInput.dirty(state.form.endTime.value),
-      reason: ReasonInput.dirty(state.form.reason.value),
-      attachments: AttachmentsInput.dirty(
-        state.form.attachments.value,
-        isRequired: isAttachmentRequired,
-      ),
-    );
-    emit(state.copyWith(form: form));
-
-    if (form.isNotValid) return;
-
-    emit(state.copyWith(submit: BaseState.loading()));
-
-    late final List<MultipartFile> attachments;
-    try {
-      attachments = form.attachments.value
-          .map(AppUtility.toPickedMultipartFile)
-          .toList();
-    } on Failure catch (failure) {
-      emit(state.copyWith(submit: BaseState.failure(failure)));
+  Future<void> submit({bool isAttachmentRequired = false}) async {
+    if (_isSubmittingAction || isClosed || state.submit.isSuccess) {
       return;
     }
+    _isSubmittingAction = true;
+    try {
+      final form = state.form.copyWith(
+        date: DateInput.dirty(state.form.date.value),
+        startTime: StartTimeInput.dirty(state.form.startTime.value),
+        endTime: EndTimeInput.dirty(state.form.endTime.value),
+        reason: ReasonInput.dirty(state.form.reason.value),
+        attachments: AttachmentsInput.dirty(
+          state.form.attachments.value,
+          isRequired: isAttachmentRequired,
+        ),
+      );
+      emit(state.copyWith(form: form));
 
-    final params = CreateOvertimeRequestParams(
-      date: form.date.value,
-      startTime: form.startTime.value,
-      endTime: form.endTime.value,
-      reason: form.reason.value ?? '',
-      attachments: attachments,
-    );
-    final result = _request == null
-        ? await createOvertimeRequestUseCase.call(params)
-        : await updateOvertimeRequestUseCase.call(_request!.id, params);
+      if (form.isNotValid) return;
 
-    result.fold(
-      (failure) {
+      emit(state.copyWith(submit: BaseState.loading()));
+
+      late final List<MultipartFile> attachments;
+      try {
+        attachments = form.attachments.value
+            .map(AppUtility.toPickedMultipartFile)
+            .toList();
+      } on Failure catch (failure) {
         emit(state.copyWith(submit: BaseState.failure(failure)));
-      },
-      (_) {
-        emit(state.copyWith(submit: BaseState.success(null)));
-      },
-    );
+        return;
+      }
+
+      final params = CreateOvertimeRequestParams(
+        date: form.date.value,
+        startTime: form.startTime.value,
+        endTime: form.endTime.value,
+        reason: form.reason.value ?? '',
+        attachments: attachments,
+      );
+      final result = _request == null
+          ? await createOvertimeRequestUseCase.call(params)
+          : await updateOvertimeRequestUseCase.call(_request!.id, params);
+
+      if (isClosed) return;
+      result.fold(
+        (failure) {
+          emit(state.copyWith(submit: BaseState.failure(failure)));
+        },
+        (_) {
+          emit(state.copyWith(submit: BaseState.success(null)));
+        },
+      );
+    } catch (_) {
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            submit: BaseState.failure(
+              UnknownFailure(
+                message: 'Pengajuan gagal diproses, silakan coba lagi',
+              ),
+            ),
+          ),
+        );
+      }
+    } finally {
+      _isSubmittingAction = false;
+    }
   }
 
   void onChangeDate(DateTime? value) async {

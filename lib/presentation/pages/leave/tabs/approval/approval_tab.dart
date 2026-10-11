@@ -51,9 +51,11 @@ class LeaveApprovalView extends StatelessWidget {
           final cubit = context.read<LeaveApprovalCubit>();
 
           void onTapLeaveRequestCard(LeaveRequest request) {
+            if (context.read<LeaveApprovalCubit>().approvalBusy.value) return;
             final cubit = context.read<LeaveApprovalCubit>();
 
             AppBottomSheet.show(
+              busyListenable: cubit.approvalBusy,
               context: context,
               onClose: () =>
                   cubit.onChangeApprovalAction(LeaveApprovalAction.none),

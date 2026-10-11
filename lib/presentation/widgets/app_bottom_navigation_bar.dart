@@ -137,6 +137,7 @@ class AppBottomNavigationBar extends StatelessWidget {
     String label,
     VoidCallback onTap, {
     bool enabled = true,
+    bool isLoading = false,
   }) {
     final isCheckOut = label.toLowerCase().contains('out');
     final backgroundColor = !enabled
@@ -175,20 +176,31 @@ class AppBottomNavigationBar extends StatelessWidget {
               shape: const CircleBorder(),
               child: InkWell(
                 borderRadius: const BorderRadius.all(Radius.circular(32)),
-                onTap: enabled ? onTap : null,
-                child: Icon(
-                  PhosphorIcons.fingerprint,
-                  color: enabled
-                      ? Colors.white
-                      : Colors.white.withValues(alpha: 0.75),
-                  size: _mainButtonIconSize,
-                ),
+                onTap: enabled && !isLoading ? onTap : null,
+                child: isLoading
+                    ? const Center(
+                        child: SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        ),
+                      )
+                    : Icon(
+                        PhosphorIcons.fingerprint,
+                        color: enabled
+                            ? Colors.white
+                            : Colors.white.withValues(alpha: 0.75),
+                        size: _mainButtonIconSize,
+                      ),
               ),
             ),
           ),
           const SizedBox(height: 6),
           Text(
-            label,
+            isLoading ? 'Memproses...' : label,
             style: context.theme.textTheme.labelSmall?.copyWith(
               color: AppColors.labelSecondary,
             ),

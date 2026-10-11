@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+import 'package:presensi_data/presensi_data.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:presensi_domain/presensi_domain.dart';
@@ -8,6 +10,10 @@ import 'approval_state.dart';
 
 class AttendanceRequestApprovalCubit
     extends Cubit<AttendanceRequestApprovalState> {
+  bool _isSubmittingAction = false;
+  final approvalBusy = ValueNotifier<bool>(false);
+  final _completedApprovalIds = <String>{};
+
   final GetMyPendingApprovals getMyPendingApprovalsUseCase;
   final CreateApproval createApprovalUseCase;
   final Logger logger;
@@ -111,34 +117,60 @@ class AttendanceRequestApprovalCubit
     );
   }
 
-  void submitApproval(AttendanceRequest request) async {
-    final approvalAction = state.approvalAction;
-    final reasonInput = ReasonInput.dirty(
-      state.reasonInput.value,
-      action: approvalAction,
-    );
+  Future<void> submitApproval(AttendanceRequest request) async {
+    if (_isSubmittingAction ||
+        isClosed ||
+        _completedApprovalIds.contains(request.id)) {
+      return;
+    }
+    _isSubmittingAction = true;
+    approvalBusy.value = true;
+    try {
+      final approvalAction = state.approvalAction;
+      final reasonInput = ReasonInput.dirty(
+        state.reasonInput.value,
+        action: approvalAction,
+      );
 
-    if (!approvalAction.isNone && reasonInput.isNotValid) return;
+      if (!approvalAction.isNone && reasonInput.isNotValid) return;
 
-    emit(state.copyWith(approvalSubmit: BaseState.loading()));
+      emit(state.copyWith(approvalSubmit: BaseState.loading()));
 
-    final params = CreateApprovalParams(
-      requestId: request.id,
-      requestType: ApprovalRequestType.request_presensi,
-      action: approvalAction,
-      reason: reasonInput.value,
-    );
-    final result = await createApprovalUseCase.call(params);
+      final params = CreateApprovalParams(
+        requestId: request.id,
+        requestType: ApprovalRequestType.request_presensi,
+        action: approvalAction,
+        reason: reasonInput.value,
+      );
+      final result = await createApprovalUseCase.call(params);
 
-    result.fold(
-      (failure) {
-        emit(state.copyWith(approvalSubmit: BaseState.failure(failure)));
-      },
-      (_) {
-        emit(state.copyWith(approvalSubmit: BaseState.success(null)));
-        getAttendanceRequests();
-      },
-    );
+      if (isClosed) return;
+      result.fold(
+        (failure) {
+          emit(state.copyWith(approvalSubmit: BaseState.failure(failure)));
+        },
+        (_) {
+          _completedApprovalIds.add(request.id);
+          emit(state.copyWith(approvalSubmit: BaseState.success(null)));
+          getAttendanceRequests();
+        },
+      );
+    } catch (_) {
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            approvalSubmit: BaseState.failure(
+              UnknownFailure(
+                message: 'Approval gagal diproses, silakan coba lagi',
+              ),
+            ),
+          ),
+        );
+      }
+    } finally {
+      _isSubmittingAction = false;
+      if (!isClosed) approvalBusy.value = false;
+    }
   }
 
   void onChangeFilterDate(DateTime? date) {
@@ -147,10 +179,16 @@ class AttendanceRequestApprovalCubit
   }
 
   void onChangeApprovalAction(AttendanceRequestApprovalAction value) {
+    if (_isSubmittingAction || isClosed) {
+      return;
+    }
     emit(state.copyWith(approvalAction: value));
   }
 
   void onChangeReason(String? value) {
+    if (_isSubmittingAction || isClosed) {
+      return;
+    }
     emit(
       state.copyWith(
         reasonInput: ReasonInput.dirty(value, action: state.approvalAction),
@@ -181,5 +219,11 @@ class AttendanceRequestApprovalCubit
     return approvals
         .where((approval) => approval.attendanceRequest != null)
         .toList();
+  }
+
+  @override
+  Future<void> close() async {
+    await super.close();
+    approvalBusy.dispose();
   }
 }

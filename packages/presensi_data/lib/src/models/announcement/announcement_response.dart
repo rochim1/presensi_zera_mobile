@@ -6,6 +6,20 @@ part 'announcement_response.g.dart';
 
 part 'announcement_response.freezed.dart';
 
+class AnnouncementDateConverter extends NullableStringTimestampConverter {
+  const AnnouncementDateConverter();
+
+  @override
+  DateTime? fromJson(String? json) {
+    if (json == null || json.trim().isEmpty) return null;
+    final value = json.trim();
+    if (int.tryParse(value) != null) return super.fromJson(value);
+    final date = DateTime.tryParse(value);
+    if (date == null) throw FormatException('Invalid announcement date', json);
+    return date;
+  }
+}
+
 @freezed
 abstract class AnnouncementResponse with _$AnnouncementResponse {
   const factory AnnouncementResponse({
@@ -22,10 +36,10 @@ abstract class AnnouncementResponse with _$AnnouncementResponse {
     required AnnouncementPriority prioritas,
 
     @JsonKey(name: 'tanggal_mulai')
-    @NullableStringTimestampConverter()
+    @AnnouncementDateConverter()
     DateTime? tanggalMulai,
     @JsonKey(name: 'tanggal_berakhir')
-    @NullableStringTimestampConverter()
+    @AnnouncementDateConverter()
     DateTime? tanggalBerakhir,
     @JsonKey(name: 'is_pinned') required bool isPinned,
     @JsonKey(name: 'show_popup') required bool showPopup,

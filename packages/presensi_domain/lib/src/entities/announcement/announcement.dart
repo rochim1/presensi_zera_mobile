@@ -36,6 +36,21 @@ class Announcement {
     this.createdAt,
     this.updatedAt,
   });
+
+  bool isUpcomingAt(DateTime now) =>
+      tanggalMulai != null && tanggalMulai!.isAfter(now);
+
+  bool isEndedAt(DateTime now) =>
+      tanggalBerakhir != null && !tanggalBerakhir!.isAfter(now);
+
+  bool isActiveAt(DateTime now) =>
+      status == 'active' && !isUpcomingAt(now) && !isEndedAt(now);
+
+  String get safeLinkUrl {
+    final uri = Uri.tryParse(linkUrl);
+    if (uri == null || !uri.isAbsolute) return '';
+    return {'http', 'https'}.contains(uri.scheme.toLowerCase()) ? linkUrl : '';
+  }
 }
 
 class AnnouncementAttachment {

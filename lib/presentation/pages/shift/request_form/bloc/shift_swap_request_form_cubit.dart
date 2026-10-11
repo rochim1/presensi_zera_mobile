@@ -1,3 +1,4 @@
+import 'package:presensi_data/presensi_data.dart';
 import 'package:bloc/bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:presensi_domain/presensi_domain.dart';
@@ -7,6 +8,8 @@ import '../formz/_formz.dart';
 import 'shift_swap_request_form_state.dart';
 
 class ShiftSwapRequestFormCubit extends Cubit<ShiftSwapRequestFormState> {
+  bool _isSubmittingAction = false;
+
   final Logger logger;
   final GetShiftScheduleById getShiftScheduleByIdUseCase;
   final GetAvailableShiftsForSwap getAvailableShiftsForSwapUseCase;
@@ -98,7 +101,9 @@ class ShiftSwapRequestFormCubit extends Cubit<ShiftSwapRequestFormState> {
                 currentShift: _request!.targetSchedule,
                 user: _request!.targetUser,
               );
-          if (!filtered.any((v) => v.currentShift.id == selected.currentShift.id)) {
+          if (!filtered.any(
+            (v) => v.currentShift.id == selected.currentShift.id,
+          )) {
             filtered.add(selected);
           }
           form = form.copyWith(
@@ -152,35 +157,56 @@ class ShiftSwapRequestFormCubit extends Cubit<ShiftSwapRequestFormState> {
   }
 
   Future<void> submit() async {
-    final form = state.form.copyWith(
-      shiftSchedule: ShiftScheduleInput.dirty(state.form.shiftSchedule.value),
-      date: DateInput.dirty(state.form.date.value),
-      targetShiftSchedule: TargetShiftScheduleInput.dirty(
-        state.form.targetShiftSchedule.value,
-      ),
-      reason: ReasonInput.dirty(state.form.reason.value),
-    );
-    emit(state.copyWith(form: form));
+    if (_isSubmittingAction || isClosed || state.submit.isSuccess) {
+      return;
+    }
+    _isSubmittingAction = true;
+    try {
+      final form = state.form.copyWith(
+        shiftSchedule: ShiftScheduleInput.dirty(state.form.shiftSchedule.value),
+        date: DateInput.dirty(state.form.date.value),
+        targetShiftSchedule: TargetShiftScheduleInput.dirty(
+          state.form.targetShiftSchedule.value,
+        ),
+        reason: ReasonInput.dirty(state.form.reason.value),
+      );
+      emit(state.copyWith(form: form));
 
-    if (!form.isValid) return;
+      if (!form.isValid) return;
 
-    emit(state.copyWith(submit: const BaseState.loading()));
-    final source = form.shiftSchedule.value!;
-    final target = form.targetShiftSchedule.value!;
-    final params = CreateShiftSwapRequestParams(
-      shiftScheduleId: source.id,
-      targetUserId: target.user.id,
-      targetScheduleId: target.currentShift.id,
-      shiftDate: form.date.value!,
-      targetShiftDate: target.currentShift.assignedDate,
-      reason: form.reason.value!.trim(),
-    );
-    final result = _request == null
-        ? await createShiftSwapRequestUseCase(params)
-        : await repository.updateShiftSwapRequest(_request!.id, params);
-    result.fold(
-      (failure) => emit(state.copyWith(submit: BaseState.failure(failure))),
-      (_) => emit(state.copyWith(submit: const BaseState.success(null))),
-    );
+      emit(state.copyWith(submit: const BaseState.loading()));
+      final source = form.shiftSchedule.value!;
+      final target = form.targetShiftSchedule.value!;
+      final params = CreateShiftSwapRequestParams(
+        shiftScheduleId: source.id,
+        targetUserId: target.user.id,
+        targetScheduleId: target.currentShift.id,
+        shiftDate: form.date.value!,
+        targetShiftDate: target.currentShift.assignedDate,
+        reason: form.reason.value!.trim(),
+      );
+      final result = _request == null
+          ? await createShiftSwapRequestUseCase(params)
+          : await repository.updateShiftSwapRequest(_request!.id, params);
+      if (isClosed) return;
+      result.fold(
+        (failure) => emit(state.copyWith(submit: BaseState.failure(failure))),
+        (_) => emit(state.copyWith(submit: const BaseState.success(null))),
+      );
+    } catch (_) {
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            submit: BaseState.failure(
+              UnknownFailure(
+                message: 'Pengajuan gagal diproses, silakan coba lagi',
+              ),
+            ),
+          ),
+        );
+      }
+    } finally {
+      _isSubmittingAction = false;
+    }
   }
 }

@@ -1,0 +1,11 @@
+# Generate only web icons using the existing Pantoo app logo.
+# dart run flutter_launcher_icons -f flutter_launcher_icons_web.yaml
+flutter_launcher_icons:
+  android: false
+  ios: false
+  image_path: "assets/icons/launcher/icon.png"
+  web:
+    generate: true
+    image_path: "assets/icons/launcher/icon.png"
+    background_color: "#FFFFFF"
+    theme_color: "#006C68"

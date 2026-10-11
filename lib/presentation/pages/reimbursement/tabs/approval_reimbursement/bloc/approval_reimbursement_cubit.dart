@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+import 'package:presensi_data/presensi_data.dart';
 import 'package:bloc/bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:presensi_domain/presensi_domain.dart';
@@ -7,6 +9,10 @@ import '../formz/reason_input.dart';
 import 'approval_reimbursement_state.dart';
 
 class ApprovalReimbursementCubit extends Cubit<ApprovalReimbursementState> {
+  bool _isSubmittingAction = false;
+  final approvalBusy = ValueNotifier<bool>(false);
+  final _completedApprovalIds = <String>{};
+
   final Logger logger;
   final GetMyPendingApprovals getMyPendingApprovalsUseCase;
   final GetReimbursementById getReimbursementByIdUseCase;
@@ -107,34 +113,60 @@ class ApprovalReimbursementCubit extends Cubit<ApprovalReimbursementState> {
     );
   }
 
-  void submitApproval(Reimbursement reimbursement) async {
-    final approvalAction = state.approvalAction;
-    final reasonInput = ReasonInput.dirty(
-      state.reasonInput.value,
-      action: approvalAction,
-    );
+  Future<void> submitApproval(Reimbursement reimbursement) async {
+    if (_isSubmittingAction ||
+        isClosed ||
+        _completedApprovalIds.contains(reimbursement.id)) {
+      return;
+    }
+    _isSubmittingAction = true;
+    approvalBusy.value = true;
+    try {
+      final approvalAction = state.approvalAction;
+      final reasonInput = ReasonInput.dirty(
+        state.reasonInput.value,
+        action: approvalAction,
+      );
 
-    if (!approvalAction.isNone && reasonInput.isNotValid) return;
+      if (!approvalAction.isNone && reasonInput.isNotValid) return;
 
-    emit(state.copyWith(approvalSubmit: BaseState.loading()));
+      emit(state.copyWith(approvalSubmit: BaseState.loading()));
 
-    final params = CreateApprovalParams(
-      requestId: reimbursement.id,
-      requestType: ApprovalRequestType.reimbursement,
-      action: approvalAction,
-      reason: reasonInput.value,
-    );
-    final result = await createApprovalUseCase.call(params);
+      final params = CreateApprovalParams(
+        requestId: reimbursement.id,
+        requestType: ApprovalRequestType.reimbursement,
+        action: approvalAction,
+        reason: reasonInput.value,
+      );
+      final result = await createApprovalUseCase.call(params);
 
-    result.fold(
-      (failure) {
-        emit(state.copyWith(approvalSubmit: BaseState.failure(failure)));
-      },
-      (_) {
-        emit(state.copyWith(approvalSubmit: BaseState.success(null)));
-        getReimbursements();
-      },
-    );
+      if (isClosed) return;
+      result.fold(
+        (failure) {
+          emit(state.copyWith(approvalSubmit: BaseState.failure(failure)));
+        },
+        (_) {
+          _completedApprovalIds.add(reimbursement.id);
+          emit(state.copyWith(approvalSubmit: BaseState.success(null)));
+          getReimbursements();
+        },
+      );
+    } catch (_) {
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            approvalSubmit: BaseState.failure(
+              UnknownFailure(
+                message: 'Approval gagal diproses, silakan coba lagi',
+              ),
+            ),
+          ),
+        );
+      }
+    } finally {
+      _isSubmittingAction = false;
+      if (!isClosed) approvalBusy.value = false;
+    }
   }
 
   void onChangeFilterDate(DateTime? value) {
@@ -143,10 +175,16 @@ class ApprovalReimbursementCubit extends Cubit<ApprovalReimbursementState> {
   }
 
   void onChangeApprovalAction(AttendanceRequestApprovalAction value) {
+    if (_isSubmittingAction || isClosed) {
+      return;
+    }
     emit(state.copyWith(approvalAction: value));
   }
 
   void onChangeReason(String? value) {
+    if (_isSubmittingAction || isClosed) {
+      return;
+    }
     emit(
       state.copyWith(
         reasonInput: ReasonInput.dirty(value, action: state.approvalAction),
@@ -182,5 +220,11 @@ class ApprovalReimbursementCubit extends Cubit<ApprovalReimbursementState> {
     );
 
     return resolved.whereType<Reimbursement>().toList();
+  }
+
+  @override
+  Future<void> close() async {
+    await super.close();
+    approvalBusy.dispose();
   }
 }

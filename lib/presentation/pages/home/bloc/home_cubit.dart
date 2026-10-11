@@ -112,7 +112,11 @@ class HomeCubit extends Cubit<HomeState> {
   Future<void> getAnnouncements() async {
     emit(state.copyWith(announcements: BaseState.loading()));
 
-    final params = GetAnnouncementsParams();
+    final params = GetAnnouncementsParams(
+      page: 1,
+      limit: 50,
+      statusWaktu: 'aktif',
+    );
     final result = await getAnnouncementsUseCase.call(params);
 
     result.fold(
@@ -156,7 +160,12 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   Future<void> onRefresh() async {
-    await Future.wait([getUnreadNotificationsCount(), getAnnouncements(), getUnreadChatCount(), getUnreadEmailCount()]);
+    await Future.wait([
+      getUnreadNotificationsCount(),
+      getAnnouncements(),
+      getUnreadChatCount(),
+      getUnreadEmailCount(),
+    ]);
   }
 
   @override

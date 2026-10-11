@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/presentation/attendance_navigation.dart';
 import 'package:action_slider/action_slider.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:file_picker/file_picker.dart';
@@ -49,6 +50,8 @@ class _HomeViewState extends State<HomeView> {
       ActionSliderController();
   final scrollController = ScrollController();
   bool _isStartingOvertime = false;
+  bool get _isOpeningAttendance =>
+      context.read<AppCubit>().attendanceFlow.value;
 
   @override
   void dispose() {
@@ -58,13 +61,37 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Future<void> onTapCheckIn() async {
-    if (!await ensureAttendanceSettingAvailable(context) || !mounted) return;
-    await context.router.push(const CheckInPageRoute());
+    final gate = context.read<AppCubit>().attendanceFlow;
+    if (!gate.tryAcquire()) return;
+    var navigationStarted = false;
+    try {
+      if (!await ensureAttendanceSettingAvailable(context) || !mounted) return;
+      navigationStarted = true;
+      await pushAttendanceWithGate(
+        context.router,
+        const CheckInPageRoute(),
+        gate,
+      );
+    } finally {
+      if (!navigationStarted) gate.release();
+    }
   }
 
   Future<void> onTapCheckOut() async {
-    if (!await ensureAttendanceSettingAvailable(context) || !mounted) return;
-    await context.router.push(const CheckOutPageRoute());
+    final gate = context.read<AppCubit>().attendanceFlow;
+    if (!gate.tryAcquire()) return;
+    var navigationStarted = false;
+    try {
+      if (!await ensureAttendanceSettingAvailable(context) || !mounted) return;
+      navigationStarted = true;
+      await pushAttendanceWithGate(
+        context.router,
+        const CheckOutPageRoute(),
+        gate,
+      );
+    } finally {
+      if (!navigationStarted) gate.release();
+    }
   }
 
   void onRefresh() async {
@@ -87,70 +114,80 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AppCubit, AppState>(
-      builder: (context, appState) {
-        return BlocBuilder<HomeCubit, HomeState>(
-          builder: (context, state) {
-            return Scaffold(
-              backgroundColor: const Color(0xFFF5F7F9),
-              body: Stack(
-                children: [
-                  AppSmartRefresher(
-                    onRefresh: () async => onRefresh(),
-                    scrollController: scrollController,
-                    child: SingleChildScrollView(
-                      child: Stack(
-                        children: [
-                          _buildGradientHeader(),
-                          SafeArea(
-                            child: LayoutBuilder(
-                              builder: (context, constraints) =>
-                                  _buildResponsiveHomeContent(
-                                    context,
-                                    constraints,
-                                    appState,
-                                    state,
-                                  ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    child: AppRevealHeader(
-                      controller: scrollController,
-                      triggerOffset: AppDimens.h128,
-                      child: Column(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            decoration: const BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage(AppImages.geometricBg),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            child: SafeArea(
-                              child: Center(
-                                child: ConstrainedBox(
-                                  constraints: const BoxConstraints(
-                                    maxWidth: 1440,
-                                  ),
-                                  child: _buildHeaderSection(appState, state),
+    return AnimatedBuilder(
+      animation: context.read<AppCubit>().attendanceFlow,
+      builder: (context, _) {
+        return BlocBuilder<AppCubit, AppState>(
+          builder: (context, appState) {
+            return BlocBuilder<HomeCubit, HomeState>(
+              builder: (context, state) {
+                return Scaffold(
+                  backgroundColor: const Color(0xFFF5F7F9),
+                  body: Stack(
+                    children: [
+                      AppSmartRefresher(
+                        onRefresh: () async => onRefresh(),
+                        scrollController: scrollController,
+                        child: SingleChildScrollView(
+                          child: Stack(
+                            children: [
+                              _buildGradientHeader(),
+                              SafeArea(
+                                child: LayoutBuilder(
+                                  builder: (context, constraints) =>
+                                      _buildResponsiveHomeContent(
+                                        context,
+                                        constraints,
+                                        appState,
+                                        state,
+                                      ),
                                 ),
                               ),
-                            ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
-                    ),
+                      Positioned(
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        child: AppRevealHeader(
+                          controller: scrollController,
+                          triggerOffset: AppDimens.h128,
+                          child: Column(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                ),
+                                decoration: const BoxDecoration(
+                                  image: DecorationImage(
+                                    image: AssetImage(AppImages.geometricBg),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                child: SafeArea(
+                                  child: Center(
+                                    child: ConstrainedBox(
+                                      constraints: const BoxConstraints(
+                                        maxWidth: 1440,
+                                      ),
+                                      child: _buildHeaderSection(
+                                        appState,
+                                        state,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                );
+              },
             );
           },
         );
@@ -378,6 +415,7 @@ class _HomeViewState extends State<HomeView> {
     }
 
     void onTapActionButton() async {
+      if (_isOpeningAttendance || _isStartingOvertime) return;
       final appCubit = context.read<AppCubit>();
 
       if (appState.isOvertimeActive) {
@@ -497,6 +535,7 @@ class _HomeViewState extends State<HomeView> {
           secondaryActionButtonLabel: getSecondaryActionButtonLabelText(),
           overtimeStartTime: appState.overtimeStartTime,
           isStartingOvertime: _isStartingOvertime,
+          isOpeningAttendance: _isOpeningAttendance,
           sliderController: attendanceSliderController,
           sliderText: getSliderText(),
           setting: appState.setting.data,
@@ -509,164 +548,210 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  void _showAkhiriLemburBottomSheet(BuildContext context, AppCubit appCubit) {
-    final TextEditingController reasonController = TextEditingController();
+  Future<void> _showAkhiriLemburBottomSheet(
+    BuildContext context,
+    AppCubit appCubit,
+  ) async {
+    final gate = appCubit.attendanceFlow;
+    if (!gate.tryAcquire()) return;
+    final reasonController = TextEditingController();
     final isAttachmentRequired =
         appCubit.state.setting.data?.isMandatorySupportingEvidence ?? false;
     List<PlatformFile> attachments = [];
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (ctx) {
-        return StatefulBuilder(
-          builder: (ctx, setSheetState) => Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(ctx).viewInsets.bottom,
-              left: 16,
-              right: 16,
-              top: 24,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Akhiri Lembur',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 16),
-                const Text('Alasan Lembur (Opsional)'),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: reasonController,
-                  decoration: const InputDecoration(
-                    hintText: 'Tuliskan alasan/kegiatan lembur...',
-                    border: OutlineInputBorder(),
-                  ),
-                  maxLines: 3,
-                ),
-                const SizedBox(height: 16),
-                AppAttachmentField(
-                  label: 'Bukti Pendukung',
-                  isRequired: isAttachmentRequired,
-                  hintText: 'Tambahkan foto atau dokumen pendukung',
-                  value: attachments.map((file) => file.name).join(', '),
-                  onDelete: () => setSheetState(() => attachments = []),
-                  onTap: () async {
-                    final result = await AppUtility.fileAttachment(
-                      false,
-                      const ['jpg', 'jpeg', 'png', 'pdf'],
-                      FileType.custom,
-                    );
-                    if (result.isEmpty || !ctx.mounted) return;
-                    setSheetState(() => attachments = [result.first]);
-                  },
-                ),
-                const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if (isAttachmentRequired && attachments.isEmpty) {
-                        AppSnackbar.showError(
-                          context,
-                          'Bukti pendukung wajib diunggah',
-                        );
-                        return;
-                      }
+    bool busy = false;
+    String? activeAction;
+    try {
+      await showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        isDismissible: false,
+        enableDrag: false,
+        builder: (ctx) => StatefulBuilder(
+          builder: (ctx, update) {
+            Future<void> run(
+              String action,
+              Future<void> Function() work,
+            ) async {
+              if (busy) return;
+              update(() {
+                busy = true;
+                activeAction = action;
+              });
+              try {
+                await work();
+              } finally {
+                if (ctx.mounted) {
+                  update(() {
+                    busy = false;
+                    activeAction = null;
+                  });
+                }
+              }
+            }
 
-                      final reason = reasonController.text.trim().isEmpty
-                          ? 'Lembur setelah presensi pulang'
-                          : reasonController.text.trim();
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (_) =>
-                            const Center(child: CircularProgressIndicator()),
-                      );
-                      final errorMessage = await appCubit.finishOvertime(
-                        reason,
-                        attachmentPaths: attachments
-                            .map((file) => file.path)
-                            .whereType<String>()
-                            .toList(),
-                      );
-                      if (!context.mounted) return;
-                      Navigator.pop(context); // close dialog
-                      if (errorMessage == null) {
-                        Navigator.pop(ctx); // close bottom sheet
-                        AppSnackbar.showSuccess(
-                          context,
-                          'Berhasil mencatat lembur',
-                        );
-                      } else {
-                        AppBottomSheet.showError(
-                          context: context,
-                          titleText: 'Gagal',
-                          message: errorMessage,
-                        );
-                      }
-                    },
-                    child: const Text('Simpan Lembur'),
-                  ),
+            Widget actionLabel(String action, String text) =>
+                busy && activeAction == action
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Text(text);
+            return PopScope(
+              canPop: !busy,
+              child: Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(ctx).viewInsets.bottom,
+                  left: 16,
+                  right: 16,
+                  top: 24,
                 ),
-                const SizedBox(height: 12),
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.red,
-                      side: const BorderSide(color: Colors.red),
-                    ),
-                    onPressed: () async {
-                      final shouldCancel = await showDialog<bool>(
-                        context: context,
-                        builder: (dialogContext) {
-                          return AlertDialog(
-                            title: const Text('Batalkan Lembur?'),
-                            content: const Text(
-                              'Mode lembur akan dihentikan tanpa menyimpan request lembur.',
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      children: [
+                        const Expanded(
+                          child: Text(
+                            'Akhiri Lembur',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
                             ),
-                            actions: [
-                              TextButton(
-                                onPressed: () =>
-                                    Navigator.pop(dialogContext, false),
-                                child: const Text('Tidak'),
-                              ),
-                              TextButton(
-                                onPressed: () =>
-                                    Navigator.pop(dialogContext, true),
-                                child: const Text('Ya, Batalkan'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-
-                      if (shouldCancel != true) return;
-
-                      final errorMessage = await appCubit.cancelOvertime();
-                      if (!mounted || !ctx.mounted) return;
-                      if (errorMessage == null) {
-                        Navigator.pop(ctx);
-                        AppSnackbar.showSuccess(context, 'Lembur dibatalkan');
-                      } else {
-                        AppBottomSheet.showError(
-                          context: context,
-                          titleText: 'Gagal',
-                          message: errorMessage,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: busy ? null : () => Navigator.pop(ctx),
+                          icon: const Icon(Icons.close),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      enabled: !busy,
+                      controller: reasonController,
+                      maxLines: 3,
+                      decoration: const InputDecoration(
+                        labelText: 'Alasan Lembur (Opsional)',
+                        hintText: 'Tuliskan alasan/kegiatan lembur...',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    AppAttachmentField(
+                      label: 'Bukti Pendukung',
+                      isRequired: isAttachmentRequired,
+                      hintText: 'Tambahkan foto atau dokumen pendukung',
+                      value: attachments.map((file) => file.name).join(', '),
+                      onDelete: () {
+                        if (!busy) update(() => attachments = []);
+                      },
+                      onTap: () => run('attachment', () async {
+                        final result = await AppUtility.fileAttachment(
+                          false,
+                          const ['jpg', 'jpeg', 'png', 'pdf'],
+                          FileType.custom,
                         );
-                      }
-                    },
-                    child: const Text('Batalkan Lembur'),
-                  ),
+                        if (ctx.mounted && result.isNotEmpty) {
+                          update(() => attachments = [result.first]);
+                        }
+                      }),
+                    ),
+                    if (busy && activeAction == 'attachment')
+                      const LinearProgressIndicator(),
+                    const SizedBox(height: 24),
+                    ElevatedButton(
+                      onPressed: busy
+                          ? null
+                          : () => run('save', () async {
+                              if (isAttachmentRequired && attachments.isEmpty) {
+                                AppSnackbar.showError(
+                                  ctx,
+                                  'Bukti pendukung wajib diunggah',
+                                );
+                                return;
+                              }
+                              final reason =
+                                  reasonController.text.trim().isEmpty
+                                  ? 'Lembur setelah presensi pulang'
+                                  : reasonController.text.trim();
+                              final error = await appCubit.finishOvertime(
+                                reason,
+                                attachmentPaths: attachments
+                                    .map((file) => file.path)
+                                    .whereType<String>()
+                                    .toList(),
+                              );
+                              if (!ctx.mounted) return;
+                              if (error == null) {
+                                Navigator.pop(ctx);
+                                if (context.mounted) {
+                                  AppSnackbar.showSuccess(
+                                    context,
+                                    'Berhasil mencatat lembur',
+                                  );
+                                }
+                              } else {
+                                AppSnackbar.showError(ctx, error);
+                              }
+                            }),
+                      child: actionLabel('save', 'Simpan Lembur'),
+                    ),
+                    const SizedBox(height: 12),
+                    OutlinedButton(
+                      onPressed: busy
+                          ? null
+                          : () => run('cancel', () async {
+                              final confirmed = await showDialog<bool>(
+                                context: ctx,
+                                builder: (dialogContext) => AlertDialog(
+                                  title: const Text('Batalkan Lembur?'),
+                                  content: const Text(
+                                    'Mode lembur akan dihentikan tanpa menyimpan request lembur.',
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(dialogContext, false),
+                                      child: const Text('Tidak'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(dialogContext, true),
+                                      child: const Text('Ya, Batalkan'),
+                                    ),
+                                  ],
+                                ),
+                              );
+                              if (confirmed != true || !ctx.mounted) return;
+                              final error = await appCubit.cancelOvertime();
+                              if (!ctx.mounted) return;
+                              if (error == null) {
+                                Navigator.pop(ctx);
+                                if (context.mounted) {
+                                  AppSnackbar.showSuccess(
+                                    context,
+                                    'Lembur dibatalkan',
+                                  );
+                                }
+                              } else {
+                                AppSnackbar.showError(ctx, error);
+                              }
+                            }),
+                      child: actionLabel('cancel', 'Batalkan Lembur'),
+                    ),
+                    const SizedBox(height: 24),
+                  ],
                 ),
-                const SizedBox(height: 24),
-              ],
-            ),
-          ),
-        );
-      },
-    );
+              ),
+            );
+          },
+        ),
+      );
+    } finally {
+      reasonController.dispose();
+      gate.release();
+    }
   }
 }

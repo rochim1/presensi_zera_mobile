@@ -58,7 +58,9 @@ class OvertimeRequestApprovalView extends StatelessWidget {
               final cubit = context.read<OvertimeRequestApprovalCubit>();
 
               void onTapOvertimeRequestCard(OvertimeRequest request) {
+                if (cubit.approvalBusy.value) return;
                 AppBottomSheet.show(
+                  busyListenable: cubit.approvalBusy,
                   context: context,
                   onClose: () {
                     cubit.onChangeApprovalAction(

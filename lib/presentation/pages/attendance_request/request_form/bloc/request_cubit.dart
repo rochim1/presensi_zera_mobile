@@ -10,6 +10,8 @@ import '../formz/_formz.dart';
 import 'request_state.dart';
 
 class AttendanceRequestFormCubit extends Cubit<AttendanceRequestFormState> {
+  bool _isSubmittingAction = false;
+
   final GetShiftSchedules getShiftSchedulesUseCase;
   final CreateAttendanceRequest createAttendanceRequestUseCase;
   final Logger logger;
@@ -41,64 +43,85 @@ class AttendanceRequestFormCubit extends Cubit<AttendanceRequestFormState> {
     return null;
   }
 
-  void submit() async {
-    final form = state.form.copyWith(
-      attendanceType: AttendanceTypeInput.dirty(
-        state.form.attendanceType.value,
-      ),
-      attendanceRequestType: AttendanceRequestTypeInput.dirty(
-        state.form.attendanceRequestType.value,
-      ),
-      attendanceDate: AttendanceDateInput.dirty(
-        state.form.attendanceDate.value,
-      ),
-      checkInTime: CheckInTimeInput.dirty(state.form.checkInTime.value),
-      checkOutTime: CheckOutTimeInput.dirty(state.form.checkOutTime.value),
-      reason: ReasonInput.dirty(state.form.reason.value),
-      attachments: AttachmentsInput.dirty(state.form.attachments.value),
-      shiftSchedule: ShiftScheduleInput.dirty(
-        state.form.shiftSchedule.value,
-        attendanceType: state.form.attendanceType.value,
-        attendanceDate: state.form.attendanceDate.value,
-      ),
-    );
-    emit(state.copyWith(form: form));
-
-    if (!form.isValid) return;
-
-    emit(state.copyWith(submit: BaseState.loading()));
-
-    late final List<MultipartFile> attachments;
-    try {
-      attachments = form.attachments.value
-          .map(AppUtility.toPickedMultipartFile)
-          .toList();
-    } on Failure catch (failure) {
-      emit(state.copyWith(submit: BaseState.failure(failure)));
+  Future<void> submit() async {
+    if (_isSubmittingAction || isClosed || state.submit.isSuccess) {
       return;
     }
+    _isSubmittingAction = true;
+    try {
+      final form = state.form.copyWith(
+        attendanceType: AttendanceTypeInput.dirty(
+          state.form.attendanceType.value,
+        ),
+        attendanceRequestType: AttendanceRequestTypeInput.dirty(
+          state.form.attendanceRequestType.value,
+        ),
+        attendanceDate: AttendanceDateInput.dirty(
+          state.form.attendanceDate.value,
+        ),
+        checkInTime: CheckInTimeInput.dirty(state.form.checkInTime.value),
+        checkOutTime: CheckOutTimeInput.dirty(state.form.checkOutTime.value),
+        reason: ReasonInput.dirty(state.form.reason.value),
+        attachments: AttachmentsInput.dirty(state.form.attachments.value),
+        shiftSchedule: ShiftScheduleInput.dirty(
+          state.form.shiftSchedule.value,
+          attendanceType: state.form.attendanceType.value,
+          attendanceDate: state.form.attendanceDate.value,
+        ),
+      );
+      emit(state.copyWith(form: form));
 
-    final params = CreateAttendanceRequestParams(
-      attendanceDate: form.attendanceDate.value,
-      attendanceType: form.attendanceType.value,
-      attachments: attachments,
-      attendanceRequestType: form.attendanceRequestType.value,
-      attendanceTime: _constructAttendanceTime(form),
-      reason: form.reason.value,
-      shiftId: form.shiftSchedule.value?.id,
-    );
-    final result = _request == null
-        ? await createAttendanceRequestUseCase.call(params)
-        : await repository.updateAttendanceRequest(_request!.id, params);
+      if (!form.isValid) return;
 
-    result.fold(
-      (failure) {
+      emit(state.copyWith(submit: BaseState.loading()));
+
+      late final List<MultipartFile> attachments;
+      try {
+        attachments = form.attachments.value
+            .map(AppUtility.toPickedMultipartFile)
+            .toList();
+      } on Failure catch (failure) {
         emit(state.copyWith(submit: BaseState.failure(failure)));
-      },
-      (_) {
-        emit(state.copyWith(submit: BaseState.success(null)));
-      },
-    );
+        return;
+      }
+
+      final params = CreateAttendanceRequestParams(
+        attendanceDate: form.attendanceDate.value,
+        attendanceType: form.attendanceType.value,
+        attachments: attachments,
+        attendanceRequestType: form.attendanceRequestType.value,
+        attendanceTime: _constructAttendanceTime(form),
+        reason: form.reason.value,
+        shiftId: form.shiftSchedule.value?.id,
+      );
+      final result = _request == null
+          ? await createAttendanceRequestUseCase.call(params)
+          : await repository.updateAttendanceRequest(_request!.id, params);
+
+      if (isClosed) return;
+      result.fold(
+        (failure) {
+          emit(state.copyWith(submit: BaseState.failure(failure)));
+        },
+        (_) {
+          emit(state.copyWith(submit: BaseState.success(null)));
+        },
+      );
+    } catch (_) {
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            submit: BaseState.failure(
+              UnknownFailure(
+                message: 'Pengajuan gagal diproses, silakan coba lagi',
+              ),
+            ),
+          ),
+        );
+      }
+    } finally {
+      _isSubmittingAction = false;
+    }
   }
 
   void onChangeAttendanceType(AttendanceType? value) {
