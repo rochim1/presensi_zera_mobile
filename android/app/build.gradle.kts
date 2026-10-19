@@ -63,7 +63,7 @@ android {
             dimension = "app"
             applicationId = "com.pantoo.presensi.dev"
             versionCode = flutterVersionCode.toInt()
-            versionName = flutterVersionCode.toString()
+            versionName = flutterVersionName
             resValue("string", "app_name", "Pantoo HR [dev]")
             manifestPlaceholders["usesCleartextTraffic"] = "true"
             manifestPlaceholders["googleMapsApiKey"] = googleMapsApiKey
