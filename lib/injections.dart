@@ -191,8 +191,8 @@ void _bloc() {
   // Common
   sl.registerFactory<AppCameraCubit>(() => AppCameraCubit());
 
-  // Global
-  sl.registerFactory(
+  // The UI and logout must resolve the same application session.
+  sl.registerLazySingleton(
     () => AppCubit(
       getActiveAttendanceUseCase: sl(),
       getAttendancesUseCase: sl(),

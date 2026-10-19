@@ -6,6 +6,7 @@ import 'package:presensi_mobile/core/_core.dart';
 import 'attendance_state.dart';
 
 class AttendanceCubit extends Cubit<AttendanceState> {
+  String? currentUserId;
   final Logger logger;
   final GetAttendanceStatistics getAttendanceStatisticsUseCase;
 
@@ -32,12 +33,21 @@ class AttendanceCubit extends Cubit<AttendanceState> {
   }
 
   Future<void> fetchStatistics() async {
-    if (state.startDate == null || state.endDate == null) return;
+    if (currentUserId == null ||
+        state.startDate == null ||
+        state.endDate == null) {
+      return;
+    }
 
     emit(state.copyWith(statistics: const BaseState.loading()));
 
     final result = await getAttendanceStatisticsUseCase.call(
-      GetAttendancesParams(startDate: state.startDate, endDate: state.endDate),
+      GetAttendancesParams(
+        userId: currentUserId,
+        startDate: state.startDate,
+        endDate: state.endDate,
+        typePresensi: state.typePresensi,
+      ),
     );
 
     result.fold(

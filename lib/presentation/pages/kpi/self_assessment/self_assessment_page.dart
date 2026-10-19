@@ -1,3 +1,4 @@
+import 'package:presensi_domain/presensi_domain.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -69,6 +70,13 @@ class SelfAssessmentView extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _buildHeader(context, data),
+                          if (data.finalScore != null)
+                            Padding(padding: const EdgeInsets.only(top: 12), child: Text('Hasil review: ${data.finalScore} / 5 • Grade ${data.finalGrade ?? "-"}')),
+                          if (data.sourceUpdateMessage?.isNotEmpty == true)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 16),
+                              child: Text(data.sourceUpdateMessage!),
+                            ),
                           const SizedBox(height: 24),
                           ...data.scores?.map((score) {
                                 if (score.indicator == null ||
@@ -237,9 +245,18 @@ class SelfAssessmentView extends StatelessWidget {
                   ),
               ],
             ),
+            if (isReadonly && score.managerRating != null)
+              Padding(padding: const EdgeInsets.only(top: 12), child: Text('Nilai pemeriksa: ${score.managerRating} / 5 • Kontribusi: ${score.nilaiTerbobot ?? 0}')),
+            if (score.nilaiRating != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: Text(
+                  'Rating otomatis: ${score.nilaiRating} / 5. Nilai akhir mengikuti penilaian pemeriksa.',
+                ),
+              ),
             const SizedBox(height: 16),
             Text(
-              'Penilaian Anda',
+              isReadonly ? 'Penilaian pribadi sebelumnya' : 'Penilaian Anda',
               style: context.textStyle.bodyMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -291,7 +308,10 @@ class SelfAssessmentView extends StatelessWidget {
     );
   }
 
-  Future<void> _confirmSubmit(BuildContext context, dynamic assignment) async {
+  Future<void> _confirmSubmit(
+    BuildContext context,
+    KpiAssignment assignment,
+  ) async {
     final cubit = context.read<SelfAssessmentCubit>();
     final indicatorIds = (assignment.scores ?? [])
         .map((score) => score.indicator?.id)

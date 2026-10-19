@@ -31,8 +31,8 @@ class MyKpiView extends StatelessWidget {
     'Pengumpulan Data',
     'Self Assessment',
     'Menunggu Review',
-    'Completed',
-    'Acknowledged',
+    'Menunggu Konfirmasi',
+    'Selesai',
   ];
 
   static const Map<String, String?> _statusMap = {
@@ -41,8 +41,8 @@ class MyKpiView extends StatelessWidget {
     'Pengumpulan Data': 'data_collection',
     'Self Assessment': 'self_review',
     'Menunggu Review': 'manager_review',
-    'Completed': 'completed',
-    'Acknowledged': 'acknowledged',
+    'Menunggu Konfirmasi': 'completed',
+    'Selesai': 'acknowledged',
   };
 
   @override
@@ -55,7 +55,7 @@ class MyKpiView extends StatelessWidget {
             AppSnackbar.showError(context, f.message);
           },
           success: (_) {
-            AppSnackbar.showSuccess(context, 'Berhasil acknowledge KPI');
+            AppSnackbar.showSuccess(context, 'Hasil KPI berhasil dikonfirmasi');
           },
         );
       },
@@ -105,7 +105,9 @@ class MyKpiView extends StatelessWidget {
                         context.router
                             .push(SelfAssessmentPageRoute(id: assignmentId))
                             .then((_) {
-                              context.read<MyKpiCubit>().fetchAssignments();
+                              if (context.mounted) {
+                                context.read<MyKpiCubit>().fetchAssignments();
+                              }
                             });
                       },
                 onAcknowledge: !hasValidId || state.actionState.isLoading
@@ -114,9 +116,13 @@ class MyKpiView extends StatelessWidget {
                 onDetail: !hasValidId
                     ? null
                     : () {
-                        context.router.push(
-                          SelfAssessmentPageRoute(id: assignmentId),
-                        );
+                        context.router
+                            .push(SelfAssessmentPageRoute(id: assignmentId))
+                            .then((_) {
+                              if (context.mounted) {
+                                context.read<MyKpiCubit>().fetchAssignments();
+                              }
+                            });
                       },
               ),
             );
@@ -135,7 +141,7 @@ class MyKpiView extends StatelessWidget {
       builder: (dialogContext) => AlertDialog(
         title: const Text('Konfirmasi KPI'),
         content: const Text(
-          'Dengan mengakui hasil ini, status KPI akan berubah dan tidak dapat dikembalikan dari aplikasi.',
+          'Konfirmasi bahwa Anda sudah membaca hasil KPI. Jika ada koreksi presensi yang disetujui, sistem dapat meminta review dan konfirmasi ulang.',
         ),
         actions: [
           TextButton(

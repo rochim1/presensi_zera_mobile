@@ -107,7 +107,8 @@ class GlobalPostFcmCubit extends Cubit<GlobalPostFcmState> {
 
   @pragma('vm:entry-point')
   static Future<void> backgroundHandler(RemoteMessage message) async {
-    await Firebase.initializeApp(name: kAppName, options: fl.values!.options);
+    // A background isolate has no UI dependency locator/flavor instance.
+    await Firebase.initializeApp();
   }
 
   Future<void> _foregroundHandler(BuildContext context) async {

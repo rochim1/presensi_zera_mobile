@@ -22,15 +22,14 @@ class User {
   bool hasPermission(String module, {String? action}) {
     if (isAdmin == true) return true;
     if (rolePermissions?.isFullAccess == true) return true;
-    final perm = rolePermissions?.permissions?.firstWhere(
-      (p) => p.module == module,
-      orElse: () => const RolePermissionEntity(),
-    );
-    if (perm?.module == null) return false;
-    if (action != null) {
-      return perm?.actions?.contains(action) ?? false;
-    }
-    return true;
+    // API and Hive can provide List<RolePermissionModel>, a subtype of the
+    // entity list. Avoid a firstWhere fallback returning the base entity.
+    return rolePermissions?.permissions?.any(
+          (permission) =>
+              permission.module == module &&
+              (action == null || permission.actions?.contains(action) == true),
+        ) ??
+        false;
   }
 }
 

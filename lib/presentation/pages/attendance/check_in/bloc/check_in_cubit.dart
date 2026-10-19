@@ -30,7 +30,10 @@ class CheckInCubit extends Cubit<CheckInState> {
     final mode = state.attendanceMode;
     final form = state.form.copyWith(
       location: LocationInput.dirty(state.form.location.value),
-      attachment: AttachmentInput.dirty(state.form.attachment.value),
+      attachment: AttachmentInput.dirty(
+        state.form.attachment.value,
+        isRequired: state.form.attachment.isRequired,
+      ),
       keterangan: NoteInput.dirty(state.form.keterangan.value),
       photo: SelfieInput.dirty(state.form.photo.value, mode: mode),
     );
@@ -102,7 +105,12 @@ class CheckInCubit extends Cubit<CheckInState> {
   }
 
   void onChangeAttachment(List<PlatformFile> value) {
-    final form = state.form.copyWith(attachment: AttachmentInput.dirty(value));
+    final form = state.form.copyWith(
+      attachment: AttachmentInput.dirty(
+        value,
+        isRequired: state.form.attachment.isRequired,
+      ),
+    );
 
     emit(state.copyWith(form: form));
   }
@@ -138,10 +146,21 @@ class CheckInCubit extends Cubit<CheckInState> {
     }
   }
 
-  void init(SettingAttendanceMode mode, {AttendanceType? initialPresenceType}) {
+  void init(
+    SettingAttendanceMode mode, {
+    AttendanceType? initialPresenceType,
+    bool requiredEvidence = false,
+  }) {
     if (initialPresenceType != null) {
       onChangePresenceType(initialPresenceType);
     }
+    emit(
+      state.copyWith(
+        form: state.form.copyWith(
+          attachment: AttachmentInput.pure(isRequired: requiredEvidence),
+        ),
+      ),
+    );
     setAttendanceMode(mode);
     getCurrentAddress();
     _startTimer();

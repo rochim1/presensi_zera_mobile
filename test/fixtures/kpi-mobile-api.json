@@ -1,0 +1,109 @@
+{
+  "detail": {
+    "_id": "6ad314e0e12d42be7af53879",
+    "user_id": {
+      "_id": "6ad3146d15ed3cc2d0196ef1",
+      "name": "QA Mobile peer",
+      "username": "qa_mobile_peer17a",
+      "foto": {
+        "url_path": null
+      },
+      "divisi_id": {
+        "_id": "6ad3146d15ed3cc2d0196eeb",
+        "nama_divisi": "QA Mobile KPI 17A"
+      },
+      "jabatan_id": {
+        "_id": "6acee9a8c0beae1d2de7c7f1",
+        "nama_jabatan": "Staff"
+      }
+    },
+    "template_id": {
+      "_id": "6ad314dfe12d42be7af5386c",
+      "nama_template": "QA Mobile KPI 17A",
+      "allow_self_assessment": true,
+      "anonymous_peer_review": true
+    },
+    "periode_label": "QA Oktober 2026 17A",
+    "tanggal_mulai": "1790812800000",
+    "tanggal_selesai": "1793404800000",
+    "status": "acknowledged",
+    "final_score": 4.2,
+    "final_grade": "A",
+    "catatan_karyawan_global": null,
+    "catatan_reviewer_global": null,
+    "self_submitted_at": "1792218533052",
+    "manager_reviewed_at": "1792218533177",
+    "acknowledged_at": "1792218533267",
+    "scores": [
+      {
+        "indicator_id": {
+          "_id": "6ad314dfe12d42be7af5385d",
+          "nama_indikator": "Kualitas kerja QA",
+          "deskripsi": null,
+          "tipe_data": "manual",
+          "satuan": "rating",
+          "category_id": {
+            "_id": "6ad314dfe12d42be7af53856",
+            "nama_kategori": "QA Mobile 17A"
+          }
+        },
+        "bobot": 60,
+        "target": 5,
+        "target_minimum": 0,
+        "target_max": 0,
+        "nilai_aktual": null,
+        "sumber": null,
+        "self_rating": 4,
+        "catatan_karyawan": "QA penilaian pribadi",
+        "manager_rating": 5,
+        "catatan_reviewer": "QA hasil review",
+        "nilai_rating": null,
+        "nilai_terbobot": 3,
+        "auto_data": null
+      },
+      {
+        "indicator_id": {
+          "_id": "6ad314dfe12d42be7af53864",
+          "nama_indikator": "Kerja sama QA",
+          "deskripsi": null,
+          "tipe_data": "manual",
+          "satuan": "rating",
+          "category_id": {
+            "_id": "6ad314dfe12d42be7af53856",
+            "nama_kategori": "QA Mobile 17A"
+          }
+        },
+        "bobot": 40,
+        "target": 5,
+        "target_minimum": 0,
+        "target_max": 0,
+        "nilai_aktual": null,
+        "sumber": null,
+        "self_rating": 5,
+        "catatan_karyawan": "QA penilaian pribadi",
+        "manager_rating": 3,
+        "catatan_reviewer": "QA hasil review",
+        "nilai_rating": null,
+        "nilai_terbobot": 1.2,
+        "auto_data": null
+      }
+    ],
+    "createdAt": "1792218336026",
+    "updatedAt": "1792218533268"
+  },
+  "summary": {
+    "total_karyawan": 2,
+    "completed": 1,
+    "in_progress": 0,
+    "not_started": 1,
+    "avg_score": 4.2,
+    "grade_distribution": [
+      {
+        "grade": "A",
+        "label": "QA A",
+        "count": 1,
+        "warna": ""
+      }
+    ]
+  }
+}

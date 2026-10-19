@@ -1,3 +1,5 @@
+import 'package:presensi_mobile/presentation/bloc/app/app_cubit.dart';
+import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,14 +17,72 @@ class AttendancePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => sl<AttendanceCubit>()..init(),
+      create: (context) => sl<AttendanceCubit>()
+        ..currentUserId = context.read<AppCubit>().state.user.data?.id
+        ..init(),
       child: const AttendanceView(),
     );
   }
 }
 
-class AttendanceView extends StatelessWidget {
+class AttendanceView extends StatefulWidget {
   const AttendanceView({super.key});
+
+  @override
+  State<AttendanceView> createState() => _AttendanceViewState();
+}
+
+class _AttendanceViewState extends State<AttendanceView>
+    with WidgetsBindingObserver {
+  bool _refreshing = true;
+  bool _verified = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _refreshPolicy());
+  }
+
+  Future<void> _refreshPolicy() async {
+    if (!mounted) return;
+    setState(() {
+      _refreshing = true;
+      _verified = false;
+    });
+    final refreshed = await context.read<AppCubit>().getSetting();
+    if (!mounted) return;
+    if (context.read<AppCubit>().state.setting.data?.canViewTeamAttendance !=
+        true) {
+      _clearNameFilter();
+    }
+    setState(() {
+      _refreshing = false;
+      _verified = refreshed;
+    });
+  }
+
+  void _clearNameFilter() {
+    final cubit = context.read<AttendanceCubit>();
+    final filter = cubit.state;
+    if (filter.searchName == null) return;
+    cubit.applyFilters(
+      startDate: filter.startDate,
+      endDate: filter.endDate,
+      typePresensi: filter.typePresensi,
+    );
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) unawaited(_refreshPolicy());
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
 
   String _buildFilterSummary(AttendanceState state) {
     final List<String> filters = [];
@@ -49,17 +109,47 @@ class AttendanceView extends StatelessWidget {
     return BlocBuilder<AttendanceCubit, AttendanceState>(
       builder: (context, state) {
         final cubit = context.read<AttendanceCubit>();
+        final appState = context.watch<AppCubit>().state;
+        final canViewTeam =
+            !_refreshing &&
+            _verified &&
+            appState.setting.data?.canViewTeamAttendance == true;
         return Scaffold(
           appBar: AppTopBar(
             title: 'Presensi',
+            actions: [
+              IconButton(
+                tooltip: 'Perbarui pengaturan presensi',
+                onPressed: _refreshing ? null : _refreshPolicy,
+                icon: const Icon(Icons.refresh),
+              ),
+            ],
             showBackButton: true,
             onBackTap: () => context.tabsRouter.setActiveIndex(0),
             backgroundColor: AppColors.transparent,
           ),
           body: AutoTabsRouter.tabBar(
-            routes: [MyAttendancePageRoute(), AttendancesPageRoute()],
+            key: ValueKey(canViewTeam),
+            routes: [
+              MyAttendancePageRoute(),
+              if (canViewTeam) AttendancesPageRoute(),
+            ],
             builder: (context, child, tabController) => NestedScrollView(
               headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                    child: Text(
+                      _refreshing
+                          ? 'Memperbarui izin presensi…'
+                          : !_verified
+                          ? 'Izin tim belum dapat diperbarui. Periksa koneksi lalu ketuk tombol perbarui.'
+                          : canViewTeam
+                          ? 'Anda dapat melihat presensi tim sesuai izin admin. Ringkasan di bawah adalah presensi Anda.'
+                          : 'Admin membatasi akses ke presensi Anda sendiri.',
+                    ),
+                  ),
+                ),
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
@@ -77,7 +167,9 @@ class AttendanceView extends StatelessWidget {
                             initialEndDate: state.endDate,
                             initialTypePresensi: state.typePresensi,
                             initialSearchName: state.searchName,
-                            showSearchName: context.tabsRouter.activeIndex == 1,
+                            showSearchName:
+                                canViewTeam &&
+                                context.tabsRouter.activeIndex == 1,
                             onApply: (start, end, type, name) {
                               cubit.applyFilters(
                                 startDate: start,
@@ -150,9 +242,13 @@ class AttendanceView extends StatelessWidget {
                           vertical: AppDimens.paddingSmallX,
                         ),
                         child: AppTabBar(
-                          tabs: const ['Presensi Saya', 'Presensi User'],
+                          tabs: [
+                            'Presensi Saya',
+                            if (canViewTeam) 'Presensi Tim',
+                          ],
                           currentIndex: context.tabsRouter.activeIndex,
                           onTap: (index) {
+                            if (index == 0) _clearNameFilter();
                             context.tabsRouter.setActiveIndex(index);
                             tabController.animateTo(index);
                           },

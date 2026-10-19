@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/presentation/session_restore_gate.dart';
 import 'package:presensi_mobile/presentation/attendance_navigation.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -416,45 +417,50 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                                     }
                                   }
 
-                                  return PopScope(
-                                    canPop: false,
-                                    onPopInvokedWithResult:
-                                        (didPop, result) async {
-                                          if (didPop) return;
-                                          if (tabsRouter.activeIndex != 0) {
-                                            tabsRouter.setActiveIndex(0);
-                                            return;
-                                          }
+                                  return SessionRestoreGate(
+                                    state: state,
+                                    onRetry: () =>
+                                        context.read<AppCubit>().onRefresh(),
+                                    child: PopScope(
+                                      canPop: false,
+                                      onPopInvokedWithResult:
+                                          (didPop, result) async {
+                                            if (didPop) return;
+                                            if (tabsRouter.activeIndex != 0) {
+                                              tabsRouter.setActiveIndex(0);
+                                              return;
+                                            }
 
-                                          final shouldPop =
-                                              await AppModalBottom.handleWillPop(
-                                                context,
-                                              );
-                                          if (shouldPop && context.mounted) {
-                                            Navigator.of(context).pop();
-                                          }
-                                        },
-                                    child: Scaffold(
-                                      floatingActionButtonLocation:
-                                          FloatingActionButtonLocation
-                                              .centerDocked,
-                                      floatingActionButton:
-                                          AppBottomNavigationBar.buildMainActionButton(
-                                            context,
-                                            getActionButtonLabel(),
-                                            onTapActionButton,
-                                            enabled:
-                                                !state.isOvertimeActive &&
-                                                !_isOpeningAttendance,
-                                            isLoading: _isOpeningAttendance,
-                                          ),
-                                      bottomNavigationBar:
-                                          AppBottomNavigationBar(
-                                            currentIndex:
-                                                tabsRouter.activeIndex,
-                                            onTap: tabsRouter.setActiveIndex,
-                                          ),
-                                      body: child,
+                                            final shouldPop =
+                                                await AppModalBottom.handleWillPop(
+                                                  context,
+                                                );
+                                            if (shouldPop && context.mounted) {
+                                              Navigator.of(context).pop();
+                                            }
+                                          },
+                                      child: Scaffold(
+                                        floatingActionButtonLocation:
+                                            FloatingActionButtonLocation
+                                                .centerDocked,
+                                        floatingActionButton:
+                                            AppBottomNavigationBar.buildMainActionButton(
+                                              context,
+                                              getActionButtonLabel(),
+                                              onTapActionButton,
+                                              enabled:
+                                                  !state.isOvertimeActive &&
+                                                  !_isOpeningAttendance,
+                                              isLoading: _isOpeningAttendance,
+                                            ),
+                                        bottomNavigationBar:
+                                            AppBottomNavigationBar(
+                                              currentIndex:
+                                                  tabsRouter.activeIndex,
+                                              onTap: tabsRouter.setActiveIndex,
+                                            ),
+                                        body: child,
+                                      ),
                                     ),
                                   );
                                 },

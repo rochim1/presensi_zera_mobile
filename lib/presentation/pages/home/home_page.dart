@@ -524,7 +524,7 @@ class _HomeViewState extends State<HomeView> {
       builder: (context, state) {
         return HomeAttendanceCard(
           isLoading: appState.user.isLoading,
-          attendance: activeAttendance,
+          attendance: activeAttendance ?? appState.lastTodayAttendance,
           effectiveSchedule: appState.effectiveSchedule.data,
           onTapActionButton: onTapActionButton,
           onTapSecondaryActionButton:

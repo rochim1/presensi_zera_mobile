@@ -10,6 +10,12 @@ part 'setting_response.freezed.dart';
 abstract class SettingResponse with _$SettingResponse {
   const factory SettingResponse({
     @JsonKey(name: '_id') required String id,
+    @JsonKey(name: 'can_view_team_attendance')
+    @Default(false)
+    bool canViewTeamAttendance,
+    @JsonKey(name: 'employee_attendance_visibility')
+    @Default('team')
+    String employeeAttendanceVisibility,
 
     @JsonKey(name: 'jam_masuk') @TimeConverter() DateTime? jamMasuk,
     @JsonKey(name: 'jam_pulang') @TimeConverter() DateTime? jamPulang,

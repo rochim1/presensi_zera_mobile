@@ -143,10 +143,27 @@ class _CreateCalendarEventSheetState extends State<CreateCalendarEventSheet> {
   }
 
   Future<void> _submit() async {
+    if (_submitting) return;
     if (!_formKey.currentState!.validate()) return;
     if (_recurring && _recurringType == null) {
       AppSnackbar.showError(context, 'Pilih tipe pengulangan');
       return;
+    }
+    if (!_allDay) {
+      if (_startTime == null || _endTime == null) {
+        AppSnackbar.showError(context, 'Waktu mulai dan selesai harus diisi');
+        return;
+      }
+      final sameDay = _date(_endDate ?? _startDate) == _date(_startDate);
+      final startMinutes = _startTime!.hour * 60 + _startTime!.minute;
+      final endMinutes = _endTime!.hour * 60 + _endTime!.minute;
+      if (sameDay && endMinutes <= startMinutes) {
+        AppSnackbar.showError(
+          context,
+          'Waktu selesai harus setelah waktu mulai',
+        );
+        return;
+      }
     }
     setState(() => _submitting = true);
     final error = await widget.onSubmit({
@@ -220,6 +237,13 @@ class _CreateCalendarEventSheetState extends State<CreateCalendarEventSheet> {
               ),
             ],
           ),
+          if (widget.initialEvent?.isRecurring == true)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 8),
+              child: Text(
+                'Perubahan berlaku untuk seluruh rangkaian event. Tanggal di bawah adalah tanggal awal rangkaian.',
+              ),
+            ),
           TextFormField(
             controller: _title,
             decoration: const InputDecoration(labelText: 'Judul *'),
@@ -323,7 +347,7 @@ class _CreateCalendarEventSheetState extends State<CreateCalendarEventSheet> {
               if (!v) _recurringType = null;
             }),
           ),
-          if (_recurring)
+          if (_recurring) ...[
             DropdownButtonFormField<String>(
               initialValue: _recurringType,
               decoration: const InputDecoration(
@@ -336,6 +360,13 @@ class _CreateCalendarEventSheetState extends State<CreateCalendarEventSheet> {
               ],
               onChanged: (v) => setState(() => _recurringType = v),
             ),
+            const Padding(
+              padding: EdgeInsets.only(top: 8),
+              child: Text(
+                'Pengulangan mengikuti tanggal awal. Bulan atau tahun tanpa tanggal tersebut dilewati.',
+              ),
+            ),
+          ],
           const SizedBox(height: 16),
           FilledButton(
             onPressed: _submitting ? null : _submit,

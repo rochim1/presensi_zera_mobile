@@ -14,6 +14,8 @@ abstract class AppState with _$AppState {
     @Default(BaseState.initial()) BaseState<User> user,
     @Default(BaseState.initial())
     BaseState<EffectiveSchedule> effectiveSchedule,
+    @Default(BaseState.initial()) BaseState<bool> sessionRestore,
+    Attendance? lastTodayAttendance,
     String? overtimeStartTime,
     String? checkedOutDate,
   }) = _AppState;

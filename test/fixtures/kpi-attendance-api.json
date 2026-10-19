@@ -1,0 +1,121 @@
+{
+  "detail": {
+    "_id": "6ad404f7a893e82b33b19f0d",
+    "user_id": {
+      "_id": "6ad3146d15ed3cc2d0196eed",
+      "name": "QA Mobile employee",
+      "username": "qa_mobile_employee17a",
+      "foto": {
+        "url_path": null
+      },
+      "divisi_id": {
+        "_id": "6ad3146d15ed3cc2d0196eeb",
+        "nama_divisi": "QA Mobile KPI 17A"
+      },
+      "jabatan_id": {
+        "_id": "6acee9a8c0beae1d2de7c7f1",
+        "nama_jabatan": "Staff"
+      }
+    },
+    "template_id": {
+      "_id": "6ad404f7a893e82b33b19f03",
+      "nama_template": "QA KPI Otomatis Presensi 18",
+      "allow_self_assessment": true,
+      "anonymous_peer_review": true
+    },
+    "periode_label": "QA Presensi 17-18 Oktober",
+    "tanggal_mulai": "1792195200000",
+    "tanggal_selesai": "1792281600000",
+    "status": "acknowledged",
+    "final_score": 3.8,
+    "final_grade": "B",
+    "catatan_karyawan_global": null,
+    "catatan_reviewer_global": "",
+    "self_submitted_at": "1792280040292",
+    "manager_reviewed_at": "1792280434947",
+    "acknowledged_at": "1792280481480",
+    "source_update_message": "Review terbaru sudah menggunakan data presensi yang diperbarui.",
+    "scores": [
+      {
+        "indicator_id": {
+          "_id": "6ad404f7a893e82b33b19eed",
+          "nama_indikator": "Kehadiran sesuai jadwal",
+          "deskripsi": null,
+          "tipe_data": "otomatis",
+          "satuan": "persen",
+          "category_id": {
+            "_id": "6ad404f7a893e82b33b19ee6",
+            "nama_kategori": "QA KPI Presensi 18"
+          }
+        },
+        "bobot": 40,
+        "target": 100,
+        "target_minimum": 0,
+        "target_max": 0,
+        "nilai_aktual": 100,
+        "sumber": "auto",
+        "self_rating": 5,
+        "catatan_karyawan": null,
+        "manager_rating": 5,
+        "catatan_reviewer": "",
+        "nilai_rating": 5,
+        "nilai_terbobot": 2,
+        "auto_data": "{\"total_records\":2,\"hadir_count\":2,\"total_hari_kerja\":2,\"periode\":\"2026-10-17 - 2026-10-18\"}"
+      },
+      {
+        "indicator_id": {
+          "_id": "6ad404f7a893e82b33b19ef4",
+          "nama_indikator": "Ketepatan jam masuk",
+          "deskripsi": null,
+          "tipe_data": "otomatis",
+          "satuan": "persen",
+          "category_id": {
+            "_id": "6ad404f7a893e82b33b19ee6",
+            "nama_kategori": "QA KPI Presensi 18"
+          }
+        },
+        "bobot": 20,
+        "target": 100,
+        "target_minimum": 0,
+        "target_max": 0,
+        "nilai_aktual": 50,
+        "sumber": "auto",
+        "self_rating": 1,
+        "catatan_karyawan": null,
+        "manager_rating": 3,
+        "catatan_reviewer": "",
+        "nilai_rating": 3,
+        "nilai_terbobot": 0.6,
+        "auto_data": "{\"total_hadir\":2,\"on_time_count\":1,\"late_count\":1,\"periode\":\"2026-10-17 - 2026-10-18\"}"
+      },
+      {
+        "indicator_id": {
+          "_id": "6ad404f7a893e82b33b19efb",
+          "nama_indikator": "Rata-rata jam kerja bersih",
+          "deskripsi": null,
+          "tipe_data": "otomatis",
+          "satuan": "jam",
+          "category_id": {
+            "_id": "6ad404f7a893e82b33b19ee6",
+            "nama_kategori": "QA KPI Presensi 18"
+          }
+        },
+        "bobot": 40,
+        "target": 8,
+        "target_minimum": 0,
+        "target_max": 0,
+        "nilai_aktual": 4.1,
+        "sumber": "auto",
+        "self_rating": 1,
+        "catatan_karyawan": null,
+        "manager_rating": 3,
+        "catatan_reviewer": "",
+        "nilai_rating": 3,
+        "nilai_terbobot": 1.2,
+        "auto_data": "{\"total_hours\":8.21,\"records_with_data\":2,\"total_hadir\":2,\"periode\":\"2026-10-17 - 2026-10-18\"}"
+      }
+    ],
+    "createdAt": "1792279799989",
+    "updatedAt": "1792280481481"
+  }
+}

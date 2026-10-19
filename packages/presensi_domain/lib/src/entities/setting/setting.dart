@@ -2,6 +2,8 @@ import 'package:presensi_domain/presensi_domain.dart';
 
 class Setting {
   final String id;
+  final bool canViewTeamAttendance;
+  final String employeeAttendanceVisibility;
   final DateTime? jamMasuk;
   final DateTime? jamPulang;
   final SettingAttendanceMode? attendanceMode;
@@ -34,6 +36,8 @@ class Setting {
     this.jamMasuk,
     this.jamPulang,
     required this.id,
+    this.canViewTeamAttendance = false,
+    this.employeeAttendanceVisibility = 'team',
     this.attendanceMode,
     this.modeOrderSales = 'full',
     this.allowMobileChangeVisitVehicle = false,

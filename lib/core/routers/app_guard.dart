@@ -28,7 +28,7 @@ class AppGuard extends AutoRouteGuard {
                 );
                 return;
               }
-              if (!kIsWeb) {
+              if (!kIsWeb && !kDebugMode) {
                 fs.setUserIdentifier(user!.userId);
                 fa.setUserId(id: user.userId);
               }
@@ -41,7 +41,7 @@ class AppGuard extends AutoRouteGuard {
         predicate: (r) => true,
       ),
       (value) {
-        if (!kIsWeb) {
+        if (!kIsWeb && !kDebugMode) {
           fs.setUserIdentifier(value!.userId);
           fa.setUserId(id: value.userId);
         }

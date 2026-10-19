@@ -5,6 +5,8 @@ query GetSettingQuery($instansiId: ID) {
     _id
     jam_masuk
     jam_pulang
+    can_view_team_attendance
+    employee_attendance_visibility
     mode_presensi
     mode_order_sales
     allow_mobile_change_visit_vehicle

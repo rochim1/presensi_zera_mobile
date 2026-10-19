@@ -58,8 +58,16 @@ class AppRouter extends RootStackRouter {
 
     // Attendance
     AutoRoute(page: AttendanceDetailPageRoute.page, path: attendanceDetailPath),
-    AutoRoute(page: CheckOutPageRoute.page, path: checkOutFormPath),
-    AutoRoute(page: CheckInPageRoute.page, path: checkInFormPath),
+    AutoRoute(
+      page: CheckOutPageRoute.page,
+      path: checkOutFormPath,
+      guards: [auth],
+    ),
+    AutoRoute(
+      page: CheckInPageRoute.page,
+      path: checkInFormPath,
+      guards: [auth],
+    ),
     AutoRoute(page: TodayAttendancePageRoute.page, path: todayAttendancePath),
 
     // Announcement
@@ -256,13 +264,22 @@ class AppRouter extends RootStackRouter {
     AutoRoute(
       page: KpiPageRoute.page,
       path: kpiPath,
+      guards: [auth],
       children: [
         AutoRoute(page: MyKpiTabRoute.page, path: myKpiPath, initial: true),
         AutoRoute(page: TeamKpiTabRoute.page, path: teamKpiPath),
       ],
     ),
-    AutoRoute(page: SelfAssessmentPageRoute.page, path: selfAssessmentPath),
-    AutoRoute(page: KpiReviewPageRoute.page, path: kpiReviewPath),
+    AutoRoute(
+      page: SelfAssessmentPageRoute.page,
+      path: selfAssessmentPath,
+      guards: [auth],
+    ),
+    AutoRoute(
+      page: KpiReviewPageRoute.page,
+      path: kpiReviewPath,
+      guards: [auth],
+    ),
 
     // Fallback
     RedirectRoute(path: '*', redirectTo: mainPath),

@@ -9,7 +9,7 @@ abstract class SettingRemoteDatasource {
 }
 
 class SettingRemoteDatasourceImpl
-    with SettingGrapql
+    with SettingGrapql, AttendanceGraphQl
     implements SettingRemoteDatasource {
   final GraphQlService gql;
   final Logger logger;
@@ -35,54 +35,21 @@ class SettingRemoteDatasourceImpl
 
     final setting = response["GetOneSetting"] as Map<String, dynamic>;
 
-    // 1. Check Jam Kerja Khusus (TestUserAgainstJamKerja)
+    // The server selects special hours, shift dates and the tenant timezone.
+    // Device weekday/timezone must not select a different work schedule.
     try {
-      final khususResponse = await gql.query(
-        query: testUserAgainstJamKerjaQuery,
+      final response = await gql.query(
+        query: getEffectiveScheduleTodayQuery,
         variables: {"userId": userId},
       );
-
-      final todayDayNumber = DateTime.now().weekday % 7; // Sunday=0
-      final allKhusus =
-          khususResponse["TestUserAgainstJamKerja"] as List<dynamic>? ?? [];
-      final todayKhusus = allKhusus.cast<Map<String, dynamic>>().firstWhere(
-        (jk) => jk["day_number"] == todayDayNumber,
-        orElse: () => <String, dynamic>{},
-      );
-
-      if (todayKhusus.isNotEmpty &&
-          todayKhusus["jam_masuk"] != null &&
-          todayKhusus["jam_pulang"] != null) {
-        setting["jam_masuk"] = todayKhusus["jam_masuk"];
-        setting["jam_pulang"] = todayKhusus["jam_pulang"];
-      } else {
-        // 2. Fallback to Jam Kerja Umum
-        final regularResponse = await gql.query(
-          query: getAllJamKerjaQuery,
-          variables: {
-            "filter": {"is_default": true},
-            "pagination": {"limit": 10, "page": 0},
-            "sorting": {},
-          },
-        );
-
-        final allRegular =
-            regularResponse["getAllJamKerja"]?["jam_kerja"] as List<dynamic>? ??
-            [];
-        final todayRegular = allRegular.cast<Map<String, dynamic>>().firstWhere(
-          (jk) => jk["day_number"] == todayDayNumber,
-          orElse: () => <String, dynamic>{},
-        );
-
-        if (todayRegular.isNotEmpty &&
-            todayRegular["jam_masuk"] != null &&
-            todayRegular["jam_pulang"] != null) {
-          setting["jam_masuk"] = todayRegular["jam_masuk"];
-          setting["jam_pulang"] = todayRegular["jam_pulang"];
-        }
+      final schedule =
+          response["GetEffectiveScheduleToday"] as Map<String, dynamic>?;
+      if (schedule != null) {
+        setting["jam_masuk"] = schedule["effective_jam_masuk"];
+        setting["jam_pulang"] = schedule["effective_jam_pulang"];
       }
     } catch (e) {
-      logger.e("Error fetching jam kerja: $e");
+      logger.e("Error fetching effective work schedule: $e");
     }
 
     return SettingResponse.fromJson(setting);

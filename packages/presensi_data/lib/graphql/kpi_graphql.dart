@@ -26,6 +26,7 @@ mixin KpiGraphQl {
           self_submitted_at
           manager_reviewed_at
           acknowledged_at
+      source_update_message
           scores {
             self_rating
             bobot
@@ -75,6 +76,7 @@ mixin KpiGraphQl {
         self_submitted_at
         manager_reviewed_at
         acknowledged_at
+      source_update_message
         scores {
           indicator_id {
             _id
@@ -137,6 +139,7 @@ mixin KpiGraphQl {
           self_submitted_at
           manager_reviewed_at
           acknowledged_at
+      source_update_message
           createdAt
         }
         total
@@ -192,6 +195,7 @@ mixin KpiGraphQl {
         _id
         status
         acknowledged_at
+      source_update_message
       }
     }
   ''';

@@ -1,21 +1,35 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:presensi_mobile/core/formz/_formz.dart';
 
-enum AttachmentValidationError { max, invalidExtension }
+enum AttachmentValidationError { max, invalidExtension, empty }
 
 class AttachmentInput
     extends AppFormzInput<List<PlatformFile>, AttachmentValidationError>
     with MaxLengthListValidator<PlatformFile>, FileExtensionValidator {
-  const AttachmentInput.pure() : super.pure(const []);
+  final bool isRequired;
+  const AttachmentInput.pure({this.isRequired = false}) : super.pure(const []);
 
-  const AttachmentInput.dirty(super.value) : super.dirty();
+  const AttachmentInput.dirty(super.value, {this.isRequired = false})
+    : super.dirty();
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AttachmentInput &&
+          super == other &&
+          isRequired == other.isRequired;
+
+  @override
+  int get hashCode => Object.hash(super.hashCode, isRequired);
 
   static const int maxFile = 5;
   static const allowedExtensions = ['jpg', 'jpeg', 'png', 'pdf'];
 
   @override
   AttachmentValidationError? validator(List<PlatformFile> value) {
-    if (value.isEmpty) return null;
+    if (value.isEmpty) {
+      return isRequired ? AttachmentValidationError.empty : null;
+    }
 
     if (!hasMaxLength(value, maxFile)) {
       return AttachmentValidationError.max;
@@ -34,6 +48,8 @@ class AttachmentInput
   String? get errorMessage {
     if (isPure) return null;
     switch (error) {
+      case AttachmentValidationError.empty:
+        return 'Bukti pendukung wajib diunggah sesuai pengaturan admin';
       case AttachmentValidationError.max:
         return 'Maksimal $maxFile file';
       case AttachmentValidationError.invalidExtension:

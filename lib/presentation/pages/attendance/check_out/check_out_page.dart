@@ -19,6 +19,7 @@ import 'package:presensi_mobile/service/websocket_service.dart';
 
 import '../formz/_formz.dart';
 import 'bloc/check_out_state.dart';
+import 'package:presensi_mobile/presentation/widgets/global/web_attendance_location.dart';
 
 @RoutePage()
 class CheckOutPage extends StatelessWidget {
@@ -36,8 +37,13 @@ class CheckOutPage extends StatelessWidget {
         final attendanceType =
             appState.activeAttendance.data?.type ?? AttendanceType.shift;
         return BlocProvider(
-          key: ValueKey(mode),
-          create: (_) => sl<CheckOutCubit>()..init(mode, attendanceType),
+          key: ValueKey((mode, setting.isMandatorySupportingEvidence)),
+          create: (_) => sl<CheckOutCubit>()
+            ..init(
+              mode,
+              attendanceType,
+              requiredEvidence: setting.isMandatorySupportingEvidence,
+            ),
           child: CheckOutView(mode: mode),
         );
       },
@@ -278,6 +284,15 @@ class _CheckOutViewState extends State<CheckOutView> {
   }
 
   Widget _buildMap(LatLng latLng, bool isSuccess, CheckOutState state) {
+    if (kIsWeb && !const bool.fromEnvironment('HRMS_WEB_GOOGLE_MAPS')) {
+      return Positioned.fill(
+        child: WebAttendanceLocation(
+          ready: isSuccess,
+          latitude: latLng.latitude,
+          longitude: latLng.longitude,
+        ),
+      );
+    }
     return Positioned.fill(
       child: GoogleMap(
         initialCameraPosition: CameraPosition(target: latLng, zoom: 15),
@@ -581,7 +596,9 @@ class _CheckOutViewState extends State<CheckOutView> {
               ),
               AppDimens.paddingMedium.hSpace,
               AppAttachmentField(
-                label: 'Lampiran (Opsional)',
+                label: state.form.attachment.isRequired
+                    ? 'Bukti pendukung (Wajib)'
+                    : 'Lampiran (Opsional)',
                 hintText: 'Tambahkan foto atau dokumen pendukung',
                 errorText: state.form.attachment.errorMessage,
                 value: state.form.attachment.value

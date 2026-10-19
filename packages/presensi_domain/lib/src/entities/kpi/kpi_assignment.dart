@@ -11,6 +11,7 @@ class KpiAssignment extends Equatable {
   final String? tanggalMulai;
   final String? tanggalSelesai;
   final String? status;
+  final String? sourceUpdateMessage;
   final double? finalScore;
   final String? finalGrade;
   final String? catatanKaryawanGlobal;
@@ -30,6 +31,7 @@ class KpiAssignment extends Equatable {
     this.tanggalMulai,
     this.tanggalSelesai,
     this.status,
+    this.sourceUpdateMessage,
     this.finalScore,
     this.finalGrade,
     this.catatanKaryawanGlobal,
@@ -44,22 +46,23 @@ class KpiAssignment extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        user,
-        template,
-        periodeLabel,
-        tanggalMulai,
-        tanggalSelesai,
-        status,
-        finalScore,
-        finalGrade,
-        catatanKaryawanGlobal,
-        catatanReviewerGlobal,
-        selfSubmittedAt,
-        managerReviewedAt,
-        acknowledgedAt,
-        scores,
-        createdAt,
-        updatedAt,
-      ];
+    id,
+    user,
+    template,
+    periodeLabel,
+    tanggalMulai,
+    tanggalSelesai,
+    status,
+    sourceUpdateMessage,
+    finalScore,
+    finalGrade,
+    catatanKaryawanGlobal,
+    catatanReviewerGlobal,
+    selfSubmittedAt,
+    managerReviewedAt,
+    acknowledgedAt,
+    scores,
+    createdAt,
+    updatedAt,
+  ];
 }

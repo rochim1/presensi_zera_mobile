@@ -42,7 +42,10 @@ class CheckOutCubit extends Cubit<CheckOutState> {
     final mode = state.attendanceMode;
     final form = state.form.copyWith(
       location: LocationInput.dirty(state.form.location.value),
-      attachment: AttachmentInput.dirty(state.form.attachment.value),
+      attachment: AttachmentInput.dirty(
+        state.form.attachment.value,
+        isRequired: state.form.attachment.isRequired,
+      ),
       keterangan: NoteInput.dirty(state.form.keterangan.value),
       photo: SelfieInput.dirty(state.form.photo.value, mode: mode),
     );
@@ -154,7 +157,12 @@ class CheckOutCubit extends Cubit<CheckOutState> {
   }
 
   void onChangeAttachment(List<PlatformFile> value) {
-    final form = state.form.copyWith(attachment: AttachmentInput.dirty(value));
+    final form = state.form.copyWith(
+      attachment: AttachmentInput.dirty(
+        value,
+        isRequired: state.form.attachment.isRequired,
+      ),
+    );
 
     emit(state.copyWith(form: form));
   }
@@ -190,7 +198,18 @@ class CheckOutCubit extends Cubit<CheckOutState> {
     }
   }
 
-  void init(SettingAttendanceMode mode, AttendanceType type) {
+  void init(
+    SettingAttendanceMode mode,
+    AttendanceType type, {
+    bool requiredEvidence = false,
+  }) {
+    emit(
+      state.copyWith(
+        form: state.form.copyWith(
+          attachment: AttachmentInput.pure(isRequired: requiredEvidence),
+        ),
+      ),
+    );
     setAttendanceMode(mode);
     setAttendanceType(type);
     getCurrentAddress();

@@ -7,6 +7,7 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:location/location.dart';
+import 'package:geolocator/geolocator.dart' as geo;
 import 'package:web_socket_channel/status.dart' as ws_status;
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:presensi_mobile/service/location_disclosure_service.dart';
@@ -18,7 +19,21 @@ class BackgroundLocationService {
   static const _notificationId = 8888;
   static final _service = FlutterBackgroundService();
 
-  static Future<void> initialize() async {
+  static Future<void>? _initialization;
+
+  // Concurrent session refreshes must not configure/start duplicate engines.
+  // A failed configuration can be retried without touching stored attendance.
+  static Future<void> initialize() => kIsWeb
+      ? Future<void>.value()
+      : _initialization ??= _configure().catchError((
+          Object error,
+          StackTrace stack,
+        ) {
+          _initialization = null;
+          Error.throwWithStackTrace(error, stack);
+        });
+
+  static Future<void> _configure() async {
     const channel = AndroidNotificationChannel(
       _channelId,
       'Live tracking Pantoo',
@@ -54,6 +69,7 @@ class BackgroundLocationService {
 
   /// Dipanggil dari UI tepat setelah pengguna menyetujui pengungkapan.
   static Future<bool> ensureTrackingPermission() async {
+    if (kIsWeb) return false;
     if (!await LocationDisclosureService.ensureAccepted()) return false;
 
     final location = Location();
@@ -79,6 +95,8 @@ class BackgroundLocationService {
     required String baseUrl,
     required String token,
   }) async {
+    if (kIsWeb) return;
+    await initialize();
     final box = await Hive.openBox('background_tracking');
     await box.put('token', token);
     await box.put('baseUrl', baseUrl);
@@ -90,6 +108,7 @@ class BackgroundLocationService {
   }
 
   static Future<void> stop() async {
+    if (kIsWeb) return;
     if (await _service.isRunning()) _service.invoke('stop');
     final box = await Hive.openBox('background_tracking');
     await box.clear();
@@ -117,21 +136,25 @@ Future<void> _onStart(ServiceInstance service) async {
     );
   }
 
-  final location = Location();
-  final permission = await location.hasPermission();
-  if (permission != PermissionStatus.granted &&
-      permission != PermissionStatus.grantedLimited) {
-    if (service is AndroidServiceInstance) service.stopSelf();
+  // The location plugin's hasPermission requires an Activity. This isolate
+  // has only a Service; check existing permission without opening UI here.
+  try {
+    final permission = await geo.Geolocator.checkPermission();
+    if (permission != geo.LocationPermission.always &&
+        permission != geo.LocationPermission.whileInUse) {
+      await box.close();
+      service.stopSelf();
+      return;
+    }
+  } catch (error) {
+    debugPrint('Unable to initialize background location: $error');
+    await box.close();
+    service.stopSelf();
     return;
   }
-  await location.changeSettings(
-    accuracy: LocationAccuracy.high,
-    interval: 15000,
-    distanceFilter: 0,
-  );
 
   WebSocketChannel? socket;
-  StreamSubscription<LocationData>? locationSubscription;
+  StreamSubscription<geo.Position>? locationSubscription;
   Timer? retryTimer;
   Timer? pingTimer;
   bool authenticated = false;
@@ -168,21 +191,39 @@ Future<void> _onStart(ServiceInstance service) async {
         content: 'Lokasi dibagikan ke admin HR selama sesi kerja.',
       );
     }
-    locationSubscription = location.onLocationChanged.listen((data) {
-      if (!authenticated || socket == null) {
-        return;
-      }
-      socket!.sink.add(
-        jsonEncode({
-          'type': 'live_location',
-          'data': {
-            'latitude': data.latitude,
-            'longitude': data.longitude,
-            'timestamp': DateTime.now().toIso8601String(),
+    locationSubscription =
+        geo.Geolocator.getPositionStream(
+          locationSettings: defaultTargetPlatform == TargetPlatform.android
+              ? geo.AndroidSettings(
+                  accuracy: geo.LocationAccuracy.high,
+                  distanceFilter: 0,
+                  intervalDuration: const Duration(seconds: 15),
+                )
+              : const geo.LocationSettings(
+                  accuracy: geo.LocationAccuracy.high,
+                  distanceFilter: 0,
+                ),
+        ).listen(
+          (data) {
+            if (!authenticated || socket == null) {
+              return;
+            }
+            socket!.sink.add(
+              jsonEncode({
+                'type': 'live_location',
+                'data': {
+                  'latitude': data.latitude,
+                  'longitude': data.longitude,
+                  'timestamp': DateTime.now().toIso8601String(),
+                },
+              }),
+            );
           },
-        }),
-      );
-    });
+          onError: (Object error) {
+            debugPrint('Background location update failed: $error');
+            stopTracking();
+          },
+        );
   }
 
   late void Function() connect;

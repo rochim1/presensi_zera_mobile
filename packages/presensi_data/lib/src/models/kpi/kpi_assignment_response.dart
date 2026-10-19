@@ -16,6 +16,7 @@ abstract class KpiAssignmentResponse with _$KpiAssignmentResponse {
     String? tanggal_mulai,
     String? tanggal_selesai,
     String? status,
+    String? source_update_message,
     double? final_score,
     String? final_grade,
     String? catatan_karyawan_global,

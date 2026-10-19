@@ -486,7 +486,7 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
           const SizedBox(height: 4),
 
           // ── Slider ──
-          if (widget.attendance != null)
+          if (widget.attendance != null && widget.attendance!.jamPulang == null)
             Padding(
               padding: const EdgeInsets.all(16),
               child: SizedBox(

@@ -420,7 +420,7 @@ class AppUtility {
       context.router.navigate(const ProfileInventoryPageRoute());
     } else if (notificationType?.isNotifikasiTaskDoneToday ?? false) {
       context.router.navigate(
-        const MainPageRoute(
+        MainPageRoute(
           children: [
             DeliveryPageRoute(children: [DeliverySuccessTabRoute()]),
           ],
@@ -428,7 +428,7 @@ class AppUtility {
       );
     } else if (notificationType?.isNotifikasiTaskCancelToday ?? false) {
       context.router.navigate(
-        const MainPageRoute(
+        MainPageRoute(
           children: [
             DeliveryPageRoute(children: [DeliveryCanceledTabRoute()]),
           ],

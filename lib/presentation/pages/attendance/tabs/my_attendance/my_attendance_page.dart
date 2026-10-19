@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/presentation/bloc/app/app_cubit.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -65,7 +66,10 @@ class MyAttendanceView extends StatelessWidget {
 
           return AppInfiniteScrollView<Attendance>(
             state: state.attendances,
-            onRefresh: () async => cubit.onRefresh(),
+            onRefresh: () async {
+              await context.read<AppCubit>().getSetting();
+              if (context.mounted) await cubit.onRefresh();
+            },
             onFetchNext: () => cubit.fetchNextPage(),
             padding: EdgeInsets.symmetric(
               horizontal: AppDimens.w16,

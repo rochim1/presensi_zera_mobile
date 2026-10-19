@@ -56,8 +56,9 @@ class MyKpiCubit extends Cubit<MyKpiState> {
 
   Future<void> fetchNextPage() async {
     final current = state.assignmentState;
-    if (current.hasReachedMax || current.isLoadingNext || current.isLoading)
+    if (current.hasReachedMax || current.isLoadingNext || current.isLoading) {
       return;
+    }
     if (current.data.isEmpty) return;
 
     final nextPage = current.currentPage + 1;

@@ -96,7 +96,9 @@ class TeamKpiView extends StatelessWidget {
                         context.router
                             .push(KpiReviewPageRoute(id: assignmentId))
                             .then((_) {
-                              context.read<TeamKpiCubit>().init();
+                              if (context.mounted) {
+                                context.read<TeamKpiCubit>().init();
+                              }
                             });
                       },
                 onDetail: !hasValidId

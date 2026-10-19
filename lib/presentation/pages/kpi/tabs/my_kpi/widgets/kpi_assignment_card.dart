@@ -119,7 +119,7 @@ class KpiAssignmentCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      child: const Text('Acknowledge'),
+                      child: const Text('Akui Hasil'),
                     ),
                   ),
                 ],

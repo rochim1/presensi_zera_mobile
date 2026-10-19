@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/presentation/bloc/app/app_cubit.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,6 +16,12 @@ class AttendancesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (context.watch<AppCubit>().state.setting.data?.canViewTeamAttendance !=
+        true) {
+      return const Center(
+        child: Text("Presensi tim tidak diizinkan oleh admin."),
+      );
+    }
     return BlocProvider(
       create: (context) {
         final filter = context.read<AttendanceCubit>().state;
@@ -65,7 +72,20 @@ class AttendancesView extends StatelessWidget {
 
           return AppInfiniteScrollView<Attendance>(
             state: state.attendances,
-            onRefresh: () async => cubit.onRefresh(),
+            onRefresh: () async {
+              final fresh = await context.read<AppCubit>().getSetting();
+              if (!context.mounted ||
+                  !fresh ||
+                  context
+                          .read<AppCubit>()
+                          .state
+                          .setting
+                          .data
+                          ?.canViewTeamAttendance !=
+                      true)
+                return;
+              await cubit.onRefresh();
+            },
             onFetchNext: () => cubit.fetchNextPage(),
             padding: EdgeInsets.symmetric(
               horizontal: AppDimens.w16,

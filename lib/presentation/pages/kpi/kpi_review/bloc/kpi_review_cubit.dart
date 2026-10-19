@@ -16,6 +16,7 @@ class KpiReviewCubit extends Cubit<KpiReviewState> {
   }) : super(const KpiReviewState());
 
   Future<void> init(String assignmentId) async {
+    if (isClosed) return;
     emit(
       state.copyWith(
         assignmentId: assignmentId,
@@ -23,6 +24,7 @@ class KpiReviewCubit extends Cubit<KpiReviewState> {
       ),
     );
     final result = await getDetail(assignmentId);
+    if (isClosed) return;
 
     result.fold(
       (failure) {
@@ -72,7 +74,12 @@ class KpiReviewCubit extends Cubit<KpiReviewState> {
   }
 
   Future<void> submit() async {
-    if (state.assignmentId.isEmpty || state.submitState.isLoading) return;
+    if (isClosed ||
+        state.assignmentId.isEmpty ||
+        state.submitState.isLoading ||
+        state.submitState.isSuccess) {
+      return;
+    }
 
     emit(state.copyWith(submitState: const BaseState.loading()));
 
@@ -93,6 +100,7 @@ class KpiReviewCubit extends Cubit<KpiReviewState> {
     );
 
     final result = await submitManagerReview(params);
+    if (isClosed) return;
 
     result.fold(
       (failure) {

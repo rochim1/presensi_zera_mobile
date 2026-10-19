@@ -1,11 +1,9 @@
-import 'dart:io';
 import 'dart:isolate';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:logger/logger.dart';
 import 'package:presensi_mobile/presentation/_presentation.dart';
 import 'core/_core.dart';
@@ -16,13 +14,25 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:presensi_data/presensi_data.dart';
 import 'package:presensi_mobile/injections.dart';
 import 'package:presensi_mobile/service/_service.dart';
-import 'package:presensi_mobile/service/background_location_service.dart';
+import 'package:presensi_mobile/service/startup_gate.dart';
+import 'package:presensi_mobile/service/startup_metrics.dart';
+import 'package:presensi_mobile/service/development_endpoint.dart';
+import 'package:presensi_mobile/service/cached_api_session.dart';
 
 Future<void> bootstrap(
   FutureOr<Widget> Function() builder, {
   required FlavorConfig flavor,
 }) async {
   WidgetsFlutterBinding.ensureInitialized();
+  StartupMetrics.begin();
+  runApp(StartupGate(initialize: () => _initialize(builder, flavor: flavor)));
+}
+
+Future<Widget> _initialize(
+  FutureOr<Widget> Function() builder, {
+  required FlavorConfig flavor,
+}) async {
+  final startup = Stopwatch()..start();
 
   PlatformDispatcher.instance.onError = (error, stackTrace) {
     final response = AppUtility.errorIgnore(error.toString());
@@ -43,14 +53,18 @@ Future<void> bootstrap(
   if (kIsWeb) {
     await Firebase.initializeApp(options: flavor.values!.options);
   } else {
-    await Firebase.initializeApp(
-      name: kAppName,
-      options: flavor.values!.options,
-    );
+    // Native services all use [DEFAULT], supplied by google-services/plist.
+    // Creating an additional named app initializes unused Firebase components.
+    await Firebase.initializeApp();
   }
+
+  StartupMetrics.mark('firebase_ready');
+
+  await restoreDevelopmentEndpoint(flavor);
 
   //! Init injection locator
   initLocator(flavor);
+  StartupMetrics.mark('dependencies_registered');
 
   //! An interface for observing the behavior of [Bloc] instances.
   Bloc.observer = AppBlocObserver(flavor);
@@ -60,16 +74,8 @@ Future<void> bootstrap(
 
   //! Register Hive
   HiveAdapterService.init();
-
-  // Background services are a native capability. On web they would either
-  // fail at runtime or suggest a level of tracking that browsers cannot keep
-  // alive once the tab is suspended.
-  if (!kIsWeb) {
-    await BackgroundLocationService.initialize();
-  }
-
-  //! Initialize SyncService for offline order queue
-  sl<SyncService>().init();
+  await restoreCachedApiSession(flavor);
+  StartupMetrics.mark('storage_ready');
 
   // Android 15+ mewajibkan edge-to-edge dan Android 16 mengabaikan
   // pembatasan orientasi pada layar besar. Scaffold/SafeArea menangani inset.
@@ -77,8 +83,10 @@ Future<void> bootstrap(
 
   //! Enables/disables automatic data collection by Crashlytics.
   if (!kIsWeb) {
-    await fa.setAnalyticsCollectionEnabled(!kDebugMode);
-    await fs.setCrashlyticsCollectionEnabled(!kDebugMode && fl.env!.isProd);
+    await Future.wait([
+      fa.setAnalyticsCollectionEnabled(!kDebugMode),
+      fs.setCrashlyticsCollectionEnabled(!kDebugMode && fl.env!.isProd),
+    ]);
   }
 
   //! Set the background messaging handler early on, as a named top-level function
@@ -86,20 +94,15 @@ Future<void> bootstrap(
     FirebaseMessaging.onBackgroundMessage(GlobalPostFcmCubit.backgroundHandler);
   }
 
-  //! ZERA-6 handle issue close app when initial map view
-  if (!kIsWeb && Platform.isAndroid) {
-    try {
-      await GoogleMapsFlutterAndroid().initializeWithRenderer(
-        AndroidMapRenderer.latest,
-      );
-    } catch (_) {
-      // Ignore exception. This typically happens during Hot Restart because
-      // the native Android renderer persists while the Dart isolate restarts.
-    }
-  }
-
-  //! run app
-  runApp(await builder());
+  // Maps initializes when a map is opened (the SDK defaults to its latest
+  // renderer). Loading it here blocks Android's platform thread even on login.
+  // Tracking is configured lazily by BackgroundLocationService.start().
+  final app = await builder();
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    // Hive and its adapters are ready before any queue work can start.
+    sl<SyncService>().init();
+    debugPrint('[Startup] app ready in ${startup.elapsedMilliseconds}ms');
+  });
 
   Logger.addLogListener((event) {
     if (event.level == Level.error ||
@@ -130,24 +133,30 @@ Future<void> bootstrap(
     }
   };
 
-  Isolate.current.addErrorListener(
-    RawReceivePort((pair) async {
-      final List<dynamic> errorAndStacktrace = pair;
+  // dart:isolate is unavailable in browsers. Web errors are handled above
+  // by PlatformDispatcher and FlutterError.
+  if (!kIsWeb) {
+    Isolate.current.addErrorListener(
+      RawReceivePort((pair) async {
+        final List<dynamic> errorAndStacktrace = pair;
 
-      final response = AppUtility.errorIgnore(
-        errorAndStacktrace.first.toString(),
-      );
-      if (!response) return;
-
-      if (!kIsWeb && !kDebugMode) {
-        await fs.recordError(
-          errorAndStacktrace.first,
-          errorAndStacktrace.last,
-          fatal: fl.env!.isProd,
+        final response = AppUtility.errorIgnore(
+          errorAndStacktrace.first.toString(),
         );
-      }
-    }).sendPort,
-  );
+        if (!response) return;
+
+        if (!kIsWeb && !kDebugMode) {
+          await fs.recordError(
+            errorAndStacktrace.first,
+            errorAndStacktrace.last,
+            fatal: fl.env!.isProd,
+          );
+        }
+      }).sendPort,
+    );
+  }
+
+  return app;
 }
 
 class AppBlocObserver extends BlocObserver {

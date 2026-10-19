@@ -16,6 +16,7 @@ class SelfAssessmentCubit extends Cubit<SelfAssessmentState> {
   }) : super(const SelfAssessmentState());
 
   Future<void> init(String assignmentId) async {
+    if (isClosed) return;
     emit(
       state.copyWith(
         assignmentId: assignmentId,
@@ -23,6 +24,7 @@ class SelfAssessmentCubit extends Cubit<SelfAssessmentState> {
       ),
     );
     final result = await getDetail(assignmentId);
+    if (isClosed) return;
 
     result.fold(
       (failure) {
@@ -72,7 +74,12 @@ class SelfAssessmentCubit extends Cubit<SelfAssessmentState> {
   }
 
   Future<void> submit() async {
-    if (state.assignmentId.isEmpty || state.submitState.isLoading) return;
+    if (isClosed ||
+        state.assignmentId.isEmpty ||
+        state.submitState.isLoading ||
+        state.submitState.isSuccess) {
+      return;
+    }
 
     emit(state.copyWith(submitState: const BaseState.loading()));
 
@@ -93,6 +100,7 @@ class SelfAssessmentCubit extends Cubit<SelfAssessmentState> {
     );
 
     final result = await submitSelfAssessment(params);
+    if (isClosed) return;
 
     result.fold(
       (failure) {

@@ -14,6 +14,12 @@ import 'app_state.dart';
 class AppCubit extends Cubit<AppState> {
   final attendanceFlow = InteractionGate();
   final overtimeAction = InteractionGate();
+  int _settingRequest = 0;
+  int _sessionRevision = 0;
+  Future<void>? _restoreInFlight;
+  int? _restoreRevision;
+  bool _sessionIsCurrent(int revision) =>
+      !isClosed && revision == _sessionRevision;
   static const _settingCacheKeyPrefix = 'organization_setting_cache';
   final GetActiveAttendance getActiveAttendanceUseCase;
   final GetAttendances getAttendancesUseCase;
@@ -42,9 +48,11 @@ class AppCubit extends Cubit<AppState> {
   }) : super(const AppState());
 
   Future<void> getActiveAttendance() async {
+    final revision = _sessionRevision;
     emit(state.copyWith(activeAttendance: BaseState.loading()));
 
     final result = await getActiveAttendanceUseCase.call(NoParams());
+    if (!_sessionIsCurrent(revision)) return;
     result.fold(
       (failure) {
         emit(state.copyWith(activeAttendance: BaseState.failure(failure)));
@@ -56,9 +64,11 @@ class AppCubit extends Cubit<AppState> {
   }
 
   Future<void> getEffectiveScheduleToday() async {
+    final revision = _sessionRevision;
     emit(state.copyWith(effectiveSchedule: BaseState.loading()));
 
     final result = await getEffectiveScheduleTodayUseCase.call(NoParams());
+    if (!_sessionIsCurrent(revision)) return;
     result.fold(
       (failure) {
         emit(state.copyWith(effectiveSchedule: BaseState.failure(failure)));
@@ -70,9 +80,11 @@ class AppCubit extends Cubit<AppState> {
   }
 
   Future<void> getAuthSession() async {
+    final revision = _sessionRevision;
     emit(state.copyWith(session: BaseState.loading()));
 
     final result = await getAuthSessionUseCase.call(NoParams());
+    if (!_sessionIsCurrent(revision)) return;
     result.fold(
       (failure) {
         emit(state.copyWith(session: BaseState.failure(failure)));
@@ -84,9 +96,11 @@ class AppCubit extends Cubit<AppState> {
   }
 
   Future<void> getCurrentUser() async {
+    final revision = _sessionRevision;
     emit(state.copyWith(user: BaseState.loading()));
 
     final result = await getCurrentUserUseCase.call(NoParams());
+    if (!_sessionIsCurrent(revision)) return;
     result.fold(
       (failure) {
         emit(state.copyWith(user: BaseState.failure(failure)));
@@ -97,12 +111,13 @@ class AppCubit extends Cubit<AppState> {
     );
   }
 
-  Future<void> getSetting() async {
-    if (!state.user.isSuccess) return;
+  Future<bool> getSetting() async {
+    final request = ++_settingRequest;
+    if (!state.user.isSuccess) return false;
     final currentUser = state.user.data;
     final currentOrgId = currentUser?.organization?.id;
     final currentUserId = currentUser?.id;
-    if (currentOrgId == null || currentUserId == null) return;
+    if (currentOrgId == null || currentUserId == null) return false;
 
     // Keep the last valid value available while refreshing. Attendance pages
     // must never temporarily fall back to another mode because a request is in
@@ -114,6 +129,13 @@ class AppCubit extends Cubit<AppState> {
     final result = await getSettingByOrganizationIdUseCase.call(
       GetSettingParams(organizationId: currentOrgId, userId: currentUserId),
     );
+    if (isClosed ||
+        request != _settingRequest ||
+        state.user.data?.id != currentUserId ||
+        state.user.data?.organization?.id != currentOrgId) {
+      return false;
+    }
+    var refreshed = false;
     await result.fold<Future<void>>(
       (failure) async {
         if (!state.setting.isSuccess) {
@@ -121,10 +143,14 @@ class AppCubit extends Cubit<AppState> {
         }
       },
       (value) async {
+        refreshed = true;
         await _saveSettingCache(value);
-        emit(state.copyWith(setting: BaseState.success(value)));
+        if (!isClosed && request == _settingRequest) {
+          emit(state.copyWith(setting: BaseState.success(value)));
+        }
       },
     );
+    return refreshed && request == _settingRequest;
   }
 
   String? get _settingCacheKey {
@@ -142,6 +168,7 @@ class AppCubit extends Cubit<AppState> {
       key,
       jsonEncode({
         'id': setting.id,
+        'employeeAttendanceVisibility': setting.employeeAttendanceVisibility,
         'jamMasuk': setting.jamMasuk?.toIso8601String(),
         'jamPulang': setting.jamPulang?.toIso8601String(),
         'attendanceMode': setting.attendanceMode?.name,
@@ -175,9 +202,11 @@ class AppCubit extends Cubit<AppState> {
   }
 
   Future<void> loadSettingCache() async {
+    final revision = _sessionRevision;
     final key = _settingCacheKey;
     if (key == null) return;
     final prefs = await SharedPreferences.getInstance();
+    if (!_sessionIsCurrent(revision)) return;
     final raw = prefs.getString(key);
     if (raw == null) return;
 
@@ -186,6 +215,10 @@ class AppCubit extends Cubit<AppState> {
       final modeName = json['attendanceMode']?.toString();
       final cached = Setting(
         id: json['id']?.toString() ?? '',
+        // Team access is verified online; a cache never grants access.
+        canViewTeamAttendance: false,
+        employeeAttendanceVisibility:
+            json['employeeAttendanceVisibility']?.toString() ?? 'team',
         jamMasuk: DateTime.tryParse(json['jamMasuk']?.toString() ?? ''),
         jamPulang: DateTime.tryParse(json['jamPulang']?.toString() ?? ''),
         attendanceMode: SettingAttendanceMode.values.firstWhere(
@@ -240,35 +273,44 @@ class AppCubit extends Cubit<AppState> {
   }
 
   Future<void> loadCheckedOutDate() async {
-    final prefs = await SharedPreferences.getInstance();
+    final revision = _sessionRevision;
     final userId = state.user.data?.id;
+    final prefs = await SharedPreferences.getInstance();
+    if (!_sessionIsCurrent(revision)) return;
     if (userId == null) return;
 
     final key = 'checked_out_date_$userId';
     // The local marker is only a UI cache and must never authorize overtime
     // after the app is restarted. The server sync below is authoritative.
     await prefs.remove(key);
+    if (!_sessionIsCurrent(revision)) return;
     emit(state.copyWith(checkedOutDate: null));
   }
 
   Future<void> markCheckedOutToday() async {
-    final prefs = await SharedPreferences.getInstance();
+    final revision = _sessionRevision;
     final userId = state.user.data?.id;
+    final prefs = await SharedPreferences.getInstance();
+    if (!_sessionIsCurrent(revision)) return;
     if (userId == null) return;
 
     final today = DateTime.now().toIso8601String().substring(0, 10);
     await prefs.setString('checked_out_date_$userId', today);
+    if (!_sessionIsCurrent(revision)) return;
     emit(state.copyWith(checkedOutDate: today));
   }
 
   Future<void> syncCheckedOutDateFromTodayAttendance(bool hasCheckedOut) async {
-    final prefs = await SharedPreferences.getInstance();
+    final revision = _sessionRevision;
     final userId = state.user.data?.id;
+    final prefs = await SharedPreferences.getInstance();
+    if (!_sessionIsCurrent(revision)) return;
     if (userId == null) return;
 
     if (hasCheckedOut) {
       final today = DateTime.now().toIso8601String().substring(0, 10);
       await prefs.setString('checked_out_date_$userId', today);
+      if (!_sessionIsCurrent(revision)) return;
       if (state.checkedOutDate != today) {
         emit(state.copyWith(checkedOutDate: today));
       }
@@ -277,14 +319,17 @@ class AppCubit extends Cubit<AppState> {
 
     if (state.checkedOutDate != null) {
       await prefs.remove('checked_out_date_$userId');
+      if (!_sessionIsCurrent(revision)) return;
       emit(state.copyWith(checkedOutDate: null));
     }
   }
 
   Future<bool> syncTodayAttendanceFromServer() async {
+    final revision = _sessionRevision;
     final userId = state.user.data?.id;
     if (userId == null) return false;
 
+    final currentOrgId = state.user.data?.organization?.id;
     final now = DateTime.now();
     final result = await getAttendancesUseCase.call(
       GetAttendancesParams(
@@ -296,12 +341,22 @@ class AppCubit extends Cubit<AppState> {
       ),
     );
 
+    if (!_sessionIsCurrent(revision) ||
+        state.user.data?.id != userId ||
+        state.user.data?.organization?.id != currentOrgId) {
+      return false;
+    }
     return result.fold(
       (_) async {
         await syncCheckedOutDateFromTodayAttendance(false);
         return false;
       },
       (attendances) async {
+        emit(
+          state.copyWith(
+            lastTodayAttendance: attendances.isEmpty ? null : attendances.first,
+          ),
+        );
         final hasCheckedOut = attendances.any(
           (attendance) => attendance.jamPulang != null,
         );
@@ -312,11 +367,13 @@ class AppCubit extends Cubit<AppState> {
   }
 
   Future<void> loadOvertimeState() async {
+    final revision = _sessionRevision;
     final prefs = await SharedPreferences.getInstance();
     final userId = state.user.data?.id;
     if (userId == null) return;
 
     final activeResult = await getActiveOvertimeSessionUseCase.call(NoParams());
+    if (!_sessionIsCurrent(revision) || state.user.data?.id != userId) return;
     var activeLookupFailed = false;
     final activeSession = activeResult.fold((_) {
       activeLookupFailed = true;
@@ -649,35 +706,104 @@ class AppCubit extends Cubit<AppState> {
   }
 
   Future<void> clearStateOnLogout() async {
+    ++_sessionRevision;
+    ++_settingRequest;
     emit(const AppState());
   }
 
-  void init() async {
-    await getAuthSession();
-    await getCurrentUser();
-    await loadSettingCache();
-    await getSetting();
-    await loadCheckedOutDate();
-    await loadOvertimeState();
-    await Future.wait([getActiveAttendance(), getEffectiveScheduleToday()]);
-    await syncTodayAttendanceFromServer();
+  Future<void> init() => onRefresh();
+
+  // The root widget and login can request the same restoration. Share its work
+  // within one session, but never make a new account wait for an old request.
+  Future<void> onRefresh() {
+    final revision = _sessionRevision;
+    if (_restoreRevision == revision && _restoreInFlight != null) {
+      return _restoreInFlight!;
+    }
+    _restoreRevision = revision;
+    late final Future<void> restore;
+    restore = _restoreSession(revision).whenComplete(() {
+      if (identical(_restoreInFlight, restore)) _restoreInFlight = null;
+    });
+    _restoreInFlight = restore;
+    return restore;
   }
 
-  Future<void> onRefresh() async {
-    final previousUserId = state.user.data?.id;
+  Future<void> _restoreSession(int revision) async {
+    emit(state.copyWith(sessionRestore: BaseState.loading()));
     await getAuthSession();
+    if (!_sessionIsCurrent(revision)) return;
+    if (!state.session.isSuccess) {
+      emit(
+        state.copyWith(
+          sessionRestore: BaseState.failure(
+            state.session.failure ?? UnknownFailure(),
+          ),
+        ),
+      );
+      return;
+    }
+    final previousUserId = state.user.data?.id;
     await getCurrentUser();
-    final currentUserId = state.user.data?.id;
-    if (previousUserId != null && previousUserId != currentUserId) {
+    if (!_sessionIsCurrent(revision)) return;
+    if (!state.user.isSuccess) {
+      emit(
+        state.copyWith(
+          sessionRestore: BaseState.failure(
+            state.user.failure ?? UnknownFailure(),
+          ),
+        ),
+      );
+      return;
+    }
+    if (previousUserId != null && previousUserId != state.user.data?.id) {
       emit(state.copyWith(setting: BaseState.initial()));
     }
-    if (!state.setting.isSuccess) {
-      await loadSettingCache();
+
+    Future<void> restoreSettings() async {
+      if (!state.setting.isSuccess) {
+        await loadSettingCache();
+        if (!_sessionIsCurrent(revision)) return;
+      }
+      await getSetting();
+      if (_sessionIsCurrent(revision)) await loadOvertimeState();
     }
-    await getSetting();
-    await loadOvertimeState();
-    await Future.wait([getActiveAttendance(), getEffectiveScheduleToday()]);
-    await syncTodayAttendanceFromServer();
+
+    Future<void> restoreAttendance() async {
+      // The local marker must be cleared before the authoritative daily list
+      // replaces it. Both this list and the active session are needed for UI.
+      Future<bool> restoreToday() async {
+        await loadCheckedOutDate();
+        if (!_sessionIsCurrent(revision)) return false;
+        return syncTodayAttendanceFromServer();
+      }
+
+      final results = await Future.wait([
+        getActiveAttendance().then((_) => true),
+        restoreToday(),
+      ]);
+      if (!_sessionIsCurrent(revision)) return;
+      emit(
+        state.copyWith(
+          sessionRestore: results[1]
+              ? BaseState.success(true)
+              : BaseState.failure(
+                  UnknownFailure(
+                    message:
+                        'Presensi hari ini belum dapat dimuat. Silakan coba lagi.',
+                  ),
+                ),
+        ),
+      );
+    }
+
+    // Settings/overtime and schedule do not depend on attendance responses.
+    // Keep awaiting them for refresh callers, without serializing first Home.
+    await Future.wait([
+      restoreSettings(),
+      restoreAttendance(),
+      getEffectiveScheduleToday(),
+    ]);
   }
 
   @override

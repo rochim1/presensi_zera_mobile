@@ -1,12 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:presensi_data/presensi_data.dart';
+import '../calendar_recurrence.dart';
 
 // ─── State ──────────────────────────────────────────
 
 class KalenderState extends Equatable {
   final bool isLoading;
-  final List<KalenderEvent> events;
+  final List<KalenderOccurrence> events;
   final String? errorMessage;
   final DateTime focusedMonth;
   final DateTime? selectedDate;
@@ -21,7 +22,7 @@ class KalenderState extends Equatable {
 
   KalenderState copyWith({
     bool? isLoading,
-    List<KalenderEvent>? events,
+    List<KalenderOccurrence>? events,
     String? errorMessage,
     DateTime? focusedMonth,
     DateTime? selectedDate,
@@ -52,16 +53,23 @@ class KalenderState extends Equatable {
 
 class KalenderCubit extends Cubit<KalenderState> {
   final KalenderRemoteDatasource remoteDatasource;
+  int _eventRequest = 0;
 
-  KalenderCubit({required this.remoteDatasource})
-    : super(KalenderState(focusedMonth: DateTime.now()));
+  KalenderCubit({required this.remoteDatasource, DateTime? initialMonth})
+    : super(KalenderState(focusedMonth: initialMonth ?? DateTime.now()));
 
   Future<void> init() async {
     await fetchEvents();
   }
 
   Future<void> onMonthChanged(DateTime month) async {
-    emit(state.copyWith(focusedMonth: month, clearSelectedDate: true));
+    emit(
+      state.copyWith(
+        focusedMonth: month,
+        clearSelectedDate: true,
+        events: const [],
+      ),
+    );
     await fetchEvents();
   }
 
@@ -84,13 +92,15 @@ class KalenderCubit extends Cubit<KalenderState> {
   }
 
   Future<void> fetchEvents() async {
+    if (isClosed) return;
+    final request = ++_eventRequest;
     emit(state.copyWith(isLoading: true, errorMessage: null));
 
     try {
       final month = state.focusedMonth;
       // Fetch broader range to include events that span month boundaries
-      final start = DateTime(month.year, month.month - 1, 1);
-      final end = DateTime(month.year, month.month + 2, 0);
+      final start = DateTime.utc(month.year, month.month - 1, 1);
+      final end = DateTime.utc(month.year, month.month + 2, 0);
 
       final startStr =
           '${start.year}-${start.month.toString().padLeft(2, '0')}-${start.day.toString().padLeft(2, '0')}';
@@ -101,9 +111,26 @@ class KalenderCubit extends Cubit<KalenderState> {
         startStr,
         endStr,
       );
-      emit(state.copyWith(isLoading: false, events: events));
+      if (isClosed || request != _eventRequest) return;
+      emit(
+        state.copyWith(
+          isLoading: false,
+          events: expandKalenderEvents(
+            events,
+            start,
+            end.add(const Duration(days: 1)),
+          ),
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+      if (isClosed || request != _eventRequest) return;
+      emit(
+        state.copyWith(
+          isLoading: false,
+          events: const [],
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 

@@ -28,7 +28,7 @@ class KpiStatusBadge extends StatelessWidget {
         color = Colors.blue;
         break;
       case 'completed':
-        label = 'Menunggu Acknowledge';
+        label = 'Menunggu Konfirmasi';
         color = AppColors.green;
         break;
       case 'acknowledged':

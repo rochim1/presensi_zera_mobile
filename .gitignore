@@ -71,3 +71,6 @@ app.*.map.json
 key.properties
 **/*.keystore
 **/*.jks
+
+# Kotlin compiler session cache
+/android/.kotlin/

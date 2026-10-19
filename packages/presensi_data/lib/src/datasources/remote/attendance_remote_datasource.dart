@@ -91,9 +91,14 @@ class AttendanceRemoteDatasourceImpl
       "AttendanceRemoteDatasourceImpl.getAttendanceById response: $response",
     );
 
-    return AttendanceResponse.fromJson(
-      response['GetOnePresensi'] as Map<String, dynamic>,
-    );
+    final record = response['GetOnePresensi'];
+    if (record == null) {
+      throw GraphQlException(
+        code: 'NOT_FOUND',
+        message: 'Presensi tidak tersedia atau aksesnya dibatasi oleh admin.',
+      );
+    }
+    return AttendanceResponse.fromJson(record as Map<String, dynamic>);
   }
 
   @override
@@ -135,8 +140,12 @@ class AttendanceRemoteDatasourceImpl
   }
 
   @override
-  Future<EffectiveScheduleModel> getEffectiveScheduleToday(String userId) async {
-    logger.d("AttendanceRemoteDatasourceImpl.getEffectiveScheduleToday userId: $userId");
+  Future<EffectiveScheduleModel> getEffectiveScheduleToday(
+    String userId,
+  ) async {
+    logger.d(
+      "AttendanceRemoteDatasourceImpl.getEffectiveScheduleToday userId: $userId",
+    );
 
     final response = await gql.query(
       query: getEffectiveScheduleTodayQuery,

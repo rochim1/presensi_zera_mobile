@@ -1,3 +1,4 @@
+import 'package:presensi_domain/presensi_domain.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -65,6 +66,11 @@ class KpiReviewView extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _buildHeader(context, data),
+                          if (data.sourceUpdateMessage?.isNotEmpty == true)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 16),
+                              child: Text(data.sourceUpdateMessage!),
+                            ),
                           const SizedBox(height: 24),
                           ...data.scores?.map((score) {
                                 if (score.indicator == null ||
@@ -242,6 +248,13 @@ class KpiReviewView extends StatelessWidget {
                   ),
               ],
             ),
+            if (score.nilaiRating != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: Text(
+                  'Rating otomatis: ${score.nilaiRating} / 5. Nilai akhir mengikuti penilaian pemeriksa.',
+                ),
+              ),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(12),
@@ -345,7 +358,10 @@ class KpiReviewView extends StatelessWidget {
     return normalized.isEmpty ? 'U' : normalized.substring(0, 1).toUpperCase();
   }
 
-  Future<void> _confirmSubmit(BuildContext context, dynamic assignment) async {
+  Future<void> _confirmSubmit(
+    BuildContext context,
+    KpiAssignment assignment,
+  ) async {
     final cubit = context.read<KpiReviewCubit>();
     final indicatorIds = (assignment.scores ?? [])
         .map((score) => score.indicator?.id)
@@ -372,7 +388,7 @@ class KpiReviewView extends StatelessWidget {
       builder: (dialogContext) => AlertDialog(
         title: const Text('Selesaikan review?'),
         content: const Text(
-          'Nilai akhir KPI akan dihitung dan hasil review tidak dapat diedit kembali dari aplikasi.',
+          'Nilai akhir KPI akan dihitung dan disimpan. Koreksi presensi yang disetujui dapat meminta review ulang.',
         ),
         actions: [
           TextButton(

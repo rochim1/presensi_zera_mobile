@@ -117,23 +117,72 @@ import 'app_mappr.auto_mappr.dart';
   MapType<CreateReimbursementParams, CreateReimbursementRequest>(),
 
   // KPI
-  MapType<KpiAssignmentUserResponse, KpiAssignmentUser>(),
+  MapType<KpiAssignmentUserResponse, KpiAssignmentUser>(
+    fields: [
+      Field('fotoUrl', custom: AppMappr.mapKpiFoto),
+      Field('divisiName', custom: AppMappr.mapKpiDivisi),
+      Field('jabatanName', custom: AppMappr.mapKpiJabatan),
+    ],
+  ),
   MapType<KpiAssignmentTemplateResponse, KpiAssignmentTemplate>(
     fields: [
       Field('namaTemplate', from: 'nama_template'),
       Field('allowSelfAssessment', from: 'allow_self_assessment'),
+      Field('anonymousPeerReview', from: 'anonymous_peer_review'),
     ],
   ),
   MapType<KpiCategoryRefResponse, KpiCategoryRef>(
     fields: [Field('namaKategori', from: 'nama_kategori')],
   ),
   MapType<KpiIndicatorRefResponse, KpiIndicatorRef>(
-    fields: [Field('namaIndikator', from: 'nama_indikator')],
+    fields: [
+      Field('namaIndikator', from: 'nama_indikator'),
+      Field('tipeData', from: 'tipe_data'),
+      Field('category', from: 'category_id'),
+    ],
   ),
-  MapType<KpiScoreResponse, KpiScore>(),
-  MapType<KpiAssignmentResponse, KpiAssignment>(),
+  MapType<KpiScoreResponse, KpiScore>(
+    fields: [
+      Field('indicator', from: 'indicator_id'),
+      Field('targetMinimum', from: 'target_minimum'),
+      Field('targetMax', from: 'target_max'),
+      Field('nilaiAktual', from: 'nilai_aktual'),
+      Field('selfRating', from: 'self_rating'),
+      Field('catatanKaryawan', from: 'catatan_karyawan'),
+      Field('managerRating', from: 'manager_rating'),
+      Field('catatanReviewer', from: 'catatan_reviewer'),
+      Field('nilaiRating', from: 'nilai_rating'),
+      Field('nilaiTerbobot', from: 'nilai_terbobot'),
+      Field('autoData', from: 'auto_data'),
+    ],
+  ),
+  MapType<KpiAssignmentResponse, KpiAssignment>(
+    fields: [
+      Field('user', from: 'user_id'),
+      Field('template', from: 'template_id'),
+      Field('periodeLabel', from: 'periode_label'),
+      Field('sourceUpdateMessage', from: 'source_update_message'),
+      Field('tanggalMulai', from: 'tanggal_mulai'),
+      Field('tanggalSelesai', from: 'tanggal_selesai'),
+      Field('finalScore', from: 'final_score'),
+      Field('finalGrade', from: 'final_grade'),
+      Field('catatanKaryawanGlobal', from: 'catatan_karyawan_global'),
+      Field('catatanReviewerGlobal', from: 'catatan_reviewer_global'),
+      Field('selfSubmittedAt', from: 'self_submitted_at'),
+      Field('managerReviewedAt', from: 'manager_reviewed_at'),
+      Field('acknowledgedAt', from: 'acknowledged_at'),
+    ],
+  ),
   MapType<KpiGradeDistributionResponse, KpiGradeDistribution>(),
-  MapType<KpiTeamSummaryResponse, KpiTeamSummary>(),
+  MapType<KpiTeamSummaryResponse, KpiTeamSummary>(
+    fields: [
+      Field('totalKaryawan', from: 'total_karyawan'),
+      Field('inProgress', from: 'in_progress'),
+      Field('notStarted', from: 'not_started'),
+      Field('avgScore', from: 'avg_score'),
+      Field('gradeDistribution', from: 'grade_distribution'),
+    ],
+  ),
   MapType<SelfScoreInputParams, SelfScoreInputRequest>(
     fields: [
       Field('indicator_id', from: 'indicatorId'),
@@ -173,6 +222,12 @@ class AppMappr extends $AppMappr {
   static String mapBulanan(GetAttendancesParams _) => 'bulanan';
   static String mapKastem(GetAttendancesParams _) => 'kastem';
   static DateTime? mapNull(GetAttendancesParams _) => null;
+  static String? mapKpiFoto(KpiAssignmentUserResponse value) =>
+      value.foto?['url_path']?.toString();
+  static String? mapKpiDivisi(KpiAssignmentUserResponse value) =>
+      value.divisi_id?['nama_divisi']?.toString();
+  static String? mapKpiJabatan(KpiAssignmentUserResponse value) =>
+      value.jabatan_id?['nama_jabatan']?.toString();
   static LoginRolePermissionsEntity? mapRolePermissions(UserResponse input) =>
       input.rolePermissions;
 }

@@ -11,6 +11,7 @@ import 'package:presensi_mobile/presentation/bloc/app/app_cubit.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import 'bloc/kalender_cubit.dart';
+import 'calendar_recurrence.dart';
 import 'widgets/create_event_sheet.dart';
 
 @RoutePage()
@@ -47,7 +48,7 @@ class KalenderView extends StatelessWidget {
     'lainnya': 'Lainnya',
   };
 
-  Color _eventColor(KalenderEvent event) {
+  Color _eventColor(KalenderOccurrence event) {
     if (event.color != null && event.color!.isNotEmpty) {
       try {
         final hex = event.color!.replaceFirst('#', '');
@@ -61,8 +62,8 @@ class KalenderView extends StatelessWidget {
     return _eventTypeLabels[type] ?? type ?? '-';
   }
 
-  List<KalenderEvent> _getEventsForDay(
-    List<KalenderEvent> allEvents,
+  List<KalenderOccurrence> _getEventsForDay(
+    List<KalenderOccurrence> allEvents,
     DateTime day,
   ) {
     final dayStr = DateFormat('yyyy-MM-dd').format(day);
@@ -136,7 +137,7 @@ class KalenderView extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: TableCalendar<KalenderEvent>(
+                child: TableCalendar<KalenderOccurrence>(
                   firstDay: DateTime.utc(2020, 1, 1),
                   lastDay: DateTime.utc(2030, 12, 31),
                   focusedDay: state.focusedMonth,
@@ -280,7 +281,7 @@ class KalenderView extends StatelessWidget {
     bool canUpdate,
     bool canDelete,
   ) {
-    List<KalenderEvent> displayEvents;
+    List<KalenderOccurrence> displayEvents;
     String emptyMessage;
 
     if (state.selectedDate != null) {
@@ -366,6 +367,7 @@ class KalenderView extends StatelessWidget {
         final color = _eventColor(event);
 
         return Container(
+          key: ValueKey(event.occurrenceId),
           decoration: BoxDecoration(
             color: AppColors.white,
             borderRadius: BorderRadius.circular(AppDimens.r12),
@@ -437,7 +439,7 @@ class KalenderView extends StatelessWidget {
                                       initialDate:
                                           DateTime.tryParse(event.startDate) ??
                                           DateTime.now(),
-                                      initialEvent: event,
+                                      initialEvent: event.series,
                                       onSubmit: (input) =>
                                           cubit.updateEvent(event.id, input),
                                     );
@@ -448,7 +450,9 @@ class KalenderView extends StatelessWidget {
                                     builder: (dialogContext) => AlertDialog(
                                       title: const Text('Hapus Event?'),
                                       content: Text(
-                                        'Event "${event.title}" akan dihapus.',
+                                        event.isRecurring
+                                            ? 'Seluruh rangkaian "${event.title}" akan dihapus.'
+                                            : 'Event "${event.title}" akan dihapus.',
                                       ),
                                       actions: [
                                         TextButton(
@@ -501,6 +505,18 @@ class KalenderView extends StatelessWidget {
                           ],
                         ),
                         SizedBox(height: AppDimens.h4),
+                        if (event.isRecurring)
+                          Text(
+                            switch (event.recurringType) {
+                              'weekly' => 'Berulang mingguan',
+                              'monthly' => 'Berulang bulanan',
+                              'yearly' => 'Berulang tahunan',
+                              _ => 'Event berulang',
+                            },
+                            style: context.textStyle.bodySmall?.copyWith(
+                              color: AppColors.labelSecondary,
+                            ),
+                          ),
                         Row(
                           children: [
                             Icon(
@@ -542,7 +558,7 @@ class KalenderView extends StatelessWidget {
     );
   }
 
-  String _formatDateRange(KalenderEvent event) {
+  String _formatDateRange(KalenderOccurrence event) {
     try {
       final start = DateFormat('yyyy-MM-dd').parse(event.startDate);
       final startFormatted = DateFormat('dd MMM yyyy', 'id').format(start);
@@ -552,12 +568,20 @@ class KalenderView extends StatelessWidget {
           event.endDate != event.startDate) {
         final end = DateFormat('yyyy-MM-dd').parse(event.endDate!);
         final endFormatted = DateFormat('dd MMM yyyy', 'id').format(end);
-        return '$startFormatted - $endFormatted';
+        return '$startFormatted - $endFormatted${_eventTime(event)}';
       }
 
-      return startFormatted;
+      return '$startFormatted${_eventTime(event)}';
     } catch (_) {
       return event.startDate;
     }
+  }
+
+  String _eventTime(KalenderOccurrence event) {
+    if (event.series.allDay) return '';
+    final start = event.series.startTime;
+    final end = event.series.endTime;
+    if (start == null || start.isEmpty) return '';
+    return end == null || end.isEmpty ? ' • $start' : ' • $start–$end';
   }
 }

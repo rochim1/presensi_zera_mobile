@@ -1,22 +1,77 @@
 package com.pantoo.presensi
 
+import android.content.Context
 import android.content.ContentValues
 import android.media.MediaScannerConnection
 import android.os.Build
+import android.os.Bundle
+import android.os.SystemClock
+import android.util.Log
 import android.os.Environment
 import android.provider.MediaStore
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
+import io.flutter.plugins.GeneratedPluginRegistrant
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 
 class MainActivity : FlutterActivity() {
     private val downloadsChannel = "com.pantoo.presensi/downloads"
+    private var startupAt = 0L
+    private var ownsUiEngine = false
+    private val startupMetricsEnabled: Boolean
+        get() = intent?.getBooleanExtra("zera_startup_metrics", false) == true
+
+    override fun provideFlutterEngine(context: Context): FlutterEngine? {
+        if ((applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) == 0) {
+            return super.provideFlutterEngine(context)
+        }
+        ownsUiEngine = true
+        return UiFlutterEngine(context, shouldRestoreAndSaveState())
+    }
+
+    override fun shouldDestroyEngineWithHost(): Boolean =
+        if (ownsUiEngine) true else super.shouldDestroyEngineWithHost()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        startupAt = SystemClock.elapsedRealtime()
+        logProcessAge("activity_created_process_ms")
+        super.onCreate(savedInstanceState)
+    }
+
+    override fun onFlutterUiDisplayed() {
+        super.onFlutterUiDisplayed()
+        if (startupMetricsEnabled) Log.i("ZeraStartup", "first_frame_ms=${SystemClock.elapsedRealtime() - startupAt}")
+        logProcessAge("first_frame_process_ms")
+    }
+
+    // Process clock includes Firebase providers and engine setup before Activity.
+    // Keep metrics opt-in and use Android's monotonic clock, not wall time.
+    private fun logProcessAge(phase: String) {
+        if (startupMetricsEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Log.i("ZeraStartup", "$phase=${SystemClock.elapsedRealtime() - android.os.Process.getStartElapsedRealtime()}")
+        }
+    }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
-        super.configureFlutterEngine(flutterEngine)
+        val pluginsAt = SystemClock.elapsedRealtime()
+        if (flutterEngine is UiFlutterEngine) {
+            GeneratedPluginRegistrant.registerWith(flutterEngine)
+            if (startupMetricsEnabled) Log.i("ZeraStartup", "ui_geolocator_registered=${flutterEngine.plugins.has(com.baseflow.geolocator.GeolocatorPlugin::class.java)}")
+        } else {
+            super.configureFlutterEngine(flutterEngine)
+        }
+        if (startupMetricsEnabled) Log.i("ZeraStartup", "plugins_ms=${SystemClock.elapsedRealtime() - pluginsAt}")
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "com.pantoo.presensi/startup")
+            .setMethodCallHandler { call, result ->
+                if (call.method == "homeReady") {
+                    if (startupMetricsEnabled) Log.i("ZeraStartup", "home_ready_ms=${SystemClock.elapsedRealtime() - startupAt}")
+                    logProcessAge("home_ready_process_ms")
+                    result.success(null)
+                } else result.notImplemented()
+            }
 
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, downloadsChannel)
             .setMethodCallHandler { call, result ->

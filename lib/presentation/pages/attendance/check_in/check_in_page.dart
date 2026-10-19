@@ -16,6 +16,7 @@ import 'package:presensi_mobile/presentation/bloc/app/app_state.dart';
 
 import '../formz/_formz.dart';
 import 'bloc/check_in_state.dart';
+import 'package:presensi_mobile/presentation/widgets/global/web_attendance_location.dart';
 
 @RoutePage()
 class CheckInPage extends StatelessWidget {
@@ -37,10 +38,13 @@ class CheckInPage extends StatelessWidget {
           afterCheckout: completedAttendance,
         );
         return BlocProvider(
-          key: ValueKey(mode),
-          create: (_) =>
-              sl<CheckInCubit>()
-                ..init(mode, initialPresenceType: availableTypes.first),
+          key: ValueKey((mode, setting.isMandatorySupportingEvidence)),
+          create: (_) => sl<CheckInCubit>()
+            ..init(
+              mode,
+              initialPresenceType: availableTypes.first,
+              requiredEvidence: setting.isMandatorySupportingEvidence,
+            ),
           child: CheckInView(mode: mode),
         );
       },
@@ -50,6 +54,18 @@ class CheckInPage extends StatelessWidget {
 
 Future<bool> ensureAttendanceSettingAvailable(BuildContext context) async {
   final appCubit = context.read<AppCubit>();
+
+  // A browser refresh can open this route before account hydration starts.
+  // Settings are scoped to the current employee; wait for that session before
+  // treating the empty initial state as a missing configuration.
+  if (appCubit.state.user.isInitial || appCubit.state.user.isLoading) {
+    try {
+      await appCubit.init().timeout(const Duration(seconds: 15));
+    } on TimeoutException {
+      // The recovery UI below remains available if session loading stalls.
+    }
+    if (!context.mounted) return false;
+  }
 
   bool isAvailable() =>
       appCubit.state.setting.isSuccess && appCubit.state.setting.data != null;
@@ -359,6 +375,15 @@ class _CheckInViewState extends State<CheckInView> {
   }
 
   Widget _buildMap(LatLng latLng, bool isSuccess, CheckInState state) {
+    if (kIsWeb && !const bool.fromEnvironment('HRMS_WEB_GOOGLE_MAPS')) {
+      return Positioned.fill(
+        child: WebAttendanceLocation(
+          ready: isSuccess,
+          latitude: latLng.latitude,
+          longitude: latLng.longitude,
+        ),
+      );
+    }
     return Positioned.fill(
       child: GoogleMap(
         initialCameraPosition: CameraPosition(target: latLng, zoom: 15),
@@ -482,7 +507,9 @@ class _CheckInViewState extends State<CheckInView> {
               ),
               AppDimens.paddingMedium.hSpace,
               AppAttachmentField(
-                label: 'Lampiran (Opsional)',
+                label: state.form.attachment.isRequired
+                    ? 'Bukti pendukung (Wajib)'
+                    : 'Lampiran (Opsional)',
                 hintText: 'Tambahkan foto atau dokumen pendukung',
                 errorText: state.form.attachment.errorMessage,
                 value: state.form.attachment.value
