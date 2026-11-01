@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:action_slider/action_slider.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:intl/intl.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:presensi_domain/presensi_domain.dart';
@@ -166,7 +167,10 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
             children: [
               Text(
                 title,
-                style: TextStyle(fontSize: 11, color: AppColors.labelSecondary),
+                style: const TextStyle(
+                  fontSize: 11,
+                  color: AppColors.labelSecondary,
+                ),
               ),
               const SizedBox(height: 2),
               Text(
@@ -283,7 +287,7 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
         children: [
           // ── Clock + Check In Button ──
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+            padding: const EdgeInsets.fromLTRB(20, 14, 20, 12),
             child: Row(
               children: [
                 Expanded(child: _buildClock(context)),
@@ -298,7 +302,7 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
             Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 20,
-              ).copyWith(bottom: 16),
+              ).copyWith(bottom: 10),
               child: Row(
                 children: [
                   AppChip(
@@ -317,54 +321,56 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
           AnimatedContainer(
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
-            height: _currentSlide == 0 ? 90 : 135,
-            child: PageView(
-              controller: _pageController,
-              onPageChanged: (index) {
-                setState(() => _currentSlide = index);
-              },
-              children: [
-                // Slide 1: Check In & Check Out
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: SingleChildScrollView(
-                    physics: const NeverScrollableScrollPhysics(),
+            height: _currentSlide == 0 ? 64 : 156,
+            child: ScrollConfiguration(
+              behavior: ScrollConfiguration.of(
+                context,
+              ).copyWith(dragDevices: PointerDeviceKind.values.toSet()),
+              child: PageView(
+                controller: _pageController,
+                onPageChanged: (index) {
+                  setState(() => _currentSlide = index);
+                },
+                children: [
+                  // Slide 1: attendance times on a shared surface.
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
+                        const Divider(
+                          height: 1,
+                          thickness: 1,
+                          color: AppColors.dividerLight,
+                        ),
+                        const SizedBox(height: 10),
                         Row(
                           children: [
                             Expanded(
                               child: _buildCheckStatus(
-                                context,
-                                label: 'Check In',
+                                label: 'Masuk',
                                 time:
                                     widget.attendance?.jamMasuk?.format(
                                       pattern: 'HH:mm',
                                     ) ??
                                     '--:--',
-                                subtitle: widget.attendance?.jamMasuk != null
-                                    ? 'Sudah Check In'
-                                    : 'Belum Check In',
-                                icon: PhosphorIcons.signInFill,
-                                color: const Color(0xFF0F8B6D),
                               ),
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: 16),
+                            Container(
+                              width: 1,
+                              height: 42,
+                              color: AppColors.dividerLight,
+                            ),
+                            const SizedBox(width: 16),
                             Expanded(
                               child: _buildCheckStatus(
-                                context,
-                                label: 'Check Out',
+                                label: 'Pulang',
                                 time:
                                     widget.attendance?.jamPulang?.format(
                                       pattern: 'HH:mm',
                                     ) ??
                                     '--:--',
-                                subtitle: widget.attendance?.jamPulang != null
-                                    ? 'Sudah Check Out'
-                                    : 'Belum Check Out',
-                                icon: PhosphorIcons.signOutFill,
-                                color: AppColors.info,
                               ),
                             ),
                           ],
@@ -372,113 +378,151 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
                       ],
                     ),
                   ),
-                ),
-                // Slide 2: Detailed Info View (Grid)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: const Color(0xFFF0F0F0)),
-                    ),
-                    child: SingleChildScrollView(
-                      physics: const NeverScrollableScrollPhysics(),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _buildDetailItem(
-                                  PhosphorIcons.clockClockwiseFill,
-                                  const Color(0xFF0F8B6D),
-                                  'Jadwal Masuk',
-                                  widget.effectiveSchedule != null
-                                      ? _parseTime(
-                                                  widget
-                                                      .effectiveSchedule!
-                                                      .effectiveJamMasuk,
-                                                ) !=
-                                                null
-                                            ? '${_parseTime(widget.effectiveSchedule!.effectiveJamMasuk)!.hour.toString().padLeft(2, '0')}:${_parseTime(widget.effectiveSchedule!.effectiveJamMasuk)!.minute.toString().padLeft(2, '0')}'
-                                            : '--:--'
-                                      : widget.setting?.jamMasuk?.format(
-                                              pattern: 'HH:mm',
-                                            ) ??
-                                            '--:--',
+                  // Slide 2: Detailed Info View (Grid)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Container(
+                      padding: EdgeInsets.zero,
+                      child: SingleChildScrollView(
+                        physics: const NeverScrollableScrollPhysics(),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Divider(
+                              height: 1,
+                              thickness: 1,
+                              color: AppColors.dividerLight,
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _buildDetailItem(
+                                    PhosphorIcons.clockClockwiseFill,
+                                    AppColors.primary,
+                                    'Jadwal Masuk',
+                                    widget.effectiveSchedule != null
+                                        ? _parseTime(
+                                                    widget
+                                                        .effectiveSchedule!
+                                                        .effectiveJamMasuk,
+                                                  ) !=
+                                                  null
+                                              ? '${_parseTime(widget.effectiveSchedule!.effectiveJamMasuk)!.hour.toString().padLeft(2, '0')}:${_parseTime(widget.effectiveSchedule!.effectiveJamMasuk)!.minute.toString().padLeft(2, '0')}'
+                                              : '--:--'
+                                        : widget.setting?.jamMasuk?.format(
+                                                pattern: 'HH:mm',
+                                              ) ??
+                                              '--:--',
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: _buildDetailItem(
-                                  PhosphorIcons.clockCounterClockwiseFill,
-                                  const Color(0xFFE8890C),
-                                  'Jadwal Pulang',
-                                  widget.effectiveSchedule != null
-                                      ? _parseTime(
-                                                  widget
-                                                      .effectiveSchedule!
-                                                      .effectiveJamPulang,
-                                                ) !=
-                                                null
-                                            ? '${_parseTime(widget.effectiveSchedule!.effectiveJamPulang)!.hour.toString().padLeft(2, '0')}:${_parseTime(widget.effectiveSchedule!.effectiveJamPulang)!.minute.toString().padLeft(2, '0')}'
-                                            : '--:--'
-                                      : widget.setting?.jamPulang?.format(
-                                              pattern: 'HH:mm',
-                                            ) ??
-                                            '--:--',
+                                const SizedBox(width: 12),
+                                Container(
+                                  width: 1,
+                                  height: 44,
+                                  color: AppColors.dividerLight,
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _buildDetailItem(
-                                  PhosphorIcons.targetFill,
-                                  const Color(0xFF0F8B6D),
-                                  'Target Kerja',
-                                  _getTargetKerja(),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: _buildDetailItem(
+                                    PhosphorIcons.clockCounterClockwiseFill,
+                                    AppColors.labelSecondary,
+                                    'Jadwal Pulang',
+                                    widget.effectiveSchedule != null
+                                        ? _parseTime(
+                                                    widget
+                                                        .effectiveSchedule!
+                                                        .effectiveJamPulang,
+                                                  ) !=
+                                                  null
+                                              ? '${_parseTime(widget.effectiveSchedule!.effectiveJamPulang)!.hour.toString().padLeft(2, '0')}:${_parseTime(widget.effectiveSchedule!.effectiveJamPulang)!.minute.toString().padLeft(2, '0')}'
+                                              : '--:--'
+                                        : widget.setting?.jamPulang?.format(
+                                                pattern: 'HH:mm',
+                                              ) ??
+                                              '--:--',
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: _buildDetailItem(
-                                  PhosphorIcons.hourglassFill,
-                                  const Color(0xFFE8890C),
-                                  'Sisa Waktu',
-                                  _getSisaWaktu(),
+                              ],
+                            ),
+                            const Divider(
+                              height: 25,
+                              thickness: 1,
+                              color: AppColors.dividerLight,
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _buildDetailItem(
+                                    PhosphorIcons.targetFill,
+                                    AppColors.primary,
+                                    'Target Kerja',
+                                    _getTargetKerja(),
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
+                                const SizedBox(width: 12),
+                                Container(
+                                  width: 1,
+                                  height: 44,
+                                  color: AppColors.dividerLight,
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: _buildDetailItem(
+                                    PhosphorIcons.hourglassFill,
+                                    AppColors.labelSecondary,
+                                    'Sisa Waktu',
+                                    _getSisaWaktu(),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
 
           // Pagination Dots
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(2, (index) {
-              return AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                height: 6,
-                width: _currentSlide == index ? 16 : 6,
-                decoration: BoxDecoration(
-                  color: _currentSlide == index
-                      ? AppColors.primary
-                      : AppColors.primary.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(3),
+              return Semantics(
+                button: true,
+                selected: _currentSlide == index,
+                label: index == 0
+                    ? 'Tampilkan masuk dan pulang'
+                    : 'Tampilkan jadwal kerja',
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => _pageController.animateToPage(
+                    index,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 6,
+                      horizontal: 4,
+                    ),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      height: 6,
+                      width: _currentSlide == index ? 16 : 6,
+                      decoration: BoxDecoration(
+                        color: _currentSlide == index
+                            ? AppColors.primary
+                            : AppColors.primary.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                    ),
+                  ),
                 ),
               );
             }),
@@ -500,7 +544,7 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
               ),
             )
           else
-            const SizedBox(height: 16),
+            const SizedBox(height: 10),
 
           // ── Today's Attendance Log Button ──
           const Divider(height: 1, color: Color(0xFFF0F0F0)),
@@ -576,7 +620,7 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
               Text(
                 timeStr,
                 style: const TextStyle(
-                  fontSize: 36,
+                  fontSize: 30,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFF1E1E1E),
                   letterSpacing: -1,
@@ -703,7 +747,8 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
             : widget.onTapActionButton,
         borderRadius: BorderRadius.circular(18),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          constraints: const BoxConstraints(minHeight: 48),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: gradientColors,
@@ -737,15 +782,21 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
                       ? PhosphorIcons.signOutFill
                       : PhosphorIcons.signInFill,
                   color: Colors.white,
-                  size: 18,
+                  size: 16,
                 ),
               const SizedBox(width: 8),
               Text(
-                showLoading ? 'Memproses...' : widget.actionButtonLabel,
+                showLoading
+                    ? 'Memproses...'
+                    : switch (widget.actionButtonLabel) {
+                        'Check In' => 'Masuk',
+                        'Check Out' => 'Pulang',
+                        final label => label,
+                      },
                 style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w600,
-                  fontSize: 14,
+                  fontSize: 13,
                 ),
               ),
             ],
@@ -908,66 +959,34 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
     );
   }
 
-  Widget _buildCheckStatus(
-    BuildContext context, {
-    required String label,
-    required String time,
-    required String subtitle,
-    required IconData icon,
-    required Color color,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF5F7F9),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.12),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, size: 18, color: color),
+  Widget _buildCheckStatus({required String label, required String time}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            color: AppColors.labelSecondary,
           ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.labelSecondary,
-                  ),
-                ),
-                Text(
-                  time,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF1E1E1E),
-                  ),
-                ),
-                Text(
-                  subtitle,
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: AppColors.labelSecondary,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+        ),
+        const SizedBox(height: 4),
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: Text(
+            time,
+            style: const TextStyle(
+              fontSize: 22,
+              height: 1.2,
+              fontWeight: FontWeight.w600,
+              color: AppColors.labelPrimary,
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

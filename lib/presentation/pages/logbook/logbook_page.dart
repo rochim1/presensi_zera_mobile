@@ -38,29 +38,8 @@ class LogbookView extends StatefulWidget {
 class _LogbookViewState extends State<LogbookView> {
   String? _actionEntryId;
 
-  // Category colors (same as web admin)
-  static const _categoryColors = <String, Color>{
-    'Meeting': Color(0xFF007bff),
-    'Development': Color(0xFF28a745),
-    'Design': Color(0xFF6610f2),
-    'Testing': Color(0xFFe83e8c),
-    'Research': Color(0xFF17a2b8),
-    'Admin': Color(0xFFfd7e14),
-    'Lainnya': Color(0xFF6c757d),
-  };
-
-  Color _categoryColor(String? category) {
-    if (category == null) return const Color(0xFF6c757d);
-    if (_categoryColors.containsKey(category)) {
-      return _categoryColors[category]!;
-    }
-    // Hash-based fallback color
-    int hash = 0;
-    for (int i = 0; i < category.length; i++) {
-      hash = category.codeUnitAt(i) + ((hash << 5) - hash);
-    }
-    return Color(0xFF000000 | (hash & 0x00FFFFFF));
-  }
+  // Categories remain explicit text; a neutral accent avoids arbitrary colors.
+  Color _categoryColor(String? category) => AppColors.labelSecondary;
 
   String _formatDuration(int? minutes) {
     if (minutes == null || minutes == 0) return '0m';
@@ -1166,18 +1145,11 @@ class _LogbookViewState extends State<LogbookView> {
                 margin: EdgeInsets.only(bottom: AppDimens.h10),
                 decoration: BoxDecoration(
                   color: AppColors.white,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: const Color(0xFFEEF0F3)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.025),
-                      blurRadius: 10,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: AppColors.border),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(12, 11, 12, 10),
+                  padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

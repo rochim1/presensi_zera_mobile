@@ -39,16 +39,7 @@ class _AttendanceStatsCardState extends State<AttendanceStatsCard> {
   }
 
   Color _getTypeColor(String? type) {
-    switch (type) {
-      case 'reguler':
-        return AppColors.primary;
-      case 'shift':
-        return const Color(0xFFE67E22);
-      case 'oncall':
-        return const Color(0xFF8E44AD);
-      default:
-        return AppColors.primary;
-    }
+    return AppColors.primary;
   }
 
   @override
@@ -142,6 +133,7 @@ class _AttendanceStatsCardState extends State<AttendanceStatsCard> {
 
   Widget _buildStats(List<AttendanceStatistic> stats) {
     if (stats.isEmpty) return const SizedBox.shrink();
+    final currentPage = _currentPage.clamp(0, stats.length - 1);
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -180,16 +172,16 @@ class _AttendanceStatsCardState extends State<AttendanceStatsCard> {
                 ),
                 decoration: BoxDecoration(
                   color: _getTypeColor(
-                    stats[_currentPage].typePresensi,
+                    stats[currentPage].typePresensi,
                   ).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  _getTypeLabel(stats[_currentPage].typePresensi),
+                  _getTypeLabel(stats[currentPage].typePresensi),
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
-                    color: _getTypeColor(stats[_currentPage].typePresensi),
+                    color: _getTypeColor(stats[currentPage].typePresensi),
                   ),
                 ),
               ),
@@ -199,7 +191,7 @@ class _AttendanceStatsCardState extends State<AttendanceStatsCard> {
 
           // PageView for stats
           SizedBox(
-            height: 80,
+            height: 100,
             child: PageView.builder(
               controller: _pageController,
               itemCount: stats.length,
@@ -261,13 +253,11 @@ class _AttendanceStatsCardState extends State<AttendanceStatsCard> {
                   ),
                 ),
                 Text(
-                  '${stats[_currentPage].konsistensi.toStringAsFixed(0)}%',
+                  '${stats[currentPage].konsistensi.toStringAsFixed(0)}%',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
-                    color: _getKonsistensiColor(
-                      stats[_currentPage].konsistensi,
-                    ),
+                    color: _getKonsistensiColor(stats[currentPage].konsistensi),
                   ),
                 ),
               ],
@@ -279,9 +269,7 @@ class _AttendanceStatsCardState extends State<AttendanceStatsCard> {
   }
 
   Color _getKonsistensiColor(double value) {
-    if (value >= 80) return const Color(0xFF0F8B6D);
-    if (value >= 50) return const Color(0xFFE67E22);
-    return const Color(0xFFE74C3C);
+    return AppColors.labelPrimary;
   }
 
   Widget _buildStatPage(AttendanceStatistic stat) {

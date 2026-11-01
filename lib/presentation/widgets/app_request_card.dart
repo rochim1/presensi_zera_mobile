@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/core/themes/pantoo_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:presensi_domain/presensi_domain.dart';
@@ -32,19 +33,18 @@ class AppRequestCard extends StatelessWidget {
   }) : isLoading = false;
 
   const AppRequestCard.shimmer({
-    super.key, 
+    super.key,
     this.hasShadow = true,
     this.showUser = true,
-  })
-    : user = null,
-      statusColor = AppColors.grey,
-      statusLabel = '',
-      title = null,
-      subtitle = null,
-      middleContent = const [],
-      footer = null,
-      onTap = null,
-      isLoading = true;
+  }) : user = null,
+       statusColor = AppColors.grey,
+       statusLabel = '',
+       title = null,
+       subtitle = null,
+       middleContent = const [],
+       footer = null,
+       onTap = null,
+       isLoading = true;
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +53,8 @@ class AppRequestCard extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context) {
-    final hasVisibleBody = (showUser && title != null) ||
+    final hasVisibleBody =
+        (showUser && title != null) ||
         (subtitle != null && subtitle!.isNotEmpty);
 
     return GestureDetector(
@@ -61,43 +62,27 @@ class AppRequestCard extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.white,
-          borderRadius: BorderRadius.circular(AppDimens.r16),
-          boxShadow: hasShadow
-              ? [
-                  BoxShadow(
-                    color: AppColors.labelSecondary.withValues(alpha: 0.08),
-                    blurRadius: 12,
-                    offset: const Offset(0, 2),
-                  ),
-                  BoxShadow(
-                    color: AppColors.labelSecondary.withValues(alpha: 0.05),
-                    blurRadius: 4,
-                    offset: const Offset(0, 1),
-                  ),
-                ]
-              : null,
+          borderRadius: BorderRadius.circular(PantooUi.cardRadius),
+          border: Border.fromBorderSide(PantooUi.border),
         ),
         clipBehavior: Clip.antiAlias,
         child: Padding(
-          padding: EdgeInsets.all(AppDimens.w16),
+          padding: const EdgeInsets.all(PantooUi.pagePadding),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildHeader(context),
               if (hasVisibleBody) ...[
-                SizedBox(height: AppDimens.h12),
+                const SizedBox(height: 12),
                 _buildBody(context),
               ],
               if (middleContent.isNotEmpty) ...[
-                SizedBox(height: AppDimens.h12),
-                Container(
-                  height: 1,
-                  color: AppColors.labelSecondary.withValues(alpha: 0.1),
-                ),
-                SizedBox(height: AppDimens.h12),
+                const SizedBox(height: 12),
+                Container(height: 1, color: AppColors.divider),
+                const SizedBox(height: 12),
                 ...middleContent,
               ],
-              if (footer != null) ...[SizedBox(height: AppDimens.h12), footer!],
+              if (footer != null) ...[const SizedBox(height: 12), footer!],
             ],
           ),
         ),
@@ -113,7 +98,7 @@ class AppRequestCard extends StatelessWidget {
           Expanded(
             child: AppUserInfoTile(
               user: user,
-              color: statusColor,
+              color: AppColors.primary,
               padding: EdgeInsets.zero,
             ),
           )
@@ -123,35 +108,14 @@ class AppRequestCard extends StatelessWidget {
               title!,
               style: context.theme.textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: AppColors.primary,
+                color: AppColors.labelPrimary,
               ),
             ),
           )
         else
           const Spacer(),
-        SizedBox(width: AppDimens.w8),
-        Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppDimens.sizeM,
-            vertical: 6,
-          ),
-          decoration: BoxDecoration(
-            color: statusColor.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(AppDimens.size4M),
-            border: Border.all(
-              color: statusColor.withValues(alpha: 0.2),
-              width: 1,
-            ),
-          ),
-          child: Text(
-            statusLabel,
-            style: TextStyle(
-              color: statusColor,
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
+        const SizedBox(width: 8),
+        Flexible(child: AppChip(label: statusLabel)),
       ],
     );
   }
@@ -165,7 +129,7 @@ class AppRequestCard extends StatelessWidget {
             title!,
             style: context.theme.textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.w600,
-              color: AppColors.primary,
+              color: AppColors.labelPrimary,
             ),
           ),
         if (subtitle != null && subtitle!.isNotEmpty) ...[
@@ -187,25 +151,12 @@ class AppRequestCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(AppDimens.r16),
-        boxShadow: hasShadow
-            ? [
-                BoxShadow(
-                  color: AppColors.labelSecondary.withValues(alpha: 0.08),
-                  blurRadius: 12,
-                  offset: const Offset(0, 2),
-                ),
-                BoxShadow(
-                  color: AppColors.labelSecondary.withValues(alpha: 0.05),
-                  blurRadius: 4,
-                  offset: const Offset(0, 1),
-                ),
-              ]
-            : null,
+        borderRadius: BorderRadius.circular(PantooUi.cardRadius),
+        border: Border.fromBorderSide(PantooUi.border),
       ),
       clipBehavior: Clip.antiAlias,
       child: Padding(
-        padding: EdgeInsets.all(AppDimens.w16),
+        padding: const EdgeInsets.all(PantooUi.pagePadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -220,7 +171,7 @@ class AppRequestCard extends StatelessWidget {
                   )
                 else
                   const Spacer(),
-                SizedBox(width: AppDimens.w8),
+                const SizedBox(width: 8),
                 AppShimmer.box(
                   width: AppDimens.w64,
                   height: AppDimens.h24,

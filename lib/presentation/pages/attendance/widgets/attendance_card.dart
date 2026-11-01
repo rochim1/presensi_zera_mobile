@@ -47,7 +47,7 @@ class AttendanceCard extends StatelessWidget {
       color: Colors.white,
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
-        side: BorderSide(color: AppColors.dividerLight.withValues(alpha: 0.5)),
+        side: BorderSide(color: AppColors.dividerLight.withValues(alpha: 1)),
         borderRadius: BorderRadius.circular(AppDimens.r16),
       ),
       child: InkWell(
@@ -73,12 +73,12 @@ class AttendanceCard extends StatelessWidget {
                   Expanded(
                     child: _buildTimeSection(
                       context,
-                      label: 'Jam Masuk',
+                      label: 'Masuk',
                       value:
                           attendance.jamMasuk?.format(pattern: 'HH:mm') ??
                           '--:--',
                       icon: PhosphorIcons.signIn,
-                      iconColor: AppColors.green,
+                      iconColor: AppColors.labelSecondary,
                     ),
                   ),
                   Container(
@@ -90,12 +90,12 @@ class AttendanceCard extends StatelessWidget {
                   Expanded(
                     child: _buildTimeSection(
                       context,
-                      label: 'Jam Pulang',
+                      label: 'Pulang',
                       value:
                           attendance.jamPulang?.format(pattern: 'HH:mm') ??
                           '--:--',
                       icon: PhosphorIcons.signOut,
-                      iconColor: AppColors.red,
+                      iconColor: AppColors.labelSecondary,
                     ),
                   ),
                 ],
@@ -125,25 +125,27 @@ class AttendanceCard extends StatelessWidget {
           child: Icon(icon, size: 16, color: iconColor),
         ),
         SizedBox(width: AppDimens.w12),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: context.textTheme.labelSmall?.copyWith(
-                color: AppColors.labelSecondary,
-                fontWeight: FontWeight.w500,
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: context.textTheme.labelSmall?.copyWith(
+                  color: AppColors.labelSecondary,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              value,
-              style: context.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: AppColors.labelPrimary,
+              const SizedBox(height: 2),
+              Text(
+                value,
+                style: context.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.labelPrimary,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );
@@ -156,57 +158,43 @@ class AttendanceCard extends StatelessWidget {
   ) {
     return Row(
       children: [
-        if (index != null) ...[
-          Container(
-            width: 24,
-            height: 24,
-            decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Text(
-                '${index! + 1}',
-                style: context.textTheme.labelSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primary,
-                ),
-              ),
-            ),
-          ),
-          SizedBox(width: AppDimens.w8),
-        ],
-        Icon(
+        const Icon(
           PhosphorIcons.calendarBlank,
           size: 18,
           color: AppColors.labelSecondary,
         ),
-        SizedBox(width: AppDimens.w8),
+        const SizedBox(width: 8),
         Expanded(
+          flex: 3,
           child: Text(
-            '${attendance.date?.format(pattern: 'EE, dd MMM yyyy')}${_isToday ? " (Hari Ini)" : ""}',
-            style: context.textTheme.titleSmall!.copyWith(
-              fontWeight: FontWeight.w600,
-              color: AppColors.labelPrimary,
-            ),
-            maxLines: 1,
+            '${attendance.date?.format(pattern: 'EE, dd MMM yyyy') ?? '-'}${_isToday ? " (Hari Ini)" : ""}',
+            maxLines: 2,
             overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
           ),
         ),
-        SizedBox(width: AppDimens.w10),
-        AppChip(
-          label: attendance.type.toName,
-          color: attendance.type.displayColor,
-          borderRadius: AppDimens.r8,
-        ),
-        if (isLate) ...[
-          SizedBox(width: AppDimens.w10),
-          AppChip(
-            label: 'Terlambat',
-            color: AppColors.red,
-            borderRadius: AppDimens.r8,
+        const SizedBox(width: 8),
+        Flexible(
+          flex: 2,
+          child: Text(
+            [attendance.type.toName, if (isLate) 'Terlambat'].join(' · '),
+            textAlign: TextAlign.right,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 11,
+              height: 1.4,
+              fontWeight: FontWeight.w500,
+              color: AppColors.labelSecondary,
+            ),
           ),
-        ],
+        ),
+        const SizedBox(width: 8),
+        const Icon(
+          Icons.chevron_right,
+          size: 18,
+          color: AppColors.labelSecondary,
+        ),
       ],
     );
   }
@@ -217,7 +205,7 @@ class AttendanceCard extends StatelessWidget {
       color: Colors.white,
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
-        side: BorderSide(color: AppColors.dividerLight.withValues(alpha: 0.5)),
+        side: BorderSide(color: AppColors.dividerLight.withValues(alpha: 1)),
         borderRadius: BorderRadius.circular(AppDimens.r16),
       ),
       child: Padding(

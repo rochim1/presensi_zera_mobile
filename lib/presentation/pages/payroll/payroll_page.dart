@@ -38,8 +38,9 @@ class PayrollView extends StatelessWidget {
           return Scaffold(
             appBar: AppTopBar(
               title: 'Slip Gaji',
-              backgroundColor: AppColors.transparent,
-              actions: [const _PayrollMoreMenu(showApproval: false)],
+              centerTitle: false,
+              subtitle: 'Lihat dan unduh slip gaji Anda',
+              actions: [const _PayrollDownloadButton()],
             ),
             body: const MyPayrollPage(),
           );
@@ -62,17 +63,12 @@ class PayrollView extends StatelessWidget {
               child: Scaffold(
                 appBar: AppTopBar(
                   title: 'Slip Gaji',
-                  backgroundColor: AppColors.transparent,
+                  centerTitle: false,
+                  subtitle: showingApproval
+                      ? 'Tinjau pengajuan payroll karyawan'
+                      : 'Lihat dan unduh slip gaji Anda',
                   onBackTap: showingApproval ? showMyPayroll : null,
-                  actions: [
-                    _PayrollMoreMenu(
-                      showApproval: true,
-                      onApproval: () {
-                        context.tabsRouter.setActiveIndex(1);
-                        tabController.animateTo(1);
-                      },
-                    ),
-                  ],
+                  actions: const [_PayrollDownloadButton()],
                 ),
                 body: NestedScrollView(
                   headerSliverBuilder: (context, innerBoxIsScrolled) => [
@@ -110,73 +106,17 @@ class PayrollView extends StatelessWidget {
   }
 }
 
-enum _PayrollMenuAction { downloads, approval }
-
-class _PayrollMoreMenu extends StatelessWidget {
-  final bool showApproval;
-  final VoidCallback? onApproval;
-
-  const _PayrollMoreMenu({required this.showApproval, this.onApproval});
+class _PayrollDownloadButton extends StatelessWidget {
+  const _PayrollDownloadButton();
 
   @override
-  Widget build(BuildContext context) {
-    return PopupMenuButton<_PayrollMenuAction>(
-      tooltip: 'Menu slip gaji',
-      padding: EdgeInsets.zero,
-      offset: Offset(0, AppDimens.h40 + AppDimens.h4),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppDimens.r12),
-      ),
-      child: Container(
-        width: AppDimens.w40,
-        height: AppDimens.w40,
-        decoration: BoxDecoration(
-          color: AppColors.white.withValues(alpha: 0.15),
-          borderRadius: BorderRadius.circular(AppDimens.r12),
-          border: Border.all(
-            color: AppColors.white.withValues(alpha: 0.1),
-            width: 1,
-          ),
-        ),
-        child: Icon(
-          PhosphorIcons.dotsThreeVertical,
-          color: AppColors.white,
-          size: AppDimens.iconMedium,
-        ),
-      ),
-      onSelected: (action) {
-        switch (action) {
-          case _PayrollMenuAction.downloads:
-            context.router.push(const PayrollDownloadPageRoute());
-          case _PayrollMenuAction.approval:
-            onApproval?.call();
-        }
-      },
-      itemBuilder: (context) => [
-        PopupMenuItem(
-          value: _PayrollMenuAction.downloads,
-          child: Row(
-            children: [
-              Icon(PhosphorIcons.downloadSimple, size: 20),
-              const SizedBox(width: 12),
-              const Text('Unduhan Slip Gaji'),
-            ],
-          ),
-        ),
-        if (showApproval)
-          PopupMenuItem(
-            value: _PayrollMenuAction.approval,
-            child: Row(
-              children: [
-                Icon(PhosphorIcons.checkCircle, size: 20),
-                const SizedBox(width: 12),
-                const Text('Approval Slip Gaji'),
-              ],
-            ),
-          ),
-      ],
-    );
-  }
+  Widget build(BuildContext context) => Tooltip(
+    message: 'Unduhan Slip Gaji',
+    child: AppTopBarActionButton(
+      icon: PhosphorIcons.downloadSimple,
+      onTap: () => context.router.push(const PayrollDownloadPageRoute()),
+    ),
+  );
 }
 
 /// Gives AppTabBar a fixed height so it can be used as a pinned SliverPersistentHeader.

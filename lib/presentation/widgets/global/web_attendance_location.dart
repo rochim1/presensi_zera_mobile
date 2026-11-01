@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// Coordinates remain the source for server-side attendance/location rules.
-/// Google Maps web can be enabled after its browser API key is configured.
+/// Optional location-only mode when HRMS_WEB_GOOGLE_MAPS is explicitly false.
 class WebAttendanceLocation extends StatelessWidget {
   const WebAttendanceLocation({
     super.key,

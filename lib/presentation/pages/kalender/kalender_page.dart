@@ -364,37 +364,20 @@ class KalenderView extends StatelessWidget {
       separatorBuilder: (context, index) => SizedBox(height: AppDimens.h10),
       itemBuilder: (context, index) {
         final event = displayEvents[index];
-        final color = _eventColor(event);
 
         return Container(
           key: ValueKey(event.occurrenceId),
           decoration: BoxDecoration(
             color: AppColors.white,
-            borderRadius: BorderRadius.circular(AppDimens.r12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.04),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.border),
           ),
           child: IntrinsicHeight(
             child: Row(
               children: [
-                Container(
-                  width: 5,
-                  decoration: BoxDecoration(
-                    color: color,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(AppDimens.r12),
-                      bottomLeft: Radius.circular(AppDimens.r12),
-                    ),
-                  ),
-                ),
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.all(AppDimens.w12),
+                    padding: const EdgeInsets.all(16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -411,22 +394,10 @@ class KalenderView extends StatelessWidget {
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 3,
-                              ),
-                              decoration: BoxDecoration(
-                                color: color.withValues(alpha: 0.12),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                _eventTypeLabel(event.eventType),
-                                style: TextStyle(
-                                  color: color,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                            const SizedBox(width: 8),
+                            Flexible(
+                              child: AppChip(
+                                label: _eventTypeLabel(event.eventType),
                               ),
                             ),
                             if (canUpdate || canDelete)

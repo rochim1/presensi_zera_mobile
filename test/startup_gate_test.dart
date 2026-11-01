@@ -20,7 +20,8 @@ void main() {
     );
     await tester.pump(const Duration(seconds: 5));
     expect(calls, 0);
-    expect(find.text('Menyiapkan Zera…'), findsOneWidget);
+    expect(find.byType(Image), findsOneWidget);
+    expect(find.text('Menyiapkan Zera…'), findsNothing);
     firstFrame.complete();
     await tester.pump();
     await tester.pump();
@@ -41,11 +42,13 @@ void main() {
         },
       ),
     );
-    expect(find.text('Menyiapkan Zera…'), findsOneWidget);
+    expect(find.byType(Image), findsOneWidget);
+    expect(find.text('Menyiapkan Zera…'), findsNothing);
     await tester.pump();
     expect(calls, 1);
     await tester.pump(const Duration(seconds: 10));
-    expect(find.text('Menyiapkan Zera…'), findsOneWidget);
+    expect(find.byType(Image), findsOneWidget);
+    expect(find.text('Menyiapkan Zera…'), findsNothing);
     expect(find.byType(MaterialApp), findsNothing);
     expect(find.byType(Navigator), findsNothing);
     ready.complete(const MaterialApp(home: Text('Ready')));

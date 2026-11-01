@@ -15,6 +15,7 @@ import 'package:presensi_mobile/core/_core.dart';
 import '../../_presentation.dart';
 import 'bloc/home_cubit.dart';
 import 'widgets/_widgets.dart';
+import 'widgets/home_requests_section.dart';
 
 part 'widgets/home_panel.dart';
 
@@ -50,6 +51,7 @@ class _HomeViewState extends State<HomeView> {
       ActionSliderController();
   final scrollController = ScrollController();
   bool _isStartingOvertime = false;
+  int _requestsRevision = 0;
   bool get _isOpeningAttendance =>
       context.read<AppCubit>().attendanceFlow.value;
 
@@ -95,6 +97,7 @@ class _HomeViewState extends State<HomeView> {
   }
 
   void onRefresh() async {
+    setState(() => _requestsRevision++);
     await Future.wait([
       context.read<AppCubit>().onRefresh(),
       context.read<HomeCubit>().onRefresh(),
@@ -247,6 +250,8 @@ class _HomeViewState extends State<HomeView> {
           ],
         ),
         const SizedBox(height: 16),
+        HomeRequestsSection(refreshRevision: _requestsRevision),
+        const SizedBox(height: 16),
         SizedBox(
           height: 320,
           child: Row(
@@ -273,6 +278,8 @@ class _HomeViewState extends State<HomeView> {
         const SizedBox(height: 16),
         const UnsyncedDataBanner(),
         const HomeFeatureGrid(),
+        const SizedBox(height: 16),
+        HomeRequestsSection(refreshRevision: _requestsRevision),
         const SizedBox(height: 16),
         AnnouncementSection(state: state),
         const SizedBox(height: 16),

@@ -10,29 +10,40 @@ import 'bloc/attendance_request_state.dart';
 
 @RoutePage()
 class AttendanceRequestPage extends StatelessWidget {
-  const AttendanceRequestPage({super.key});
+  final bool initialApproval;
+
+  const AttendanceRequestPage({super.key, this.initialApproval = false});
   @override
   Widget build(BuildContext context) => BlocProvider(
     create: (_) => sl<AttendanceRequestCubit>()..init(),
-    child: const AttendanceRequestView(),
+    child: AttendanceRequestView(initialApproval: initialApproval),
   );
 }
 
 class AttendanceRequestView extends StatefulWidget {
-  const AttendanceRequestView({super.key});
+  final bool initialApproval;
+
+  const AttendanceRequestView({super.key, this.initialApproval = false});
   @override
   State<AttendanceRequestView> createState() => _AttendanceRequestViewState();
 }
 
 class _AttendanceRequestViewState extends State<AttendanceRequestView> {
-  bool _showingApproval = false;
+  late bool _showingApproval;
+
+  @override
+  void initState() {
+    super.initState();
+    _showingApproval = widget.initialApproval;
+  }
+
   @override
   Widget build(BuildContext context) =>
       BlocBuilder<AttendanceRequestCubit, AttendanceRequestState>(
         builder: (context, state) {
           final cubit = context.read<AttendanceRequestCubit>();
           return PopScope(
-            canPop: !_showingApproval,
+            canPop: !_showingApproval || widget.initialApproval,
             onPopInvokedWithResult: (didPop, result) {
               if (!didPop && _showingApproval) {
                 setState(() => _showingApproval = false);
@@ -43,17 +54,13 @@ class _AttendanceRequestViewState extends State<AttendanceRequestView> {
                 title: _showingApproval
                     ? 'Approval Request Presensi'
                     : 'Request Presensi',
-                backgroundColor: AppColors.transparent,
-                onBackTap: _showingApproval
+                centerTitle: false,
+                subtitle: _showingApproval
+                    ? 'Tinjau pengajuan koreksi presensi karyawan'
+                    : 'Kelola pengajuan koreksi presensi Anda',
+                onBackTap: _showingApproval && !widget.initialApproval
                     ? () => setState(() => _showingApproval = false)
                     : null,
-                actions: [
-                  AppApprovalNavigationButton(
-                    showingApproval: _showingApproval,
-                    onTap: () =>
-                        setState(() => _showingApproval = !_showingApproval),
-                  ),
-                ],
               ),
               floatingActionButton: _showingApproval
                   ? null

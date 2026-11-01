@@ -17,20 +17,13 @@ class AppDetailSectionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(AppDimens.r12),
-        border: Border.all(color: AppColors.dividerLight),
-      ),
+      decoration: const BoxDecoration(color: AppColors.white),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (title != null) ...[
             Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: AppDimens.w12,
-                vertical: AppDimens.h10,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
               child: Text(
                 title!,
                 style: context.textStyle.titleSmall?.copyWith(
@@ -41,10 +34,7 @@ class AppDetailSectionCard extends StatelessWidget {
             ),
             const Divider(height: 1, color: AppColors.dividerLight),
           ],
-          Padding(
-            padding: padding ?? EdgeInsets.all(AppDimens.w12),
-            child: child,
-          ),
+          Padding(padding: padding ?? const EdgeInsets.all(12), child: child),
         ],
       ),
     );

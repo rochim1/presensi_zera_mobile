@@ -93,8 +93,6 @@ mixin AttendanceGraphQl {
       user_id {
         _id
         name
-        jam_masuk_divisi
-        jam_pulang_divisi
         divisi_id {
           _id
           nama_divisi

@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/presentation/widgets/common/month_picker_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -39,8 +40,9 @@ class _AttendanceFilterBottomSheetState
   @override
   void initState() {
     super.initState();
-    _startDate = widget.initialStartDate;
-    _endDate = widget.initialEndDate;
+    final now = DateTime.now();
+    _startDate = widget.initialStartDate ?? DateTime(now.year, now.month, 1);
+    _endDate = widget.initialEndDate ?? DateTime(now.year, now.month + 1, 0);
     _typePresensi = widget.initialTypePresensi ?? 'Semua';
     _searchController = TextEditingController(text: widget.initialSearchName);
   }
@@ -73,6 +75,7 @@ class _AttendanceFilterBottomSheetState
       },
     );
 
+    if (!mounted) return;
     if (picked != null) {
       setState(() {
         _startDate = picked.start;
@@ -82,335 +85,263 @@ class _AttendanceFilterBottomSheetState
   }
 
   Future<void> _selectMonth(BuildContext context) async {
-    final now = DateTime.now();
-    int selectedYear = _startDate?.year ?? now.year;
-    final List<String> months = [
-      'Januari',
-      'Februari',
-      'Maret',
-      'April',
-      'Mei',
-      'Juni',
-      'Juli',
-      'Agustus',
-      'September',
-      'Oktober',
-      'November',
-      'Desember',
-    ];
-
-    await showModalBottomSheet(
-      context: context,
-      backgroundColor: AppColors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(AppDimens.radiusLarge),
-        ),
-      ),
-      builder: (ctx) {
-        return StatefulBuilder(
-          builder: (ctx, setModalState) {
-            return Container(
-              padding: const EdgeInsets.all(AppDimens.paddingLarge),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.chevron_left),
-                        onPressed: () => setModalState(() => selectedYear--),
-                      ),
-                      Text(
-                        selectedYear.toString(),
-                        style: context.textStyle.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.chevron_right),
-                        onPressed: () => setModalState(() => selectedYear++),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          childAspectRatio: 2.5,
-                          crossAxisSpacing: 8,
-                          mainAxisSpacing: 8,
-                        ),
-                    itemCount: 12,
-                    itemBuilder: (context, index) {
-                      return OutlinedButton(
-                        onPressed: () {
-                          final start = DateTime(selectedYear, index + 1, 1);
-                          final end = DateTime(
-                            selectedYear,
-                            index + 2,
-                            0,
-                          ); // last day of month
-                          setState(() {
-                            _startDate = start;
-                            _endDate = end;
-                          });
-                          Navigator.pop(ctx);
-                        },
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: AppColors.labelPrimary,
-                          side: const BorderSide(color: AppColors.dividerLight),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              AppDimens.radiusMedium,
-                            ),
-                          ),
-                        ),
-                        child: Text(
-                          months[index],
-                          style: context.textStyle.bodySmall,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            );
-          },
-        );
+    await MonthPickerBottomSheet.show(
+      context,
+      initialDate: _startDate ?? DateTime.now(),
+      onMonthSelected: (month) {
+        if (!mounted) return;
+        setState(() {
+          _startDate = DateTime(month.year, month.month, 1);
+          _endDate = DateTime(month.year, month.month + 1, 0);
+        });
       },
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(
-        left: AppDimens.paddingMediumX,
-        right: AppDimens.paddingMediumX,
-        top: AppDimens.paddingMediumX,
-        bottom:
-            MediaQuery.of(context).viewInsets.bottom + AppDimens.paddingLarge,
-      ),
-      decoration: const BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(AppDimens.radiusLarge),
+    return SafeArea(
+      top: false,
+      child: Container(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.sizeOf(context).height * 0.9,
         ),
-      ),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Drag Indicator
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                margin: const EdgeInsets.only(bottom: AppDimens.paddingMediumX),
-                decoration: BoxDecoration(
-                  color: AppColors.dividerLight,
-                  borderRadius: BorderRadius.circular(2),
+        padding: EdgeInsets.only(
+          left: AppDimens.paddingMediumX,
+          right: AppDimens.paddingMediumX,
+          top: AppDimens.paddingMediumX,
+          bottom:
+              MediaQuery.of(context).viewInsets.bottom + AppDimens.paddingLarge,
+        ),
+        decoration: const BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(AppDimens.radiusLarge),
+          ),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Drag Indicator
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.only(
+                    bottom: AppDimens.paddingMediumX,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.dividerLight,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
               ),
-            ),
 
-            Text(
-              'Filter Presensi',
-              style: context.textStyle.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: AppColors.labelPrimary,
-              ),
-            ),
-            AppDimens.paddingLarge.hSpace,
-
-            // Rentang Waktu
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Rentang Waktu',
-                  style: context.textStyle.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => _selectMonth(context),
-                  style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 0,
-                    ),
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
-                  child: Text(
-                    'Pilih Bulan',
-                    style: context.textStyle.bodyMedium?.copyWith(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            AppDimens.paddingSmallX.hSpace,
-            InkWell(
-              onTap: () => _selectDateRange(context),
-              borderRadius: BorderRadius.circular(AppDimens.radiusMedium),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.dividerLight),
-                  borderRadius: BorderRadius.circular(AppDimens.radiusMedium),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      (_startDate != null && _endDate != null)
-                          ? '${DateFormat('dd MMM yyyy').format(_startDate!)} - ${DateFormat('dd MMM yyyy').format(_endDate!)}'
-                          : 'Pilih Rentang Waktu',
-                      style: context.textStyle.bodyMedium?.copyWith(
-                        color: (_startDate != null)
-                            ? AppColors.labelPrimary
-                            : AppColors.labelSecondary,
-                      ),
-                    ),
-                    const Icon(
-                      Icons.date_range,
-                      color: AppColors.primary,
-                      size: 20,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            AppDimens.paddingLarge.hSpace,
-
-            // Tipe Presensi
-            Text(
-              'Tipe Presensi',
-              style: context.textStyle.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            AppDimens.paddingSmallX.hSpace,
-            Wrap(
-              spacing: 8.0,
-              children: _typeOptions.map((type) {
-                final isSelected = _typePresensi == type;
-                return ChoiceChip(
-                  label: Text(
-                    type == 'Semua'
-                        ? 'Semua'
-                        : type[0].toUpperCase() + type.substring(1),
-                  ),
-                  selected: isSelected,
-                  onSelected: (selected) {
-                    if (selected) {
-                      setState(() => _typePresensi = type);
-                    }
-                  },
-                  selectedColor: AppColors.primary.withValues(alpha: 0.1),
-                  labelStyle: TextStyle(
-                    color: isSelected
-                        ? AppColors.primary
-                        : AppColors.labelSecondary,
-                    fontWeight: isSelected
-                        ? FontWeight.w600
-                        : FontWeight.normal,
-                  ),
-                  backgroundColor: AppColors.white,
-                  side: BorderSide(
-                    color: isSelected
-                        ? AppColors.primary
-                        : AppColors.dividerLight,
-                  ),
-                );
-              }).toList(),
-            ),
-            AppDimens.paddingLarge.hSpace,
-
-            // Cari Nama
-            if (widget.showSearchName) ...[
               Text(
-                'Cari Nama Pegawai',
-                style: context.textStyle.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
+                'Filter Presensi',
+                style: context.textStyle.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.labelPrimary,
                 ),
-              ),
-              AppDimens.paddingSmallX.hSpace,
-              TextFieldBasic(
-                controller: _searchController,
-                hint: 'Masukkan nama...',
-                prefixIcon: Icon(Icons.search, color: AppColors.labelSecondary),
               ),
               AppDimens.paddingLarge.hSpace,
-            ],
-            AppDimens.paddingMediumX.hSpace,
 
-            // Action Buttons
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () {
-                      setState(() {
-                        _startDate = null;
-                        _endDate = null;
-                        _typePresensi = 'Semua';
-                        _searchController.clear();
-                      });
-                    },
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      side: const BorderSide(color: AppColors.primary),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                          AppDimens.radiusMediumX,
-                        ),
+              // Rentang Waktu
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Rentang Waktu',
+                      style: context.textStyle.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
+                  ),
+                  const SizedBox(width: 8),
+                  TextButton(
+                    onPressed: () => _selectMonth(context),
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 0,
+                      ),
+                      minimumSize: const Size(48, 48),
+                    ),
                     child: Text(
-                      'Reset',
-                      style: context.textStyle.bodyLarge?.copyWith(
+                      'Pilih Bulan',
+                      style: context.textStyle.bodyMedium?.copyWith(
                         color: AppColors.primary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
-                ),
-                AppDimens.w16.wSpace,
-                Expanded(
-                  child: AppButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      widget.onApply(
-                        _startDate,
-                        _endDate,
-                        _typePresensi == 'Semua' ? null : _typePresensi,
-                        _searchController.text.isEmpty
-                            ? null
-                            : _searchController.text,
-                      );
-                    },
-                    text: 'Terapkan',
+                ],
+              ),
+              AppDimens.paddingSmallX.hSpace,
+              InkWell(
+                onTap: () => _selectDateRange(context),
+                borderRadius: BorderRadius.circular(AppDimens.radiusMedium),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: AppColors.dividerLight),
+                    borderRadius: BorderRadius.circular(AppDimens.radiusMedium),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          (_startDate != null && _endDate != null)
+                              ? '${DateFormat('dd MMM yyyy').format(_startDate!)} - ${DateFormat('dd MMM yyyy').format(_endDate!)}'
+                              : 'Pilih Rentang Waktu',
+                          style: context.textStyle.bodyMedium?.copyWith(
+                            color: (_startDate != null)
+                                ? AppColors.labelPrimary
+                                : AppColors.labelSecondary,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      const Icon(
+                        Icons.date_range,
+                        color: AppColors.primary,
+                        size: 20,
+                      ),
+                    ],
                   ),
                 ),
+              ),
+              AppDimens.paddingLarge.hSpace,
+
+              // Tipe Presensi
+              Text(
+                'Tipe Presensi',
+                style: context.textStyle.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              AppDimens.paddingSmallX.hSpace,
+              Wrap(
+                spacing: 8.0,
+                runSpacing: 8,
+                children: _typeOptions.map((type) {
+                  final isSelected = _typePresensi == type;
+                  return ChoiceChip(
+                    label: Text(
+                      type == 'oncall'
+                          ? 'On Call'
+                          : type == 'Semua'
+                          ? 'Semua'
+                          : type[0].toUpperCase() + type.substring(1),
+                    ),
+                    selected: isSelected,
+                    onSelected: (selected) {
+                      if (selected) {
+                        setState(() => _typePresensi = type);
+                      }
+                    },
+                    selectedColor: AppColors.primary.withValues(alpha: 0.1),
+                    labelStyle: TextStyle(
+                      color: isSelected
+                          ? AppColors.primary
+                          : AppColors.labelSecondary,
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.normal,
+                    ),
+                    backgroundColor: AppColors.white,
+                    side: BorderSide(
+                      color: isSelected
+                          ? AppColors.primary
+                          : AppColors.dividerLight,
+                    ),
+                  );
+                }).toList(),
+              ),
+              AppDimens.paddingLarge.hSpace,
+
+              // Cari Nama
+              if (widget.showSearchName) ...[
+                Text(
+                  'Cari Nama Pegawai',
+                  style: context.textStyle.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                AppDimens.paddingSmallX.hSpace,
+                TextFieldBasic(
+                  controller: _searchController,
+                  hint: 'Masukkan nama...',
+                  prefixIcon: Icon(
+                    Icons.search,
+                    color: AppColors.labelSecondary,
+                  ),
+                ),
+                AppDimens.paddingLarge.hSpace,
               ],
-            ),
-          ],
+              AppDimens.paddingMediumX.hSpace,
+
+              // Action Buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () {
+                        setState(() {
+                          final now = DateTime.now();
+                          _startDate = DateTime(now.year, now.month, 1);
+                          _endDate = DateTime(now.year, now.month + 1, 0);
+                          _typePresensi = 'Semua';
+                          _searchController.clear();
+                        });
+                      },
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        side: const BorderSide(color: AppColors.primary),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                            AppDimens.radiusMediumX,
+                          ),
+                        ),
+                      ),
+                      child: Text(
+                        'Reset',
+                        style: context.textStyle.bodyLarge?.copyWith(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                  AppDimens.w16.wSpace,
+                  Expanded(
+                    child: AppButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        widget.onApply(
+                          _startDate,
+                          _endDate,
+                          _typePresensi == 'Semua' ? null : _typePresensi,
+                          !widget.showSearchName ||
+                                  _searchController.text.trim().isEmpty
+                              ? null
+                              : _searchController.text.trim(),
+                        );
+                      },
+                      text: 'Terapkan',
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

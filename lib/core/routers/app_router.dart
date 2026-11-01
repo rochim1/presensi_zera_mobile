@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/presentation/pages/approval_center/approval_center_page.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:presensi_domain/presensi_domain.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -54,6 +55,12 @@ class AppRouter extends RootStackRouter {
         AutoRoute(path: consignmentPath, page: ConsignmentPageRoute.page),
         AutoRoute(path: profilePath, page: ProfilePageRoute.page),
       ],
+    ),
+
+    AutoRoute(
+      page: ApprovalCenterPageRoute.page,
+      path: '/approval-center',
+      guards: [auth],
     ),
 
     // Attendance

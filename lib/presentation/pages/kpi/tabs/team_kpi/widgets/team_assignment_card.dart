@@ -25,7 +25,10 @@ class TeamAssignmentCard extends StatelessWidget {
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: AppColors.border),
+      ),
       elevation: 0,
       color: Colors.white,
       child: Padding(
@@ -62,7 +65,7 @@ class TeamAssignmentCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                KpiStatusBadge(status: status),
+                Flexible(child: KpiStatusBadge(status: status)),
               ],
             ),
             const Divider(height: 24),
@@ -113,7 +116,7 @@ class TeamAssignmentCard extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: onReview,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+                    backgroundColor: AppColors.primary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),

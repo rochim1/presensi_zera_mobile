@@ -181,8 +181,8 @@ class _SalesDashboardPageState extends State<SalesDashboardPage> {
                       'EC',
                       target.actualEc,
                       target.targetEc,
-                      const Color(0xFF10B981),
-                    ), // Emerald
+                      AppColors.primary,
+                    ), // Pantoo teal
                   ),
                   const SizedBox(width: AppDimens.paddingMedium),
                   Expanded(
@@ -191,8 +191,8 @@ class _SalesDashboardPageState extends State<SalesDashboardPage> {
                       'NOO',
                       target.actualNoo,
                       target.targetNoo,
-                      const Color(0xFF8B5CF6),
-                    ), // Purple
+                      AppColors.primaryDark,
+                    ), // Pantoo teal
                   ),
                 ],
               ),
@@ -288,7 +288,7 @@ class _SalesDashboardPageState extends State<SalesDashboardPage> {
                     minHeight: 8,
                     backgroundColor: AppColors.white.withValues(alpha: 0.3),
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      isSuccess ? const Color(0xFF10B981) : AppColors.white,
+                      isSuccess ? AppColors.primary : AppColors.white,
                     ),
                   ),
                 ),
@@ -511,7 +511,7 @@ class _SalesDashboardPageState extends State<SalesDashboardPage> {
                       title: 'Selesai',
                       value: successCount.toString(),
                       icon: Icons.check_circle_outline,
-                      color: const Color(0xFF10B981), // Emerald
+                      color: AppColors.primary, // Pantoo teal
                     ),
                   ),
                 ],

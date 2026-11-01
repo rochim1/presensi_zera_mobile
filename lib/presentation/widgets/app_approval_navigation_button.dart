@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:presensi_mobile/core/_core.dart';
+import 'package:presensi_mobile/presentation/pages/approval_center/approval_center_page.dart';
 
 class AppApprovalNavigationButton extends StatelessWidget {
   final bool showingApproval;
@@ -22,10 +23,12 @@ class AppApprovalNavigationButton extends StatelessWidget {
         color: AppColors.white.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(AppDimens.r12),
         child: InkWell(
-          onTap: onTap,
+          onTap: showingApproval
+              ? onTap
+              : () => ApprovalCenterPage.open(context),
           borderRadius: BorderRadius.circular(AppDimens.r12),
           child: Container(
-            height: AppDimens.w40,
+            constraints: const BoxConstraints(minHeight: 48),
             padding: EdgeInsets.symmetric(horizontal: AppDimens.w12),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(AppDimens.r12),
@@ -43,7 +46,7 @@ class AppApprovalNavigationButton extends StatelessWidget {
                 ),
                 SizedBox(width: AppDimens.w6),
                 Text(
-                  showingApproval ? returnLabel : 'Approval',
+                  showingApproval ? returnLabel : 'Persetujuan',
                   style: Theme.of(context).textTheme.labelMedium?.copyWith(
                     color: AppColors.white,
                     fontWeight: FontWeight.w600,

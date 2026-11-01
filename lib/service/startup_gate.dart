@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter/foundation.dart';
+import 'package:presensi_mobile/presentation/widgets/pantoo_launch_screen.dart';
 import 'package:presensi_mobile/service/startup_metrics.dart';
 
 /// Render a responsive first frame before loading storage and native services.
@@ -50,28 +51,28 @@ class _StartupGateState extends State<StartupGate> {
         view: View.of(context),
         child: Directionality(
           textDirection: TextDirection.ltr,
-          child: ColoredBox(
-            color: const Color(0xFFF7FAFA),
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Semantics(
-                  liveRegion: true,
-                  child: Text(
-                    _failed
-                        ? 'Zera belum dapat dibuka. Tutup lalu buka kembali aplikasi. Data tersimpan tidak dihapus.'
-                        : 'Menyiapkan Zera…',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Color(0xFF173D3A),
-                      fontSize: 16,
-                      height: 1.5,
+          child: !_failed
+              ? const PantooLaunchScreen()
+              : ColoredBox(
+                  color: const Color(0xFFF7FAFA),
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Semantics(
+                        liveRegion: true,
+                        child: Text(
+                          'Pantoo HR belum dapat dibuka. Tutup lalu buka kembali aplikasi. Data tersimpan tidak dihapus.',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Color(0xFF173D3A),
+                            fontSize: 16,
+                            height: 1.5,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-          ),
         ),
       );
 }

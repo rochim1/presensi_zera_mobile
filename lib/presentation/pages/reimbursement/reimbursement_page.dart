@@ -10,29 +10,40 @@ import 'bloc/reimbursement_state.dart';
 
 @RoutePage()
 class ReimbursementPage extends StatelessWidget {
-  const ReimbursementPage({super.key});
+  final bool initialApproval;
+
+  const ReimbursementPage({super.key, this.initialApproval = false});
   @override
   Widget build(BuildContext context) => BlocProvider(
     create: (_) => sl<ReimbursementCubit>()..init(),
-    child: const ReimbursementView(),
+    child: ReimbursementView(initialApproval: initialApproval),
   );
 }
 
 class ReimbursementView extends StatefulWidget {
-  const ReimbursementView({super.key});
+  final bool initialApproval;
+
+  const ReimbursementView({super.key, this.initialApproval = false});
   @override
   State<ReimbursementView> createState() => _ReimbursementViewState();
 }
 
 class _ReimbursementViewState extends State<ReimbursementView> {
-  bool _showingApproval = false;
+  late bool _showingApproval;
+
+  @override
+  void initState() {
+    super.initState();
+    _showingApproval = widget.initialApproval;
+  }
+
   @override
   Widget build(BuildContext context) =>
       BlocBuilder<ReimbursementCubit, ReimbursementState>(
         builder: (context, state) {
           final cubit = context.read<ReimbursementCubit>();
           return PopScope(
-            canPop: !_showingApproval,
+            canPop: !_showingApproval || widget.initialApproval,
             onPopInvokedWithResult: (didPop, result) {
               if (!didPop && _showingApproval) {
                 setState(() => _showingApproval = false);
@@ -43,17 +54,13 @@ class _ReimbursementViewState extends State<ReimbursementView> {
                 title: _showingApproval
                     ? 'Approval Reimbursement'
                     : 'Reimbursement',
-                backgroundColor: AppColors.transparent,
-                onBackTap: _showingApproval
+                centerTitle: false,
+                subtitle: _showingApproval
+                    ? 'Tinjau pengajuan reimbursement karyawan'
+                    : 'Kelola pengajuan reimbursement Anda',
+                onBackTap: _showingApproval && !widget.initialApproval
                     ? () => setState(() => _showingApproval = false)
                     : null,
-                actions: [
-                  AppApprovalNavigationButton(
-                    showingApproval: _showingApproval,
-                    onTap: () =>
-                        setState(() => _showingApproval = !_showingApproval),
-                  ),
-                ],
               ),
               floatingActionButton: _showingApproval
                   ? null

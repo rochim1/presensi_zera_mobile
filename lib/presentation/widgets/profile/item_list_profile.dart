@@ -2,6 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:presensi_mobile/core/_core.dart';
 
+final _profileIconAssets = <IconData, String>{
+  Icons.person_rounded: 'profile',
+  Icons.qr_code_2_rounded: 'identity',
+  Icons.account_circle_rounded: 'account',
+  Icons.delete_forever_rounded: 'delete_account',
+  Icons.business_rounded: 'company',
+  Icons.directions_bike_rounded: 'van_stock',
+  Icons.sync_rounded: 'sync',
+  Icons.phone_rounded: 'contact',
+  Icons.help_rounded: 'help',
+  Icons.security_rounded: 'privacy',
+  Icons.info_rounded: 'version',
+  Icons.logout_rounded: 'logout',
+};
+
 class ItemListProfile extends StatelessWidget {
   final Function()? onTap;
   final String title;
@@ -49,12 +64,25 @@ class ItemListProfile extends StatelessWidget {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.1),
+                    color: AppColors.primaryLight,
                     borderRadius: BorderRadius.circular(
                       AppDimens.radiusMediumX,
                     ),
                   ),
-                  child: Icon(icon, color: AppColors.primary, size: 24),
+                  child: _profileIconAssets.containsKey(icon)
+                      ? Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: Image.asset(
+                            'assets/icons/menu/${_profileIconAssets[icon]}.png',
+                            fit: BoxFit.contain,
+                            cacheWidth: 120,
+                            cacheHeight: 120,
+                            excludeFromSemantics: true,
+                            errorBuilder: (_, _, _) =>
+                                Icon(icon, color: AppColors.primary, size: 24),
+                          ),
+                        )
+                      : Icon(icon, color: AppColors.primary, size: 24),
                 ),
                 AppDimens.paddingMediumX.wSpace,
                 Expanded(

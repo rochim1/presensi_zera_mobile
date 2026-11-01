@@ -11,29 +11,40 @@ import 'bloc/overtime_state.dart';
 
 @RoutePage()
 class OvertimePage extends StatelessWidget {
-  const OvertimePage({super.key});
+  final bool initialApproval;
+
+  const OvertimePage({super.key, this.initialApproval = false});
   @override
   Widget build(BuildContext context) => BlocProvider(
     create: (_) => sl<OvertimeCubit>()..init(),
-    child: const OvertimeView(),
+    child: OvertimeView(initialApproval: initialApproval),
   );
 }
 
 class OvertimeView extends StatefulWidget {
-  const OvertimeView({super.key});
+  final bool initialApproval;
+
+  const OvertimeView({super.key, this.initialApproval = false});
   @override
   State<OvertimeView> createState() => _OvertimeViewState();
 }
 
 class _OvertimeViewState extends State<OvertimeView> {
-  bool _showingApproval = false;
+  late bool _showingApproval;
+
+  @override
+  void initState() {
+    super.initState();
+    _showingApproval = widget.initialApproval;
+  }
+
   @override
   Widget build(BuildContext context) =>
       BlocBuilder<OvertimeCubit, OvertimeState>(
         builder: (context, state) {
           final cubit = context.read<OvertimeCubit>();
           return PopScope(
-            canPop: !_showingApproval,
+            canPop: !_showingApproval || widget.initialApproval,
             onPopInvokedWithResult: (didPop, result) {
               if (!didPop && _showingApproval) {
                 setState(() => _showingApproval = false);
@@ -42,17 +53,13 @@ class _OvertimeViewState extends State<OvertimeView> {
             child: Scaffold(
               appBar: AppTopBar(
                 title: _showingApproval ? 'Approval Lembur' : 'Lembur',
-                backgroundColor: AppColors.transparent,
-                onBackTap: _showingApproval
+                centerTitle: false,
+                subtitle: _showingApproval
+                    ? 'Tinjau pengajuan lembur karyawan'
+                    : 'Kelola pengajuan lembur Anda',
+                onBackTap: _showingApproval && !widget.initialApproval
                     ? () => setState(() => _showingApproval = false)
                     : null,
-                actions: [
-                  AppApprovalNavigationButton(
-                    showingApproval: _showingApproval,
-                    onTap: () =>
-                        setState(() => _showingApproval = !_showingApproval),
-                  ),
-                ],
               ),
               floatingActionButton: _showingApproval
                   ? null

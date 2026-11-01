@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/core/themes/pantoo_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
 
@@ -54,30 +55,19 @@ class AppCard extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.white,
-          borderRadius: BorderRadius.circular(AppDimens.r16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          borderRadius: BorderRadius.circular(PantooUi.cardRadius),
+          border: Border.fromBorderSide(PantooUi.border),
         ),
         clipBehavior: Clip.antiAlias,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             if (leadingIndicatorColor != null)
-              Container(width: AppDimens.w6, color: leadingIndicatorColor),
+              Container(width: 1, color: AppColors.divider),
 
             Expanded(
               child: Padding(
-                padding:
-                    padding ??
-                    EdgeInsets.symmetric(
-                      horizontal: AppDimens.w16,
-                      vertical: AppDimens.h14,
-                    ),
+                padding: padding ?? const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

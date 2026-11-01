@@ -284,7 +284,11 @@ class _CheckOutViewState extends State<CheckOutView> {
   }
 
   Widget _buildMap(LatLng latLng, bool isSuccess, CheckOutState state) {
-    if (kIsWeb && !const bool.fromEnvironment('HRMS_WEB_GOOGLE_MAPS')) {
+    if (kIsWeb &&
+        !const bool.fromEnvironment(
+          'HRMS_WEB_GOOGLE_MAPS',
+          defaultValue: true,
+        )) {
       return Positioned.fill(
         child: WebAttendanceLocation(
           ready: isSuccess,

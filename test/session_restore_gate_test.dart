@@ -29,7 +29,7 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(view(const AppState()));
-    expect(find.text('Memulihkan akun dan presensi…'), findsOneWidget);
+    expect(find.byType(Image), findsOneWidget);
     expect(find.text('Attendance actions'), findsNothing);
     await tester.pumpWidget(
       view(const AppState(user: user, activeAttendance: BaseState.loading())),
@@ -100,7 +100,7 @@ void main() {
         ),
       );
       expect(find.text('Attendance actions'), findsNothing);
-      expect(find.text('Memulihkan akun dan presensi…'), findsOneWidget);
+      expect(find.byType(Image), findsOneWidget);
     },
   );
 
@@ -172,3 +172,4 @@ class _LifecycleProbeState extends State<_LifecycleProbe> {
   @override
   Widget build(BuildContext context) => const SizedBox();
 }
+

@@ -102,19 +102,8 @@ class AnnouncementSection extends StatelessWidget {
               ?.where((e) => e.isActiveAt(now))
               .toList();
 
-          return Container(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.06),
-                  blurRadius: 24,
-                  offset: const Offset(0, 8),
-                ),
-              ],
-            ),
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
             child: Column(
               spacing: AppDimens.h8,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -128,7 +117,7 @@ class AnnouncementSection extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Info Penting Hari Ini',
+                              'Pengumuman',
                               style: context.textStyle.titleMedium!.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.labelPrimary,
@@ -150,7 +139,7 @@ class AnnouncementSection extends StatelessWidget {
                 ),
                 if (state.announcements.isLoading)
                   SizedBox(
-                    height: 196.h,
+                    height: 220.h,
                     child: LayoutBuilder(
                       builder: (context, constraints) => ListView.separated(
                         scrollDirection: Axis.horizontal,
@@ -171,7 +160,7 @@ class AnnouncementSection extends StatelessWidget {
                   )
                 else if (validAnnouncements?.isNotEmpty ?? false)
                   SizedBox(
-                    height: 196.h,
+                    height: 220.h,
                     child: LayoutBuilder(
                       builder: (context, constraints) {
                         final isSingleAnnouncement =
@@ -221,10 +210,6 @@ class AnnouncementSection extends StatelessWidget {
                       vertical: AppDimens.h8,
                     ),
                     padding: EdgeInsets.symmetric(vertical: AppDimens.h24),
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      borderRadius: BorderRadius.circular(AppDimens.r16),
-                    ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

@@ -11,26 +11,36 @@ import 'bloc/leave_state.dart';
 
 @RoutePage()
 class LeavePage extends StatelessWidget {
-  const LeavePage({super.key});
+  final bool initialApproval;
+
+  const LeavePage({super.key, this.initialApproval = false});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => sl<LeaveCubit>()..init(),
-      child: const LeaveView(),
+      child: LeaveView(initialApproval: initialApproval),
     );
   }
 }
 
 class LeaveView extends StatefulWidget {
-  const LeaveView({super.key});
+  final bool initialApproval;
+
+  const LeaveView({super.key, this.initialApproval = false});
 
   @override
   State<LeaveView> createState() => _LeaveViewState();
 }
 
 class _LeaveViewState extends State<LeaveView> {
-  bool _showingApproval = false;
+  late bool _showingApproval;
+
+  @override
+  void initState() {
+    super.initState();
+    _showingApproval = widget.initialApproval;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +49,7 @@ class _LeaveViewState extends State<LeaveView> {
         final cubit = context.read<LeaveCubit>();
 
         return PopScope(
-          canPop: !_showingApproval,
+          canPop: !_showingApproval || widget.initialApproval,
           onPopInvokedWithResult: (didPop, result) {
             if (!didPop && _showingApproval) {
               setState(() => _showingApproval = false);
@@ -52,17 +62,9 @@ class _LeaveViewState extends State<LeaveView> {
               subtitle: _showingApproval
                   ? 'Tinjau pengajuan cuti karyawan'
                   : 'Kelola pengajuan cuti Anda',
-              onBackTap: _showingApproval
+              onBackTap: _showingApproval && !widget.initialApproval
                   ? () => setState(() => _showingApproval = false)
                   : null,
-              actions: [
-                AppApprovalNavigationButton(
-                  showingApproval: _showingApproval,
-                  returnLabel: 'Cuti Saya',
-                  onTap: () =>
-                      setState(() => _showingApproval = !_showingApproval),
-                ),
-              ],
             ),
             floatingActionButton: _showingApproval
                 ? null

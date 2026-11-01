@@ -1,0 +1,21 @@
+{
+  "release": "2.0.4+44",
+  "baseCommit": "599b5503292cafdacfc4253abc228c3d30b6b95b",
+  "patchSha256": "d92b4a45fcfdc12969c93245638e184fd72bda9bf0222b49ef3e8a282add54a0",
+  "files": [
+    "ecosystem.config.js",
+    "graphql/users/user.model.js",
+    "graphql/users/user.resolvers.js",
+    "graphql/users/user.typedef.js",
+    "middlewares/allowedFields.js",
+    "middlewares/authMiddleware.js",
+    "package-lock.json",
+    "package.json",
+    "utils/publicRegistration.js",
+    "tests/google_login.security.test.js",
+    "tests/google_auth_public_fields.test.js",
+    "scripts/verify-google-auth-production.cjs"
+  ],
+  "tests": "13 backend authentication tests passed; Google token verifier dependency 10.9.1",
+  "productionClientId": "941313151223-pbdntkrdmhhqc88vafpte9svfdqv6kf8.apps.googleusercontent.com"
+}

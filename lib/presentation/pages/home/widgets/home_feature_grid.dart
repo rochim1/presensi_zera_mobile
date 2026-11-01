@@ -3,7 +3,30 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:presensi_mobile/core/_core.dart';
-import 'package:presensi_mobile/presentation/_presentation.dart';
+
+const _menuIconFiles = <String, String>{
+  'Presensi': 'attendance',
+  'Cuti': 'leave',
+  'Lembur': 'overtime',
+  'Gaji': 'payroll',
+  'Request\nPresensi': 'attendance_request',
+  'Shift': 'shift',
+  'Reimbursement': 'reimbursement',
+  'Kalender Kerja': 'calendar',
+  'Kegiatan &\nKehadiran': 'activity',
+  'KPI': 'kpi',
+  'Pengumuman': 'announcement',
+  'Performa Sales': 'sales',
+  'Piutang': 'receivables',
+  'Katalog': 'catalog',
+  'Kasbon\n(Loan)': 'loan',
+  'Outlet': 'outlet',
+  'Taking Order': 'order',
+  'Incidental\nReport': 'incident',
+  'Survey Saya': 'survey',
+  'Logbook': 'logbook',
+  'Van Stock': 'van_stock',
+};
 
 class HomeFeatureGrid extends StatefulWidget {
   const HomeFeatureGrid({super.key});
@@ -28,151 +51,109 @@ class _HomeFeatureGridState extends State<HomeFeatureGrid> {
 
     final features = [
       _Feature(
-        icon: PhosphorIcons.calendarCheckFill,
+        icon: PhosphorIcons.calendarCheck,
         label: 'Presensi',
-        color: const Color(0xFF10B981),
-        bgColor: const Color(0xFF10B981),
         onTap: () => context.router.navigate(const AttendancePageRoute()),
       ),
       _Feature(
-        icon: PhosphorIcons.suitcaseFill,
+        icon: PhosphorIcons.suitcase,
         label: 'Cuti',
-        color: AppColors.warning,
-        bgColor: AppColors.warningBackground,
-        onTap: () => context.router.push(const LeavePageRoute()),
+        onTap: () => context.router.push(LeavePageRoute()),
       ),
       _Feature(
-        icon: PhosphorIcons.clockFill,
+        icon: PhosphorIcons.clock,
         label: 'Lembur',
-        color: const Color(0xFF14B8A6),
-        bgColor: const Color(0xFF14B8A6),
-        onTap: () => context.router.push(const OvertimePageRoute()),
+        onTap: () => context.router.push(OvertimePageRoute()),
       ),
       _Feature(
-        icon: PhosphorIcons.fingerprintFill,
+        icon: PhosphorIcons.wallet,
         label: 'Gaji',
-        color: const Color(0xFFF43F5E),
-        bgColor: const Color(0xFFF43F5E),
-        onTap: () => context.router.push(const PayrollPageRoute()),
+        onTap: () => context.router.push(PayrollPageRoute()),
       ),
       _Feature(
-        icon: PhosphorIcons.clipboardTextFill,
+        icon: PhosphorIcons.clipboardText,
         label: 'Request\nPresensi',
-        color: const Color(0xFF10B981),
-        bgColor: const Color(0xFF10B981),
-        onTap: () => context.router.push(const AttendanceRequestPageRoute()),
+        onTap: () => context.router.push(AttendanceRequestPageRoute()),
       ),
       _Feature(
-        icon: PhosphorIcons.clockCountdownFill,
+        icon: PhosphorIcons.clockCountdown,
         label: 'Shift',
-        color: AppColors.warning,
-        bgColor: AppColors.warningBackground,
-        onTap: () => context.router.push(const ShiftPageRoute()),
+        onTap: () => context.router.push(ShiftPageRoute()),
       ),
       _Feature(
-        icon: PhosphorIcons.receiptFill,
+        icon: PhosphorIcons.receipt,
         label: 'Reimbursement',
-        color: const Color(0xFF14B8A6),
-        bgColor: const Color(0xFF14B8A6),
-        onTap: () => context.router.push(const ReimbursementPageRoute()),
+        onTap: () => context.router.push(ReimbursementPageRoute()),
       ),
       _Feature(
-        icon: PhosphorIcons.calendarDotsFill,
+        icon: PhosphorIcons.calendarDots,
         label: 'Kalender Kerja',
-        color: const Color(0xFFEAB308),
-        bgColor: const Color(0xFFEAB308),
         onTap: () => context.router.push(const KalenderPageRoute()),
       ),
       _Feature(
-        icon: PhosphorIcons.usersThreeFill,
+        icon: PhosphorIcons.usersThree,
         label: 'Kegiatan &\nKehadiran',
-        color: AppColors.primary,
-        bgColor: AppColors.primaryLight,
         onTap: () => context.router.push(const ActivityPageRoute()),
       ),
       _Feature(
-        icon: PhosphorIcons.targetFill,
+        icon: PhosphorIcons.target,
         label: 'KPI',
-        color: const Color(0xFF6366F1),
-        bgColor: const Color(0xFF6366F1),
         onTap: () => context.router.push(const KpiPageRoute()),
       ),
       _Feature(
-        icon: PhosphorIcons.megaphoneFill,
+        icon: PhosphorIcons.megaphone,
         label: 'Pengumuman',
-        color: AppColors.danger,
-        bgColor: AppColors.dangerBackground,
         onTap: () => context.router.push(const AnnouncementPageRoute()),
         hasBadge: true,
       ),
       _Feature(
-        icon: PhosphorIcons.chartBarFill,
+        icon: PhosphorIcons.chartBar,
         label: 'Performa Sales',
-        color: AppColors.info,
-        bgColor: AppColors.infoBackground,
         onTap: () => context.router.push(const SalesDashboardPageRoute()),
       ),
       _Feature(
-        icon: PhosphorIcons.moneyFill,
+        icon: PhosphorIcons.money,
         label: 'Piutang',
-        color: const Color(0xFFEAB308),
-        bgColor: const Color(0xFFEAB308),
         onTap: () => context.router.push(const PiutangPageRoute()),
       ),
       _Feature(
-        icon: PhosphorIcons.packageFill,
+        icon: PhosphorIcons.package,
         label: 'Katalog',
-        color: const Color(0xFF8B5CF6),
-        bgColor: const Color(0xFF8B5CF6),
         onTap: () => context.router.push(const ProductCatalogPageRoute()),
       ),
       _Feature(
-        icon: PhosphorIcons.moneyFill,
+        icon: PhosphorIcons.money,
         label: 'Kasbon\n(Loan)',
-        color: const Color(0xFF0EA5E9), // Light blue color for Loan
-        bgColor: const Color(0xFF0EA5E9),
         onTap: () => context.router.push(const LoanPageRoute()),
       ),
       _Feature(
-        icon: PhosphorIcons.storefrontFill,
+        icon: PhosphorIcons.storefront,
         label: 'Outlet',
-        color: const Color(0xFFF43F5E),
-        bgColor: const Color(0xFFF43F5E),
         onTap: () => context.router.push(const ApotekPageRoute()),
       ),
       _Feature(
-        icon: PhosphorIcons.shoppingCartFill,
+        icon: PhosphorIcons.shoppingCart,
         label: 'Taking Order',
-        color: const Color(0xFF06B6D4),
-        bgColor: const Color(0xFF06B6D4),
         onTap: () => context.router.push(TakingOrderPageRoute()),
       ),
       _Feature(
-        icon: PhosphorIcons.warningCircleFill,
+        icon: PhosphorIcons.warningCircle,
         label: 'Incidental\nReport',
-        color: AppColors.danger,
-        bgColor: AppColors.dangerBackground,
         onTap: () => context.router.push(const IncidentalReportPageRoute()),
       ),
       _Feature(
-        icon: PhosphorIcons.clipboardFill,
+        icon: PhosphorIcons.clipboard,
         label: 'Survey Saya',
-        color: const Color(0xFF64748B),
-        bgColor: const Color(0xFF64748B),
         onTap: () => context.router.push(const SurveyPageRoute()),
       ),
       _Feature(
-        icon: PhosphorIcons.notebookFill,
+        icon: PhosphorIcons.notebook,
         label: 'Logbook',
-        color: const Color(0xFF475569),
-        bgColor: const Color(0xFF475569),
         onTap: () => context.router.push(const LogbookPageRoute()),
       ),
       _Feature(
-        icon: PhosphorIcons.truckFill,
+        icon: PhosphorIcons.truck,
         label: 'Van Stock',
-        color: const Color(0xFF8B5CF6),
-        bgColor: const Color(0xFF8B5CF6),
         onTap: () => context.router.push(const VanStockPageRoute()),
       ),
     ];
@@ -237,8 +218,6 @@ class _HomeFeatureGridState extends State<HomeFeatureGrid> {
                         context: context,
                         icon: feature.icon,
                         label: feature.label,
-                        color: feature.color,
-                        bgColor: feature.bgColor,
                         onTap: feature.onTap,
                         hasBadge: feature.hasBadge,
                       );
@@ -276,8 +255,6 @@ class _HomeFeatureGridState extends State<HomeFeatureGrid> {
     required BuildContext context,
     required IconData icon,
     required String label,
-    required Color color,
-    required Color bgColor,
     required VoidCallback onTap,
     bool hasBadge = false,
   }) {
@@ -294,22 +271,22 @@ class _HomeFeatureGridState extends State<HomeFeatureGrid> {
                 width: 52,
                 height: 52,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [AppColors.primary, AppColors.secondary],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(18),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.25),
-                      blurRadius: 10,
-                      spreadRadius: 1,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
+                  color: AppColors.primaryLight,
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                child: Center(child: Icon(icon, color: Colors.white, size: 24)),
+                child: Center(
+                  child: Image.asset(
+                    'assets/icons/menu/${_menuIconFiles[label]}.png',
+                    width: 52,
+                    height: 52,
+                    cacheWidth: 156,
+                    cacheHeight: 156,
+                    fit: BoxFit.contain,
+                    excludeFromSemantics: true,
+                    errorBuilder: (_, _, _) =>
+                        Icon(icon, color: AppColors.primary, size: 26),
+                  ),
+                ),
               ),
               if (hasBadge)
                 Positioned(
@@ -327,13 +304,13 @@ class _HomeFeatureGridState extends State<HomeFeatureGrid> {
                 ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           Text(
             label,
             style: const TextStyle(
-              fontSize: 10.5,
+              fontSize: 12,
               fontWeight: FontWeight.w500,
-              color: Color(0xFF1E1E1E),
+              color: AppColors.labelPrimary,
               height: 1.2,
             ),
             textAlign: TextAlign.center,
@@ -349,16 +326,12 @@ class _HomeFeatureGridState extends State<HomeFeatureGrid> {
 class _Feature {
   final IconData icon;
   final String label;
-  final Color color;
-  final Color bgColor;
   final VoidCallback onTap;
   final bool hasBadge;
 
   const _Feature({
     required this.icon,
     required this.label,
-    required this.color,
-    required this.bgColor,
     required this.onTap,
     this.hasBadge = false,
   });

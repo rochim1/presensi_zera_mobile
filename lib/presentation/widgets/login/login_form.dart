@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/_core.dart';
 import '../../../injections.dart';
 import '../../_presentation.dart';
+import 'google_account_button.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -30,6 +31,7 @@ class _LoginFormState extends State<LoginForm> {
   late TextEditingController _passwordController;
   late Env _environment;
   LoginCaptchaFailure? _captcha;
+  bool _googleBusy = false;
   final _captchaController = TextEditingController();
 
   @override
@@ -72,11 +74,7 @@ class _LoginFormState extends State<LoginForm> {
     super.dispose();
   }
 
-  Future<void> _handleLogin() async {
-    if (!_formKey.currentState!.validate()) return;
-
-    _formKey.currentState!.save();
-
+  Future<void> _prepareEndpoint() async {
     // Handle environment configuration for development
     if (fl.env!.isDev) {
       await dotenv.load(fileName: ".env.development");
@@ -88,6 +86,13 @@ class _LoginFormState extends State<LoginForm> {
         await prefs.setString('dev_base_url', newBaseApi);
       }
     }
+  }
+
+  Future<void> _handleLogin() async {
+    if (_googleBusy) return;
+    if (!_formKey.currentState!.validate()) return;
+    _formKey.currentState!.save();
+    await _prepareEndpoint();
 
     if (mounted) {
       context.read<LoginSignInCubit>().login(
@@ -169,6 +174,17 @@ class _LoginFormState extends State<LoginForm> {
                   const SizedBox(height: AppDimens.size4M),
                 ],
 
+                BlocBuilder<LoginSignInCubit, LoginSignInState>(
+                  builder: (_, state) => GoogleAccountButton(
+                    enabled:
+                        !state.status.isLoading && !state.status.isLoggedIn,
+                    prepareEndpoint: _prepareEndpoint,
+                    onBusyChanged: (busy) {
+                      if (mounted) setState(() => _googleBusy = busy);
+                    },
+                  ),
+                ),
+
                 // Username field
                 TextFieldBasic(
                   controller: _usernameController,
@@ -248,7 +264,7 @@ class _LoginFormState extends State<LoginForm> {
                     return AppButton(
                       text: 'Masuk',
                       onPressed: _handleLogin,
-                      isLoading: state.status.isLoading,
+                      isLoading: state.status.isLoading || _googleBusy,
                     );
                   },
                 ),

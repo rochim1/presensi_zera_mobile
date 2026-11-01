@@ -7,33 +7,43 @@ import 'package:presensi_mobile/presentation/_presentation.dart';
 
 @RoutePage()
 class ShiftPage extends StatelessWidget {
-  const ShiftPage({super.key});
+  final bool initialApproval;
+
+  const ShiftPage({super.key, this.initialApproval = false});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => sl<ShiftCubit>()..init(),
-      child: const ShiftView(),
+      child: ShiftView(initialApproval: initialApproval),
     );
   }
 }
 
 class ShiftView extends StatefulWidget {
-  const ShiftView({super.key});
+  final bool initialApproval;
+
+  const ShiftView({super.key, this.initialApproval = false});
 
   @override
   State<ShiftView> createState() => _ShiftViewState();
 }
 
 class _ShiftViewState extends State<ShiftView> {
-  bool _showingApproval = false;
+  late bool _showingApproval;
+
+  @override
+  void initState() {
+    super.initState();
+    _showingApproval = widget.initialApproval;
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ShiftCubit, ShiftState>(
       builder: (context, state) {
         return PopScope(
-          canPop: !_showingApproval,
+          canPop: !_showingApproval || widget.initialApproval,
           onPopInvokedWithResult: (didPop, result) {
             if (!didPop && _showingApproval) {
               setState(() => _showingApproval = false);
@@ -42,18 +52,13 @@ class _ShiftViewState extends State<ShiftView> {
           child: Scaffold(
             appBar: AppTopBar(
               title: _showingApproval ? 'Approval Tukar Shift' : 'Shift',
-              backgroundColor: AppColors.transparent,
-              onBackTap: _showingApproval
+              centerTitle: false,
+              subtitle: _showingApproval
+                  ? 'Tinjau pengajuan tukar shift karyawan'
+                  : 'Kelola jadwal dan pengajuan tukar shift Anda',
+              onBackTap: _showingApproval && !widget.initialApproval
                   ? () => setState(() => _showingApproval = false)
                   : null,
-              actions: [
-                AppApprovalNavigationButton(
-                  showingApproval: _showingApproval,
-                  returnLabel: 'Shift Saya',
-                  onTap: () =>
-                      setState(() => _showingApproval = !_showingApproval),
-                ),
-              ],
             ),
             body: _showingApproval
                 ? const ApprovalShiftSwapPage()

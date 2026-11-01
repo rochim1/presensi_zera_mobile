@@ -44,17 +44,11 @@ class SurveyCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(AppDimens.r16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border),
       ),
       child: Padding(
-        padding: EdgeInsets.all(AppDimens.w16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: AppDimens.h12,
@@ -72,7 +66,8 @@ class SurveyCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                AppChip(label: status.label, color: status.color),
+                const SizedBox(width: 8),
+                Flexible(child: AppChip(label: status.label)),
               ],
             ),
 
@@ -86,6 +81,7 @@ class SurveyCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
 
+            const Divider(height: 1, color: AppColors.divider),
             AppRequestDateRow(
               title: 'Periode',
               value: _periodText(

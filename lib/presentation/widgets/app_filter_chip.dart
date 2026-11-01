@@ -19,13 +19,11 @@ class AppFilterChip extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: EdgeInsets.symmetric(
-          horizontal: AppDimens.w16,
-          vertical: AppDimens.h6,
-        ),
+        constraints: const BoxConstraints(minHeight: 48),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary : AppColors.white,
-          borderRadius: BorderRadius.circular(AppDimens.r24),
+          color: isSelected ? AppColors.primaryLight : AppColors.white,
+          borderRadius: BorderRadius.circular(12),
           border: isSelected
               ? null
               : Border.all(color: AppColors.neutralBorder, width: 1),
@@ -33,7 +31,9 @@ class AppFilterChip extends StatelessWidget {
         child: Text(
           label,
           style: context.theme.textTheme.bodyMedium?.copyWith(
-            color: isSelected ? AppColors.white : AppColors.labelSecondary,
+            color: isSelected
+                ? AppColors.primaryDark
+                : AppColors.labelSecondary,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
           ),
         ),

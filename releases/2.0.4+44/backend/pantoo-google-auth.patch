@@ -1,0 +1,936 @@
+diff --git a/ecosystem.config.js b/ecosystem.config.js
+index 67046038..c1a56dcd 100644
+--- a/ecosystem.config.js
++++ b/ecosystem.config.js
+@@ -32,6 +32,7 @@ module.exports = {
+       // 🚀 env production
+       env_production: {
+         NODE_ENV: "production",
++        GOOGLE_CLIENT_ID: "941313151223-pbdntkrdmhhqc88vafpte9svfdqv6kf8.apps.googleusercontent.com",
+         PORT: 3002
+       },
+ 
+@@ -42,4 +43,4 @@ module.exports = {
+       time: true
+     }
+   ]
+-};
+\ No newline at end of file
++};
+diff --git a/graphql/users/user.model.js b/graphql/users/user.model.js
+index 5a513652..5961acdc 100644
+--- a/graphql/users/user.model.js
++++ b/graphql/users/user.model.js
+@@ -56,6 +56,11 @@ const userSchema = new Schema({
+     type: Boolean,
+     default: false,
+   },
++  provider: {
++    type: String,
++    enum: ['form', 'google'],
++    default: 'form',
++  },
+   email_confirmed_at: {
+     type: Date,
+   },
+@@ -190,6 +195,14 @@ const userSchema = new Schema({
+   legal_accepted_at: { type: Date },
+   privacy_policy_version: { type: String },
+   terms_of_service_version: { type: String },
++  utm_source: { type: String, maxlength: 500 },
++  utm_medium: { type: String, maxlength: 500 },
++  utm_campaign: { type: String, maxlength: 500 },
++  utm_content: { type: String, maxlength: 500 },
++  utm_term: { type: String, maxlength: 500 },
++  gclid: { type: String, maxlength: 500 },
++  fbclid: { type: String, maxlength: 500 },
++  ttclid: { type: String, maxlength: 500 },
+   resign_reason: {
+     type: String
+   },
+diff --git a/graphql/users/user.resolvers.js b/graphql/users/user.resolvers.js
+index eac9a808..53f7e9ad 100644
+--- a/graphql/users/user.resolvers.js
++++ b/graphql/users/user.resolvers.js
+@@ -1,3 +1,4 @@
++const ALLOWED_PUBLIC_PRODUCTS = new Set(['pos', 'hrms', 'erp']);
+ const { GraphQLError } = require('graphql');
+ const userModel = require('./user.model');
+ const PresensiModel = require('../presensi/presensi.model');
+@@ -297,11 +298,17 @@ const CreateUserByAdmin = async (parent, { input, foto }, ctx) => {
+ };
+ 
+ const CreateUser = async (parent, { input, foto }, ctx) => {
++  const isGoogleRegistration = input?.provider === 'google';
+   const {
+     sanitizePublicRegistrationInput,
+     escapeRegex,
+   } = require('../../utils/publicRegistration');
+   input = sanitizePublicRegistrationInput(input);
++  if (isGoogleRegistration) {
++    input.provider = 'google';
++    input.confirm_email = true;
++    input.email_confirmed_at = new Date();
++  }
+   if (['mobile_pos', 'web_admin'].includes(input.registration_source) && input.legal_consent !== true) {
+     common.throwGraphQLError(
+       'Persetujuan Kebijakan Privasi dan Ketentuan Layanan wajib diberikan',
+@@ -439,6 +446,10 @@ const CreateUser = async (parent, { input, foto }, ctx) => {
+     sisa_cuti: sisaCuti,
+     status_histories: [status_histories],
+   });
++  if (input.provider === 'google') {
++    newUser.confirm_email = true;
++    newUser.email_confirmed_at = new Date();
++  }
+ 
+   newUser = await newUser.save();
+ 
+@@ -470,7 +481,7 @@ const CreateUser = async (parent, { input, foto }, ctx) => {
+   }
+ 
+   // Kirim email konfirmasi untuk verifikasi email
+-  const activationEmailSent = newUser.email
++  const activationEmailSent = newUser.email && !isGoogleRegistration
+     ? await UserUtilities.sendActivationEmail(newUser)
+     : false;
+ 
+@@ -483,7 +494,52 @@ const CreateUser = async (parent, { input, foto }, ctx) => {
+   };
+ };
+ 
+-const Login = async (parent, { input }, { res, req }) => {
++const RegisterUserWithGoogle = async (parent, { input }, ctx) => {
++  const { OAuth2Client } = require('google-auth-library');
++  const { sanitizePublicRegistrationInput, escapeRegex } = require('../../utils/publicRegistration');
++  const { token_id, telp_number, primary_product, registration_source, legal_consent } = input || {};
++  if (legal_consent !== true) common.throwGraphQLError('Persetujuan Kebijakan Privasi dan Ketentuan Layanan wajib diberikan', 'BAD_REQUEST', 400);
++  if (!/^\d{8,15}$/.test(String(telp_number || '').trim())) common.throwGraphQLError('Nomor telepon harus 8-15 digit', 'BAD_REQUEST', 400);
++  if (!process.env.GOOGLE_CLIENT_ID || !token_id) common.throwGraphQLError('Google Sign-In belum tersedia', 'BAD_REQUEST', 400);
++
++  let payload;
++  try {
++    const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID.trim());
++    const ticket = await client.verifyIdToken({ idToken: token_id, audience: process.env.GOOGLE_CLIENT_ID.trim() });
++    payload = ticket.getPayload();
++  } catch (error) {
++    common.throwGraphQLError('Verifikasi akun Google gagal. Silakan coba lagi.', 'UNAUTHENTICATED', 401);
++  }
++  if (!payload?.email || payload.email_verified !== true || !payload.name || !payload.sub) {
++    common.throwGraphQLError('Akun Google harus memiliki email terverifikasi dan nama profil.', 'BAD_REQUEST', 400);
++  }
++
++  const normalizedEmail = payload.email.trim().toLowerCase();
++  if (!ALLOWED_PUBLIC_PRODUCTS.has(primary_product)) common.throwGraphQLError('Pilihan produk tidak valid.', 'BAD_REQUEST', 400);
++  const duplicate = await userModel.findOne({ email: { $regex: new RegExp(`^${escapeRegex(normalizedEmail)}$`, 'i') } }).select('_id email').lean();
++  if (duplicate) common.throwGraphQLError('Email Google ini sudah terdaftar. Silakan masuk.', 'CONFLICT', 409);
++
++  const baseUsername = String(payload.email.split('@')[0] || payload.name).toLowerCase().replace(/[^a-z0-9._-]/g, '').slice(0, 24) || 'pantoo';
++  const candidateUsername = `${baseUsername.slice(0, 18)}${String(payload.sub).slice(-5).toLowerCase()}`;
++  if (await userModel.exists({ username: candidateUsername })) common.throwGraphQLError('Akun untuk email Google ini sudah terdaftar. Silakan masuk.', 'CONFLICT', 409);
++
++  const registration = sanitizePublicRegistrationInput({
++    name: payload.name, username: candidateUsername, email: normalizedEmail, telp_number,
++    primary_product, registration_source, requested_trial: 'pantoo_unlimited',
++    legal_consent: true,
++    ...Object.fromEntries(['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'fbclid', 'ttclid'].map((field) => [field, input?.[field]])),
++  });
++  registration.legal_accepted_at = new Date();
++  registration.privacy_policy_version = '1.0-2026-09-04';
++  registration.terms_of_service_version = '1.0-2026-09-04';
++  registration.password = await hash(crypto.randomBytes(32).toString('hex'), 10);
++  registration.provider = 'google';
++  // CreateUser validates and records consent before removing this input field.
++  return CreateUser(parent, { input: registration }, ctx);
++};
++
++const Login = async (parent, { input }, ctx) => {
++  const { res, req } = ctx;
+   let is_email;
+   if (input && input.email_or_username) {
+     is_email = validateEmail(input.email_or_username);
+@@ -491,9 +547,67 @@ const Login = async (parent, { input }, { res, req }) => {
+   let user;
+   let verifiedRememberSession = null;
+   let loginAttemptKey = null;
++  let googleAuthenticated = false;
+ 
+   const hasRememberToken = Boolean(input?.remember_token);
+-  if (hasRememberToken) {
++  if (input?.provider === 'google') {
++    if (!input.tokenId || !process.env.GOOGLE_CLIENT_ID) {
++      common.throwGraphQLError('Verifikasi Google tidak tersedia. Silakan coba lagi.', 'UNAUTHENTICATED', 401);
++    }
++    let googlePayload;
++    try {
++      const { OAuth2Client } = require('google-auth-library');
++      const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID.trim());
++      const ticket = await client.verifyIdToken({
++        idToken: input.tokenId,
++        audience: process.env.GOOGLE_CLIENT_ID.trim(),
++      });
++      googlePayload = ticket.getPayload();
++    } catch (_) {
++      common.throwGraphQLError('Verifikasi akun Google gagal. Silakan coba lagi.', 'UNAUTHENTICATED', 401);
++    }
++    if (!googlePayload?.email || googlePayload.email_verified !== true || !googlePayload.sub) {
++      common.throwGraphQLError('Akun Google harus memiliki email terverifikasi.', 'UNAUTHENTICATED', 401);
++    }
++
++    const { escapeRegex } = require('../../utils/publicRegistration');
++    const normalizedEmail = googlePayload.email.trim().toLowerCase();
++    user = await userModel.findOne({
++      email: { $regex: new RegExp(`^${escapeRegex(normalizedEmail)}$`, 'i') },
++      status: 'active',
++    });
++
++    if (!user) {
++      if (input.legal_consent !== true || !/^\d{8,15}$/.test(String(input.telp_number || '').trim())) {
++        common.throwGraphQLError(
++          'Akun belum terdaftar. Isi nomor telepon dan setujui Kebijakan Privasi serta Ketentuan Layanan untuk membuat akun.',
++          'GOOGLE_REGISTRATION_DETAILS_REQUIRED',
++          400,
++        );
++      }
++      const created = await RegisterUserWithGoogle(parent, {
++        input: {
++          token_id: input.tokenId,
++          telp_number: input.telp_number.trim(),
++          primary_product: ALLOWED_PUBLIC_PRODUCTS.has(input.primary_product) ? input.primary_product : 'erp',
++          registration_source: input.registration_source || 'public_web',
++          legal_consent: true,
++          ...Object.fromEntries(['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'fbclid', 'ttclid']
++            .map((field) => [field, input[field]])),
++        },
++      }, ctx);
++      user = await userModel.findOne({ _id: created._id, status: 'active' });
++      if (!user) common.throwGraphQLError('Akun berhasil dibuat, tetapi belum dapat masuk. Silakan hubungi tim Pantoo.', 'FORBIDDEN', 403);
++    }
++
++    // A verified Google email also verifies a matching existing Pantoo account.
++    if (user.confirm_email === false) {
++      user.confirm_email = true;
++      user.email_confirmed_at = new Date();
++      await user.save();
++    }
++    googleAuthenticated = true;
++  } else if (hasRememberToken) {
+     let verification;
+     try {
+       verification = jwt.verify(input.remember_token, process.env.TOKEN_SECRET);
+@@ -561,7 +675,7 @@ const Login = async (parent, { input }, { res, req }) => {
+ 
+   // Blok pengecekan subscription dihapus dari backend agar user tetap bisa login dan diarahkan ke halaman billing/expired oleh frontend router guard
+ 
+-  if (!hasRememberToken) {
++  if (!hasRememberToken && !googleAuthenticated) {
+     try {
+       await common.verifyPassword(input.password, user);
+     } catch (error) {
+@@ -3177,6 +3291,7 @@ module.exports = {
+     GetLevelDiversity,
+     GetEmployStatusDiversity,
+     GetOnlineUsers,
++    GetGoogleRegistrationClientId: () => process.env.GOOGLE_CLIENT_ID || '',
+     GetAllPantooUsers,
+     ValidateAdminPasswordResetToken,
+   },
+@@ -3186,6 +3301,7 @@ module.exports = {
+     },
+     CreateUserByAdmin,
+     CreateUser,
++    RegisterUserWithGoogle,
+     Login,
+     RefreshMobileSession,
+     RevokeMobileSession,
+diff --git a/graphql/users/user.typedef.js b/graphql/users/user.typedef.js
+index 61a4848c..95baf31e 100644
+--- a/graphql/users/user.typedef.js
++++ b/graphql/users/user.typedef.js
+@@ -171,6 +171,14 @@ const typeDef = `
+         legal_consent: Boolean
+         privacy_policy_version: String
+         terms_of_service_version: String
++        utm_source: String
++        utm_medium: String
++        utm_campaign: String
++        utm_content: String
++        utm_term: String
++        gclid: String
++        fbclid: String
++        ttclid: String
+         additional_contact: [AdditionalContactInput]
+         bank_accounts: [BankAccountInput]
+         deleted_at: String
+@@ -247,6 +255,18 @@ const typeDef = `
+         remember_token: String
+         tokenId: String
+         provider: String
++        telp_number: String
++        primary_product: String
++        registration_source: String
++        legal_consent: Boolean
++        utm_source: String
++        utm_medium: String
++        utm_campaign: String
++        utm_content: String
++        utm_term: String
++        gclid: String
++        fbclid: String
++        ttclid: String
+     }
+ 
+     input exportUsersInput {
+@@ -352,6 +372,7 @@ const typeDef = `
+         role_id: Role
+         confirm_email: Boolean
+         email_confirmed_at: String
++        provider: String
+         id_presensi: Presensi
+     }
+ 
+@@ -464,6 +485,7 @@ const typeDef = `
+         CheckNipAvailable(nip: String): Boolean
+         GenerateNip: String
+         GetOnlineUsers: [String]
++        GetGoogleRegistrationClientId: String
+         GetAllPantooUsers(filter: AdminUserFilter, pagination: pagination): gettingUser
+         ValidateAdminPasswordResetToken(token: String!): BooleanResponse
+     }
+@@ -472,6 +494,7 @@ const typeDef = `
+         getAvailableMasterCode(masterType: String!): String
+         CreateUserByAdmin(input: UserInput, foto: Upload): User
+         CreateUser(input: UserInput): User
++        RegisterUserWithGoogle(input: GoogleRegistrationInput!): User
+         Login(input: LoginInput): Authentication
+         RefreshMobileSession(refresh_token: String!): Authentication
+         RevokeMobileSession(refresh_token: String!): BooleanResponse
+@@ -495,6 +518,22 @@ const typeDef = `
+         SelectRole(role_id: ID!): SelectRoleResult
+         ForceConfirmUserEmail(_id: ID!): BooleanResponse
+     }
++
++    input GoogleRegistrationInput {
++        token_id: String!
++        telp_number: String!
++        primary_product: String!
++        registration_source: String!
++        legal_consent: Boolean!
++        utm_source: String
++        utm_medium: String
++        utm_campaign: String
++        utm_content: String
++        utm_term: String
++        gclid: String
++        fbclid: String
++        ttclid: String
++    }
+ `;
+ 
+ module.exports = typeDef;
+diff --git a/middlewares/allowedFields.js b/middlewares/allowedFields.js
+index 20f02d05..c970f492 100644
+--- a/middlewares/allowedFields.js
++++ b/middlewares/allowedFields.js
+@@ -20,6 +20,8 @@ const AUTH_FIELDS = [
+   "ActivateResellerAccount",
+   "ResellerLogin",
+   "CreateUser", // Public user registration
++  "RegisterUserWithGoogle",
++  "GetGoogleRegistrationClientId",
+   "ConfirmEmail", // Email confirmation for user registration
+   "ResendConfirmationEmail", // Resend email confirmation
+   "ActivateUserAccount", // Activate user account with OTP
+diff --git a/middlewares/authMiddleware.js b/middlewares/authMiddleware.js
+index 27fc6ff8..1fb8238d 100644
+--- a/middlewares/authMiddleware.js
++++ b/middlewares/authMiddleware.js
+@@ -30,6 +30,8 @@ const TOKEN_AGNOSTIC_PUBLIC_FIELDS = new Set([
+   // Registration must work before a user has a session. Mobile clients may
+   // still send an empty/stale Authorization header, so ignore it explicitly.
+   "CreateUser",
++  "RegisterUserWithGoogle",
++  "GetGoogleRegistrationClientId",
+   "CheckEmailAvailable",
+   "CheckUsernameAvailable",
+   // Refresh token is the credential for this endpoint; requiring a still-valid
+@@ -295,6 +297,7 @@ const educationAuth = educationAuthFactory(Authorized);
+ const adminAuth = adminAuthFactory(Authorized);
+ module.exports = {
+   Query: {
++    GetGoogleRegistrationClientId: Authorized,
+     GetVillageFamilies: Authorized,
+     GetVillageFamily: Authorized,
+     GetVillageResidents: Authorized,
+@@ -1853,6 +1856,7 @@ module.exports = {
+     CreatePOFromReorderAlert: Authorized,
+ 
+     CreateUser: Authorized,
++    RegisterUserWithGoogle: Authorized,
+     CreateUserByAdmin: Authorized,
+     ResendEmployeeActivation: Authorized,
+     AddContact: Authorized,
+diff --git a/package-lock.json b/package-lock.json
+index 26a498dd..043315f2 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -32,6 +32,7 @@
+         "express-session": "^1.18.1",
+         "filter-validate-email": "^1.1.3",
+         "firebase-admin": "^11.11.1",
++        "google-auth-library": "^10.9.1",
+         "googleapis": "^128.0.0",
+         "graphql": "^16.8.0",
+         "graphql-middleware": "^6.1.35",
+@@ -625,6 +626,40 @@
+         "node": ">=12"
+       }
+     },
++    "node_modules/@google-cloud/storage/node_modules/google-auth-library": {
++      "version": "8.9.0",
++      "resolved": "https://registry.npmjs.org/google-auth-library/-/google-auth-library-8.9.0.tgz",
++      "integrity": "sha512-f7aQCJODJFmYWN6PeNKzgvy9LI2tYmXnzpNDHEjG5sDNPgGb2FXQyTBnXeSH+PAtpKESFD+LmHw3Ox3mN7e1Fg==",
++      "license": "Apache-2.0",
++      "optional": true,
++      "dependencies": {
++        "arrify": "^2.0.0",
++        "base64-js": "^1.3.0",
++        "ecdsa-sig-formatter": "^1.0.11",
++        "fast-text-encoding": "^1.0.0",
++        "gaxios": "^5.0.0",
++        "gcp-metadata": "^5.3.0",
++        "gtoken": "^6.1.0",
++        "jws": "^4.0.0",
++        "lru-cache": "^6.0.0"
++      },
++      "engines": {
++        "node": ">=12"
++      }
++    },
++    "node_modules/@google-cloud/storage/node_modules/lru-cache": {
++      "version": "6.0.0",
++      "resolved": "https://registry.npmjs.org/lru-cache/-/lru-cache-6.0.0.tgz",
++      "integrity": "sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==",
++      "license": "ISC",
++      "optional": true,
++      "dependencies": {
++        "yallist": "^4.0.0"
++      },
++      "engines": {
++        "node": ">=10"
++      }
++    },
+     "node_modules/@google-cloud/storage/node_modules/uuid": {
+       "version": "8.3.2",
+       "resolved": "https://registry.npmjs.org/uuid/-/uuid-8.3.2.tgz",
+@@ -3879,6 +3914,15 @@
+         "node": ">=0.12"
+       }
+     },
++    "node_modules/data-uri-to-buffer": {
++      "version": "4.0.1",
++      "resolved": "https://registry.npmjs.org/data-uri-to-buffer/-/data-uri-to-buffer-4.0.1.tgz",
++      "integrity": "sha512-0R9ikRb668HB7QDxT1vkpuUBtqc53YyAwMwGeUFKRojY/NWKvdZ+9UYtRfGmhqNbRkTSVpMbmyhXipFFv2cb/A==",
++      "license": "MIT",
++      "engines": {
++        "node": ">= 12"
++      }
++    },
+     "node_modules/dataloader": {
+       "version": "2.2.3",
+       "resolved": "https://registry.npmjs.org/dataloader/-/dataloader-2.2.3.tgz",
+@@ -5012,6 +5056,29 @@
+         "pend": "~1.2.0"
+       }
+     },
++    "node_modules/fetch-blob": {
++      "version": "3.2.0",
++      "resolved": "https://registry.npmjs.org/fetch-blob/-/fetch-blob-3.2.0.tgz",
++      "integrity": "sha512-7yAQpD2UMJzLi1Dqv7qFYnPbaPx7ZfFK6PiIxQ4PfkGPyNyl2Ugx+a/umUonmKqjhM4DnfbMvdX6otXq83soQQ==",
++      "funding": [
++        {
++          "type": "github",
++          "url": "https://github.com/sponsors/jimmywarting"
++        },
++        {
++          "type": "paypal",
++          "url": "https://paypal.me/jimmywarting"
++        }
++      ],
++      "license": "MIT",
++      "dependencies": {
++        "node-domexception": "^1.0.0",
++        "web-streams-polyfill": "^3.0.3"
++      },
++      "engines": {
++        "node": "^12.20 || >= 14.13"
++      }
++    },
+     "node_modules/file-type": {
+       "version": "5.2.0",
+       "resolved": "https://registry.npmjs.org/file-type/-/file-type-5.2.0.tgz",
+@@ -5255,6 +5322,18 @@
+         "node": ">= 6"
+       }
+     },
++    "node_modules/formdata-polyfill": {
++      "version": "4.0.10",
++      "resolved": "https://registry.npmjs.org/formdata-polyfill/-/formdata-polyfill-4.0.10.tgz",
++      "integrity": "sha512-buewHzMvYL29jdeQTVILecSaZKnt/RJWjoZCF5OW60Z67/GmSLBkOFM7qh1PI3zFNtJbaZL5eQu1vLfazOwj4g==",
++      "license": "MIT",
++      "dependencies": {
++        "fetch-blob": "^3.1.2"
++      },
++      "engines": {
++        "node": ">=12.20.0"
++      }
++    },
+     "node_modules/forwarded": {
+       "version": "0.2.0",
+       "resolved": "https://registry.npmjs.org/forwarded/-/forwarded-0.2.0.tgz",
+@@ -5574,37 +5653,120 @@
+       }
+     },
+     "node_modules/google-auth-library": {
+-      "version": "8.9.0",
+-      "resolved": "https://registry.npmjs.org/google-auth-library/-/google-auth-library-8.9.0.tgz",
+-      "integrity": "sha512-f7aQCJODJFmYWN6PeNKzgvy9LI2tYmXnzpNDHEjG5sDNPgGb2FXQyTBnXeSH+PAtpKESFD+LmHw3Ox3mN7e1Fg==",
++      "version": "10.9.1",
++      "resolved": "https://registry.npmjs.org/google-auth-library/-/google-auth-library-10.9.1.tgz",
++      "integrity": "sha512-i1ydyHrqcIxXkWh/uBmVkzCvIuq5yiK2ATndIe5XxKholrG/MTYP9xGYka4sQhrbIAgGjL2B6NOE7rFaiF3fXw==",
+       "license": "Apache-2.0",
+-      "optional": true,
+       "dependencies": {
+-        "arrify": "^2.0.0",
+         "base64-js": "^1.3.0",
+         "ecdsa-sig-formatter": "^1.0.11",
+-        "fast-text-encoding": "^1.0.0",
+-        "gaxios": "^5.0.0",
+-        "gcp-metadata": "^5.3.0",
+-        "gtoken": "^6.1.0",
+-        "jws": "^4.0.0",
+-        "lru-cache": "^6.0.0"
++        "gaxios": "^7.1.4",
++        "gcp-metadata": "8.1.2",
++        "google-logging-utils": "1.1.3",
++        "jws": "^4.0.0"
+       },
+       "engines": {
+-        "node": ">=12"
++        "node": ">=18"
+       }
+     },
+-    "node_modules/google-auth-library/node_modules/lru-cache": {
+-      "version": "6.0.0",
+-      "resolved": "https://registry.npmjs.org/lru-cache/-/lru-cache-6.0.0.tgz",
+-      "integrity": "sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==",
+-      "license": "ISC",
+-      "optional": true,
++    "node_modules/google-auth-library/node_modules/agent-base": {
++      "version": "7.1.4",
++      "resolved": "https://registry.npmjs.org/agent-base/-/agent-base-7.1.4.tgz",
++      "integrity": "sha512-MnA+YT8fwfJPgBx3m60MNqakm30XOkyIoH1y6huTQvC0PwZG7ki8NacLBcrPbNoo8vEZy7Jpuk7+jMO+CUovTQ==",
++      "license": "MIT",
++      "engines": {
++        "node": ">= 14"
++      }
++    },
++    "node_modules/google-auth-library/node_modules/debug": {
++      "version": "4.4.3",
++      "resolved": "https://registry.npmjs.org/debug/-/debug-4.4.3.tgz",
++      "integrity": "sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==",
++      "license": "MIT",
+       "dependencies": {
+-        "yallist": "^4.0.0"
++        "ms": "^2.1.3"
+       },
+       "engines": {
+-        "node": ">=10"
++        "node": ">=6.0"
++      },
++      "peerDependenciesMeta": {
++        "supports-color": {
++          "optional": true
++        }
++      }
++    },
++    "node_modules/google-auth-library/node_modules/gaxios": {
++      "version": "7.3.1",
++      "resolved": "https://registry.npmjs.org/gaxios/-/gaxios-7.3.1.tgz",
++      "integrity": "sha512-kB3rzJV7d9juLZh8/56QTXCwQfxyhdOMdyYk1HdQKFtF8TJTDTZQJtixWIwXdE9Jji91mC41DUNpjleo4L4eAQ==",
++      "license": "Apache-2.0",
++      "dependencies": {
++        "extend": "^3.0.2",
++        "https-proxy-agent": "^7.0.1",
++        "node-fetch": "^3.3.2"
++      },
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/google-auth-library/node_modules/gcp-metadata": {
++      "version": "8.1.2",
++      "resolved": "https://registry.npmjs.org/gcp-metadata/-/gcp-metadata-8.1.2.tgz",
++      "integrity": "sha512-zV/5HKTfCeKWnxG0Dmrw51hEWFGfcF2xiXqcA3+J90WDuP0SvoiSO5ORvcBsifmx/FoIjgQN3oNOGaQ5PhLFkg==",
++      "license": "Apache-2.0",
++      "dependencies": {
++        "gaxios": "^7.0.0",
++        "google-logging-utils": "^1.0.0",
++        "json-bigint": "^1.0.0"
++      },
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/google-auth-library/node_modules/google-logging-utils": {
++      "version": "1.1.3",
++      "resolved": "https://registry.npmjs.org/google-logging-utils/-/google-logging-utils-1.1.3.tgz",
++      "integrity": "sha512-eAmLkjDjAFCVXg7A1unxHsLf961m6y17QFqXqAXGj/gVkKFrEICfStRfwUlGNfeCEjNRa32JEWOUTlYXPyyKvA==",
++      "license": "Apache-2.0",
++      "engines": {
++        "node": ">=14"
++      }
++    },
++    "node_modules/google-auth-library/node_modules/https-proxy-agent": {
++      "version": "7.0.6",
++      "resolved": "https://registry.npmjs.org/https-proxy-agent/-/https-proxy-agent-7.0.6.tgz",
++      "integrity": "sha512-vK9P5/iUfdl95AI+JVyUuIcVtd4ofvtrOr3HNtM2yxC9bnMbEdp3x01OhQNnjb8IJYi38VlTE3mBXwcfvywuSw==",
++      "license": "MIT",
++      "dependencies": {
++        "agent-base": "^7.1.2",
++        "debug": "4"
++      },
++      "engines": {
++        "node": ">= 14"
++      }
++    },
++    "node_modules/google-auth-library/node_modules/ms": {
++      "version": "2.1.3",
++      "resolved": "https://registry.npmjs.org/ms/-/ms-2.1.3.tgz",
++      "integrity": "sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==",
++      "license": "MIT"
++    },
++    "node_modules/google-auth-library/node_modules/node-fetch": {
++      "version": "3.3.2",
++      "resolved": "https://registry.npmjs.org/node-fetch/-/node-fetch-3.3.2.tgz",
++      "integrity": "sha512-dRB78srN/l6gqWulah9SrxeYnxeddIG30+GOqK/9OlLVyLg3HPnr6SqOWTWOXKRwC2eGYCkZ59NNuSgvSrpgOA==",
++      "license": "MIT",
++      "dependencies": {
++        "data-uri-to-buffer": "^4.0.0",
++        "fetch-blob": "^3.1.4",
++        "formdata-polyfill": "^4.0.10"
++      },
++      "engines": {
++        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/node-fetch"
+       }
+     },
+     "node_modules/google-gax": {
+@@ -5638,6 +5800,27 @@
+         "node": ">=12"
+       }
+     },
++    "node_modules/google-gax/node_modules/google-auth-library": {
++      "version": "8.9.0",
++      "resolved": "https://registry.npmjs.org/google-auth-library/-/google-auth-library-8.9.0.tgz",
++      "integrity": "sha512-f7aQCJODJFmYWN6PeNKzgvy9LI2tYmXnzpNDHEjG5sDNPgGb2FXQyTBnXeSH+PAtpKESFD+LmHw3Ox3mN7e1Fg==",
++      "license": "Apache-2.0",
++      "optional": true,
++      "dependencies": {
++        "arrify": "^2.0.0",
++        "base64-js": "^1.3.0",
++        "ecdsa-sig-formatter": "^1.0.11",
++        "fast-text-encoding": "^1.0.0",
++        "gaxios": "^5.0.0",
++        "gcp-metadata": "^5.3.0",
++        "gtoken": "^6.1.0",
++        "jws": "^4.0.0",
++        "lru-cache": "^6.0.0"
++      },
++      "engines": {
++        "node": ">=12"
++      }
++    },
+     "node_modules/google-gax/node_modules/long": {
+       "version": "5.3.2",
+       "resolved": "https://registry.npmjs.org/long/-/long-5.3.2.tgz",
+@@ -5645,6 +5828,19 @@
+       "license": "Apache-2.0",
+       "optional": true
+     },
++    "node_modules/google-gax/node_modules/lru-cache": {
++      "version": "6.0.0",
++      "resolved": "https://registry.npmjs.org/lru-cache/-/lru-cache-6.0.0.tgz",
++      "integrity": "sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==",
++      "license": "ISC",
++      "optional": true,
++      "dependencies": {
++        "yallist": "^4.0.0"
++      },
++      "engines": {
++        "node": ">=10"
++      }
++    },
+     "node_modules/google-gax/node_modules/protobufjs": {
+       "version": "7.2.4",
+       "resolved": "https://registry.npmjs.org/protobufjs/-/protobufjs-7.2.4.tgz",
+@@ -8020,6 +8216,26 @@
+         "uuid": "dist/bin/uuid"
+       }
+     },
++    "node_modules/node-domexception": {
++      "version": "1.0.0",
++      "resolved": "https://registry.npmjs.org/node-domexception/-/node-domexception-1.0.0.tgz",
++      "integrity": "sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==",
++      "deprecated": "Use your platform's native DOMException instead",
++      "funding": [
++        {
++          "type": "github",
++          "url": "https://github.com/sponsors/jimmywarting"
++        },
++        {
++          "type": "github",
++          "url": "https://paypal.me/jimmywarting"
++        }
++      ],
++      "license": "MIT",
++      "engines": {
++        "node": ">=10.5.0"
++      }
++    },
+     "node_modules/node-fetch": {
+       "version": "2.7.0",
+       "resolved": "https://registry.npmjs.org/node-fetch/-/node-fetch-2.7.0.tgz",
+@@ -10529,6 +10745,15 @@
+         "node": ">= 0.8"
+       }
+     },
++    "node_modules/web-streams-polyfill": {
++      "version": "3.3.3",
++      "resolved": "https://registry.npmjs.org/web-streams-polyfill/-/web-streams-polyfill-3.3.3.tgz",
++      "integrity": "sha512-d2JWLCivmZYTSIoge9MsgFCZrt571BikcWGYkjC1khllbTeDlGqZ2D8vD8E/lJa8WGWbb7Plm8/XJYV7IJHZZw==",
++      "license": "MIT",
++      "engines": {
++        "node": ">= 8"
++      }
++    },
+     "node_modules/webidl-conversions": {
+       "version": "7.0.0",
+       "resolved": "https://registry.npmjs.org/webidl-conversions/-/webidl-conversions-7.0.0.tgz",
+diff --git a/package.json b/package.json
+index 50c10023..6d480fd0 100644
+--- a/package.json
++++ b/package.json
+@@ -182,7 +182,8 @@
+     "uuid": "13.0.0",
+     "validator": "^13.15.15",
+     "ws": "^8.18.3",
+-    "xlsx": "^0.18.5"
++    "xlsx": "^0.18.5",
++    "google-auth-library": "^10.9.1"
+   },
+   "devDependencies": {
+     "mongodb-memory-server": "^10.2.2"
+diff --git a/utils/publicRegistration.js b/utils/publicRegistration.js
+index 8a032a0d..1c6d9fbc 100644
+--- a/utils/publicRegistration.js
++++ b/utils/publicRegistration.js
+@@ -13,6 +13,7 @@ function sanitizePublicRegistrationInput(raw = {}) {
+     'name', 'username', 'email', 'telp_number', 'password',
+     'primary_product', 'registration_source', 'requested_trial',
+     'legal_consent', 'privacy_policy_version', 'terms_of_service_version',
++    'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'fbclid', 'ttclid',
+   ];
+   const input = Object.fromEntries(
+     allowedFields.filter((field) => Object.prototype.hasOwnProperty.call(raw, field))
+@@ -24,6 +25,9 @@ function sanitizePublicRegistrationInput(raw = {}) {
+   input.email = input.email?.trim().toLowerCase();
+   input.telp_number = input.telp_number?.trim();
+   input.is_admin = false;
++  for (const field of ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'fbclid', 'ttclid']) {
++    if (typeof input[field] === 'string') input[field] = input[field].trim().slice(0, 500);
++  }
+ 
+   if (!ALLOWED_PRIMARY_PRODUCTS.has(input.primary_product)) {
+     delete input.primary_product;
+diff --git a/tests/google_login.security.test.js b/tests/google_login.security.test.js
+new file mode 100644
+index 00000000..7398fd0e
+--- /dev/null
++++ b/tests/google_login.security.test.js
+@@ -0,0 +1,117 @@
++const test = require('node:test');
++const assert = require('node:assert/strict');
++const { OAuth2Client } = require('google-auth-library');
++const { Mutation } = require('../graphql/users/user.resolvers');
++const UserModel = require('../graphql/users/user.model');
++const SettingModel = require('../graphql/setting/setting.model');
++
++const verifiedProfile = {
++  email: 'google-user@example.test', email_verified: true,
++  sub: 'test-google-subject-12345', name: 'Google User',
++};
++
++function setup(t, profile = verifiedProfile) {
++  const originalClientId = process.env.GOOGLE_CLIENT_ID;
++  process.env.GOOGLE_CLIENT_ID = 'test-server-client.apps.googleusercontent.com';
++  t.after(() => {
++    if (originalClientId === undefined) delete process.env.GOOGLE_CLIENT_ID;
++    else process.env.GOOGLE_CLIENT_ID = originalClientId;
++  });
++  t.mock.method(OAuth2Client.prototype, 'verifyIdToken', async options => {
++    assert.equal(options.audience, process.env.GOOGLE_CLIENT_ID);
++    return { getPayload: () => profile };
++  });
++}
++
++test('Google login rejects invalid tokens before accessing accounts', async t => {
++  setup(t);
++  t.mock.method(OAuth2Client.prototype, 'verifyIdToken', async () => { throw new Error('invalid'); });
++  const lookup = t.mock.method(UserModel, 'findOne', () => { throw new Error('must not query'); });
++  await assert.rejects(Mutation.Login(null, {
++    input: { provider: 'google', tokenId: 'invalid-token' },
++  }, { req: {}, res: {} }), /Verifikasi akun Google gagal/);
++  assert.equal(lookup.mock.callCount(), 0);
++});
++
++test('Google login rejects unverified email', async t => {
++  setup(t, { ...verifiedProfile, email_verified: false });
++  await assert.rejects(Mutation.Login(null, {
++    input: { provider: 'google', tokenId: 'test-token' },
++  }, { req: {}, res: {} }), /email terverifikasi/);
++});
++
++test('new Google account requests registration details instead of silently creating a user', async t => {
++  setup(t);
++  t.mock.method(UserModel, 'findOne', async () => null);
++  await assert.rejects(Mutation.Login(null, {
++    input: { provider: 'google', tokenId: 'test-token' },
++  }, { req: {}, res: {} }), error => error.extensions.code === 'GOOGLE_REGISTRATION_DETAILS_REQUIRED');
++});
++
++test('Google login still enforces one user one device', async t => {
++  setup(t);
++  t.mock.method(UserModel, 'findOne', async () => ({
++    _id: '507f1f77bcf86cd799439011', confirm_email: true,
++    mac_address: 'registered-device', instansi_id: 'tenant',
++  }));
++  t.mock.method(SettingModel, 'findOne', async () => ({ one_user_one_device: true }));
++  await assert.rejects(Mutation.Login(null, {
++    input: { provider: 'google', tokenId: 'test-token', mac_address: 'another-device' },
++  }, { req: {}, res: {} }), /Perangkat tidak terdaftar/);
++});
++
++test('Google registration proceeds into public registration validation with request context', async t => {
++  setup(t);
++  let lookups = 0;
++  t.mock.method(UserModel, 'findOne', () => {
++    lookups++;
++    if (lookups === 1) return null;
++    return { select: () => ({ lean: async () => lookups === 2 ? null : { email: verifiedProfile.email } }) };
++  });
++  t.mock.method(UserModel, 'exists', async () => false);
++  // A duplicate discovered inside CreateUser stops before any database writes.
++  // Previously this path threw ReferenceError because Login had no ctx binding.
++  await assert.rejects(Mutation.Login(null, {
++    input: {
++      provider: 'google', tokenId: 'test-token', telp_number: '081234567890',
++      legal_consent: true, primary_product: 'hrms', registration_source: 'mobile_zera',
++    },
++  }, { req: {}, res: {} }), /Email sudah digunakan/);
++  assert.equal(lookups, 3);
++});
++
++test('new Google registration records consent and verified email before saving', async t => {
++  setup(t);
++  let lookups = 0;
++  let captured;
++  t.mock.method(UserModel, 'findOne', () => {
++    if (++lookups === 1) return null;
++    return { select: () => ({ lean: async () => null }) };
++  });
++  t.mock.method(UserModel, 'exists', async () => false);
++  for (const modelPath of [
++    '../graphql/jabatan/jabatan.model',
++    '../graphql/divisi/divisi.model',
++    '../graphql/tipe_pegawai/tipe_pegawai.model',
++  ]) {
++    t.mock.method(require(modelPath), 'findById', () => ({ select: async () => null }));
++  }
++  t.mock.method(UserModel.prototype, 'save', async function () {
++    captured = this.toObject();
++    throw new Error('stop before database write');
++  });
++  await assert.rejects(Mutation.Login(null, {
++    input: {
++      provider: 'google', tokenId: 'test-token', telp_number: '081234567890',
++      legal_consent: true, primary_product: 'hrms', registration_source: 'mobile_zera',
++    },
++  }, { req: {}, res: {} }), /stop before database write/);
++  assert.equal(captured.confirm_email, true);
++  assert.equal(captured.provider, 'google');
++  assert.equal(captured.email, verifiedProfile.email);
++  assert.ok(captured.legal_accepted_at instanceof Date);
++  assert.equal(captured.primary_product, 'hrms');
++  assert.equal(captured.registration_source, 'mobile_zera');
++  assert.equal(captured.instansi_id, null);
++  assert.equal(captured.is_admin, false);
++});
+diff --git a/tests/google_auth_public_fields.test.js b/tests/google_auth_public_fields.test.js
+new file mode 100644
+index 00000000..0c7b542d
+--- /dev/null
++++ b/tests/google_auth_public_fields.test.js
+@@ -0,0 +1,23 @@
++const test = require('node:test');
++const assert = require('node:assert/strict');
++const auth = require('../middlewares/authMiddleware');
++const { isFieldAllowed } = require('../middlewares/allowedFields');
++
++for (const [operation, field] of [
++  ['Query', 'GetGoogleRegistrationClientId'],
++  ['Mutation', 'RegisterUserWithGoogle'],
++]) {
++  test(`${field} works without a valid Pantoo session`, async () => {
++    assert.equal(isFieldAllowed(field), true);
++    const ctx = { token: 'Bearer stale-session', req: { headers: {} } };
++    let resolved = false;
++    await auth[operation][field](async () => { resolved = true; }, null, {}, ctx, { fieldName: field });
++    assert.equal(resolved, true);
++    assert.equal(ctx.token, null);
++  });
++}
++
++test('Google public endpoints do not expose private account mutations', () => {
++  assert.equal(isFieldAllowed('DeleteUser'), false);
++  assert.equal(isFieldAllowed('UpdateProfile'), false);
++});
+diff --git a/scripts/verify-google-auth-production.cjs b/scripts/verify-google-auth-production.cjs
+new file mode 100644
+index 00000000..a1437db0
+--- /dev/null
++++ b/scripts/verify-google-auth-production.cjs
+@@ -0,0 +1,20 @@
++const assert = require('node:assert/strict');
++const expected = require('../ecosystem.config').apps[0].env_production.GOOGLE_CLIENT_ID;
++
++(async () => {
++  const endpoint = process.argv[2] || 'https://graphql.pantoo.id/';
++  const response = await fetch(endpoint, {
++    method: 'POST',
++    headers: { 'Content-Type': 'application/json' },
++    body: JSON.stringify({ query: 'query { GetGoogleRegistrationClientId }' }),
++    signal: AbortSignal.timeout(20000),
++  });
++  const payload = await response.json();
++  assert.ok(response.ok && !payload.errors, 'Query konfigurasi Google belum tersedia di endpoint ini.');
++  assert.equal(payload.data?.GetGoogleRegistrationClientId, expected, 'Client ID server belum cocok dengan OAuth baru.');
++  console.log('PASS: endpoint publik Google dan client ID backend sudah sesuai.');
++  console.log('Lanjutkan uji login menggunakan akun Google milik Anda di aplikasi.');
++})().catch(error => {
++  console.error('FAIL:', error.message);
++  process.exitCode = 1;
++});

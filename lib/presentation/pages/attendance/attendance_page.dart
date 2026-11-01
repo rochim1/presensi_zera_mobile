@@ -1,9 +1,9 @@
+import 'widgets/attendance_period_filter.dart';
 import 'package:presensi_mobile/presentation/bloc/app/app_cubit.dart';
 import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:presensi_mobile/core/_core.dart';
 import 'package:presensi_mobile/injections.dart';
 import 'package:presensi_mobile/presentation/_presentation.dart';
@@ -84,26 +84,6 @@ class _AttendanceViewState extends State<AttendanceView>
     super.dispose();
   }
 
-  String _buildFilterSummary(AttendanceState state) {
-    final List<String> filters = [];
-    if (state.startDate != null && state.endDate != null) {
-      filters.add(
-        '${DateFormat('dd MMM yyyy').format(state.startDate!)} - ${DateFormat('dd MMM yyyy').format(state.endDate!)}',
-      );
-    } else {
-      filters.add('Bulan Ini');
-    }
-    if (state.typePresensi != null) {
-      filters.add(
-        state.typePresensi![0].toUpperCase() + state.typePresensi!.substring(1),
-      );
-    }
-    if (state.searchName != null && state.searchName!.isNotEmpty) {
-      filters.add('Cari: ${state.searchName}');
-    }
-    return filters.join(' • ');
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AttendanceCubit, AttendanceState>(
@@ -117,9 +97,24 @@ class _AttendanceViewState extends State<AttendanceView>
         return Scaffold(
           appBar: AppTopBar(
             title: 'Presensi',
+            centerTitle: false,
+            subtitle: 'Kelola kehadiran dan riwayat presensi Anda',
             actions: [
               IconButton(
                 tooltip: 'Perbarui pengaturan presensi',
+                style: IconButton.styleFrom(
+                  foregroundColor: AppColors.white,
+                  disabledForegroundColor: AppColors.white.withValues(
+                    alpha: 0.45,
+                  ),
+                  backgroundColor: AppColors.white.withValues(alpha: 0.15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: BorderSide(
+                      color: AppColors.white.withValues(alpha: 0.1),
+                    ),
+                  ),
+                ),
                 onPressed: _refreshing ? null : _refreshPolicy,
                 icon: const Icon(Icons.refresh),
               ),
@@ -146,88 +141,34 @@ class _AttendanceViewState extends State<AttendanceView>
                           ? 'Izin tim belum dapat diperbarui. Periksa koneksi lalu ketuk tombol perbarui.'
                           : canViewTeam
                           ? 'Anda dapat melihat presensi tim sesuai izin admin. Ringkasan di bawah adalah presensi Anda.'
-                          : 'Admin membatasi akses ke presensi Anda sendiri.',
-                    ),
-                  ),
-                ),
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    child: InkWell(
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          backgroundColor: Colors.transparent,
-                          builder: (context) => AttendanceFilterBottomSheet(
-                            initialStartDate: state.startDate,
-                            initialEndDate: state.endDate,
-                            initialTypePresensi: state.typePresensi,
-                            initialSearchName: state.searchName,
-                            showSearchName:
-                                canViewTeam &&
-                                context.tabsRouter.activeIndex == 1,
-                            onApply: (start, end, type, name) {
-                              cubit.applyFilters(
-                                startDate: start,
-                                endDate: end,
-                                typePresensi: type,
-                                searchName: name,
-                              );
-                            },
-                          ),
-                        );
-                      },
-                      borderRadius: BorderRadius.circular(
-                        AppDimens.radiusMedium,
-                      ),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.white,
-                          borderRadius: BorderRadius.circular(
-                            AppDimens.radiusMedium,
-                          ),
-                          border: Border.all(color: AppColors.dividerLight),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.filter_list,
-                              color: AppColors.primary,
-                              size: 20,
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                _buildFilterSummary(state),
-                                style: context.textStyle.bodyMedium?.copyWith(
-                                  color: AppColors.labelPrimary,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            Icon(
-                              Icons.chevron_right,
-                              color: AppColors.labelSecondary,
-                              size: 20,
-                            ),
-                          ],
-                        ),
+                          : 'Ringkasan dan riwayat kehadiran Anda.',
+                      style: const TextStyle(
+                        fontSize: 13,
+                        height: 1.5,
+                        color: AppColors.labelSecondary,
                       ),
                     ),
                   ),
                 ),
                 SliverToBoxAdapter(
+                  child: AttendancePeriodFilter(
+                    startDate: state.startDate,
+                    endDate: state.endDate,
+                    type: state.typePresensi,
+                    searchName: state.searchName,
+                    showSearchName:
+                        canViewTeam && context.tabsRouter.activeIndex == 1,
+                    onApply: (start, end, type, name) => cubit.applyFilters(
+                      startDate: start,
+                      endDate: end,
+                      typePresensi: type,
+                      searchName: name,
+                    ),
+                  ),
+                ),
+                SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
                     child: const AttendanceStatsCard(),
                   ),
                 ),

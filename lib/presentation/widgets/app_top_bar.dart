@@ -25,7 +25,7 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
     this.backgroundColor,
     this.useGradient = true,
     this.titleColor,
-    this.centerTitle = true,
+    this.centerTitle = false,
   });
 
   @override
@@ -46,16 +46,16 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
           : null,
       color: useGradient ? null : (backgroundColor ?? Colors.transparent),
       padding: EdgeInsets.only(
-        top: MediaQuery.of(context).padding.top + AppDimens.h8,
-        left: AppDimens.w16,
-        right: AppDimens.w16,
-        bottom: AppDimens.h8,
+        top: MediaQuery.of(context).padding.top + 8,
+        left: 16,
+        right: 16,
+        bottom: 8,
       ),
       child: Row(
         children: [
           // Leading
           Container(
-            constraints: BoxConstraints(minWidth: AppDimens.w48),
+            constraints: const BoxConstraints(minWidth: 48),
             child:
                 leading ??
                 (showBackButton
@@ -88,13 +88,16 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   if (subtitle != null) ...[
-                    SizedBox(height: AppDimens.h2),
+                    const SizedBox(height: 2),
                     Text(
                       subtitle!,
                       style: context.textStyle.bodySmall?.copyWith(
-                        color: (titleColor ?? AppColors.white).withValues(
-                          alpha: .78,
-                        ),
+                        color:
+                            (titleColor ??
+                                    (useGradient
+                                        ? AppColors.white
+                                        : AppColors.labelSecondary))
+                                .withValues(alpha: .78),
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -107,7 +110,7 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
 
           // Actions
           Container(
-            constraints: BoxConstraints(minWidth: AppDimens.w48),
+            constraints: const BoxConstraints(minWidth: 48),
             child: actions != null && actions!.isNotEmpty
                 ? Row(
                     mainAxisSize: MainAxisSize.min,
@@ -122,6 +125,5 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize =>
-      Size.fromHeight(AppDimens.h56 + (subtitle == null ? 16 : AppDimens.h28));
+  Size get preferredSize => Size.fromHeight(subtitle == null ? 72 : 84);
 }

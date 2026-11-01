@@ -375,7 +375,11 @@ class _CheckInViewState extends State<CheckInView> {
   }
 
   Widget _buildMap(LatLng latLng, bool isSuccess, CheckInState state) {
-    if (kIsWeb && !const bool.fromEnvironment('HRMS_WEB_GOOGLE_MAPS')) {
+    if (kIsWeb &&
+        !const bool.fromEnvironment(
+          'HRMS_WEB_GOOGLE_MAPS',
+          defaultValue: true,
+        )) {
       return Positioned.fill(
         child: WebAttendanceLocation(
           ready: isSuccess,

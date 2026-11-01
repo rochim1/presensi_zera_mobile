@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.pantoo.presensi.app-mergeProductionReleaseResources-72:/values-night-v8/values-night-v8.xml",
+            "outputFile": "com.pantoo.presensi.app-mergeProductionReleaseResources-76:/values-night-v8/values-night-v8.xml",
             "map": [
                 {
                     "source": "D:\\.gradle\\caches\\8.14\\transforms\\8de93605f85fa50cdad3a121370965f4\\transformed\\appcompat-1.7.1\\res\\values-night-v8\\values-night-v8.xml",
@@ -15,9 +15,9 @@
                     "to": {
                         "startLines": "9,10,11,12,13,14,15,16",
                         "startColumns": "4,4,4,4,4,4,4,4",
-                        "startOffsets": "405,475,559,643,739,841,943,1037",
+                        "startOffsets": "388,458,542,626,722,824,926,1020",
                         "endColumns": "69,83,83,95,101,101,93,88",
-                        "endOffsets": "470,554,638,734,836,938,1032,1121"
+                        "endOffsets": "453,537,621,717,819,921,1015,1104"
                     }
                 },
                 {
@@ -28,7 +28,7 @@
                         "startOffsets": "175,831",
                         "endLines": "7,16",
                         "endColumns": "12,12",
-                        "endOffsets": "482,997"
+                        "endOffsets": "482,980"
                     },
                     "to": {
                         "startLines": "2,6",
@@ -36,7 +36,7 @@
                         "startOffsets": "55,236",
                         "endLines": "5,8",
                         "endColumns": "12,12",
-                        "endOffsets": "231,400"
+                        "endOffsets": "231,383"
                     }
                 }
             ]

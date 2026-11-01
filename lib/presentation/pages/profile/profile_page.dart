@@ -100,7 +100,18 @@ class _ProfilePageState extends State<ProfilePage> {
                               appUser?.organization?.namaInstansi,
                         );
                       },
-                      icon: const Icon(Icons.badge_outlined),
+                      icon: Image.asset(
+                        'assets/icons/menu/identity.png',
+                        width: 30,
+                        height: 30,
+                        cacheWidth: 90,
+                        cacheHeight: 90,
+                        excludeFromSemantics: true,
+                        errorBuilder: (_, _, _) => const Icon(
+                          Icons.badge_outlined,
+                          color: AppColors.white,
+                        ),
+                      ),
                     ),
                   ],
                   pinned: true,

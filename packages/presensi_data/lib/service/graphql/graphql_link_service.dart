@@ -15,7 +15,12 @@ class GraphqlLinkService extends Link {
   Stream<Response> request(Request request, [NextLink? forward]) async* {
     String? baseApi;
     if (flavor.env! == Env.DEVELOPMENT) baseApi = flavor.baseApi;
-    final http.Client client = kDebugMode
+    // Authentication credentials must never enter the debug request inspector.
+    final input = request.variables['input'];
+    final sensitiveAuth =
+        input is Map &&
+        ['tokenId', 'password', 'remember_token'].any(input.containsKey);
+    final http.Client client = kDebugMode && !sensitiveAuth
         ? ChuckerHttpClient(http.Client())
         : http.Client();
     final httpLink = HttpLink(

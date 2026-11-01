@@ -7,7 +7,7 @@ class AppBottomNavigationBar extends StatelessWidget {
   // ScreenUtil's width-based values grow excessively on tablets in landscape.
   static const double _mainButtonSize = 64;
   static const double _mainButtonIconSize = 32;
-  static const double _navigationIconSize = 20;
+  static const double _navigationIconSize = 38;
   static const double _mainButtonGap = 64;
 
   final int currentIndex;
@@ -45,7 +45,7 @@ class AppBottomNavigationBar extends StatelessWidget {
             ],
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -53,14 +53,14 @@ class AppBottomNavigationBar extends StatelessWidget {
                   context,
                   index: 0,
                   icon: PhosphorIcons.squaresFour,
-                  activeIcon: PhosphorIcons.squaresFourFill,
+                  assetName: 'home',
                   label: "Home",
                 ),
                 _buildItem(
                   context,
                   index: 1,
                   icon: PhosphorIcons.calendarCheck,
-                  activeIcon: PhosphorIcons.calendarCheckFill,
+                  assetName: 'attendance',
                   label: "Presensi",
                 ),
 
@@ -71,15 +71,15 @@ class AppBottomNavigationBar extends StatelessWidget {
                   context,
                   index: 2,
                   icon: PhosphorIcons.cardsThree,
-                  activeIcon: PhosphorIcons.cardsThreeFill,
-                  label: "Kunjungan",
+                  assetName: 'visits',
+                  label: 'Kunjungan',
                 ),
                 _buildItem(
                   context,
                   index: 3,
                   icon: PhosphorIcons.user,
-                  activeIcon: PhosphorIcons.userFill,
-                  label: "Profile",
+                  assetName: 'profile',
+                  label: 'Profile',
                 ),
               ],
             ),
@@ -93,40 +93,90 @@ class AppBottomNavigationBar extends StatelessWidget {
     BuildContext context, {
     required int index,
     required PhosphorIconData icon,
-    required PhosphorIconData activeIcon,
+    required String assetName,
     required String label,
   }) {
     final isActive = currentIndex == index;
     final color = isActive ? AppColors.primary : AppColors.labelSecondary;
+    final navigationIcon = Image.asset(
+      'assets/icons/menu/$assetName.png',
+      width: _navigationIconSize,
+      height: _navigationIconSize,
+      cacheWidth: 96,
+      cacheHeight: 96,
+      excludeFromSemantics: true,
+      errorBuilder: (_, _, _) =>
+          Icon(icon, color: color, size: _navigationIconSize),
+    );
 
-    return GestureDetector(
-      onTap: () => onTap(index),
-      behavior: HitTestBehavior.opaque,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        decoration: const BoxDecoration(color: Colors.transparent),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              isActive ? activeIcon : icon,
-              color: color,
-              size: _navigationIconSize,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: context.theme.textTheme.labelSmall?.copyWith(
-                color: color,
-                fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
-                fontSize: 11,
-                height: 1.2,
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => onTap(index),
+        behavior: HitTestBehavior.opaque,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+          decoration: const BoxDecoration(color: Colors.transparent),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                width: 40,
+                height: 30,
+                decoration: BoxDecoration(
+                  color: isActive ? AppColors.primaryLight : Colors.transparent,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                alignment: Alignment.center,
+                child: OverflowBox(
+                  minWidth: _navigationIconSize,
+                  maxWidth: _navigationIconSize,
+                  minHeight: _navigationIconSize,
+                  maxHeight: _navigationIconSize,
+                  child: isActive
+                      ? navigationIcon
+                      : ColorFiltered(
+                          colorFilter: const ColorFilter.matrix([
+                            0.2126,
+                            0.7152,
+                            0.0722,
+                            0,
+                            0,
+                            0.2126,
+                            0.7152,
+                            0.0722,
+                            0,
+                            0,
+                            0.2126,
+                            0.7152,
+                            0.0722,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            1,
+                            0,
+                          ]),
+                          child: navigationIcon,
+                        ),
+                ),
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
+              const SizedBox(height: 2),
+              Text(
+                label,
+                style: context.theme.textTheme.labelSmall?.copyWith(
+                  color: color,
+                  fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
+                  fontSize: 11,
+                  height: 1.2,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
         ),
       ),
     );

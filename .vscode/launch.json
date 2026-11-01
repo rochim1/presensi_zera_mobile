@@ -2,6 +2,15 @@
   "version": "0.3.0",
   "configurations": [
     {
+      "name": "Dev Web Google (7357)",
+      "request": "launch",
+      "type": "dart",
+      "deviceId": "chrome",
+      "toolArgs": ["--web-port", "7357"],
+      "program": "lib/main_development.dart",
+      "args": ["--flavor", "development"]
+    },
+    {
       "name": "Dev Debug",
       "request": "launch",
       "type": "dart",

@@ -135,13 +135,13 @@ class LeaveRequestCard extends StatelessWidget {
                     width: AppDimens.w48,
                     height: AppDimens.w48,
                     decoration: BoxDecoration(
-                      color: categoryStyle.background,
+                      color: AppColors.primaryLight,
                       borderRadius: BorderRadius.circular(AppDimens.r12),
                     ),
                     alignment: Alignment.center,
                     child: Icon(
                       categoryStyle.icon,
-                      color: categoryStyle.foreground,
+                      color: AppColors.primary,
                       size: AppDimens.iconMedium,
                     ),
                   ),

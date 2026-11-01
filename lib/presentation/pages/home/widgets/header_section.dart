@@ -47,7 +47,7 @@ class HeaderSection extends StatelessWidget {
             subtitle:
                 '${user?.department?.name ?? '-'} • ${user?.organization?.namaResmi ?? '-'}',
             titleBuilder: (context, title) => Text(
-              'Halo, $title! 👋',
+              'Halo, $title!',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: context.textStyle.titleMedium!.copyWith(

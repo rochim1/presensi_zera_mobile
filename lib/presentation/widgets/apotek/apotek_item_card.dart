@@ -30,14 +30,14 @@ class _ApotekItemCardState extends State<ApotekItemCard> {
       color: Colors.white,
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
-        side: BorderSide(color: AppColors.dividerLight.withValues(alpha: 0.5)),
-        borderRadius: BorderRadius.circular(AppDimens.r16),
+        side: const BorderSide(color: AppColors.border),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: InkWell(
         onTap: widget.onTap,
-        borderRadius: BorderRadius.circular(AppDimens.r16),
+        borderRadius: BorderRadius.circular(16),
         child: Padding(
-          padding: EdgeInsets.all(AppDimens.h16),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -45,7 +45,7 @@ class _ApotekItemCardState extends State<ApotekItemCard> {
               const SizedBox(height: 12),
               const Divider(height: 1, color: AppColors.dividerLight),
               const SizedBox(height: 12),
-              
+
               Row(
                 children: [
                   Expanded(
@@ -54,10 +54,14 @@ class _ApotekItemCardState extends State<ApotekItemCard> {
                       label: 'Area',
                       value: widget.apotek.area ?? '-',
                       icon: PhosphorIcons.mapPin,
-                      iconColor: AppColors.green,
+                      iconColor: AppColors.labelSecondary,
                     ),
                   ),
-                  Container(height: 28, width: 1, color: AppColors.dividerLight),
+                  Container(
+                    height: 28,
+                    width: 1,
+                    color: AppColors.dividerLight,
+                  ),
                   SizedBox(width: AppDimens.w16),
                   Expanded(
                     child: _buildInfoSection(
@@ -65,12 +69,12 @@ class _ApotekItemCardState extends State<ApotekItemCard> {
                       label: 'Penanggung Jawab',
                       value: widget.apotek.namaAPJ ?? '-',
                       icon: PhosphorIcons.user,
-                      iconColor: AppColors.primary,
+                      iconColor: AppColors.labelSecondary,
                     ),
                   ),
                 ],
               ),
-              
+
               AnimatedCrossFade(
                 firstChild: const SizedBox(width: double.infinity, height: 0),
                 secondChild: Column(
@@ -86,10 +90,14 @@ class _ApotekItemCardState extends State<ApotekItemCard> {
                             label: 'Tipe',
                             value: widget.apotek.tipeOutlet ?? '-',
                             icon: PhosphorIcons.storefront,
-                            iconColor: AppColors.orange,
+                            iconColor: AppColors.labelSecondary,
                           ),
                         ),
-                        Container(height: 28, width: 1, color: AppColors.dividerLight),
+                        Container(
+                          height: 28,
+                          width: 1,
+                          color: AppColors.dividerLight,
+                        ),
                         SizedBox(width: AppDimens.w16),
                         Expanded(
                           child: _buildInfoSection(
@@ -97,7 +105,7 @@ class _ApotekItemCardState extends State<ApotekItemCard> {
                             label: 'Kategori',
                             value: widget.apotek.kategoriProduk ?? '-',
                             icon: PhosphorIcons.tag,
-                            iconColor: AppColors.purple,
+                            iconColor: AppColors.labelSecondary,
                           ),
                         ),
                       ],
@@ -113,10 +121,14 @@ class _ApotekItemCardState extends State<ApotekItemCard> {
                                 ? 'Rp ${widget.apotek.totalValue!.toStringAsFixed(0)}'
                                 : '-',
                             icon: PhosphorIcons.money,
-                            iconColor: AppColors.primary,
+                            iconColor: AppColors.labelSecondary,
                           ),
                         ),
-                        Container(height: 28, width: 1, color: AppColors.dividerLight),
+                        Container(
+                          height: 28,
+                          width: 1,
+                          color: AppColors.dividerLight,
+                        ),
                         SizedBox(width: AppDimens.w16),
                         Expanded(
                           child: _buildInfoSection(
@@ -138,10 +150,14 @@ class _ApotekItemCardState extends State<ApotekItemCard> {
                             label: 'Pemilik',
                             value: widget.apotek.namaOwner ?? '-',
                             icon: PhosphorIcons.identificationCard,
-                            iconColor: AppColors.blue,
+                            iconColor: AppColors.labelSecondary,
                           ),
                         ),
-                        Container(height: 28, width: 1, color: AppColors.dividerLight),
+                        Container(
+                          height: 28,
+                          width: 1,
+                          color: AppColors.dividerLight,
+                        ),
                         SizedBox(width: AppDimens.w16),
                         Expanded(
                           child: _buildInfoSection(
@@ -266,7 +282,9 @@ class _ApotekItemCardState extends State<ApotekItemCard> {
             padding: const EdgeInsets.only(left: 8.0),
             child: AppChip(
               label: apotek.status?.toActiveType?.toName ?? '',
-              color: apotek.status?.toActiveType?.toColor ?? AppColors.fillSecondary,
+              color:
+                  apotek.status?.toActiveType?.toColor ??
+                  AppColors.fillSecondary,
               borderRadius: AppDimens.r16,
             ),
           ),

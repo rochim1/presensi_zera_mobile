@@ -26,7 +26,10 @@ class KpiAssignmentCard extends StatelessWidget {
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: AppColors.border),
+      ),
       elevation: 0,
       color: Colors.white,
       child: Padding(
@@ -45,7 +48,7 @@ class KpiAssignmentCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                KpiStatusBadge(status: status),
+                Flexible(child: KpiStatusBadge(status: status)),
               ],
             ),
             const SizedBox(height: 8),

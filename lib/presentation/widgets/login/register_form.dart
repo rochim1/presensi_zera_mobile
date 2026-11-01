@@ -7,6 +7,7 @@ import 'package:presensi_domain/presensi_domain.dart';
 
 import '../../../core/_core.dart';
 import '../../_presentation.dart';
+import 'google_account_button.dart';
 
 class RegisterForm extends StatefulWidget {
   const RegisterForm({super.key});
@@ -19,6 +20,7 @@ class _RegisterFormState extends State<RegisterForm> {
   static const Duration _checkDebounceDuration = Duration(milliseconds: 500);
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool _googleBusy = false;
 
   final FocusNode _fnName = FocusNode();
   final FocusNode _fnUsername = FocusNode();
@@ -67,6 +69,7 @@ class _RegisterFormState extends State<RegisterForm> {
   }
 
   Future<void> _handleRegister(RegisterCubit cubit) async {
+    if (_googleBusy) return;
     if (!_formKey.currentState!.validate()) return;
     _formKey.currentState!.save();
 
@@ -273,6 +276,12 @@ class _RegisterFormState extends State<RegisterForm> {
                     ),
                   ),
                   const SizedBox(height: AppDimens.size3L),
+                  GoogleAccountButton(
+                    enabled: !state.submitStatus.isLoading,
+                    onBusyChanged: (busy) {
+                      if (mounted) setState(() => _googleBusy = busy);
+                    },
+                  ),
                   TextFieldBasic(
                     controller: _nameController,
                     focusNode: _fnName,
@@ -361,7 +370,7 @@ class _RegisterFormState extends State<RegisterForm> {
                   AppButton(
                     text: 'Daftar',
                     onPressed: () => _handleRegister(cubit),
-                    isLoading: state.submitStatus.isLoading,
+                    isLoading: state.submitStatus.isLoading || _googleBusy,
                   ),
                   const SizedBox(height: AppDimens.size3M),
                   Text.rich(

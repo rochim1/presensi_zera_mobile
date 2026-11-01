@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:presensi_mobile/presentation/widgets/pantoo_launch_screen.dart';
 import 'package:presensi_data/presensi_data.dart';
 import 'package:presensi_mobile/presentation/bloc/app/app_state.dart';
 import 'package:presensi_mobile/service/startup_metrics.dart';
@@ -64,31 +65,29 @@ class _SessionRestoreGateState extends State<SessionRestoreGate> {
             child: KeyedSubtree(key: ValueKey(_userId), child: widget.child),
           ),
         if (!ready)
-          Scaffold(
-            body: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (!failed) const CircularProgressIndicator(),
-                    const SizedBox(height: 20),
-                    Text(
-                      failed
-                          ? 'Data akun atau presensi belum dapat dimuat. Periksa koneksi lalu coba lagi.'
-                          : 'Memulihkan akun dan presensi…',
-                      textAlign: TextAlign.center,
-                    ),
-                    if (failed)
+          if (!failed)
+            const PantooLaunchScreen()
+          else
+            Scaffold(
+              body: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Data akun atau presensi belum dapat dimuat. Periksa koneksi lalu coba lagi.',
+                        textAlign: TextAlign.center,
+                      ),
                       TextButton(
                         onPressed: widget.onRetry,
                         child: const Text('Coba lagi'),
                       ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
       ],
     );
   }

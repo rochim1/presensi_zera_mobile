@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.pantoo.presensi.app-mergeProductionReleaseResources-72:/values-zh/values-zh.xml",
+            "outputFile": "com.pantoo.presensi.app-mergeProductionReleaseResources-76:/values-zh/values-zh.xml",
             "map": [
                 {
                     "source": "D:\\.gradle\\caches\\8.14\\transforms\\c6eec7a21cec6366f74359f7b6a58524\\transformed\\jetified-ucrop-2.2.11\\res\\values-zh\\values-zh.xml",

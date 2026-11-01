@@ -70,7 +70,7 @@ class AppRequestDetailView extends StatelessWidget {
         Expanded(
           child: AppUserInfoTile(
             user: user,
-            color: statusColor,
+            color: AppColors.primary,
             subtitle: headerSubtitle,
             padding: EdgeInsets.zero,
           ),

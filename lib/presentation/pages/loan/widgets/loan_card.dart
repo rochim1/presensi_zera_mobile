@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/presentation/widgets/app_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:presensi_domain/presensi_domain.dart';
@@ -26,29 +27,21 @@ class LoanCard extends StatelessWidget {
           height: 120.h,
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(16.r),
+            borderRadius: BorderRadius.circular(16),
           ),
         ),
       );
     }
 
-    final statusColor = _getStatusColor(item.approvalStatus);
-
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16.r),
+      borderRadius: BorderRadius.circular(16),
       child: Container(
-        padding: EdgeInsets.all(AppDimens.w16),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16.r),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.border),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -64,26 +57,21 @@ class LoanCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: AppDimens.w8,
-                    vertical: AppDimens.h4,
+                const SizedBox(width: 8),
+                Flexible(
+                  child: AppChip(
+                    label: item.approvalStatus?.toUpperCase() ?? 'PENDING',
                   ),
-                  decoration: BoxDecoration(
-                    color: statusColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Text(
-                    item.approvalStatus?.toUpperCase() ?? 'PENDING',
-                    style: context.textStyle.bodySmall?.copyWith(
-                      color: statusColor,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                ),
+                const SizedBox(width: 8),
+                const Icon(
+                  Icons.chevron_right,
+                  size: 18,
+                  color: AppColors.labelSecondary,
                 ),
               ],
             ),
-            AppDimens.h8.hSpace,
+            const Divider(height: 25, color: AppColors.divider),
             Text(
               'Nominal: Rp ${item.principalAmount?.toStringAsFixed(0) ?? 0}',
               style: context.textStyle.bodyMedium?.copyWith(
@@ -110,24 +98,5 @@ class LoanCard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Color _getStatusColor(String? status) {
-    switch (status?.toLowerCase()) {
-      case 'approved':
-        return Colors.green;
-      case 'active':
-        return Colors.green;
-      case 'pending_approval':
-        return Colors.orange;
-      case 'rejected':
-        return Colors.red;
-      case 'disbursed':
-        return Colors.blue;
-      case 'completed':
-        return Colors.purple;
-      default:
-        return Colors.orange;
-    }
   }
 }

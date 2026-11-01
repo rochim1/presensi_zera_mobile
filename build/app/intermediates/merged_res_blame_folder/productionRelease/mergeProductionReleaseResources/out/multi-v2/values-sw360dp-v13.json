@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.pantoo.presensi.app-mergeProductionReleaseResources-72:/values-sw360dp-v13/values-sw360dp-v13.xml",
+            "outputFile": "com.pantoo.presensi.app-mergeProductionReleaseResources-76:/values-sw360dp-v13/values-sw360dp-v13.xml",
             "map": [
                 {
                     "source": "D:\\.gradle\\caches\\8.14\\transforms\\b7b6519eac80ce923ccb01715194299a\\transformed\\preference-1.2.1\\res\\values-sw360dp-v13\\values-sw360dp-v13.xml",
