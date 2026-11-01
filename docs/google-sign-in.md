@@ -25,7 +25,7 @@ Kedua client berikut telah diverifikasi di daftar Google Cloud Clients. Email du
 
 - Project: `pantoo-511802` / `941313151223`.
 - Identitas aplikasi: Pantoo HR, audience External.
-- Origin JavaScript Web: `https://app.pantoo.id` dan `http://localhost:7357`; tidak ada redirect URI karena integrasi memakai ID token GIS/native.
+- Origin JavaScript Web: `https://app.pantoo.id`, `https://hrms.pantoo.id`, `http://localhost:7357`, dan `http://localhost:5173`; tidak ada redirect URI karena integrasi memakai ID token GIS/native. Origin HRMS ditambahkan pada 1 November 2026 untuk memperbaiki `origin_mismatch`.
 - Client Android memakai package dan SHA-1 production APK lokal pada tabel di bawah.
 - `GOOGLE_CLIENT_ID` dalam `.env` backend lokal sudah diperbarui ke **client Web** di atas. Client secret tidak diperlukan untuk verifikasi ID token dan tidak disalin ke aplikasi atau dokumentasi.
 - Google OAuth sudah dipublikasikan dan status **In production** dikonfirmasi pada halaman Audience tanggal 25 Oktober 2026. Uji login akun Google nyata belum dilakukan.

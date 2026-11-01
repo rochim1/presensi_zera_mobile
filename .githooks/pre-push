@@ -1,0 +1,14 @@
+#!/bin/sh
+# Check every commit tip actually being pushed, including explicit refspecs.
+while read local_ref local_sha remote_ref remote_sha; do
+    case "$local_sha" in
+        0000000000000000000000000000000000000000) continue ;;
+    esac
+    for file in index.html main.dart.js flutter_bootstrap.js assets/AssetManifest.bin.json version.json; do
+        if ! git cat-file -e "$local_sha:build/web/$file" 2>/dev/null; then
+            echo "Push dibatalkan: $local_ref tidak memiliki build/web/$file."
+            echo "Build ulang web dan commit hasilnya sebelum push."
+            exit 1
+        fi
+    done
+done

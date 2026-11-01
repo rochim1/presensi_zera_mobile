@@ -74,6 +74,7 @@ jobs:
 
       - name: Resolve project dependencies
         run: |
+          flutter clean
           flutter pub get
           cd packages/presensi_data && flutter pub get
 
@@ -94,6 +95,16 @@ jobs:
 
       - name: Build production AAB
         run: flutter build appbundle --release --flavor production --target lib/main_production.dart
+
+      - name: Rebuild production web deployment
+        run: flutter build web --release --target lib/main_production.dart --no-pub
+
+      - name: Upload production web artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pantoo-hr-web
+          path: build/web/
+          include-hidden-files: true
 
       - name: Upload AAB to Google Play
         uses: r0adkll/upload-google-play@v1

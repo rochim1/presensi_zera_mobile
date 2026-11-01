@@ -11,4 +11,7 @@ build_dev:
 	fvm flutter build apk --debug --flavor development --target lib/main_development.dart
 
 build_staging:
-	fvm flutter build apk --split-per-abi --release --flavor production --target lib/main_production.dart
+	pwsh -File scripts/build-release.ps1 -Artifact apk
+
+build_aab:
+	pwsh -File scripts/build-release.ps1 -Artifact aab

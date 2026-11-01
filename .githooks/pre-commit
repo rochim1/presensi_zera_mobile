@@ -1,0 +1,9 @@
+#!/bin/sh
+# Prevent deployment commits that remove the Flutter web entry point/assets.
+for file in index.html main.dart.js flutter_bootstrap.js assets/AssetManifest.bin.json version.json; do
+    if ! git cat-file -e ":build/web/$file" 2>/dev/null; then
+        echo "Commit dibatalkan: build/web/$file tidak ada di staging."
+        echo "Jalankan pwsh -File scripts/build-release.ps1, lalu git add build/web."
+        exit 1
+    fi
+done
