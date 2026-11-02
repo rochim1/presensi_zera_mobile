@@ -41,16 +41,22 @@ class LoginSignInCubit extends Cubit<LoginSignInState> {
         (failure) => emit(
           state.copyWith(status: AuthState.notLoggedIn, failure: failure),
         ),
-        (value) async {
+        (value) {
           emit(state.copyWith(status: AuthState.loggedIn, userEntity: value));
 
           if (!kIsWeb) {
-            await fa.logLogin(
-              parameters: {
-                'id': state.userEntity?.user?.id ?? '',
-                'name': state.userEntity?.user?.name ?? '',
-              },
-            );
+            unawaited(() async {
+              try {
+                await fa.logLogin(
+                  parameters: {
+                    'id': value.user?.id ?? '',
+                    'name': value.user?.name ?? '',
+                  },
+                );
+              } catch (error) {
+                debugPrint('Login telemetry unavailable: $error');
+              }
+            }());
           }
         },
       );

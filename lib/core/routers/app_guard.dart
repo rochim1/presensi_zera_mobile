@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:presensi_data/presensi_data.dart';
 import 'package:presensi_domain/presensi_domain.dart';
@@ -16,39 +17,42 @@ class AppGuard extends AutoRouteGuard {
     final data = await loginCheck.call(NoParams());
 
     data.fold(
-      (failure) => router.pushAndPopUntil(
+      (failure) => resolver.redirectUntil(
         IntroPageRoute(
           onLoginResult: (validate, user) {
             if (validate ?? false) {
               if (user?.user?.instansiId == null) {
                 resolver.next(false);
-                router.pushAndPopUntil(
+                router.root.replaceAll([
                   InstansiSetupPageRoute(initialEmail: user?.user?.email),
-                  predicate: (route) => true,
-                );
+                ]);
                 return;
               }
-              if (!kIsWeb && !kDebugMode) {
-                fs.setUserIdentifier(user!.userId);
-                fa.setUserId(id: user.userId);
-              }
               fl.token = user!.token;
+              _recordUser(user.userId);
               resolver.next();
-              router.removeLast();
             }
           },
         ),
-        predicate: (r) => true,
       ),
       (value) {
-        if (!kIsWeb && !kDebugMode) {
-          fs.setUserIdentifier(value!.userId);
-          fa.setUserId(id: value.userId);
-        }
         fl.token = value?.token;
+        if (value != null) _recordUser(value.userId);
         return resolver.next(true);
       },
     );
+  }
+
+  void _recordUser(String userId) {
+    if (kIsWeb || kDebugMode) return;
+    unawaited(() async {
+      try {
+        await fs.setUserIdentifier(userId);
+        await fa.setUserId(id: userId);
+      } catch (error) {
+        debugPrint('Auth telemetry unavailable: $error');
+      }
+    }());
   }
 }
 

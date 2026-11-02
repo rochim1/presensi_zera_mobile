@@ -59,7 +59,7 @@ class _AppState extends State<App> {
       // Logout and disconnect websocket
       await sl<LoginSignOutCubit>().logout();
       // Navigate to login page
-      _appRouter.pushAndPopUntil(LoginPageRoute(), predicate: (_) => false);
+      await _appRouter.replaceAll([LoginPageRoute()]);
 
       _isHandlingUnauthorized = false;
     };

@@ -65,15 +65,13 @@ Future<void> handlePantooSignIn(
     if (onLoginResult != null) {
       onLoginResult.call(true, state.userEntity);
     } else if (state.userEntity?.user?.instansiId == null) {
-      context.router.pushAndPopUntil(
+      context.router.root.replaceAll([
         InstansiSetupPageRoute(initialEmail: state.userEntity?.user?.email),
-        predicate: (r) => true,
-      );
+      ]);
     } else {
-      context.router.pushAndPopUntil(
-        const MainPageRoute(),
-        predicate: (r) => true,
-      );
+      context.router.root.replaceAll(const [
+        MainPageRoute(children: [HomePageRoute()]),
+      ]);
     }
   }
   if (state.status.isNotLoggedIn &&

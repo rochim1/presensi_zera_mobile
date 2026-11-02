@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:presensi_mobile/core/routers/auth_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_domain/presensi_domain.dart';
 import 'package:presensi_data/presensi_data.dart';
@@ -434,10 +435,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       } else if (state.status.isLoaded ||
                           state.status.isNotLoaded) {
                         SmartDialog.dismiss();
-                        context.router.pushAndPopUntil(
-                          IntroPageRoute(),
-                          predicate: (r) => true,
-                        );
                       }
                     },
                     builder: (ctxLog, state) => ItemListProfile(
@@ -454,7 +451,19 @@ class _ProfilePageState extends State<ProfilePage> {
                               );
                               if (!ctxLog.mounted) return;
                               if (answer != null && answer.isYesOk) {
-                                ctxLog.read<LoginSignOutCubit>().logout();
+                                // Session clearing can dispose this profile and
+                                // its listener. Keep the root router before it.
+                                final rootRouter = ctxLog.router.root;
+                                final signOut = ctxLog
+                                    .read<LoginSignOutCubit>();
+                                try {
+                                  await finishPantooSignOut(
+                                    rootRouter,
+                                    signOut.logout,
+                                  );
+                                } finally {
+                                  SmartDialog.dismiss();
+                                }
                               }
                             },
                     ),

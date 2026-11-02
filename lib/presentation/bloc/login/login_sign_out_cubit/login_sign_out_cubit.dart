@@ -27,6 +27,9 @@ class LoginSignOutCubit extends Cubit<LoginSignOutState> {
           .timeout(const Duration(seconds: 12));
 
       await _clearRuntimeSession();
+      // Clearing AppCubit can dispose the profile's factory-owned cubit.
+      // Its caller still awaits this future to navigate using the root router.
+      if (isClosed) return;
       data.fold(
         (failure) =>
             emit(state.copyWith(status: TypeState.notLoaded, failure: failure)),
@@ -44,6 +47,7 @@ class LoginSignOutCubit extends Cubit<LoginSignOutState> {
       );
     } catch (error) {
       await _clearRuntimeSession();
+      if (isClosed) return;
       emit(
         state.copyWith(
           status: TypeState.notLoaded,
