@@ -19,16 +19,17 @@ class LoginSignInCubit extends Cubit<LoginSignInState> {
     : super(const LoginSignInState());
 
   Future<void> login(LoginParamsEntity params) async {
-    if (state.status.isLoading) return;
-    emit(state.copyWith(status: AuthState.loading));
+    if (isClosed || state.status.isLoading) return;
+    emit(const LoginSignInState(status: AuthState.loading));
 
     try {
       String? deviceIdentifier;
       // deviceInfo.androidInfo is a native call and must never be awaited by
       // the browser. Previously this prevented the login mutation from being
       // sent and left the button in its loading state.
-      if (!kIsWeb) {
-        final AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+        final AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo
+            .timeout(const Duration(seconds: 10));
         deviceIdentifier = '${androidInfo.model}:${androidInfo.id}';
       }
 
@@ -37,6 +38,7 @@ class LoginSignInCubit extends Cubit<LoginSignInState> {
           .call(newParams)
           .timeout(Duration(seconds: kIsWeb ? 20 : 30));
 
+      if (isClosed) return;
       data.fold(
         (failure) => emit(
           state.copyWith(status: AuthState.notLoggedIn, failure: failure),
@@ -61,6 +63,7 @@ class LoginSignInCubit extends Cubit<LoginSignInState> {
         },
       );
     } catch (error) {
+      if (isClosed) return;
       emit(
         state.copyWith(
           status: AuthState.notLoggedIn,

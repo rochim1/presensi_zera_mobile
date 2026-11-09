@@ -11,9 +11,10 @@ import 'package:presensi_mobile/core/routers/auth_navigation.dart';
 import 'package:presensi_mobile/injections.dart';
 
 class _Check extends Fake implements LoginCheck {
+  LoginUserEntity? cached;
   @override
   Future<Either<Failure, LoginUserEntity?>> call(NoParams params) async =>
-      Left(CacheFailure());
+      cached == null ? Left(CacheFailure()) : Right(cached);
 }
 
 const _employee = LoginUserEntity(
@@ -23,7 +24,12 @@ const _employee = LoginUserEntity(
 );
 
 class _Router extends RootStackRouter {
-  _Router({required this.guard, required this.hasOrganization});
+  _Router({
+    required this.guard,
+    required this.hasOrganization,
+    this.throughLogin = false,
+  });
+  final bool throughLogin;
   final AppGuard guard;
   final bool hasOrganization;
   @override
@@ -44,15 +50,17 @@ class _Router extends RootStackRouter {
           final args = data.argsAs<IntroPageRouteArgs>();
           return Scaffold(
             body: TextButton(
-              onPressed: () => args.onLoginResult!(
-                true,
-                hasOrganization
-                    ? _employee
-                    : const LoginUserEntity(
-                        userId: 'new',
-                        user: UserEntity(id: 'new'),
-                      ),
-              ),
+              onPressed: throughLogin
+                  ? () => openPantooLogin(this)
+                  : () => args.onLoginResult!(
+                      true,
+                      hasOrganization
+                          ? _employee
+                          : const LoginUserEntity(
+                              userId: 'new',
+                              user: UserEntity(id: 'new'),
+                            ),
+                    ),
               child: const Text('Google verified'),
             ),
           );
@@ -63,7 +71,25 @@ class _Router extends RootStackRouter {
       path: '/login',
       page: PageInfo(
         LoginPageRoute.name,
-        builder: (_) => const Scaffold(body: Text('Login')),
+        builder: (data) => Scaffold(
+          body: throughLogin
+              ? TextButton(
+                  onPressed: () {
+                    final args = data.argsAs<LoginPageRouteArgs>(
+                      orElse: () => const LoginPageRouteArgs(),
+                    );
+                    expect(args.onLoginResult, isNull);
+                    (guard.loginCheck as _Check).cached = _employee;
+                    replaceAll([
+                      hasOrganization
+                          ? const MainPageRoute()
+                          : InstansiSetupPageRoute(),
+                    ]);
+                  },
+                  child: const Text('Complete Google login'),
+                )
+              : const Text('Login'),
+        ),
       ),
     ),
     AutoRoute(
@@ -83,6 +109,33 @@ void main() {
     );
   });
   for (final hasOrganization in [true, false]) {
+    testWidgets(
+      'Intro to Login discards obsolete callback, organization=$hasOrganization',
+      (tester) async {
+        final router = _Router(
+          guard: AppGuard(_Check()),
+          hasOrganization: hasOrganization,
+          throughLogin: true,
+        );
+        await tester.pumpWidget(
+          MaterialApp.router(routerConfig: router.config()),
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Google verified'));
+        await tester.pumpAndSettle();
+        expect(find.text('Complete Google login'), findsOneWidget);
+        await tester.tap(find.text('Complete Google login'));
+        await tester.pumpAndSettle();
+        expect(
+          find.text(hasOrganization ? 'Dashboard' : 'Setup'),
+          findsOneWidget,
+        );
+        expect(find.text('Complete Google login'), findsNothing);
+        expect(tester.takeException(), isNull);
+        await tester.pumpWidget(const SizedBox());
+        router.dispose();
+      },
+    );
     testWidgets('guard resumes verified login, organization=$hasOrganization', (
       tester,
     ) async {

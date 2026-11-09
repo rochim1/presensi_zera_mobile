@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:in_app_update/in_app_update.dart';
 
 import '../../../core/_core.dart';
+import '../../../core/routers/auth_navigation.dart';
 import '../../../injections.dart';
 import '../../_presentation.dart';
 import '../../widgets/intro/_intro.dart';
@@ -122,10 +123,7 @@ class _IntroPageState extends State<IntroPage> {
                             curve: Curves.easeInOut,
                           );
                         } else {
-                          context.router.pushAndPopUntil(
-                            LoginPageRoute(onLoginResult: widget.onLoginResult),
-                            predicate: (r) => false,
-                          );
+                          openPantooLogin(context.router);
                         }
                       },
                       text: pageIndex < 2 ? 'Selanjutnya' : 'Mulai Sekarang',

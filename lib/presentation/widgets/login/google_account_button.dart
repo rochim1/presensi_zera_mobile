@@ -34,6 +34,7 @@ class _GoogleAccountButtonState extends State<GoogleAccountButton> {
   StreamSubscription<GoogleSignInAuthenticationEvent>? _events;
   bool _ready = false;
   bool _busy = false;
+  String _progress = 'Menyiapkan Google…';
   String? _error;
 
   @override
@@ -43,10 +44,17 @@ class _GoogleAccountButtonState extends State<GoogleAccountButton> {
   }
 
   Future<void> _initialize() async {
-    if (mounted) setState(() => _error = null);
+    if (mounted) {
+      setState(() {
+        _ready = false;
+        _error = null;
+      });
+    }
     try {
-      await widget.prepareEndpoint?.call();
-      await GoogleIdentityService.initialize(sl<GraphQlService>());
+      await widget.prepareEndpoint?.call().timeout(const Duration(seconds: 15));
+      await GoogleIdentityService.initialize(
+        sl<GraphQlService>(),
+      ).timeout(const Duration(seconds: 20));
       if (!mounted) return;
       if (kIsWeb) {
         _events = GoogleSignIn.instance.authenticationEvents.listen(
@@ -85,11 +93,19 @@ class _GoogleAccountButtonState extends State<GoogleAccountButton> {
 
   void _setBusy(bool value) {
     if (!mounted) return;
-    setState(() => _busy = value);
+    setState(() {
+      _busy = value;
+      if (value) {
+        _error = null;
+        _progress = 'Menyiapkan login Google…';
+      }
+    });
     widget.onBusyChanged?.call(value);
   }
 
   void _showError(String message) {
+    if (!mounted) return;
+    setState(() => _error = message);
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text(message)));
@@ -99,17 +115,28 @@ class _GoogleAccountButtonState extends State<GoogleAccountButton> {
     if (_busy || !widget.enabled) return;
     _setBusy(true);
     try {
-      await widget.prepareEndpoint?.call();
-      await GoogleIdentityService.initialize(sl<GraphQlService>());
+      await widget.prepareEndpoint?.call().timeout(const Duration(seconds: 15));
+      await GoogleIdentityService.initialize(
+        sl<GraphQlService>(),
+      ).timeout(const Duration(seconds: 20));
       if (!mounted) return;
-      final account = await GoogleSignIn.instance.authenticate();
+      setState(() => _progress = 'Menunggu pilihan akun Google…');
+      final account = await GoogleSignIn.instance.authenticate().timeout(
+        const Duration(seconds: 90),
+      );
       if (mounted) await _login(account);
     } on GoogleSignInException catch (error) {
-      if (mounted && error.code != GoogleSignInExceptionCode.canceled) {
+      if (mounted && error.code == GoogleSignInExceptionCode.canceled) {
+        _showError(
+          'Login Google dibatalkan. Silakan pilih akun untuk melanjutkan.',
+        );
+      } else if (mounted) {
         _showError(
           'Login Google belum berhasil. Coba lagi atau gunakan email dan password.',
         );
       }
+    } on TimeoutException {
+      _showError('Login Google terlalu lama. Periksa koneksi lalu coba lagi.');
     } catch (_) {
       if (mounted) {
         _showError('Google belum dapat dihubungkan. Silakan coba lagi.');
@@ -123,7 +150,7 @@ class _GoogleAccountButtonState extends State<GoogleAccountButton> {
     if (_busy || !widget.enabled) return;
     _setBusy(true);
     try {
-      await widget.prepareEndpoint?.call();
+      await widget.prepareEndpoint?.call().timeout(const Duration(seconds: 15));
       if (!mounted) return;
       await _login(account);
     } catch (_) {
@@ -136,6 +163,7 @@ class _GoogleAccountButtonState extends State<GoogleAccountButton> {
   }
 
   Future<void> _login(GoogleSignInAccount account) async {
+    setState(() => _progress = 'Memverifikasi akun ke Pantoo…');
     final token = account.authentication.idToken;
     if (token == null || token.isEmpty) {
       _showError('Google belum memberikan verifikasi akun. Silakan coba lagi.');
@@ -145,12 +173,23 @@ class _GoogleAccountButtonState extends State<GoogleAccountButton> {
     if (cubit.state.status.isLoading || cubit.state.status.isLoggedIn) return;
     // Token stays only in this call's memory and is verified by Pantoo's server.
     await cubit.login(LoginParamsEntity.google(idToken: token));
+    if (mounted &&
+        !cubit.isClosed &&
+        cubit.state.status.isNotLoggedIn &&
+        cubit.state.failure?.code != 'GOOGLE_REGISTRATION_DETAILS_REQUIRED') {
+      setState(
+        () => _error =
+            cubit.state.failure?.message ??
+            'Login Google gagal. Silakan coba lagi.',
+      );
+    }
     if (!mounted ||
         cubit.isClosed ||
         cubit.state.failure?.code != 'GOOGLE_REGISTRATION_DETAILS_REQUIRED' ||
         !cubit.state.status.isNotLoggedIn) {
       return;
     }
+    setState(() => _progress = 'Lengkapi informasi akun untuk melanjutkan.');
     final phone = await showModalBottomSheet<String>(
       context: context,
       isScrollControlled: true,
@@ -158,6 +197,7 @@ class _GoogleAccountButtonState extends State<GoogleAccountButton> {
       builder: (_) => const GoogleRegistrationDetails(),
     );
     if (!mounted || cubit.isClosed || phone == null) return;
+    setState(() => _progress = 'Menyelesaikan login akun…');
     await cubit.login(
       LoginParamsEntity.google(
         idToken: token,
@@ -204,10 +244,22 @@ class _GoogleAccountButtonState extends State<GoogleAccountButton> {
                 : 'Coba hubungkan Google',
           ),
         ),
-      if (_busy)
-        const Padding(
-          padding: EdgeInsets.only(top: 8),
-          child: LinearProgressIndicator(),
+      if (_busy || (!_ready && _error == null))
+        Padding(
+          padding: const EdgeInsets.only(top: 8),
+          child: Semantics(
+            liveRegion: true,
+            child: Column(
+              children: [
+                const LinearProgressIndicator(),
+                const SizedBox(height: 8),
+                Text(
+                  _busy ? _progress : 'Menyiapkan login Google…',
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
         ),
       if (_error != null)
         Padding(
