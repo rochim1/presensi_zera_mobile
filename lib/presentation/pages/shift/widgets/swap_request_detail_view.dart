@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:presensi_domain/presensi_domain.dart';
@@ -21,7 +22,7 @@ class SwapRequestDetailView extends StatelessWidget {
           AppDetailSectionCard(
             child: _buildShiftDetails(
               context,
-              title: 'Shift Saya (Requester)',
+              title: ('Shift Saya (Requester)').tr(context),
               user: request.requesterUser,
               schedule: request.requesterSchedule,
               showDivider: false,
@@ -44,7 +45,7 @@ class SwapRequestDetailView extends StatelessWidget {
           AppDetailSectionCard(
             child: _buildShiftDetails(
               context,
-              title: 'Shift Tujuan (Target)',
+              title: ('Shift Tujuan (Target)').tr(context),
               user: request.targetUser,
               schedule: request.targetSchedule,
             ),
@@ -70,7 +71,7 @@ class SwapRequestDetailView extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: Text(
+              child: HrText(
                 'Request Tukar Shift',
                 style: context.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
@@ -100,7 +101,7 @@ class SwapRequestDetailView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: AppDimens.h12,
       children: [
-        Text(
+        HrText(
           title,
           style: context.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,
@@ -108,14 +109,14 @@ class SwapRequestDetailView extends StatelessWidget {
         ),
         AppUserInfoTile(user: user),
         AppLabeledValue(
-          label: 'Tanggal',
+          label: ('Tanggal').tr(context),
           value:
               schedule.assignedDate?.format(pattern: 'EEEE, dd MMMM yyyy') ??
               '-',
           icon: PhosphorIcons.calendarBlank,
         ),
         AppLabeledValue(
-          label: 'Nama Shift',
+          label: ('Nama Shift').tr(context),
           value: schedule.shift.name,
           icon: PhosphorIcons.calendarCheck,
         ),
@@ -123,7 +124,7 @@ class SwapRequestDetailView extends StatelessWidget {
           children: [
             Expanded(
               child: AppLabeledValue(
-                label: 'Jam Masuk',
+                label: ('Jam Masuk').tr(context),
                 value:
                     schedule.shift.jamMasuk?.format(pattern: 'HH:mm') ??
                     '--:--',
@@ -132,7 +133,7 @@ class SwapRequestDetailView extends StatelessWidget {
             ),
             Expanded(
               child: AppLabeledValue(
-                label: 'Jam Pulang',
+                label: ('Jam Pulang').tr(context),
                 value:
                     schedule.shift.jamPulang?.format(pattern: 'HH:mm') ??
                     '--:--',
@@ -151,7 +152,7 @@ class SwapRequestDetailView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: AppDimens.h12,
       children: [
-        Text(
+        HrText(
           'Alasan Tukar',
           style: context.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,
@@ -174,7 +175,7 @@ class SwapRequestDetailView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: AppDimens.h12,
       children: [
-        Text(
+        HrText(
           'Alasan Ditolak',
           style: context.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,
@@ -198,7 +199,7 @@ class SwapRequestDetailView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: AppDimens.h12,
       children: [
-        Text(
+        HrText(
           'Alasan Dibatalkan',
           style: context.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,
@@ -222,7 +223,7 @@ class SwapRequestDetailView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: AppDimens.h12,
       children: [
-        Text(
+        HrText(
           'Riwayat Persetujuan',
           style: context.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,

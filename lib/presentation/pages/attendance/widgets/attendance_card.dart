@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:presensi_domain/presensi_domain.dart';
@@ -73,7 +74,7 @@ class AttendanceCard extends StatelessWidget {
                   Expanded(
                     child: _buildTimeSection(
                       context,
-                      label: 'Masuk',
+                      label: ('Masuk').tr(context),
                       value:
                           attendance.jamMasuk?.format(pattern: 'HH:mm') ??
                           '--:--',
@@ -90,7 +91,7 @@ class AttendanceCard extends StatelessWidget {
                   Expanded(
                     child: _buildTimeSection(
                       context,
-                      label: 'Pulang',
+                      label: ('Pulang').tr(context),
                       value:
                           attendance.jamPulang?.format(pattern: 'HH:mm') ??
                           '--:--',
@@ -129,7 +130,7 @@ class AttendanceCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              HrText(
                 label,
                 style: context.textTheme.labelSmall?.copyWith(
                   color: AppColors.labelSecondary,
@@ -167,7 +168,7 @@ class AttendanceCard extends StatelessWidget {
         Expanded(
           flex: 3,
           child: Text(
-            '${attendance.date?.format(pattern: 'EE, dd MMM yyyy') ?? '-'}${_isToday ? " (Hari Ini)" : ""}',
+            '${attendance.date?.format(pattern: 'EE, dd MMM yyyy') ?? '-'}${_isToday ? (" (Hari Ini)").tr(context) : ""}',
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
@@ -177,7 +178,10 @@ class AttendanceCard extends StatelessWidget {
         Flexible(
           flex: 2,
           child: Text(
-            [attendance.type.toName, if (isLate) 'Terlambat'].join(' · '),
+            [
+              attendance.type.toName.tr(context),
+              if (isLate) 'Terlambat'.tr(context),
+            ].join(' · '),
             textAlign: TextAlign.right,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,

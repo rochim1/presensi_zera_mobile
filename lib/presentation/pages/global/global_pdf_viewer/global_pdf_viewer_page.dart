@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
@@ -34,7 +35,7 @@ class _GlobalPdfViewerPageState extends State<GlobalPdfViewerPage>
           ..getPermissionStatus(widget.base64String);
       },
       child: Scaffold(
-        appBar: const AppBarWidget(titleText: 'Pdf Viewer'),
+        appBar: AppBarWidget(titleText: ('Pdf Viewer').tr(context)),
         body: Stack(
           children: [
             Container(
@@ -58,7 +59,7 @@ class _GlobalPdfViewerPageState extends State<GlobalPdfViewerPage>
                               ? null
                               : () => openPdfBytesInBrowser(state.uInt8!),
                           icon: const Icon(Icons.open_in_new),
-                          label: const Text('Buka PDF di tab baru'),
+                          label: const HrText('Buka PDF di tab baru'),
                         ),
                       );
                     }

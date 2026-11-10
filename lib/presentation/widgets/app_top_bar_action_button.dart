@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
 
@@ -54,7 +55,7 @@ class AppTopBarActionButton extends StatelessWidget {
                   border: Border.all(color: AppColors.primary, width: 1.5),
                 ),
                 child: Center(
-                  child: Text(
+                  child: HrText(
                     badgeText,
                     style: context.textStyle.labelSmall!.copyWith(
                       color: AppColors.white,

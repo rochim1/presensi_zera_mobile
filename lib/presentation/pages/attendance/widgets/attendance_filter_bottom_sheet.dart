@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:presensi_mobile/presentation/widgets/common/month_picker_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -139,7 +140,7 @@ class _AttendanceFilterBottomSheetState
                 ),
               ),
 
-              Text(
+              HrText(
                 'Filter Presensi',
                 style: context.textStyle.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
@@ -153,7 +154,7 @@ class _AttendanceFilterBottomSheetState
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                    child: Text(
+                    child: HrText(
                       'Rentang Waktu',
                       style: context.textStyle.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w600,
@@ -170,7 +171,7 @@ class _AttendanceFilterBottomSheetState
                       ),
                       minimumSize: const Size(48, 48),
                     ),
-                    child: Text(
+                    child: HrText(
                       'Pilih Bulan',
                       style: context.textStyle.bodyMedium?.copyWith(
                         color: AppColors.primary,
@@ -197,7 +198,7 @@ class _AttendanceFilterBottomSheetState
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
-                        child: Text(
+                        child: HrText(
                           (_startDate != null && _endDate != null)
                               ? '${DateFormat('dd MMM yyyy').format(_startDate!)} - ${DateFormat('dd MMM yyyy').format(_endDate!)}'
                               : 'Pilih Rentang Waktu',
@@ -221,7 +222,7 @@ class _AttendanceFilterBottomSheetState
               AppDimens.paddingLarge.hSpace,
 
               // Tipe Presensi
-              Text(
+              HrText(
                 'Tipe Presensi',
                 style: context.textStyle.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
@@ -234,7 +235,7 @@ class _AttendanceFilterBottomSheetState
                 children: _typeOptions.map((type) {
                   final isSelected = _typePresensi == type;
                   return ChoiceChip(
-                    label: Text(
+                    label: HrText(
                       type == 'oncall'
                           ? 'On Call'
                           : type == 'Semua'
@@ -269,7 +270,7 @@ class _AttendanceFilterBottomSheetState
 
               // Cari Nama
               if (widget.showSearchName) ...[
-                Text(
+                HrText(
                   'Cari Nama Pegawai',
                   style: context.textStyle.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
@@ -278,7 +279,7 @@ class _AttendanceFilterBottomSheetState
                 AppDimens.paddingSmallX.hSpace,
                 TextFieldBasic(
                   controller: _searchController,
-                  hint: 'Masukkan nama...',
+                  hint: ('Masukkan nama...').tr(context),
                   prefixIcon: Icon(
                     Icons.search,
                     color: AppColors.labelSecondary,
@@ -311,7 +312,7 @@ class _AttendanceFilterBottomSheetState
                           ),
                         ),
                       ),
-                      child: Text(
+                      child: HrText(
                         'Reset',
                         style: context.textStyle.bodyLarge?.copyWith(
                           color: AppColors.primary,
@@ -335,7 +336,7 @@ class _AttendanceFilterBottomSheetState
                               : _searchController.text.trim(),
                         );
                       },
-                      text: 'Terapkan',
+                      text: ('Terapkan').tr(context),
                     ),
                   ),
                 ],

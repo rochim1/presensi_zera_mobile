@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -57,7 +58,7 @@ class DeliveryCardWidget extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Flexible(
-                        child: Text(
+                        child: HrText(
                           title ?? '-',
                           style: context.textStyle.titleMedium!.copyWith(
                             fontWeight: FontWeight.w600,
@@ -137,7 +138,7 @@ class DeliveryCardWidget extends StatelessWidget {
                                   ),
                                   const SizedBox(width: AppDimens.sizeS),
                                   Flexible(
-                                    child: Text(
+                                    child: HrText(
                                       'Mencari alamat...',
                                       style: TextStyle(
                                         color: AppColors.labelSecondary,

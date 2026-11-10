@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/_core.dart';
@@ -119,7 +120,7 @@ class _AppButtonState extends State<AppButton>
                                   ),
                                 ),
                                 const SizedBox(width: AppDimens.sizeM),
-                                Text(
+                                HrText(
                                   'Memproses...',
                                   style: context.textStyle.bodyLarge?.copyWith(
                                     color: AppColors.white,
@@ -139,7 +140,7 @@ class _AppButtonState extends State<AppButton>
                                   ),
                                   const SizedBox(width: AppDimens.size2S),
                                 ],
-                                Text(
+                                HrText(
                                   widget.text,
                                   style: context.textStyle.bodyLarge?.copyWith(
                                     color: AppColors.white,

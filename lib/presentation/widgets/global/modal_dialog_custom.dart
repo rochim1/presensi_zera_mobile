@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -48,11 +49,11 @@ class AppModalDialog {
     late List<Widget> action = [];
 
     structure.addAll([
-      Text(title!, style: AppTextStyle.dialogTitle),
+      HrText(title!, style: AppTextStyle.dialogTitle),
       const SizedBox(height: AppDimens.size3S),
     ]);
     if (description != null) {
-      structure.add(Text(description, style: AppTextStyle.dialogDesc));
+      structure.add(HrText(description, style: AppTextStyle.dialogDesc));
     }
     if (content != null) {
       structure.addAll([const SizedBox(height: AppDimens.sizeL), content]);
@@ -66,7 +67,7 @@ class AppModalDialog {
             backgroundColor: AppColors.fillTertiary,
             foregroundColor: AppColors.labelSecondary,
           ),
-          child: Text(labelCancel),
+          child: HrText(labelCancel),
         ),
       );
     }
@@ -78,7 +79,7 @@ class AppModalDialog {
         style: ElevatedButton.styleFrom(
           backgroundColor: colorYesOk ?? AppColors.primary,
         ),
-        child: Text(labelYesOk!),
+        child: HrText(labelYesOk!),
       ),
     ]);
 

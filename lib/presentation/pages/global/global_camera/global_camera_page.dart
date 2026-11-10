@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'dart:math' as math;
 import 'dart:io';
 
@@ -53,10 +54,10 @@ class _GlobalCameraPageState extends State<GlobalCameraPage>
       child: BlocConsumer<GlobalCameraCubit, GlobalCameraState>(
         listener: (context, state) {
           if (state.typeState.isLoaded && state.cameraState.isFailure) {
-            Fluttertoast.showToast(msg: state.message!);
+            Fluttertoast.showToast(msg: (state.message!).trCurrent());
           }
           if (state.typeState.isNotLoaded) {
-            Fluttertoast.showToast(msg: state.message!);
+            Fluttertoast.showToast(msg: (state.message!).trCurrent());
             if (!state.isCameraGranted) context.router.pop<XFile?>(null);
           }
         },
@@ -109,7 +110,9 @@ class _GlobalCameraPageState extends State<GlobalCameraPage>
 
                           //! condition if camera not available
                           if (state.cameraState.isNotAvailable) {
-                            Fluttertoast.showToast(msg: state.message ?? '');
+                            Fluttertoast.showToast(
+                              msg: ((state.message ?? '')).trCurrent(),
+                            );
                           }
 
                           //! condition if camera ready to capture
@@ -132,7 +135,9 @@ class _GlobalCameraPageState extends State<GlobalCameraPage>
                                 },
                               );
                             } else {
-                              Fluttertoast.showToast(msg: kFaceNotDetected);
+                              Fluttertoast.showToast(
+                                msg: (kFaceNotDetected).trCurrent(),
+                              );
                             }
                           } else {
                             log.i('Camera not Ready');
@@ -266,7 +271,7 @@ class _GlobalCameraPageState extends State<GlobalCameraPage>
     } else if (state.cameraState.isFailure ||
         state.cameraState.isNotAvailable) {
       return Center(
-        child: Text(
+        child: HrText(
           state.message!,
           style: context.textStyle.bodyMedium!.copyWith(color: AppColors.white),
         ),

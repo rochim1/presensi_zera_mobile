@@ -1,3 +1,5 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
+import 'package:presensi_mobile/l10n/app_language_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -107,7 +109,10 @@ class _AppCalendarStripState extends State<AppCalendarStrip> {
       case AppCalendarStripMode.day:
         return DateFormat('d').format(item);
       case AppCalendarStripMode.month:
-        return DateFormat('MMM', 'id_ID').format(item);
+        return DateFormat(
+          'MMM',
+          AppLanguageController.instance.effectiveLocale.languageCode,
+        ).format(item);
       case AppCalendarStripMode.year:
         return DateFormat('yyyy').format(item);
     }
@@ -116,7 +121,10 @@ class _AppCalendarStripState extends State<AppCalendarStrip> {
   String _getItemSubLabel(DateTime item) {
     switch (widget.mode) {
       case AppCalendarStripMode.day:
-        return DateFormat('EEE', 'id_ID').format(item);
+        return DateFormat(
+          'EEE',
+          AppLanguageController.instance.effectiveLocale.languageCode,
+        ).format(item);
       case AppCalendarStripMode.month:
         return DateFormat('yyyy').format(item);
       case AppCalendarStripMode.year:
@@ -171,6 +179,7 @@ class _AppCalendarStripState extends State<AppCalendarStrip> {
 
   @override
   Widget build(BuildContext context) {
+    hrLocale(context); // Rebuild formatted dates when the language changes.
     final items = _buildItems();
 
     return SizedBox(
@@ -213,7 +222,7 @@ class _AppCalendarStripState extends State<AppCalendarStrip> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   if (subLabel.isNotEmpty) ...[
-                    Text(
+                    HrText(
                       subLabel,
                       style: context.theme.textTheme.bodySmall?.copyWith(
                         color: isSelected
@@ -236,7 +245,7 @@ class _AppCalendarStripState extends State<AppCalendarStrip> {
                   ),
                   if (todayLabel != null) ...[
                     SizedBox(height: AppDimens.h2),
-                    Text(
+                    HrText(
                       todayLabel,
                       style: context.theme.textTheme.bodySmall?.copyWith(
                         color: isSelected

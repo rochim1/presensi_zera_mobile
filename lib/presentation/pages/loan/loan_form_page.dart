@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -46,7 +47,7 @@ class _LoanFormViewState extends State<LoanFormView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppTopBar(
-        title: 'Ajukan Pinjaman',
+        title: ('Ajukan Pinjaman').tr(context),
         showBackButton: true,
         onBackTap: () => context.router.maybePop(),
         backgroundColor: AppColors.transparent,
@@ -70,9 +71,9 @@ class _LoanFormViewState extends State<LoanFormView> {
                 children: [
                   TextFormField(
                     controller: _amountController,
-                    decoration: const InputDecoration(
-                      labelText: 'Nominal Pinjaman',
-                      hintText: '0',
+                    decoration: InputDecoration(
+                      labelText: ('Nominal Pinjaman').tr(context),
+                      hintText: ('0').tr(context),
                       prefixText: 'Rp ',
                     ),
                     keyboardType: TextInputType.number,
@@ -88,14 +89,14 @@ class _LoanFormViewState extends State<LoanFormView> {
                   AppDimens.h16.hSpace,
                   DropdownButtonFormField<int>(
                     initialValue: _termMonths,
-                    decoration: const InputDecoration(
-                      labelText: 'Tenor (Bulan)',
+                    decoration: InputDecoration(
+                      labelText: ('Tenor (Bulan)').tr(context),
                     ),
                     items: const [
-                      DropdownMenuItem(value: 1, child: Text('1 Bulan')),
-                      DropdownMenuItem(value: 3, child: Text('3 Bulan')),
-                      DropdownMenuItem(value: 6, child: Text('6 Bulan')),
-                      DropdownMenuItem(value: 12, child: Text('12 Bulan')),
+                      DropdownMenuItem(value: 1, child: HrText('1 Bulan')),
+                      DropdownMenuItem(value: 3, child: HrText('3 Bulan')),
+                      DropdownMenuItem(value: 6, child: HrText('6 Bulan')),
+                      DropdownMenuItem(value: 12, child: HrText('12 Bulan')),
                     ],
                     onChanged: (val) {
                       if (val != null) setState(() => _termMonths = val);
@@ -105,9 +106,9 @@ class _LoanFormViewState extends State<LoanFormView> {
                   AppDimens.h16.hSpace,
                   TextFormField(
                     controller: _purposeController,
-                    decoration: const InputDecoration(
-                      labelText: 'Tujuan Pinjaman',
-                      hintText: 'Ketik alasan...',
+                    decoration: InputDecoration(
+                      labelText: ('Tujuan Pinjaman').tr(context),
+                      hintText: ('Ketik alasan...').tr(context),
                     ),
                     maxLines: 3,
                     validator: (val) => val == null || val.trim().isEmpty
@@ -136,7 +137,7 @@ class _LoanFormViewState extends State<LoanFormView> {
                           },
                     child: state.isLoading
                         ? const CircularProgressIndicator()
-                        : const Text('Ajukan Pinjaman'),
+                        : const HrText('Ajukan Pinjaman'),
                   ),
                 ],
               ),

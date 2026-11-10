@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
@@ -31,7 +32,7 @@ class CheckOutPage extends StatelessWidget {
       builder: (context, appState) {
         final setting = appState.setting.data;
         if (!appState.setting.isSuccess || setting == null) {
-          return const _SettingUnavailablePage(title: 'Check Out');
+          return _SettingUnavailablePage(title: ('Check Out').tr(context));
         }
         final mode = setting.attendanceMode ?? SettingAttendanceMode.tanpa_foto;
         final attendanceType =
@@ -269,7 +270,7 @@ class _CheckOutViewState extends State<CheckOutView> {
                       imageFile: state.form.photo.value,
                       onTap: () => onTapPhoto(),
                       onDelete: () => cubit.onChangePhoto(null),
-                      errorText: state.form.photo.errorMessage,
+                      errorText: (state.form.photo.errorMessage)?.tr(context),
                     ),
                   ),
 
@@ -417,7 +418,7 @@ class _CheckOutViewState extends State<CheckOutView> {
                             workRelation: _workRelation,
                           );
                         },
-                  text: 'Check Out',
+                  text: ('Check Out').tr(context),
                   isLoading:
                       state.checkOut.isLoading ||
                       state.policyState.isLoading ||
@@ -433,7 +434,7 @@ class _CheckOutViewState extends State<CheckOutView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              HrText(
                 'Bagaimana perasaanmu setelah bekerja hari ini?',
                 style: context.textStyle.titleMedium?.copyWith(
                   color: AppColors.labelPrimary,
@@ -483,7 +484,7 @@ class _CheckOutViewState extends State<CheckOutView> {
                                   style: const TextStyle(fontSize: 26),
                                 ),
                                 const SizedBox(height: 4),
-                                Text(
+                                HrText(
                                   mood.$3,
                                   textAlign: TextAlign.center,
                                   maxLines: 1,
@@ -506,7 +507,7 @@ class _CheckOutViewState extends State<CheckOutView> {
               ),
               if ((_moodScore ?? 5) <= 2) ...[
                 const SizedBox(height: 16),
-                Text(
+                HrText(
                   'Apakah kondisi ini berkaitan dengan pekerjaan?',
                   style: context.textStyle.bodyMedium?.copyWith(
                     color: AppColors.labelPrimary,
@@ -516,9 +517,9 @@ class _CheckOutViewState extends State<CheckOutView> {
                 const SizedBox(height: 8),
                 SegmentedButton<String>(
                   segments: const [
-                    ButtonSegment(value: 'yes', label: Text('Ya')),
-                    ButtonSegment(value: 'partly', label: Text('Sebagian')),
-                    ButtonSegment(value: 'no', label: Text('Tidak')),
+                    ButtonSegment(value: 'yes', label: HrText('Ya')),
+                    ButtonSegment(value: 'partly', label: HrText('Sebagian')),
+                    ButtonSegment(value: 'no', label: HrText('Tidak')),
                   ],
                   emptySelectionAllowed: true,
                   selected: _workRelation == null
@@ -551,7 +552,7 @@ class _CheckOutViewState extends State<CheckOutView> {
                           ),
                           const SizedBox(width: 8),
                           Expanded(
-                            child: Text(
+                            child: HrText(
                               'Logbook Wajib Diisi',
                               style: context.textStyle.titleMedium?.copyWith(
                                 color: AppColors.orange,
@@ -562,7 +563,7 @@ class _CheckOutViewState extends State<CheckOutView> {
                         ],
                       ),
                       const SizedBox(height: 8),
-                      Text(
+                      HrText(
                         policy?.message ??
                             'Anda harus mengisi logbook sebelum Check Out.',
                         style: context.textStyle.bodyMedium?.copyWith(
@@ -583,7 +584,7 @@ class _CheckOutViewState extends State<CheckOutView> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          child: const Text('Isi Logbook Sekarang'),
+                          child: const HrText('Isi Logbook Sekarang'),
                         ),
                       ),
                     ],
@@ -592,19 +593,19 @@ class _CheckOutViewState extends State<CheckOutView> {
                 AppDimens.paddingMedium.hSpace,
               ],
               AppTextField(
-                label: 'Catatan (Opsional)',
-                hintText: 'Masukkan catatan untuk presensi ini',
+                label: ('Catatan (Opsional)').tr(context),
+                hintText: ('Masukkan catatan untuk presensi ini').tr(context),
                 maxLines: 3,
                 onChanged: cubit.onChangeKeterangan,
-                errorText: state.form.keterangan.errorMessage,
+                errorText: (state.form.keterangan.errorMessage)?.tr(context),
               ),
               AppDimens.paddingMedium.hSpace,
               AppAttachmentField(
-                label: state.form.attachment.isRequired
-                    ? 'Bukti pendukung (Wajib)'
-                    : 'Lampiran (Opsional)',
-                hintText: 'Tambahkan foto atau dokumen pendukung',
-                errorText: state.form.attachment.errorMessage,
+                label: (state.form.attachment.isRequired
+                    ? ('Bukti pendukung (Wajib)').tr(context)
+                    : ('Lampiran (Opsional)').tr(context)),
+                hintText: ('Tambahkan foto atau dokumen pendukung').tr(context),
+                errorText: (state.form.attachment.errorMessage)?.tr(context),
                 value: state.form.attachment.value
                     .map((e) => e.name)
                     .join(', '),

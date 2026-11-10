@@ -1,0 +1,87 @@
+[
+  {
+    "source": "Buruk",
+    "id": "Buruk",
+    "en": "Poor"
+  },
+  {
+    "source": "Kurang",
+    "id": "Kurang",
+    "en": "Not good"
+  },
+  {
+    "source": "Biasa",
+    "id": "Biasa",
+    "en": "Okay"
+  },
+  {
+    "source": "Baik",
+    "id": "Baik",
+    "en": "Good"
+  },
+  {
+    "source": "Sangat baik",
+    "id": "Sangat baik",
+    "en": "Very good"
+  },
+  {
+    "source": "{nilai1} Outlet",
+    "id": "{nilai1} Outlet",
+    "en": "{nilai1} Outlets"
+  },
+  {
+    "source": "{nilai1} Dipilih",
+    "id": "{nilai1} Dipilih",
+    "en": "{nilai1} Selected"
+  },
+  {
+    "source": "DIAJUKAN {nilai1}",
+    "id": "DIAJUKAN {nilai1}",
+    "en": "SUBMITTED {nilai1}"
+  },
+  {
+    "source": "Stok: {nilai1}",
+    "id": "Stok: {nilai1}",
+    "en": "Stock: {nilai1}"
+  },
+  {
+    "source": "Habis",
+    "id": "Habis",
+    "en": "Out of stock"
+  },
+  {
+    "source": "Catatan: {nilai1}",
+    "id": "Catatan: {nilai1}",
+    "en": "Notes: {nilai1}"
+  },
+  {
+    "source": "Tujuan: {nilai1}",
+    "id": "Tujuan: {nilai1}",
+    "en": "Purpose: {nilai1}"
+  },
+  {
+    "source": "{nilai1} aktivitas",
+    "id": "{nilai1} aktivitas",
+    "en": "{nilai1} activities"
+  },
+  {
+    "source": "Pengaju payroll",
+    "id": "Pengaju payroll",
+    "en": "Payroll requester"
+  },
+  {
+    "source": "Uncategorized",
+    "id": "Tanpa kategori",
+    "en": "Uncategorized"
+  },
+  {
+    "source": "Terlambat",
+    "id": "Terlambat",
+    "en": "Late"
+  },
+  {
+    "source": "{nilai1} Menit",
+    "id": "{nilai1} Menit",
+    "en": "{nilai1} Minutes"
+  }
+]

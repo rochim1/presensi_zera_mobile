@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -89,7 +90,7 @@ class ItemListProfile extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      HrText(
                         title,
                         style: context.textStyle.titleMedium!.copyWith(
                           color: AppColors.labelPrimary,
@@ -98,7 +99,7 @@ class ItemListProfile extends StatelessWidget {
                       ),
                       if (description != null) ...[
                         AppDimens.paddingSmall.hSpace,
-                        Text(
+                        HrText(
                           description!,
                           style: context.textStyle.bodySmall!.copyWith(
                             color: AppColors.labelSecondary,

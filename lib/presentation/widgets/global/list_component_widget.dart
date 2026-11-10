@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
 import 'package:presensi_mobile/presentation/_presentation.dart';
@@ -38,7 +39,7 @@ class ListComponentWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         !hasBackground
-            ? Text(
+            ? HrText(
                 label,
                 style: TextStyle(
                   color: boldLabel!
@@ -49,7 +50,7 @@ class ListComponentWidget extends StatelessWidget {
                 ),
               )
             : Expanded(
-                child: Text(
+                child: HrText(
                   label,
                   style: TextStyle(
                     color: AppColors.grey.shade700,

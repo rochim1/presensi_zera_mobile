@@ -1,3 +1,5 @@
+import 'package:presensi_mobile/l10n/app_language_controller.dart';
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'dart:async';
 
 import 'package:action_slider/action_slider.dart';
@@ -165,7 +167,7 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              HrText(
                 title,
                 style: const TextStyle(
                   fontSize: 11,
@@ -190,6 +192,7 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
 
   @override
   Widget build(BuildContext context) {
+    hrLocale(context); // Rebuild formatted dates when the language changes.
     if (widget.isLoading) {
       return Container(
         padding: const EdgeInsets.all(20),
@@ -291,8 +294,8 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
             child: Row(
               children: [
                 Expanded(child: _buildClock(context)),
-                const SizedBox(width: 16),
-                _buildCheckButton(context),
+                const SizedBox(width: 12),
+                Expanded(child: _buildCheckButton(context)),
               ],
             ),
           ),
@@ -321,7 +324,9 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
           AnimatedContainer(
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
-            height: _currentSlide == 0 ? 64 : 156,
+            height: _currentSlide == 0
+                ? 80 * MediaQuery.textScalerOf(context).scale(1)
+                : 156,
             child: ScrollConfiguration(
               behavior: ScrollConfiguration.of(
                 context,
@@ -348,7 +353,7 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
                           children: [
                             Expanded(
                               child: _buildCheckStatus(
-                                label: 'Masuk',
+                                label: ('Masuk').tr(context),
                                 time:
                                     widget.attendance?.jamMasuk?.format(
                                       pattern: 'HH:mm',
@@ -365,7 +370,7 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
                             const SizedBox(width: 16),
                             Expanded(
                               child: _buildCheckStatus(
-                                label: 'Pulang',
+                                label: ('Pulang').tr(context),
                                 time:
                                     widget.attendance?.jamPulang?.format(
                                       pattern: 'HH:mm',
@@ -400,7 +405,7 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
                                   child: _buildDetailItem(
                                     PhosphorIcons.clockClockwiseFill,
                                     AppColors.primary,
-                                    'Jadwal Masuk',
+                                    ('Jadwal Masuk').tr(context),
                                     widget.effectiveSchedule != null
                                         ? _parseTime(
                                                     widget
@@ -427,7 +432,7 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
                                   child: _buildDetailItem(
                                     PhosphorIcons.clockCounterClockwiseFill,
                                     AppColors.labelSecondary,
-                                    'Jadwal Pulang',
+                                    ('Jadwal Pulang').tr(context),
                                     widget.effectiveSchedule != null
                                         ? _parseTime(
                                                     widget
@@ -456,7 +461,7 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
                                   child: _buildDetailItem(
                                     PhosphorIcons.targetFill,
                                     AppColors.primary,
-                                    'Target Kerja',
+                                    ('Target Kerja').tr(context),
                                     _getTargetKerja(),
                                   ),
                                 ),
@@ -471,7 +476,7 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
                                   child: _buildDetailItem(
                                     PhosphorIcons.hourglassFill,
                                     AppColors.labelSecondary,
-                                    'Sisa Waktu',
+                                    ('Sisa Waktu').tr(context),
                                     _getSisaWaktu(),
                                   ),
                                 ),
@@ -495,9 +500,9 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
               return Semantics(
                 button: true,
                 selected: _currentSlide == index,
-                label: index == 0
-                    ? 'Tampilkan masuk dan pulang'
-                    : 'Tampilkan jadwal kerja',
+                label: (index == 0
+                    ? ('Tampilkan masuk dan pulang').tr(context)
+                    : ('Tampilkan jadwal kerja').tr(context)),
                 child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTap: () => _pageController.animateToPage(
@@ -537,7 +542,9 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
                 width: double.infinity,
                 child: AppActionSlider(
                   enabled: widget.attendance != null,
-                  text: widget.sliderText ?? 'Geser untuk Presensi',
+                  text:
+                      (widget.sliderText ??
+                      ('Geser untuk Presensi').tr(context)),
                   onAction: widget.onSliderAction ?? (c) {},
                   controller: widget.sliderController,
                 ),
@@ -570,12 +577,15 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
                       color: AppColors.primary,
                     ),
                     const SizedBox(width: 8),
-                    Text(
-                      'Log Presensi Hari Ini',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.primary,
+                    Flexible(
+                      child: HrText(
+                        'Log Presensi Hari Ini',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primary,
+                        ),
                       ),
                     ),
                   ],
@@ -591,19 +601,17 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
   Widget _buildClock(BuildContext context) {
     final timeStr = DateFormat('HH:mm:ss').format(_currentTime);
     final period = DateFormat('a').format(_currentTime).toUpperCase();
-    final dateStr = DateFormat('EEEE, dd MMMM yyyy', 'id').format(_currentTime);
-    final greeting = switch (_currentTime.hour) {
-      >= 5 && < 10 => 'Pagi',
-      >= 10 && < 15 => 'Siang',
-      >= 15 && < 18 => 'Sore',
-      _ => 'Malam',
-    };
+    final dateStr = DateFormat(
+      'EEEE, dd MMMM yyyy',
+      AppLanguageController.instance.effectiveLocale.languageCode,
+    ).format(_currentTime);
+    final clockLabel = hrAttendanceClockLabel(_currentTime, hrLocale(context));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '$greeting, Waktu Saat Ini',
+          clockLabel,
           style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w500,
@@ -629,7 +637,7 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 4, left: 4),
-                child: Text(
+                child: HrText(
                   period,
                   style: TextStyle(
                     fontSize: 14,
@@ -721,8 +729,9 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
           _buildSecondaryActionButton(),
         ],
         const SizedBox(height: 6),
-        Text(
+        HrText(
           statusText,
+          textAlign: TextAlign.center,
           style: TextStyle(fontSize: 11, color: AppColors.labelSecondary),
         ),
       ],
@@ -785,18 +794,21 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
                   size: 16,
                 ),
               const SizedBox(width: 8),
-              Text(
-                showLoading
-                    ? 'Memproses...'
-                    : switch (widget.actionButtonLabel) {
-                        'Check In' => 'Masuk',
-                        'Check Out' => 'Pulang',
-                        final label => label,
-                      },
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13,
+              Flexible(
+                child: HrText(
+                  showLoading
+                      ? 'Memproses...'
+                      : switch (widget.actionButtonLabel) {
+                          'Check In' => 'Masuk',
+                          'Check Out' => 'Pulang',
+                          final label => label,
+                        },
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
             ],
@@ -868,12 +880,17 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
                   size: 16,
                 ),
               const SizedBox(width: 6),
-              Text(
-                showLoading ? 'Memulai...' : widget.secondaryActionButtonLabel!,
-                style: TextStyle(
-                  color: AppColors.warning,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 13,
+              Flexible(
+                child: HrText(
+                  showLoading
+                      ? 'Memulai...'
+                      : widget.secondaryActionButtonLabel!,
+                  style: TextStyle(
+                    color: AppColors.warning,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
             ],
@@ -915,7 +932,7 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                HrText(
                   label,
                   style: TextStyle(
                     fontSize: 11,
@@ -940,7 +957,7 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
                     const SizedBox(width: 4),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 2),
-                      child: Text(
+                      child: HrText(
                         suffix,
                         style: TextStyle(
                           fontSize: 11,
@@ -964,7 +981,7 @@ class _HomeAttendanceCardState extends State<HomeAttendanceCard> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
+        HrText(
           label,
           style: const TextStyle(
             fontSize: 12,

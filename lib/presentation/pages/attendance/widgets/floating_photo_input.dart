@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
@@ -89,7 +90,7 @@ class FloatingPhotoInput extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        Text(
+                        HrText(
                           label,
                           textAlign: TextAlign.center,
                           style: context.textStyle.labelMedium?.copyWith(
@@ -127,7 +128,7 @@ class FloatingPhotoInput extends StatelessWidget {
             bottom: -22,
             left: 0,
             right: 0,
-            child: Text(
+            child: HrText(
               errorText!,
               textAlign: TextAlign.center,
               style: context.textStyle.labelSmall?.copyWith(

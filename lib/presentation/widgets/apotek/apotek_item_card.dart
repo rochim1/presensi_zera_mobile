@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:presensi_domain/presensi_domain.dart';
@@ -51,7 +52,7 @@ class _ApotekItemCardState extends State<ApotekItemCard> {
                   Expanded(
                     child: _buildInfoSection(
                       context,
-                      label: 'Area',
+                      label: ('Area').tr(context),
                       value: widget.apotek.area ?? '-',
                       icon: PhosphorIcons.mapPin,
                       iconColor: AppColors.labelSecondary,
@@ -66,7 +67,7 @@ class _ApotekItemCardState extends State<ApotekItemCard> {
                   Expanded(
                     child: _buildInfoSection(
                       context,
-                      label: 'Penanggung Jawab',
+                      label: ('Penanggung Jawab').tr(context),
                       value: widget.apotek.namaAPJ ?? '-',
                       icon: PhosphorIcons.user,
                       iconColor: AppColors.labelSecondary,
@@ -87,7 +88,7 @@ class _ApotekItemCardState extends State<ApotekItemCard> {
                         Expanded(
                           child: _buildInfoSection(
                             context,
-                            label: 'Tipe',
+                            label: ('Tipe').tr(context),
                             value: widget.apotek.tipeOutlet ?? '-',
                             icon: PhosphorIcons.storefront,
                             iconColor: AppColors.labelSecondary,
@@ -102,7 +103,7 @@ class _ApotekItemCardState extends State<ApotekItemCard> {
                         Expanded(
                           child: _buildInfoSection(
                             context,
-                            label: 'Kategori',
+                            label: ('Kategori').tr(context),
                             value: widget.apotek.kategoriProduk ?? '-',
                             icon: PhosphorIcons.tag,
                             iconColor: AppColors.labelSecondary,
@@ -116,7 +117,7 @@ class _ApotekItemCardState extends State<ApotekItemCard> {
                         Expanded(
                           child: _buildInfoSection(
                             context,
-                            label: 'Total Value',
+                            label: ('Total Value').tr(context),
                             value: widget.apotek.totalValue != null
                                 ? 'Rp ${widget.apotek.totalValue!.toStringAsFixed(0)}'
                                 : '-',
@@ -133,7 +134,7 @@ class _ApotekItemCardState extends State<ApotekItemCard> {
                         Expanded(
                           child: _buildInfoSection(
                             context,
-                            label: 'Last Order',
+                            label: ('Last Order').tr(context),
                             value: widget.apotek.lastOrderDate ?? '-',
                             icon: PhosphorIcons.clockCounterClockwise,
                             iconColor: AppColors.red,
@@ -147,7 +148,7 @@ class _ApotekItemCardState extends State<ApotekItemCard> {
                         Expanded(
                           child: _buildInfoSection(
                             context,
-                            label: 'Pemilik',
+                            label: ('Pemilik').tr(context),
                             value: widget.apotek.namaOwner ?? '-',
                             icon: PhosphorIcons.identificationCard,
                             iconColor: AppColors.labelSecondary,
@@ -162,7 +163,7 @@ class _ApotekItemCardState extends State<ApotekItemCard> {
                         Expanded(
                           child: _buildInfoSection(
                             context,
-                            label: 'Dibuat Oleh',
+                            label: ('Dibuat Oleh').tr(context),
                             value: widget.apotek.userCreatedName ?? '-',
                             icon: PhosphorIcons.userPlus,
                             iconColor: AppColors.labelSecondary,
@@ -190,7 +191,7 @@ class _ApotekItemCardState extends State<ApotekItemCard> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
+                      HrText(
                         _isExpanded ? 'Sembunyikan Detail' : 'Lihat Detail',
                         style: context.textStyle.bodySmall?.copyWith(
                           color: AppColors.primary,
@@ -314,7 +315,7 @@ class _ApotekItemCardState extends State<ApotekItemCard> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              HrText(
                 label,
                 style: context.textTheme.labelSmall?.copyWith(
                   color: AppColors.labelSecondary,

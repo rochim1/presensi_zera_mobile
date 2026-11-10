@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_domain/presensi_domain.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -79,7 +80,7 @@ class TeamAssignmentCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Periode', style: context.textStyle.bodySmall),
+                      HrText('Periode', style: context.textStyle.bodySmall),
                       Text(
                         assignment.periodeLabel ?? '-',
                         style: context.textStyle.bodyMedium,
@@ -92,7 +93,7 @@ class TeamAssignmentCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text('Final Score', style: context.textStyle.bodySmall),
+                      HrText('Final Score', style: context.textStyle.bodySmall),
                       KpiScoreDisplay(score: assignment.finalScore),
                     ],
                   ),
@@ -102,7 +103,7 @@ class TeamAssignmentCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text('Grade', style: context.textStyle.bodySmall),
+                      HrText('Grade', style: context.textStyle.bodySmall),
                       KpiGradeBadge(grade: assignment.finalGrade),
                     ],
                   ),
@@ -121,7 +122,7 @@ class TeamAssignmentCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Text('Review KPI'),
+                  child: const HrText('Review KPI'),
                 ),
               )
             else
@@ -134,7 +135,7 @@ class TeamAssignmentCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Text('Lihat Detail'),
+                  child: const HrText('Lihat Detail'),
                 ),
               ),
           ],

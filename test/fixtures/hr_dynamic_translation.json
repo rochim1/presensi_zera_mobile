@@ -1,0 +1,692 @@
+[
+  [
+    " · radius USER_NILAI1 m",
+    " · radius USER_NILAI1 m",
+    "hrcec82d6a29"
+  ],
+  [
+    "- Rp USER_NILAI1",
+    "- Rp USER_NILAI1",
+    "hra2537cb6f5"
+  ],
+  [
+    "Alasan Pembatalan: USER_NILAI1",
+    "Cancellation reason: USER_NILAI1",
+    "hrd439472a36"
+  ],
+  [
+    "Alasan tidak boleh lebih dari USER_NILAI1 karakter",
+    "The reason must not exceed USER_NILAI1 characters",
+    "hr4e5e94c578"
+  ],
+  [
+    "Alasan USER_NILAI1",
+    "Reason USER_NILAI1",
+    "hr018f71f803"
+  ],
+  [
+    "Anda baru saja membatalkan kunjungan untuk USER_NILAI1",
+    "You have just canceled the visit to USER_NILAI1",
+    "hr4460f3b529"
+  ],
+  [
+    "Anda berhasil melakukan kunjungan di USER_NILAI1",
+    "Your visit to USER_NILAI1 was recorded successfully",
+    "hr171a22c91c"
+  ],
+  [
+    "Anda berhasil membuat Outlet USER_NILAI1.",
+    "Outlet USER_NILAI1 was created successfully.",
+    "hre4b8ed1728"
+  ],
+  [
+    "Anda berhasil menambahkan kunjungan ke USER_NILAI1.",
+    "A visit to USER_NILAI1 was added successfully.",
+    "hrde523a9798"
+  ],
+  [
+    "Belum ada data USER_NILAI1",
+    "No USER_NILAI1 data yet",
+    "hr7c34c8a0c7"
+  ],
+  [
+    "Belum Ada Data USER_NILAI1",
+    "No USER_NILAI1 Data Yet",
+    "hrcd92d8c507"
+  ],
+  [
+    "Cannot convert USER_NILAI1 to double",
+    "Cannot convert USER_NILAI1 to double",
+    "hraa4eae1307"
+  ],
+  [
+    "Catatan tidak boleh lebih dari USER_NILAI1 karakter",
+    "Notes must not exceed USER_NILAI1 characters",
+    "hr6fbeeedfe8"
+  ],
+  [
+    "Cicilan ke-USER_NILAI1",
+    "Installment USER_NILAI1",
+    "hrb40f2fe69e"
+  ],
+  [
+    "dari USER_NILAI1",
+    "of USER_NILAI1",
+    "hr1958204121"
+  ],
+  [
+    "Data DO (USER_NILAI1) tidak ditemukan di daftar server. Memerlukan sinkronisasi ulang.",
+    "Delivery order (USER_NILAI1) was not found in the server list. Please sync again.",
+    "hra6f0c22b65"
+  ],
+  [
+    "Data USER_NILAI1 saat ini belum tersedia untuk diakses dari aplikasi mobile.",
+    "USER_NILAI1 data is not currently accessible from the mobile app.",
+    "hr23debb504a"
+  ],
+  [
+    "Data USER_PAR0 duplikat!",
+    "Duplicate USER_PAR0 data!",
+    "hr4258a0d25d"
+  ],
+  [
+    "Deskripsi tidak boleh lebih dari USER_NILAI1 karakter",
+    "The description must not exceed USER_NILAI1 characters",
+    "hraf68f53883"
+  ],
+  [
+    "DIBUAT PADA: USER_NILAI1",
+    "CREATED ON: USER_NILAI1",
+    "hrc5b4092dcf"
+  ],
+  [
+    "Dikerjakan oleh USER_NILAI1",
+    "Completed by USER_NILAI1",
+    "hr7ea78f63b1"
+  ],
+  [
+    "Diperbarui dalam USER_NILAI1 detik",
+    "Refreshes in USER_NILAI1 seconds",
+    "hrb82d50db4e"
+  ],
+  [
+    "DIUPDATE PADA: USER_NILAI1",
+    "UPDATED ON: USER_NILAI1",
+    "hr91afcc1a24"
+  ],
+  [
+    "E002 Timeout: USER_NILAI1",
+    "E002 Timeout: USER_NILAI1",
+    "hra5145d929a"
+  ],
+  [
+    "E005 Unknown Link Exception: USER_NILAI1",
+    "E005 Unknown Link Exception: USER_NILAI1",
+    "hr6866a6f39f"
+  ],
+  [
+    "E010 HandshakeException: USER_NILAI1",
+    "E010 HandshakeException: USER_NILAI1",
+    "hr81dd1cf0b4"
+  ],
+  [
+    "Event \"USER_NILAI1\" akan dihapus.",
+    "Event \"USER_NILAI1\" will be deleted.",
+    "hr007e53289f"
+  ],
+  [
+    "Format file harus: USER_NILAI1",
+    "Allowed file formats: USER_NILAI1",
+    "hr3a3466a6df"
+  ],
+  [
+    "Gagal membuat approval: USER_NILAI1",
+    "Failed to create approval: USER_NILAI1",
+    "hr42c0cb1f6c"
+  ],
+  [
+    "Gagal membuat instansi: USER_NILAI1",
+    "Failed to create organization: USER_NILAI1",
+    "hr2150a28434"
+  ],
+  [
+    "Gagal memuat alamat (USER_NILAI1, USER_NILAI2)",
+    "Failed to load address (USER_NILAI1, USER_NILAI2)",
+    "hrb2d363cc9a"
+  ],
+  [
+    "Gagal memuat data offline: USER_NILAI1",
+    "Failed to load offline data: USER_NILAI1",
+    "hrcaa944a2d0"
+  ],
+  [
+    "Gagal memuat data:\nUSER_NILAI1",
+    "Failed to load data:\nUSER_NILAI1",
+    "hr544317f574"
+  ],
+  [
+    "Gagal memuat jadwal shift: USER_NILAI1",
+    "Failed to load shift schedule: USER_NILAI1",
+    "hr4acb9bb0e8"
+  ],
+  [
+    "Gagal memuat kehadiran: USER_NILAI1",
+    "Failed to load attendance: USER_NILAI1",
+    "hr4d8043837a"
+  ],
+  [
+    "Gagal memuat Van Stock: USER_MESSAGE",
+    "Failed to load Van Stock: USER_MESSAGE",
+    "hr061de2ae2e"
+  ],
+  [
+    "Gagal menambahkan event: USER_NILAI1",
+    "Failed to add event: USER_NILAI1",
+    "hr8d219ad012"
+  ],
+  [
+    "Gagal menambahkan kategori logbook: USER_NILAI1",
+    "Failed to add logbook category: USER_NILAI1",
+    "hr53dd9ea096"
+  ],
+  [
+    "Gagal menambahkan pengumuman: USER_NILAI1",
+    "Failed to add announcement: USER_NILAI1",
+    "hr1d631030f7"
+  ],
+  [
+    "Gagal mendapatkan lokasi: USER_MESSAGE",
+    "Failed to get location: USER_MESSAGE",
+    "hr6dff1c0abc"
+  ],
+  [
+    "Gagal mengajukan request presensi: USER_NILAI1",
+    "Failed to submit attendance request: USER_NILAI1",
+    "hrfaccaa290a"
+  ],
+  [
+    "Gagal menghapus event: USER_NILAI1",
+    "Failed to delete event: USER_NILAI1",
+    "hr9b7f77fbd0"
+  ],
+  [
+    "Gagal menghapus pengumuman: USER_NILAI1",
+    "Failed to delete announcement: USER_NILAI1",
+    "hr2b9e190528"
+  ],
+  [
+    "Gagal mengirim request tukar shift: USER_NILAI1",
+    "Failed to submit shift swap request: USER_NILAI1",
+    "hr4afe9330c7"
+  ],
+  [
+    "Gagal menyimpan order offline: USER_NILAI1",
+    "Failed to save offline order: USER_NILAI1",
+    "hr87fb4127a6"
+  ],
+  [
+    "Gagal menyimpan request lembur: USER_NILAI1",
+    "Failed to save overtime request: USER_NILAI1",
+    "hr521f0b1bca"
+  ],
+  [
+    "Gagal: USER_NILAI1",
+    "Failed: USER_NILAI1",
+    "hrc9f3197036"
+  ],
+  [
+    "Gaji Bersih: USER_NILAI1",
+    "Net Pay: USER_NILAI1",
+    "hr099fcebfb6"
+  ],
+  [
+    "Halaman USER_NILAI1 tidak dapat ditampilkan",
+    "Page USER_NILAI1 cannot be displayed",
+    "hr0158ec3a96"
+  ],
+  [
+    "Hasil review: USER_NILAI1 / 5 • Grade USER_NILAI2",
+    "Review result: USER_NILAI1 / 5 • Grade USER_NILAI2",
+    "hr721d37c5fe"
+  ],
+  [
+    "ID Tugas: USER_NILAI1",
+    "Task ID: USER_NILAI1",
+    "hrbe8a022a4f"
+  ],
+  [
+    "Invalid timestamp format: USER_NILAI1",
+    "Invalid timestamp format: USER_NILAI1",
+    "hr2ca5f0c85d"
+  ],
+  [
+    "Jatuh tempo USER_NILAI1",
+    "Due USER_NILAI1",
+    "hr3792572fcf"
+  ],
+  [
+    "Jika waktu kosong, mulai pertama dari check-in/jadwal (fallback USER_NILAI1). Log berikutnya mulai dari selesai sebelumnya; durasi otomatis USER_NILAI2.",
+    "If no time is entered, the first entry starts from check-in or the schedule (fallback: USER_NILAI1). Later entries start when the previous entry ends; duration is set automatically to USER_NILAI2.",
+    "hrb4d944e1a1"
+  ],
+  [
+    "Judul tidak boleh lebih dari USER_NILAI1 karakter",
+    "The title must not exceed USER_NILAI1 characters",
+    "hr0691618495"
+  ],
+  [
+    "Karyawan USER_NILAI1",
+    "Employee USER_NILAI1",
+    "hre29c4de3e9"
+  ],
+  [
+    "Katasandi dari username USER_NILAI1 berhasil diganti",
+    "The password for username USER_NILAI1 was changed successfully",
+    "hr858105e0ed"
+  ],
+  [
+    "Kategori LogbookUSER_NILAI1",
+    "Logbook CategoryUSER_NILAI1",
+    "hr83d1153a02"
+  ],
+  [
+    "Kegiatan “USER_NILAI1” akan dihapus.",
+    "Event “USER_NILAI1” will be deleted.",
+    "hre6cdc6c970"
+  ],
+  [
+    "Konfirmasi (USER_NILAI1 tagihan)",
+    "Confirm (USER_NILAI1 invoices)",
+    "hrdbc8f39b98"
+  ],
+  [
+    "Koordinat USER_NILAI1, USER_NILAI2",
+    "Coordinates USER_NILAI1, USER_NILAI2",
+    "hrbd6c296cb1"
+  ],
+  [
+    "Koordinat: USER_NILAI1, USER_NILAI2",
+    "Coordinates: USER_NILAI1, USER_NILAI2",
+    "hra7417d1a49"
+  ],
+  [
+    "Kunjungan ini dikerjakan oleh USER_NILAI1.",
+    "This visit is being handled by USER_NILAI1.",
+    "hr413e4258c5"
+  ],
+  [
+    "Level USER_NILAI1",
+    "Level USER_NILAI1",
+    "hree28d1bc30"
+  ],
+  [
+    "Lihat USER_NILAI1 aktivitas lainnya",
+    "View USER_NILAI1 more activities",
+    "hr0854023f8b"
+  ],
+  [
+    "Login gagal: USER_NILAI1",
+    "Sign-in failed: USER_NILAI1",
+    "hr6706fa751e"
+  ],
+  [
+    "Logout gagal: USER_NILAI1",
+    "Sign-out failed: USER_NILAI1",
+    "hr623d2f7f2c"
+  ],
+  [
+    "Lokasi tidak dapat diambil: USER_NILAI1",
+    "Could not retrieve location: USER_NILAI1",
+    "hr3068df5c73"
+  ],
+  [
+    "Lokasi USER_NILAI1",
+    "Location USER_NILAI1",
+    "hr5157238409"
+  ],
+  [
+    "Maksimal USER_NILAI1 file",
+    "Maximum USER_NILAI1 files",
+    "hr8b90a698e9"
+  ],
+  [
+    "Masuk: USER_NILAI1, Pulang: USER_NILAI2",
+    "Check-in: USER_NILAI1, Check-out: USER_NILAI2",
+    "hr277964dc5c"
+  ],
+  [
+    "Masukkan USER_NILAI1",
+    "Enter USER_NILAI1",
+    "hr3db7c11745"
+  ],
+  [
+    "MulaiUSER_NILAI1",
+    "StartUSER_NILAI1",
+    "hr15677980e4"
+  ],
+  [
+    "Nilai pemeriksa: USER_NILAI1 / 5 • Kontribusi: USER_NILAI2",
+    "Reviewer's score: USER_NILAI1 / 5 • Contribution: USER_NILAI2",
+    "hr0852015f74"
+  ],
+  [
+    "Nominal: Rp USER_NILAI1",
+    "Amount: Rp USER_NILAI1",
+    "hr248f36068d"
+  ],
+  [
+    "Nomor Pinjaman: USER_NILAI1",
+    "Loan Number: USER_NILAI1",
+    "hrcc15a9a584"
+  ],
+  [
+    "PDF tidak dapat dibuka: USER_NILAI1",
+    "Could not open PDF: USER_NILAI1",
+    "hr4a7eed396d"
+  ],
+  [
+    "Pemberitahuan USER_PAR0 dihapus!",
+    "Notification USER_PAR0 deleted!",
+    "hr7f49a66f84"
+  ],
+  [
+    "Pencapaian Target (USER_NILAI1)",
+    "Target Achievement (USER_NILAI1)",
+    "hr4bbd4822ea"
+  ],
+  [
+    "Pengumuman \"USER_NILAI1\" akan dihapus.",
+    "Announcement \"USER_NILAI1\" will be deleted.",
+    "hr2828442ba5"
+  ],
+  [
+    "Periode: USER_NILAI1",
+    "Period: USER_NILAI1",
+    "hrb1ec78f5d8"
+  ],
+  [
+    "Pesan dari USER_NILAI1",
+    "Message from USER_NILAI1",
+    "hrfde6fb9f3a"
+  ],
+  [
+    "Pilih (USER_NILAI1 DO)",
+    "Select (USER_NILAI1 DOs)",
+    "hr067351a8a0"
+  ],
+  [
+    "Pilih USER_NILAI1",
+    "Select USER_NILAI1",
+    "hr9d7c9ad392"
+  ],
+  [
+    "QR USER_NILAI1",
+    "QR USER_NILAI1",
+    "hrc532996ef2"
+  ],
+  [
+    "Rating otomatis: USER_NILAI1 / 5. Nilai akhir mengikuti penilaian pemeriksa.",
+    "Automatic rating: USER_NILAI1 / 5. The final score follows the reviewer's assessment.",
+    "hr4bdd91f7bc"
+  ],
+  [
+    "Rp USER_NILAI1 / USER_NILAI2",
+    "Rp USER_NILAI1 / USER_NILAI2",
+    "hr75a23afc8d"
+  ],
+  [
+    "Sales Order untuk USER_NILAI1 berhasil disimpan.",
+    "Sales order for USER_NILAI1 saved successfully.",
+    "hra6939d47ba"
+  ],
+  [
+    "Scan USER_NILAI1",
+    "Scan USER_NILAI1",
+    "hr1efcab76cc"
+  ],
+  [
+    "SelesaiUSER_NILAI1",
+    "EndUSER_NILAI1",
+    "hr808d8ef870"
+  ],
+  [
+    "Seluruh rangkaian \"USER_NILAI1\" akan dihapus.",
+    "The entire \"USER_NILAI1\" series will be deleted.",
+    "hr337881dfed"
+  ],
+  [
+    "SKU: USER_NILAI1",
+    "SKU: USER_NILAI1",
+    "hreb5478895a"
+  ],
+  [
+    "Stok: USER_NILAI1\nUSER_NILAI2",
+    "Stock: USER_NILAI1\nUSER_NILAI2",
+    "hra482a528f1"
+  ],
+  [
+    "Subtotal: Rp USER_NILAI1",
+    "Subtotal: Rp USER_NILAI1",
+    "hrd8a3eee670"
+  ],
+  [
+    "Tanggal Load: USER_NILAI1",
+    "Load Date: USER_NILAI1",
+    "hread7d5656f"
+  ],
+  [
+    "Tenor: USER_NILAI1 Bulan",
+    "Loan Term: USER_NILAI1 Months",
+    "hra1ea6565ab"
+  ],
+  [
+    "Termin USER_NILAI1 (USER_NILAI2)",
+    "Installment USER_NILAI1 (USER_NILAI2)",
+    "hr941231c10c"
+  ],
+  [
+    "Tgl Order: USER_NILAI1",
+    "Order Date: USER_NILAI1",
+    "hr6d789cdde9"
+  ],
+  [
+    "Tidak ada event pada USER_NILAI1",
+    "No events on USER_NILAI1",
+    "hreb04d1dd64"
+  ],
+  [
+    "Tipe Order: USER_NILAI1",
+    "Order Type: USER_NILAI1",
+    "hre5f5aa182f"
+  ],
+  [
+    "Tipe: USER_NILAI1 • Item: USER_NILAI2",
+    "Type: USER_NILAI1 • Item: USER_NILAI2",
+    "hr40f0c6a918"
+  ],
+  [
+    "Total: USER_NILAI1",
+    "Total: USER_NILAI1",
+    "hr16774d86f2"
+  ],
+  [
+    "Total: USER_NILAI1 item",
+    "Total: USER_NILAI1 items",
+    "hr023ca4aa9d"
+  ],
+  [
+    "Versi Aplikasi USER_NILAI1+USER_NILAI2 USER_NILAI3 USER_NILAI4",
+    "App Version USER_NILAI1+USER_NILAI2 USER_NILAI3 USER_NILAI4",
+    "hr009733ff8f"
+  ],
+  [
+    "Waktu USER_NILAI1",
+    "Time USER_NILAI1",
+    "hrfb063bb60c"
+  ],
+  [
+    "USER_NILAI1 (USER_NILAI2 dipilih)",
+    "USER_NILAI1 (USER_NILAI2 selected)",
+    "hra44e7cf1b2"
+  ],
+  [
+    "USER_NILAI1 (USER_NILAI2 menit)",
+    "USER_NILAI1 (USER_NILAI2 minutes)",
+    "hr3d9303a340"
+  ],
+  [
+    "USER_NILAI1 Bulan",
+    "USER_NILAI1 Months",
+    "hrb8797fd7a6"
+  ],
+  [
+    "USER_NILAI1 Bulan / Termin",
+    "USER_NILAI1 Months / Installment",
+    "hreb070acc1e"
+  ],
+  [
+    "USER_NILAI1 dari USER_NILAI2",
+    "USER_NILAI1 of USER_NILAI2",
+    "hr76223649c2"
+  ],
+  [
+    "USER_NILAI1 data offline menunggu sinkronisasi",
+    "USER_NILAI1 offline records awaiting sync",
+    "hr3acda2f4b7"
+  ],
+  [
+    "USER_NILAI1 Hari",
+    "USER_NILAI1 Days",
+    "hr8b901c2099"
+  ],
+  [
+    "USER_NILAI1 hari",
+    "USER_NILAI1 days",
+    "hr3326d6000b"
+  ],
+  [
+    "USER_NILAI1 hari tersisa",
+    "USER_NILAI1 days remaining",
+    "hr262774e396"
+  ],
+  [
+    "USER_NILAI1 hari yang lalu",
+    "USER_NILAI1 days ago",
+    "hr36ef2477c2"
+  ],
+  [
+    "USER_NILAI1 item produk",
+    "USER_NILAI1 product items",
+    "hr1d26476266"
+  ],
+  [
+    "USER_NILAI1 jam",
+    "USER_NILAI1 hours",
+    "hrae81476aee"
+  ],
+  [
+    "USER_NILAI1 Jam",
+    "USER_NILAI1 Hours",
+    "hr87fc2c293f"
+  ],
+  [
+    "USER_NILAI1 Jam ",
+    "USER_NILAI1 Hours ",
+    "hr9e32b239ba"
+  ],
+  [
+    "USER_NILAI1 jam yang lalu",
+    "USER_NILAI1 hours ago",
+    "hr9361aa08b2"
+  ],
+  [
+    "USER_NILAI1 Jam USER_NILAI2 Menit",
+    "USER_NILAI1 Hours USER_NILAI2 Minutes",
+    "hrfc0f564dfa"
+  ],
+  [
+    "USER_NILAI1 karyawan",
+    "USER_NILAI1 employees",
+    "hrf2e8da4bd7"
+  ],
+  [
+    "USER_NILAI1 menit yang lalu",
+    "USER_NILAI1 minutes ago",
+    "hr6bb06b165d"
+  ],
+  [
+    "USER_NILAI1 produk",
+    "USER_NILAI1 products",
+    "hr79efed64f2"
+  ],
+  [
+    "USER_NILAI1 surat jalan tersedia",
+    "USER_NILAI1 delivery orders available",
+    "hr630ba35e7d"
+  ],
+  [
+    "USER_NILAI1 tagihan tersedia",
+    "USER_NILAI1 invoices available",
+    "hrc825d96cf7"
+  ],
+  [
+    "USER_NILAI1 Tahun",
+    "USER_NILAI1 Years",
+    "hr6ba6249c6c"
+  ],
+  [
+    "USER_NILAI1 task · USER_NILAI2",
+    "USER_NILAI1 tasks · USER_NILAI2",
+    "hr09e8c0ea11"
+  ],
+  [
+    "USER_NILAI1 x Cicilan",
+    "USER_NILAI1 installments",
+    "hre9139d2a90"
+  ],
+  [
+    "USER_NILAI1 USER_NILAI2 x Rp USER_NILAI3",
+    "USER_NILAI1 USER_NILAI2 x Rp USER_NILAI3",
+    "hr6a1a2c0a22"
+  ],
+  [
+    "USER_NILAI1 · USER_NILAI2 (USER_NILAI3 hari)",
+    "USER_NILAI1 · USER_NILAI2 (USER_NILAI3 days)",
+    "hr9647d1ab22"
+  ],
+  [
+    "USER_NILAI1 • Stok: USER_NILAI2 USER_NILAI3",
+    "USER_NILAI1 • Stock: USER_NILAI2 USER_NILAI3",
+    "hr62d024e6d5"
+  ],
+  [
+    "USER_NILAI1, Waktu Saat Ini",
+    "USER_NILAI1, Current Time",
+    "hrba24854f16"
+  ],
+  [
+    "USER_NILAI1USER_NILAI2j USER_NILAI3m USER_NILAI4d",
+    "USER_NILAI1USER_NILAI2h USER_NILAI3m USER_NILAI4s",
+    "hra0e07d7ea7"
+  ],
+  [
+    "USER_PAR0 harus diisi!",
+    "USER_PAR0 is required!",
+    "hr950620546c"
+  ],
+  [
+    "USER_PAR0 harus dipilih!",
+    "USER_PAR0 must be selected!",
+    "hr2fdd92a577"
+  ],
+  [
+    "USER_PAR0 tidak benar!",
+    "USER_PAR0 is invalid!",
+    "hr359858f8f0"
+  ],
+  [
+    "USER_PAR0 untuk Mulai kerja!",
+    "USER_PAR0 to Start Work!",
+    "hr46af3dd302"
+  ]
+]

@@ -1,3 +1,5 @@
+import 'package:presensi_mobile/l10n/app_language_controller.dart';
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -52,11 +54,13 @@ class _OvertimeViewState extends State<OvertimeView> {
             },
             child: Scaffold(
               appBar: AppTopBar(
-                title: _showingApproval ? 'Approval Lembur' : 'Lembur',
+                title: (_showingApproval
+                    ? ('Approval Lembur').tr(context)
+                    : ('Lembur').tr(context)),
                 centerTitle: false,
-                subtitle: _showingApproval
-                    ? 'Tinjau pengajuan lembur karyawan'
-                    : 'Kelola pengajuan lembur Anda',
+                subtitle: (_showingApproval
+                    ? ('Tinjau pengajuan lembur karyawan').tr(context)
+                    : ('Kelola pengajuan lembur Anda').tr(context)),
                 onBackTap: _showingApproval && !widget.initialApproval
                     ? () => setState(() => _showingApproval = false)
                     : null,
@@ -129,10 +133,16 @@ class _MonthFilter extends StatelessWidget {
             const Icon(Icons.date_range, color: AppColors.primary, size: 20),
             const SizedBox(width: 8),
             Expanded(
-              child: Text(
+              child: HrText(
                 state.startDate == null
                     ? 'Bulan Ini'
-                    : DateFormat('MMMM yyyy', 'id_ID').format(state.startDate!),
+                    : DateFormat(
+                        'MMMM yyyy',
+                        AppLanguageController
+                            .instance
+                            .effectiveLocale
+                            .languageCode,
+                      ).format(state.startDate!),
                 style: context.textStyle.bodyMedium?.copyWith(
                   color: AppColors.labelPrimary,
                 ),

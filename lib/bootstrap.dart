@@ -1,3 +1,4 @@
+import 'l10n/app_language_controller.dart';
 import 'dart:isolate';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -33,6 +34,7 @@ Future<Widget> _initialize(
   required FlavorConfig flavor,
 }) async {
   final startup = Stopwatch()..start();
+  await AppLanguageController.instance.load();
 
   PlatformDispatcher.instance.onError = (error, stackTrace) {
     final response = AppUtility.errorIgnore(error.toString());

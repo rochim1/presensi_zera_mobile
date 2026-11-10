@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
 
@@ -40,7 +41,7 @@ class TextFieldAuth extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (title.isNotEmpty) Text(title, textAlign: TextAlign.left),
+        if (title.isNotEmpty) HrText(title, textAlign: TextAlign.left),
         if (title.isNotEmpty) const SizedBox(height: AppDimens.size3S),
         TextFormField(
           controller: controller,
@@ -70,7 +71,7 @@ class TextFieldAuth extends StatelessWidget {
             alignLabelWithHint: true,
             floatingLabelBehavior: FloatingLabelBehavior.never,
             floatingLabelStyle: TextStyle(color: AppColors.labelSecondary),
-            hintText: hint,
+            hintText: hint.tr(context),
             hintStyle: TextStyle(color: AppColors.grey.shade300),
             contentPadding: const EdgeInsets.all(AppDimens.paddingMedium),
             suffix: suffix,
@@ -78,7 +79,9 @@ class TextFieldAuth extends StatelessWidget {
           enabled: enabled,
           maxLines: multiline ? 4 : 1,
           textInputAction: inputAction,
-          validator: validator,
+          validator: validator == null
+              ? null
+              : (value) => validator?.call(value)?.tr(context),
           autovalidateMode: AutovalidateMode.onUserInteraction,
           obscureText: obscure,
           onChanged: onChanged,

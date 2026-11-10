@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -157,7 +158,9 @@ class _IncidentalReportFormPageState extends State<IncidentalReportFormPage> {
         },
         builder: (context, state) {
           return Scaffold(
-            appBar: const AppBarWidget(titleText: 'Buat Laporan Insiden'),
+            appBar: AppBarWidget(
+              titleText: ('Buat Laporan Insiden').tr(context),
+            ),
             body: SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Form(
@@ -165,7 +168,7 @@ class _IncidentalReportFormPageState extends State<IncidentalReportFormPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    const HrText(
                       'Pilih Barang',
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
@@ -185,7 +188,7 @@ class _IncidentalReportFormPageState extends State<IncidentalReportFormPage> {
                           suffixIcon: const Icon(Icons.search),
                         ),
                         child: _selectedItem == null
-                            ? const Text(
+                            ? const HrText(
                                 'Pilih produk',
                                 style: TextStyle(color: Colors.grey),
                               )
@@ -201,7 +204,7 @@ class _IncidentalReportFormPageState extends State<IncidentalReportFormPage> {
                                     ),
                                   ),
                                   const SizedBox(height: 2),
-                                  Text(
+                                  HrText(
                                     '${_selectedItem!.sku ?? _selectedItem!.kodeInventaris ?? '-'} • Stok: ${_selectedItem!.stok ?? 0} ${_selectedItem!.unit ?? _selectedItem!.baseUnit ?? ''}',
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
@@ -222,7 +225,7 @@ class _IncidentalReportFormPageState extends State<IncidentalReportFormPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
+                              const HrText(
                                 'Jenis Insiden',
                                 style: TextStyle(fontWeight: FontWeight.w600),
                               ),
@@ -242,31 +245,31 @@ class _IncidentalReportFormPageState extends State<IncidentalReportFormPage> {
                                 items: const [
                                   DropdownMenuItem(
                                     value: 'kerusakan',
-                                    child: Text('Kerusakan'),
+                                    child: HrText('Kerusakan'),
                                   ),
                                   DropdownMenuItem(
                                     value: 'kecelakaan',
-                                    child: Text('Kecelakaan'),
+                                    child: HrText('Kecelakaan'),
                                   ),
                                   DropdownMenuItem(
                                     value: 'mencair',
-                                    child: Text('Mencair/Rusak'),
+                                    child: HrText('Mencair/Rusak'),
                                   ),
                                   DropdownMenuItem(
                                     value: 'kehilangan',
-                                    child: Text('Kehilangan'),
+                                    child: HrText('Kehilangan'),
                                   ),
                                   DropdownMenuItem(
                                     value: 'kadaluarsa',
-                                    child: Text('Kadaluarsa'),
+                                    child: HrText('Kadaluarsa'),
                                   ),
                                   DropdownMenuItem(
                                     value: 'tumpah',
-                                    child: Text('Tumpah/Bocor'),
+                                    child: HrText('Tumpah/Bocor'),
                                   ),
                                   DropdownMenuItem(
                                     value: 'lainnya',
-                                    child: Text('Lainnya'),
+                                    child: HrText('Lainnya'),
                                   ),
                                 ],
                                 onChanged: (val) =>
@@ -280,7 +283,7 @@ class _IncidentalReportFormPageState extends State<IncidentalReportFormPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
+                              const HrText(
                                 'Lokasi Kejadian',
                                 style: TextStyle(fontWeight: FontWeight.w600),
                               ),
@@ -296,7 +299,7 @@ class _IncidentalReportFormPageState extends State<IncidentalReportFormPage> {
                                     vertical: 12,
                                   ),
                                 ),
-                                hint: Text(
+                                hint: HrText(
                                   _selectedItem == null
                                       ? 'Pilih produk dulu'
                                       : _isLoadingLocations
@@ -329,7 +332,7 @@ class _IncidentalReportFormPageState extends State<IncidentalReportFormPage> {
                     ),
                     const SizedBox(height: 16),
 
-                    const Text(
+                    const HrText(
                       'Tindakan',
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
@@ -349,11 +352,11 @@ class _IncidentalReportFormPageState extends State<IncidentalReportFormPage> {
                       items: const [
                         DropdownMenuItem(
                           value: 'kurangi_stok',
-                          child: Text('Kurangi Stok (Net Lost)'),
+                          child: HrText('Kurangi Stok (Net Lost)'),
                         ),
                         DropdownMenuItem(
                           value: 'recycle',
-                          child: Text('Recycle (Sebagian/Semua)'),
+                          child: HrText('Recycle (Sebagian/Semua)'),
                         ),
                       ],
                       onChanged: (val) => setState(() => _tindakan = val!),
@@ -366,7 +369,7 @@ class _IncidentalReportFormPageState extends State<IncidentalReportFormPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
+                              const HrText(
                                 'Jumlah Terdampak',
                                 style: TextStyle(fontWeight: FontWeight.w600),
                               ),
@@ -378,7 +381,7 @@ class _IncidentalReportFormPageState extends State<IncidentalReportFormPage> {
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
-                                  hintText: 'Mis: 10',
+                                  hintText: ('Mis: 10').tr(context),
                                   contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 16,
                                     vertical: 12,
@@ -396,7 +399,7 @@ class _IncidentalReportFormPageState extends State<IncidentalReportFormPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
+                                const HrText(
                                   'Hasil Recycle',
                                   style: TextStyle(fontWeight: FontWeight.w600),
                                 ),
@@ -408,7 +411,7 @@ class _IncidentalReportFormPageState extends State<IncidentalReportFormPage> {
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(12),
                                     ),
-                                    hintText: 'Mis: 8',
+                                    hintText: ('Mis: 8').tr(context),
                                     contentPadding: const EdgeInsets.symmetric(
                                       horizontal: 16,
                                       vertical: 12,
@@ -426,7 +429,7 @@ class _IncidentalReportFormPageState extends State<IncidentalReportFormPage> {
                     ),
                     const SizedBox(height: 16),
 
-                    const Text(
+                    const HrText(
                       'Waktu Kejadian',
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
@@ -486,7 +489,7 @@ class _IncidentalReportFormPageState extends State<IncidentalReportFormPage> {
                     ),
                     const SizedBox(height: 16),
 
-                    const Text(
+                    const HrText(
                       'Keterangan',
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
@@ -498,7 +501,7 @@ class _IncidentalReportFormPageState extends State<IncidentalReportFormPage> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        hintText: 'Catatan tambahan...',
+                        hintText: ('Catatan tambahan...').tr(context),
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 12,
@@ -524,7 +527,7 @@ class _IncidentalReportFormPageState extends State<IncidentalReportFormPage> {
               ),
               child: AppButton(
                 onPressed: state.isSubmitting ? () {} : _submit,
-                text: 'Simpan Laporan',
+                text: ('Simpan Laporan').tr(context),
                 isLoading: state.isSubmitting,
               ),
             ),
@@ -575,7 +578,7 @@ class _IncidentalProductSelectionSheetState
                 Row(
                   children: [
                     const Expanded(
-                      child: Text(
+                      child: HrText(
                         'Pilih Produk',
                         style: TextStyle(
                           fontSize: 20,
@@ -593,7 +596,7 @@ class _IncidentalProductSelectionSheetState
                 TextField(
                   autofocus: true,
                   decoration: InputDecoration(
-                    hintText: 'Cari produk atau SKU...',
+                    hintText: ('Cari produk atau SKU...').tr(context),
                     prefixIcon: const Icon(Icons.search),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -611,7 +614,7 @@ class _IncidentalProductSelectionSheetState
                       }
                       if (state.status.isNotLoaded) {
                         return Center(
-                          child: Text(
+                          child: HrText(
                             state.failure?.message ?? 'Gagal memuat produk',
                             textAlign: TextAlign.center,
                           ),
@@ -633,7 +636,7 @@ class _IncidentalProductSelectionSheetState
 
                       if (products.isEmpty) {
                         return const Center(
-                          child: Text('Produk tidak ditemukan'),
+                          child: HrText('Produk tidak ditemukan'),
                         );
                       }
 
@@ -653,10 +656,10 @@ class _IncidentalProductSelectionSheetState
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                            subtitle: Text(
+                            subtitle: HrText(
                               'SKU: ${product.sku ?? product.kodeInventaris ?? '-'}',
                             ),
-                            trailing: Text(
+                            trailing: HrText(
                               'Stok: ${product.stok ?? 0}\n${product.unit ?? product.baseUnit ?? ''}',
                               textAlign: TextAlign.right,
                               style: const TextStyle(fontSize: 12),

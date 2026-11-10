@@ -39,7 +39,9 @@ class MapViewWidget extends StatelessWidget {
                 Marker(
                   markerId: const MarkerId('outlet_marker'),
                   position: outletPosition!,
-                  icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+                  icon: BitmapDescriptor.defaultMarkerWithHue(
+                    BitmapDescriptor.hueBlue,
+                  ),
                 ),
             },
             onMapCreated: onMapCreated,
@@ -66,7 +68,10 @@ class MapViewWidget extends StatelessWidget {
               selected: true,
               showShadow: true,
               selectedColor: AppColors.white,
-              icon: const Icon(Icons.fullscreen_rounded, color: AppColors.primary),
+              icon: const Icon(
+                Icons.fullscreen_rounded,
+                color: AppColors.primary,
+              ),
               onTap: () {
                 Navigator.push(
                   context,
@@ -80,12 +85,17 @@ class MapViewWidget extends StatelessWidget {
                             scrollGesturesEnabled: true,
                             rotateGesturesEnabled: true,
                             markers: {
-                              Marker(markerId: const MarkerId(kMarkerId), position: position),
+                              Marker(
+                                markerId: const MarkerId(kMarkerId),
+                                position: position,
+                              ),
                               if (outletPosition != null)
                                 Marker(
                                   markerId: const MarkerId('outlet_marker'),
                                   position: outletPosition!,
-                                  icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+                                  icon: BitmapDescriptor.defaultMarkerWithHue(
+                                    BitmapDescriptor.hueBlue,
+                                  ),
                                 ),
                             },
                             initialCameraPosition: CameraPosition(
@@ -103,9 +113,17 @@ class MapViewWidget extends StatelessWidget {
                                 decoration: const BoxDecoration(
                                   color: Colors.white,
                                   shape: BoxShape.circle,
-                                  boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 4)],
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black26,
+                                      blurRadius: 4,
+                                    ),
+                                  ],
                                 ),
-                                child: const Icon(Icons.arrow_back, color: Colors.black),
+                                child: const Icon(
+                                  Icons.arrow_back,
+                                  color: Colors.black,
+                                ),
                               ),
                             ),
                           ),

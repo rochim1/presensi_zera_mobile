@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -114,7 +115,7 @@ class _AnnouncementViewState extends State<AnnouncementView>
         context: context,
         title: AppBottomSheetTitle(
           title: announcement.judul,
-          subtitle: 'Informasi pengumuman perusahaan',
+          subtitle: ('Informasi pengumuman perusahaan').tr(context),
         ),
         child: AnnouncementDetailView(announcement: announcement),
         actionsBuilder: (sheetContext) => _AnnouncementDetailActions(
@@ -125,18 +126,18 @@ class _AnnouncementViewState extends State<AnnouncementView>
             final confirmed = await showDialog<bool>(
               context: context,
               builder: (dialogContext) => AlertDialog(
-                title: const Text('Hapus Pengumuman?'),
-                content: Text(
+                title: const HrText('Hapus Pengumuman?'),
+                content: HrText(
                   'Pengumuman "${announcement.judul}" akan dihapus.',
                 ),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(dialogContext, false),
-                    child: const Text('Batal'),
+                    child: const HrText('Batal'),
                   ),
                   FilledButton(
                     onPressed: () => Navigator.pop(dialogContext, true),
-                    child: const Text('Hapus'),
+                    child: const HrText('Hapus'),
                   ),
                 ],
               ),
@@ -175,7 +176,7 @@ class _AnnouncementViewState extends State<AnnouncementView>
 
     return Scaffold(
       appBar: AppTopBar(
-        title: 'Pengumuman',
+        title: ('Pengumuman').tr(context),
         showBackButton: true,
         onBackTap: () => context.router.maybePop(),
         backgroundColor: AppColors.transparent,
@@ -310,7 +311,7 @@ class _AnnouncementDetailActions extends StatelessWidget {
         Expanded(
           child: _AnnouncementDetailActionItem(
             icon: Icons.delete_outline_rounded,
-            label: 'Hapus',
+            label: ('Hapus').tr(context),
             color: AppColors.danger,
             onTap: canDelete ? onDelete : null,
           ),
@@ -318,7 +319,7 @@ class _AnnouncementDetailActions extends StatelessWidget {
         Expanded(
           child: _AnnouncementDetailActionItem(
             icon: Icons.edit_outlined,
-            label: 'Edit',
+            label: ('Edit').tr(context),
             color: AppColors.primary,
             onTap: canEdit ? onEdit : null,
           ),
@@ -326,7 +327,7 @@ class _AnnouncementDetailActions extends StatelessWidget {
         Expanded(
           child: _AnnouncementDetailActionItem(
             icon: Icons.close_rounded,
-            label: 'Tutup',
+            label: ('Tutup').tr(context),
             color: AppColors.labelSecondary,
             onTap: onClose,
           ),
@@ -370,7 +371,7 @@ class _AnnouncementDetailActionItem extends StatelessWidget {
             children: [
               Icon(icon, size: AppDimens.iconSmall, color: effectiveColor),
               SizedBox(width: AppDimens.w6),
-              Text(
+              HrText(
                 label,
                 style: context.textStyle.bodyMedium?.copyWith(
                   color: effectiveColor,

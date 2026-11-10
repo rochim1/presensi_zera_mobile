@@ -1,3 +1,5 @@
+import 'package:presensi_mobile/l10n/app_language_controller.dart';
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -47,13 +49,14 @@ class _SalesDashboardPageState extends State<SalesDashboardPage> {
 
   @override
   Widget build(BuildContext context) {
+    hrLocale(context); // Rebuild formatted dates when the language changes.
     return MultiBlocProvider(
       providers: [
         BlocProvider.value(value: _salesTargetCubit),
         BlocProvider.value(value: _taskReportCubit),
       ],
       child: Scaffold(
-        appBar: const AppTopBar(title: 'Performa Sales'),
+        appBar: AppTopBar(title: ('Performa Sales').tr(context)),
         body: RefreshIndicator(
           onRefresh: () async {
             _loadData();
@@ -68,18 +71,25 @@ class _SalesDashboardPageState extends State<SalesDashboardPage> {
                 const SizedBox(height: AppDimens.paddingMediumX),
                 _buildSectionTitle(
                   context,
-                  'Pencapaian Target (${DateFormat('MMMM yyyy', 'id_ID').format(_selectedMonth)})',
+                  ('Pencapaian Target (${DateFormat('MMMM yyyy', AppLanguageController.instance.effectiveLocale.languageCode).format(_selectedMonth)})')
+                      .tr(context),
                 ),
                 const SizedBox(height: AppDimens.paddingMediumX),
                 _buildTargetSection(),
                 const SizedBox(height: AppDimens.paddingLarge),
 
-                _buildSectionTitle(context, 'Rangkuman Perjalanan'),
+                _buildSectionTitle(
+                  context,
+                  ('Rangkuman Perjalanan').tr(context),
+                ),
                 const SizedBox(height: AppDimens.paddingMediumX),
                 _buildReportSection(),
                 const SizedBox(height: AppDimens.paddingLarge),
 
-                _buildSectionTitle(context, 'Kunjungan Bulan Ini'),
+                _buildSectionTitle(
+                  context,
+                  ('Kunjungan Bulan Ini').tr(context),
+                ),
                 const SizedBox(height: AppDimens.paddingMediumX),
                 _buildMonthlyTasksSection(),
               ],
@@ -113,7 +123,10 @@ class _SalesDashboardPageState extends State<SalesDashboardPage> {
             const SizedBox(width: 8),
             Expanded(
               child: Text(
-                DateFormat('MMMM yyyy', 'id_ID').format(_selectedMonth),
+                DateFormat(
+                  'MMMM yyyy',
+                  AppLanguageController.instance.effectiveLocale.languageCode,
+                ).format(_selectedMonth),
                 style: context.textStyle.bodyMedium?.copyWith(
                   color: AppColors.labelPrimary,
                 ),
@@ -133,7 +146,7 @@ class _SalesDashboardPageState extends State<SalesDashboardPage> {
   }
 
   Widget _buildSectionTitle(BuildContext context, String title) {
-    return Text(
+    return HrText(
       title,
       style: context.textStyle.titleMedium?.copyWith(
         fontWeight: FontWeight.w600,
@@ -153,7 +166,9 @@ class _SalesDashboardPageState extends State<SalesDashboardPage> {
             ),
           );
         } else if (state is SalesTargetEmpty) {
-          return _buildEmptyCard('Belum ada target untuk bulan ini');
+          return _buildEmptyCard(
+            ('Belum ada target untuk bulan ini').tr(context),
+          );
         } else if (state is SalesTargetError) {
           return _buildErrorCard(state.message);
         } else if (state is SalesTargetLoaded) {
@@ -235,7 +250,7 @@ class _SalesDashboardPageState extends State<SalesDashboardPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
+              HrText(
                 'Omzet',
                 style: context.textStyle.titleMedium?.copyWith(
                   color: AppColors.white.withValues(alpha: 0.9),
@@ -248,7 +263,7 @@ class _SalesDashboardPageState extends State<SalesDashboardPage> {
                   color: AppColors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Text(
+                child: HrText(
                   _getRunRateText(target.runRate),
                   style: context.textStyle.labelSmall?.copyWith(
                     color: AppColors.white,
@@ -271,7 +286,7 @@ class _SalesDashboardPageState extends State<SalesDashboardPage> {
             ),
           ),
           const SizedBox(height: 4),
-          Text(
+          HrText(
             'dari ${NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0).format(target.targetSales)}',
             style: context.textStyle.bodyMedium?.copyWith(
               color: AppColors.white.withValues(alpha: 0.8),
@@ -333,7 +348,7 @@ class _SalesDashboardPageState extends State<SalesDashboardPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          HrText(
             title,
             style: context.textStyle.labelSmall?.copyWith(
               color: AppColors.labelSecondary,
@@ -381,7 +396,7 @@ class _SalesDashboardPageState extends State<SalesDashboardPage> {
             ),
           );
         } else if (state is TaskReportEmpty) {
-          return _buildEmptyCard('Belum ada data perjalanan');
+          return _buildEmptyCard(('Belum ada data perjalanan').tr(context));
         } else if (state is TaskReportError) {
           return _buildErrorCard(state.message);
         } else if (state is TaskReportLoaded) {
@@ -393,7 +408,7 @@ class _SalesDashboardPageState extends State<SalesDashboardPage> {
                   Expanded(
                     child: _buildReportCard(
                       context,
-                      title: 'Estimasi Biaya Transportasi',
+                      title: ('Estimasi Biaya Transportasi').tr(context),
                       value: NumberFormat.currency(
                         locale: 'id_ID',
                         symbol: 'Rp ',
@@ -407,7 +422,7 @@ class _SalesDashboardPageState extends State<SalesDashboardPage> {
                   Expanded(
                     child: _buildReportCard(
                       context,
-                      title: 'Total Jarak',
+                      title: ('Total Jarak').tr(context),
                       value:
                           '${summary.totalDistanceFinal.toStringAsFixed(1)} km',
                       icon: Icons.route,
@@ -446,7 +461,7 @@ class _SalesDashboardPageState extends State<SalesDashboardPage> {
               Icon(icon, size: 16, color: color),
               const SizedBox(width: 8),
               Expanded(
-                child: Text(
+                child: HrText(
                   title,
                   style: context.textStyle.labelSmall?.copyWith(
                     color: AppColors.labelSecondary,
@@ -481,7 +496,9 @@ class _SalesDashboardPageState extends State<SalesDashboardPage> {
             ),
           );
         } else if (state is TaskReportEmpty) {
-          return _buildEmptyCard('Belum ada data kunjungan bulan ini');
+          return _buildEmptyCard(
+            ('Belum ada data kunjungan bulan ini').tr(context),
+          );
         } else if (state is TaskReportError) {
           return _buildErrorCard(state.message);
         } else if (state is TaskReportLoaded) {
@@ -498,7 +515,7 @@ class _SalesDashboardPageState extends State<SalesDashboardPage> {
                   Expanded(
                     child: _buildStatCard(
                       context,
-                      title: 'Total',
+                      title: ('Total').tr(context),
                       value: totalCount.toString(),
                       icon: Icons.map_outlined,
                       color: AppColors.primary,
@@ -508,7 +525,7 @@ class _SalesDashboardPageState extends State<SalesDashboardPage> {
                   Expanded(
                     child: _buildStatCard(
                       context,
-                      title: 'Selesai',
+                      title: ('Selesai').tr(context),
                       value: successCount.toString(),
                       icon: Icons.check_circle_outline,
                       color: AppColors.primary, // Pantoo teal
@@ -522,7 +539,7 @@ class _SalesDashboardPageState extends State<SalesDashboardPage> {
                   Expanded(
                     child: _buildStatCard(
                       context,
-                      title: 'Pending',
+                      title: ('Pending').tr(context),
                       value: pendingCount.toString(),
                       icon: Icons.pending_actions,
                       color: AppColors.warning,
@@ -532,7 +549,7 @@ class _SalesDashboardPageState extends State<SalesDashboardPage> {
                   Expanded(
                     child: _buildStatCard(
                       context,
-                      title: 'Batal',
+                      title: ('Batal').tr(context),
                       value: canceledCount.toString(),
                       icon: Icons.cancel_outlined,
                       color: AppColors.danger,
@@ -592,7 +609,7 @@ class _SalesDashboardPageState extends State<SalesDashboardPage> {
             ),
           ),
           const SizedBox(height: 4),
-          Text(
+          HrText(
             title,
             style: context.textStyle.bodySmall?.copyWith(
               color: AppColors.labelSecondary,
@@ -613,7 +630,7 @@ class _SalesDashboardPageState extends State<SalesDashboardPage> {
         border: Border.all(color: AppColors.borderGrey),
       ),
       alignment: Alignment.center,
-      child: Text(
+      child: HrText(
         message,
         style: context.textStyle.bodyMedium?.copyWith(
           color: AppColors.labelSecondary,
@@ -631,7 +648,7 @@ class _SalesDashboardPageState extends State<SalesDashboardPage> {
         border: Border.all(color: Colors.red.withValues(alpha: 0.2)),
       ),
       alignment: Alignment.center,
-      child: Text(
+      child: HrText(
         'Gagal memuat data:\n$message',
         textAlign: TextAlign.center,
         style: context.textStyle.bodySmall?.copyWith(color: Colors.red),

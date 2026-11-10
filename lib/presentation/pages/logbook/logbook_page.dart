@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -130,7 +131,7 @@ class _LogbookViewState extends State<LogbookView> {
                       ),
                     ),
                     SizedBox(height: AppDimens.h16),
-                    Text(
+                    HrText(
                       isEditing ? 'Edit Logbook' : 'Tambah Logbook',
                       style: Theme.of(ctx).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w700,
@@ -141,8 +142,8 @@ class _LogbookViewState extends State<LogbookView> {
                     TextField(
                       controller: titleController,
                       decoration: InputDecoration(
-                        labelText: 'Judul Tugas *',
-                        hintText: 'Contoh: Menyusun laporan',
+                        labelText: ('Judul Tugas *').tr(ctx),
+                        hintText: ('Contoh: Menyusun laporan').tr(ctx),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -158,14 +159,15 @@ class _LogbookViewState extends State<LogbookView> {
                             initialValue: selectedCategory,
                             decoration: InputDecoration(
                               labelText:
-                                  'Kategori Logbook${requireCategory ? ' *' : ''}',
-                              hintText: sheetCategories.isEmpty
-                                  ? 'Kategori belum tersedia'
-                                  : 'Pilih kategori',
-                              helperText: sheetCategories.isEmpty
+                                  ('Kategori Logbook${requireCategory ? ' *' : ''}')
+                                      .tr(ctx),
+                              hintText: (sheetCategories.isEmpty
+                                  ? ('Kategori belum tersedia').tr(ctx)
+                                  : ('Pilih kategori').tr(ctx)),
+                              helperText: (sheetCategories.isEmpty
                                   ? (cubit.state.categoryError ??
-                                        'Tidak ada kategori aktif')
-                                  : null,
+                                        ('Tidak ada kategori aktif').tr(ctx))
+                                  : null),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -228,8 +230,8 @@ class _LogbookViewState extends State<LogbookView> {
                               enabled: !isSavingCategory,
                               textCapitalization: TextCapitalization.words,
                               decoration: InputDecoration(
-                                labelText: 'Nama Kategori Baru',
-                                hintText: 'Contoh: Meeting',
+                                labelText: ('Nama Kategori Baru').tr(ctx),
+                                hintText: ('Contoh: Meeting').tr(ctx),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
@@ -249,7 +251,7 @@ class _LogbookViewState extends State<LogbookView> {
                                       if (name.isEmpty) {
                                         ScaffoldMessenger.of(ctx).showSnackBar(
                                           const SnackBar(
-                                            content: Text(
+                                            content: HrText(
                                               'Nama kategori wajib diisi',
                                             ),
                                           ),
@@ -308,7 +310,9 @@ class _LogbookViewState extends State<LogbookView> {
                             controller: startController,
                             readOnly: true,
                             decoration: InputDecoration(
-                              labelText: 'Mulai${requireTime ? ' *' : ''}',
+                              labelText: ('Mulai${requireTime ? ' *' : ''}').tr(
+                                ctx,
+                              ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -346,7 +350,8 @@ class _LogbookViewState extends State<LogbookView> {
                             controller: endController,
                             readOnly: true,
                             decoration: InputDecoration(
-                              labelText: 'Selesai${requireTime ? ' *' : ''}',
+                              labelText: ('Selesai${requireTime ? ' *' : ''}')
+                                  .tr(ctx),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -374,7 +379,7 @@ class _LogbookViewState extends State<LogbookView> {
                     ),
                     if (!requireTime && useDefaultTime) ...[
                       SizedBox(height: AppDimens.h8),
-                      Text(
+                      HrText(
                         'Jika waktu kosong, mulai pertama dari check-in/jadwal (fallback $defaultStartTime). Log berikutnya mulai dari selesai sebelumnya; durasi otomatis $defaultDuration.',
                         style: TextStyle(
                           color: AppColors.labelSecondary,
@@ -387,10 +392,10 @@ class _LogbookViewState extends State<LogbookView> {
                       controller: descController,
                       maxLines: 3,
                       decoration: InputDecoration(
-                        labelText: requireDescription
-                            ? 'Deskripsi *'
-                            : 'Deskripsi (Opsional)',
-                        hintText: 'Detail pekerjaan...',
+                        labelText: (requireDescription
+                            ? ('Deskripsi *').tr(ctx)
+                            : ('Deskripsi (Opsional)').tr(ctx)),
+                        hintText: ('Detail pekerjaan...').tr(ctx),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -438,10 +443,10 @@ class _LogbookViewState extends State<LogbookView> {
                             await AppModalBottom.showDefault(
                               ctx,
                               emptyState: EmptyState.somethingWrong,
-                              contentTitle: 'Informasi',
+                              contentTitle: ('Informasi').tr(ctx),
                               contentSubtitle: validationMessage,
                               hasActionPop: true,
-                              yesOkLabel: 'Tutup',
+                              yesOkLabel: ('Tutup').tr(ctx),
                             );
                             return;
                           }
@@ -472,7 +477,7 @@ class _LogbookViewState extends State<LogbookView> {
                               : PhosphorIcons.plus,
                           size: 20,
                         ),
-                        label: Text(
+                        label: HrText(
                           isEditing ? 'Simpan Perubahan' : 'Simpan Logbook',
                           style: const TextStyle(fontWeight: FontWeight.w600),
                         ),
@@ -502,7 +507,7 @@ class _LogbookViewState extends State<LogbookView> {
         if (state.successMessage != null) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.successMessage!),
+              content: HrText(state.successMessage!),
               backgroundColor: AppColors.success,
               behavior: SnackBarBehavior.floating,
             ),
@@ -512,10 +517,10 @@ class _LogbookViewState extends State<LogbookView> {
           AppModalBottom.showDefault(
             context,
             emptyState: EmptyState.somethingWrong,
-            contentTitle: 'Informasi',
+            contentTitle: ('Informasi').tr(context),
             contentSubtitle: state.errorMessage!,
             hasActionPop: true,
-            yesOkLabel: 'Tutup',
+            yesOkLabel: ('Tutup').tr(context),
           );
         }
       },
@@ -546,9 +551,9 @@ class _LogbookViewState extends State<LogbookView> {
           },
           child: Scaffold(
             appBar: AppTopBar(
-              title: state.showingAllEmployees
-                  ? 'Riwayat Logbook'
-                  : 'Logbook Harian',
+              title: (state.showingAllEmployees
+                  ? ('Riwayat Logbook').tr(context)
+                  : ('Logbook Harian').tr(context)),
               backgroundColor: AppColors.transparent,
               onBackTap: state.showingAllEmployees
                   ? () => cubit.setShowingAllEmployees(false)
@@ -601,7 +606,7 @@ class _LogbookViewState extends State<LogbookView> {
         child: OutlinedButton.icon(
           onPressed: () => cubit.setShowingAllEmployees(true),
           icon: Icon(PhosphorIcons.usersThree, size: 19),
-          label: const Text('Buka Riwayat Logbook Karyawan'),
+          label: const HrText('Buka Riwayat Logbook Karyawan'),
           style: OutlinedButton.styleFrom(
             foregroundColor: AppColors.primary,
             backgroundColor: AppColors.primary.withValues(alpha: 0.05),
@@ -668,7 +673,7 @@ class _LogbookViewState extends State<LogbookView> {
                   initialDate: state.selectedDate,
                   firstDate: DateTime(2020),
                   lastDate: DateTime.now(),
-                  locale: const Locale('id'),
+                  locale: Localizations.localeOf(context),
                 );
                 if (picked != null) {
                   cubit.onDateChanged(picked);
@@ -695,7 +700,7 @@ class _LogbookViewState extends State<LogbookView> {
                         color: AppColors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Text(
+                      child: HrText(
                         'Hari Ini',
                         style: TextStyle(
                           color: AppColors.primary,
@@ -780,7 +785,7 @@ class _LogbookViewState extends State<LogbookView> {
             color: AppColors.labelSecondary.withValues(alpha: 0.3),
           ),
           SizedBox(height: AppDimens.h12),
-          Text(
+          HrText(
             showingAllEmployees
                 ? 'Belum ada logbook karyawan'
                 : 'Belum ada logbook hari ini',
@@ -790,7 +795,7 @@ class _LogbookViewState extends State<LogbookView> {
             ),
           ),
           SizedBox(height: AppDimens.h4),
-          Text(
+          HrText(
             showingAllEmployees
                 ? 'Tidak ada data pada tanggal ini'
                 : 'Ketuk + untuk mencatat aktivitas',
@@ -863,7 +868,7 @@ class _LogbookViewState extends State<LogbookView> {
               children: [
                 Icon(PhosphorIcons.timer, size: 18, color: AppColors.primary),
                 SizedBox(width: AppDimens.w8),
-                Text(
+                HrText(
                   'Total: ${_formatDuration(totalMinutes)}',
                   style: context.textStyle.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w700,
@@ -871,7 +876,7 @@ class _LogbookViewState extends State<LogbookView> {
                   ),
                 ),
                 const Spacer(),
-                Text(
+                HrText(
                   '$totalActivities aktivitas',
                   style: context.textStyle.bodySmall?.copyWith(
                     color: AppColors.labelSecondary,
@@ -1007,7 +1012,7 @@ class _LogbookViewState extends State<LogbookView> {
                           ),
                         ),
                         const SizedBox(height: 2),
-                        Text(
+                        HrText(
                           '${summary.totalTask} task · ${_formatDuration(summary.totalDurasiMenit)}',
                           style: context.textStyle.bodySmall?.copyWith(
                             color: AppColors.labelSecondary,
@@ -1042,12 +1047,12 @@ class _LogbookViewState extends State<LogbookView> {
                 padding: const EdgeInsets.all(12),
                 child: Row(
                   children: [
-                    Expanded(child: Text(error)),
+                    Expanded(child: HrText(error)),
                     TextButton(
                       onPressed: () => context
                           .read<LogbookCubit>()
                           .fetchUserLogbooks(summary.userId),
-                      child: const Text('Coba Lagi'),
+                      child: const HrText('Coba Lagi'),
                     ),
                   ],
                 ),
@@ -1055,7 +1060,7 @@ class _LogbookViewState extends State<LogbookView> {
             else if (entries.isEmpty)
               const Padding(
                 padding: EdgeInsets.all(16),
-                child: Text('Tidak ada task pada filter ini.'),
+                child: HrText('Tidak ada task pada filter ini.'),
               )
             else
               Padding(
@@ -1175,9 +1180,9 @@ class _LogbookViewState extends State<LogbookView> {
                               width: 28,
                               height: 28,
                               child: IconButton(
-                                tooltip: showActions
-                                    ? 'Tutup aksi'
-                                    : 'Tampilkan aksi',
+                                tooltip: (showActions
+                                    ? ('Tutup aksi').tr(context)
+                                    : ('Tampilkan aksi').tr(context)),
                                 padding: EdgeInsets.zero,
                                 visualDensity: VisualDensity.compact,
                                 onPressed: () => setState(() {
@@ -1212,7 +1217,9 @@ class _LogbookViewState extends State<LogbookView> {
                           ),
                           _buildCardMeta(
                             icon: PhosphorIcons.tag,
-                            label: entry.kategoriTugas ?? 'Lainnya',
+                            label:
+                                (entry.kategoriTugas ??
+                                ('Lainnya').tr(context)),
                             color: color,
                           ),
                         ],
@@ -1240,7 +1247,7 @@ class _LogbookViewState extends State<LogbookView> {
                           children: [
                             _buildActionButton(
                               icon: PhosphorIcons.pencilSimple,
-                              label: 'Edit',
+                              label: ('Edit').tr(context),
                               color: AppColors.primary,
                               onTap: () =>
                                   _showAddLogbookSheet(context, entry: entry),
@@ -1248,7 +1255,7 @@ class _LogbookViewState extends State<LogbookView> {
                             SizedBox(width: AppDimens.w8),
                             _buildActionButton(
                               icon: PhosphorIcons.trash,
-                              label: 'Hapus',
+                              label: ('Hapus').tr(context),
                               color: AppColors.danger,
                               onTap: () =>
                                   _confirmDelete(context, cubit, entry),
@@ -1334,7 +1341,7 @@ class _LogbookViewState extends State<LogbookView> {
                             ),
                           ),
                           const SizedBox(height: 3),
-                          Text(
+                          HrText(
                             entry.userName ?? 'Karyawan',
                             style: sheetContext.textStyle.bodySmall?.copyWith(
                               color: AppColors.labelSecondary,
@@ -1358,20 +1365,20 @@ class _LogbookViewState extends State<LogbookView> {
                       _buildDetailRow(
                         sheetContext,
                         icon: PhosphorIcons.clock,
-                        label: 'Waktu',
+                        label: ('Waktu').tr(context),
                         value:
                             '${entry.jamMulai ?? '--:--'} – ${entry.jamSelesai ?? '--:--'}',
                       ),
                       _buildDetailRow(
                         sheetContext,
                         icon: PhosphorIcons.timer,
-                        label: 'Durasi',
+                        label: ('Durasi').tr(context),
                         value: _formatDuration(entry.durasiMenit),
                       ),
                       _buildDetailRow(
                         sheetContext,
                         icon: PhosphorIcons.tag,
-                        label: 'Kategori',
+                        label: ('Kategori').tr(context),
                         value: entry.kategoriTugas ?? 'Lainnya',
                         isLast: true,
                       ),
@@ -1380,7 +1387,7 @@ class _LogbookViewState extends State<LogbookView> {
                 ),
                 if (entry.deskripsi?.trim().isNotEmpty == true) ...[
                   const SizedBox(height: 18),
-                  Text(
+                  HrText(
                     'Deskripsi Task',
                     style: sheetContext.textStyle.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w700,
@@ -1418,7 +1425,7 @@ class _LogbookViewState extends State<LogbookView> {
           const SizedBox(width: 9),
           SizedBox(
             width: 70,
-            child: Text(
+            child: HrText(
               label,
               style: context.textStyle.bodySmall?.copyWith(
                 color: AppColors.labelSecondary,
@@ -1453,7 +1460,7 @@ class _LogbookViewState extends State<LogbookView> {
         const SizedBox(width: 4),
         ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 130),
-          child: Text(
+          child: HrText(
             label,
             style: TextStyle(
               color: foreground,
@@ -1488,7 +1495,7 @@ class _LogbookViewState extends State<LogbookView> {
           children: [
             Icon(icon, size: 14, color: color),
             const SizedBox(width: 4),
-            Text(
+            HrText(
               label,
               style: TextStyle(
                 color: color,
@@ -1510,12 +1517,12 @@ class _LogbookViewState extends State<LogbookView> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Hapus Logbook?'),
-        content: const Text('Data yang dihapus tidak dapat dikembalikan.'),
+        title: const HrText('Hapus Logbook?'),
+        content: const HrText('Data yang dihapus tidak dapat dikembalikan.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Batal'),
+            child: const HrText('Batal'),
           ),
           ElevatedButton(
             onPressed: () {
@@ -1523,7 +1530,7 @@ class _LogbookViewState extends State<LogbookView> {
               cubit.deleteLogbookEntry(entry.id);
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.danger),
-            child: const Text('Hapus', style: TextStyle(color: Colors.white)),
+            child: const HrText('Hapus', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),

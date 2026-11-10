@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
@@ -73,13 +74,13 @@ class PayrollSlipCard extends StatelessWidget {
           spacing: AppDimens.h10,
           children: [
             AppRequestDateRow(
-              title: 'Total Pendapatan',
+              title: ('Total Pendapatan').tr(context),
               value: _formatCurrency(slip!.totalIncome),
               icon: PhosphorIcons.arrowUpRight,
               iconColor: AppColors.green,
             ),
             AppRequestDateRow(
-              title: 'Total Potongan',
+              title: ('Total Potongan').tr(context),
               value: _formatCurrency(slip!.totalDeduction),
               icon: PhosphorIcons.arrowDownRight,
               iconColor: AppColors.danger,
@@ -87,7 +88,7 @@ class PayrollSlipCard extends StatelessWidget {
           ],
         ),
       ],
-      footer: Text(
+      footer: HrText(
         'Gaji Bersih: ${_formatCurrency(slip!.netSalary)}',
         style: context.theme.textTheme.bodySmall?.copyWith(
           color: AppColors.green,

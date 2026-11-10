@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'dart:io';
 import 'package:auto_route/auto_route.dart';
 import 'package:camera/camera.dart';
@@ -62,7 +63,7 @@ class _AppCameraViewState extends State<AppCameraView> {
               backgroundColor: Colors.transparent,
               elevation: 0,
               centerTitle: true,
-              title: Text(
+              title: HrText(
                 state.type.title,
                 style: context.textStyle.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
@@ -163,7 +164,7 @@ class _AppCameraViewState extends State<AppCameraView> {
                                     AppDimens.r20,
                                   ),
                                 ),
-                                child: Text(
+                                child: HrText(
                                   kIsWeb
                                       ? 'Pastikan wajah terlihat jelas, lalu ambil foto'
                                       : state.isFaceDetected

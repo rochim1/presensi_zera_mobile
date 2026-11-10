@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:presensi_domain/presensi_domain.dart';
@@ -17,10 +18,7 @@ class ReimbursementCard extends StatelessWidget {
     this.showUser = true,
   }) : isLoading = false;
 
-  const ReimbursementCard.shimmer({
-    super.key,
-    this.showUser = true,
-  })
+  const ReimbursementCard.shimmer({super.key, this.showUser = true})
     : reimbursement = null,
       isLoading = true,
       onTap = null;
@@ -35,9 +33,10 @@ class ReimbursementCard extends StatelessWidget {
     return AppRequestCard(
       user: reimbursement.user,
       showUser: showUser,
-      statusColor: AppColors.primary, // Using primary as default for Reimbursement status
+      statusColor: AppColors
+          .primary, // Using primary as default for Reimbursement status
       statusLabel: reimbursement.statusReimbursement?.toUpperCase() ?? '-',
-      title: 'Reimbursement',
+      title: ('Reimbursement').tr(context),
       subtitle: reimbursement.judul ?? '-',
       onTap: onTap,
       middleContent: [
@@ -45,7 +44,7 @@ class ReimbursementCard extends StatelessWidget {
           children: [
             Expanded(
               child: AppRequestDateRow(
-                title: 'Kategori',
+                title: ('Kategori').tr(context),
                 value: reimbursement.kategori ?? '-',
                 icon: PhosphorIcons.tag,
                 iconColor: AppColors.orange,
@@ -55,8 +54,10 @@ class ReimbursementCard extends StatelessWidget {
             SizedBox(width: AppDimens.w16),
             Expanded(
               child: AppRequestDateRow(
-                title: 'Tanggal',
-                value: reimbursement.tanggal?.format(pattern: 'dd MMM yyyy') ?? '-',
+                title: ('Tanggal').tr(context),
+                value:
+                    reimbursement.tanggal?.format(pattern: 'dd MMM yyyy') ??
+                    '-',
                 icon: PhosphorIcons.calendarBlank,
                 iconColor: AppColors.green,
               ),
@@ -68,27 +69,38 @@ class ReimbursementCard extends StatelessWidget {
           children: [
             Expanded(
               child: AppRequestDateRow(
-                title: 'Nominal',
-                value: reimbursement.nominal?.toCurrency(reimbursement.mataUang ?? CurrencySymbol.IDR) ?? '-',
+                title: ('Nominal').tr(context),
+                value:
+                    reimbursement.nominal?.toCurrency(
+                      reimbursement.mataUang ?? CurrencySymbol.IDR,
+                    ) ??
+                    '-',
                 icon: PhosphorIcons.coins,
                 iconColor: AppColors.primary,
               ),
             ),
           ],
         ),
-        if (reimbursement.catatanPengaju != null && reimbursement.catatanPengaju!.isNotEmpty) ...[
+        if (reimbursement.catatanPengaju != null &&
+            reimbursement.catatanPengaju!.isNotEmpty) ...[
           const SizedBox(height: 12),
           const Divider(height: 1, color: AppColors.dividerLight),
           const SizedBox(height: 12),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(PhosphorIcons.note, size: 16, color: AppColors.labelSecondary),
+              Icon(
+                PhosphorIcons.note,
+                size: 16,
+                color: AppColors.labelSecondary,
+              ),
               SizedBox(width: AppDimens.w8),
               Expanded(
                 child: Text(
                   reimbursement.catatanPengaju!,
-                  style: context.textTheme.bodySmall?.copyWith(color: AppColors.labelSecondary),
+                  style: context.textTheme.bodySmall?.copyWith(
+                    color: AppColors.labelSecondary,
+                  ),
                 ),
               ),
             ],

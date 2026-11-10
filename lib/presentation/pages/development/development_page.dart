@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,7 @@ class DevelopmentPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarWidget(
-        titleText: 'Dev Information',
+        titleText: ('Dev Information').tr(context),
         actions: [
           if (kDebugMode)
             ButtonAddAppBar(
@@ -46,7 +47,7 @@ class DevelopmentPage extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
+                  HrText(
                     'App Information',
                     style: context.textStyle.titleMedium!.copyWith(
                       color: AppColors.primary,
@@ -55,12 +56,12 @@ class DevelopmentPage extends StatelessWidget {
                   ),
                   AppDimens.paddingMediumX.hSpace,
                   ListComponentWidget(
-                    label: 'Environment',
+                    label: ('Environment').tr(context),
                     value: fl.env!.name,
                   ),
                   AppDimens.size2M.hDiv,
                   ListComponentWidget(
-                    label: 'App Name',
+                    label: ('App Name').tr(context),
                     value: fl.values!.appName,
                   ),
                   AppDimens.size2M.hDiv,
@@ -68,7 +69,7 @@ class DevelopmentPage extends StatelessWidget {
                     future: PackageInfo.fromPlatform(),
                     builder: (_, snapshot) {
                       return ListComponentWidget(
-                        label: 'App Version',
+                        label: ('App Version').tr(context),
                         value: snapshot.hasData
                             ? 'v${snapshot.data?.version}+${snapshot.data?.buildNumber}'
                             : '',
@@ -80,21 +81,21 @@ class DevelopmentPage extends StatelessWidget {
                   ),
                   AppDimens.size2M.hDiv,
                   ListComponentWidget(
-                    label: 'Debug',
+                    label: ('Debug').tr(context),
                     value: fl.values!.debug.toString().capitalize,
                   ),
                   AppDimens.size2M.hDiv,
                   ListComponentWidget(
-                    label: 'Print Response',
+                    label: ('Print Response').tr(context),
                     value: fl.values!.printResponse.toString().capitalize,
                   ),
                   AppDimens.size2M.hDiv,
                   ListComponentWidget(
-                    label: 'Duration',
+                    label: ('Duration').tr(context),
                     value: '${fl.values!.delay!.inMilliseconds} Milliseconds',
                   ),
                   AppDimens.paddingMediumX.hSpace,
-                  Text(
+                  HrText(
                     'Graphql Information',
                     style: context.textStyle.titleMedium!.copyWith(
                       color: AppColors.primary,
@@ -111,7 +112,7 @@ class DevelopmentPage extends StatelessWidget {
                         >(
                           builder: (_, state) {
                             return ListComponentWidget(
-                              label: 'BE Version',
+                              label: ('BE Version').tr(context),
                               value: state.version ?? '',
                               isShowTooltip: true,
                               isLoaded: state.status.isLoaded,
@@ -121,7 +122,7 @@ class DevelopmentPage extends StatelessWidget {
                   ),
                   AppDimens.size2M.hDiv,
                   ListComponentWidget(
-                    label: 'Base Api',
+                    label: ('Base Api').tr(context),
                     value: fl.baseApi ?? fl.values!.baseApi!,
                     isShowTooltip: true,
                   ),
@@ -131,7 +132,7 @@ class DevelopmentPage extends StatelessWidget {
                     child: BlocBuilder<UserGetLocalCubit, UserGetLocalState>(
                       builder: (_, state) {
                         return ListComponentWidget(
-                          label: 'ID User',
+                          label: ('ID User').tr(context),
                           value: state.status.isLoaded
                               ? state.data?.userId ?? ''
                               : '',
@@ -144,7 +145,7 @@ class DevelopmentPage extends StatelessWidget {
                               ),
                             ).then((value) {
                               Fluttertoast.showToast(
-                                msg: 'Berhasil salin ID user',
+                                msg: ('Berhasil salin ID user').trCurrent(),
                               );
                             });
                           },
@@ -154,30 +155,34 @@ class DevelopmentPage extends StatelessWidget {
                   ),
                   AppDimens.size2M.hDiv,
                   ListComponentWidget(
-                    label: 'Api Key',
+                    label: ('Api Key').tr(context),
                     value: fl.token ?? '',
                     onTap: () async {
                       await Clipboard.setData(
                         ClipboardData(text: fl.token ?? ''),
                       ).then((value) {
-                        Fluttertoast.showToast(msg: 'Berhasil salin JWT');
+                        Fluttertoast.showToast(
+                          msg: ('Berhasil salin JWT').trCurrent(),
+                        );
                       });
                     },
                   ),
                   AppDimens.size2M.hDiv,
                   ListComponentWidget(
-                    label: 'FCM Token',
+                    label: ('FCM Token').tr(context),
                     value: fl.appId ?? '',
                     onTap: () async {
                       await Clipboard.setData(
                         ClipboardData(text: fl.appId ?? ''),
                       ).then((value) {
-                        Fluttertoast.showToast(msg: 'Berhasil salin FCM Token');
+                        Fluttertoast.showToast(
+                          msg: ('Berhasil salin FCM Token').trCurrent(),
+                        );
                       });
                     },
                   ),
                   AppDimens.paddingMediumX.hSpace,
-                  Text(
+                  HrText(
                     'Firebase Information',
                     style: context.textStyle.titleMedium!.copyWith(
                       color: AppColors.primary,
@@ -186,29 +191,29 @@ class DevelopmentPage extends StatelessWidget {
                   ),
                   AppDimens.paddingMediumX.hSpace,
                   ListComponentWidget(
-                    label: 'Api Key',
+                    label: ('Api Key').tr(context),
                     value: fl.values!.options.apiKey,
                   ),
                   AppDimens.size2M.hDiv,
                   ListComponentWidget(
-                    label: 'App Id',
+                    label: ('App Id').tr(context),
                     value: fl.values!.options.appId,
                   ),
                   AppDimens.size2M.hDiv,
                   ListComponentWidget(
-                    label: 'Messaging Sender Id',
+                    label: ('Messaging Sender Id').tr(context),
                     value: fl.values!.options.messagingSenderId,
                     isShowTooltip: false,
                   ),
                   AppDimens.size2M.hDiv,
                   ListComponentWidget(
-                    label: 'Project Id',
+                    label: ('Project Id').tr(context),
                     value: fl.values!.options.projectId,
                     isShowTooltip: false,
                   ),
                   AppDimens.size2M.hDiv,
                   ListComponentWidget(
-                    label: 'Storage Bucket',
+                    label: ('Storage Bucket').tr(context),
                     value: fl.values!.options.storageBucket,
                     isShowTooltip: false,
                   ),

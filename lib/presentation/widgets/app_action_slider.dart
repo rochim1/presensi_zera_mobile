@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:action_slider/action_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -103,7 +104,7 @@ class AppActionSlider extends StatelessWidget {
               ),
             ),
             child: Center(
-              child: Text(
+              child: HrText(
                 text,
                 style: context.textStyle.bodyMedium?.copyWith(
                   color: enabled

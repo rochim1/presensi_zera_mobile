@@ -1,3 +1,5 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
+import '../../../l10n/language_picker.dart';
 import 'dart:async';
 import 'dart:ui';
 
@@ -55,7 +57,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 color: Colors.black.withValues(alpha: .08),
                 shape: const CircleBorder(),
                 child: IconButton(
-                  tooltip: 'Tutup',
+                  tooltip: ('Tutup').tr(context),
                   onPressed: () => Navigator.of(dialogContext).pop(),
                   icon: const Icon(Icons.close_rounded),
                 ),
@@ -84,10 +86,10 @@ class _ProfilePageState extends State<ProfilePage> {
               slivers: [
                 SliverAppBar(
                   expandedHeight: AppDimens.size8X * 3,
-                  title: const Text('Profile'),
+                  title: const HrText('Profile'),
                   actions: [
                     IconButton(
-                      tooltip: 'Tampilkan kartu identitas',
+                      tooltip: ('Tampilkan kartu identitas').tr(context),
                       onPressed: () {
                         final appUser = context
                             .read<AppCubit>()
@@ -198,7 +200,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       } else if (state.typeState.isLoaded) {
                                         SmartDialog.dismiss();
                                         Fluttertoast.showToast(
-                                          msg: state.message!,
+                                          msg: (state.message!).trCurrent(),
                                         );
                                         ctxUser
                                             .read<UserGetDataCubit>()
@@ -211,7 +213,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         SmartDialog.dismiss();
                                         if (state.failed!) {
                                           Fluttertoast.showToast(
-                                            msg: state.message!,
+                                            msg: (state.message!).trCurrent(),
                                           );
                                         } else {
                                           AppModalBottom.handleError(
@@ -346,87 +348,107 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const ItemHeaderProfile(title: 'Umum'),
+                  ItemHeaderProfile(title: ('Umum').tr(context)),
+                  ListTile(
+                    leading: const Icon(Icons.language),
+                    title: Text(hrLocale(context).languageTitle),
+                    trailing: const LanguagePicker(),
+                  ),
                   ItemListProfile(
                     icon: Icons.person_rounded,
-                    title: 'Profil Pengguna',
-                    description: 'Kelola informasi pribadi dan data diri Anda',
+                    title: ('Profil Pengguna').tr(context),
+                    description: ('Kelola informasi pribadi dan data diri Anda')
+                        .tr(context),
                     onTap: () =>
                         context.router.navigate(const ProfileUserPageRoute()),
                   ),
                   ItemListProfile(
                     icon: Icons.qr_code_2_rounded,
-                    title: 'Kartu Identitas & QR Kegiatan',
+                    title: ('Kartu Identitas & QR Kegiatan').tr(context),
                     description:
-                        'Tampilkan QR untuk dipindai petugas presensi kegiatan',
+                        ('Tampilkan QR untuk dipindai petugas presensi kegiatan')
+                            .tr(context),
                     onTap: () => _showEmployeeIdCard(user),
                   ),
                   ItemListProfile(
                     icon: Icons.account_circle_rounded,
-                    title: 'Pengaturan Akun',
-                    description: 'Ubah password dan pengaturan keamanan akun',
+                    title: ('Pengaturan Akun').tr(context),
+                    description: ('Ubah password dan pengaturan keamanan akun')
+                        .tr(context),
                     onTap: () => context.router.navigate(
                       const ProfileAccountPageRoute(),
                     ),
                   ),
                   ItemListProfile(
                     icon: Icons.delete_forever_rounded,
-                    title: 'Hapus Akun',
-                    description: 'Permintaan penghapusan akun Anda dari sistem',
+                    title: ('Hapus Akun').tr(context),
+                    description:
+                        ('Permintaan penghapusan akun Anda dari sistem').tr(
+                          context,
+                        ),
                     onTap: () => AppUtility.launchLink(
                       'https://app.pantoo.id/request-delete-account',
                     ),
                   ),
                   ItemListProfile(
                     icon: Icons.business_rounded,
-                    title: 'Detail Perusahaan',
+                    title: ('Detail Perusahaan').tr(context),
                     description:
-                        'Informasi lengkap tentang perusahaan tempat bekerja',
+                        ('Informasi lengkap tentang perusahaan tempat bekerja')
+                            .tr(context),
                     onTap: () =>
                         context.router.navigate(const ProfileOfficePageRoute()),
                   ),
                   ItemListProfile(
                     icon: Icons.directions_bike_rounded,
-                    title: 'Kendaraan',
+                    title: ('Kendaraan').tr(context),
                     description:
-                        'Daftar kendaraan yang terdaftar untuk perjalanan dinas',
+                        ('Daftar kendaraan yang terdaftar untuk perjalanan dinas')
+                            .tr(context),
                     onTap: () => context.router.navigate(
                       const ProfileInventoryPageRoute(),
                     ),
                   ),
                   ItemListProfile(
                     icon: Icons.sync_rounded,
-                    title: 'Sinkronisasi Data',
+                    title: ('Sinkronisasi Data').tr(context),
                     description:
-                        'Lihat daftar data offline yang belum terkirim ke server',
+                        ('Lihat daftar data offline yang belum terkirim ke server')
+                            .tr(context),
                     onTap: () =>
                         context.router.navigate(const ProfileSyncPageRoute()),
                   ),
-                  const ItemHeaderProfile(title: 'Pusat Bantuan'),
+                  ItemHeaderProfile(title: ('Pusat Bantuan').tr(context)),
                   ItemListProfile(
                     icon: Icons.phone_rounded,
-                    title: 'Hubungi Kami',
-                    description: 'Chat langsung dengan tim customer service',
+                    title: ('Hubungi Kami').tr(context),
+                    description: ('Chat langsung dengan tim customer service')
+                        .tr(context),
                     onTap: () => AppUtility.launchLink(kUrlWA),
                   ),
                   ItemListProfile(
                     icon: Icons.help_rounded,
-                    title: 'Bantuan',
-                    description: 'Panduan penggunaan aplikasi dan FAQ',
+                    title: ('Bantuan').tr(context),
+                    description: ('Panduan penggunaan aplikasi dan FAQ').tr(
+                      context,
+                    ),
                     onTap: () => AppUtility.launchLink(kUrlHelpDesk),
                   ),
                   ItemListProfile(
                     icon: Icons.security_rounded,
-                    title: 'Kebijakan Privasi',
-                    description: 'Ketentuan dan kebijakan privasi aplikasi',
+                    title: ('Kebijakan Privasi').tr(context),
+                    description: ('Ketentuan dan kebijakan privasi aplikasi')
+                        .tr(context),
                     onTap: () => AppUtility.launchLink(kUrlKebijakanPrivasi),
                   ),
-                  const ItemListProfile(
+                  ItemListProfile(
                     typeItem: ItemTypeProfile.text,
                     icon: Icons.info_rounded,
-                    title: 'Versi Aplikasi',
+                    title: ('Versi Aplikasi').tr(context),
                     description:
-                        'Informasi versi aplikasi yang sedang digunakan',
+                        ('Informasi versi aplikasi yang sedang digunakan').tr(
+                          context,
+                        ),
                   ),
                   BlocConsumer<LoginSignOutCubit, LoginSignOutState>(
                     listener: (context, state) {
@@ -439,15 +461,17 @@ class _ProfilePageState extends State<ProfilePage> {
                     },
                     builder: (ctxLog, state) => ItemListProfile(
                       icon: Icons.logout_rounded,
-                      title: 'Keluar',
-                      description: 'Keluar dari akun pada perangkat ini',
+                      title: ('Keluar').tr(context),
+                      description: ('Keluar dari akun pada perangkat ini').tr(
+                        context,
+                      ),
                       onTap: state.status.isLoading
                           ? null
                           : () async {
                               final answer = await AppModalBottom.showConfirm(
                                 context,
                                 contentSubtitle: kMsgBackApp,
-                                yesOkLabel: 'Keluar',
+                                yesOkLabel: ('Keluar').tr(context),
                               );
                               if (!ctxLog.mounted) return;
                               if (answer != null && answer.isYesOk) {
@@ -562,7 +586,7 @@ class _EmployeeIdCardState extends State<_EmployeeIdCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
+          HrText(
             'KARTU IDENTITAS',
             style: context.textStyle.labelSmall?.copyWith(
               color: AppColors.primary,
@@ -581,7 +605,7 @@ class _EmployeeIdCardState extends State<_EmployeeIdCard> {
             ),
           ),
           const SizedBox(height: 4),
-          Text(
+          HrText(
             widget.user?.divisiId?.namaDivisi ?? 'Karyawan',
             style: context.textStyle.bodySmall?.copyWith(
               color: AppColors.grey.shade700,
@@ -620,7 +644,7 @@ class _EmployeeIdCardState extends State<_EmployeeIdCard> {
                     child: Center(
                       child: snapshot.hasError
                           ? IconButton(
-                              tooltip: 'Muat ulang QR',
+                              tooltip: ('Muat ulang QR').tr(context),
                               onPressed: () =>
                                   setState(() => _qrToken = _loadQrToken()),
                               icon: const Icon(
@@ -637,7 +661,7 @@ class _EmployeeIdCardState extends State<_EmployeeIdCard> {
           ),
           const SizedBox(height: 6),
           Center(
-            child: Text(
+            child: HrText(
               'Tunjukkan QR ini kepada petugas kegiatan.',
               style: context.textStyle.labelSmall?.copyWith(
                 color: AppColors.grey.shade600,
@@ -684,9 +708,9 @@ class _ProfileSubscriptionBadgeState extends State<_ProfileSubscriptionBadge> {
         if (!snapshot.hasData) {
           return _buildPill(
             context,
-            label: snapshot.hasError
-                ? 'Langganan tidak tersedia'
-                : 'Memuat langganan...',
+            label: (snapshot.hasError
+                ? ('Langganan tidak tersedia').tr(context)
+                : ('Memuat langganan...').tr(context)),
             color: AppColors.primary,
           );
         }
@@ -736,7 +760,7 @@ class _ProfileSubscriptionBadgeState extends State<_ProfileSubscriptionBadge> {
       children: [
         const Icon(Icons.bookmark, size: 16, color: Colors.white),
         const SizedBox(width: 5),
-        Text(
+        HrText(
           label,
           overflow: TextOverflow.ellipsis,
           style: context.textStyle.labelMedium?.copyWith(

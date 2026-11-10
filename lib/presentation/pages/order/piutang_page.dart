@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,7 +22,7 @@ class _PiutangPageState extends State<PiutangPage> {
           sl<OrderGetAllSalesOrdersCubit>()
             ..getAllData(statusPembayaran: 'unpaid'),
       child: Scaffold(
-        appBar: const AppTopBar(title: 'Daftar Piutang Outlet'),
+        appBar: AppTopBar(title: ('Daftar Piutang Outlet').tr(context)),
         body: BlocBuilder<OrderGetAllSalesOrdersCubit, OrderGetAllSalesOrdersState>(
           builder: (context, state) {
             if (state.status == TypeState.loading ||
@@ -78,7 +79,7 @@ class _PiutangPageState extends State<PiutangPage> {
 
             if (state.status == TypeState.notLoaded) {
               return Center(
-                child: Text(
+                child: HrText(
                   state.failure?.message ?? 'Terjadi kesalahan',
                   style: const TextStyle(color: Colors.red),
                 ),
@@ -87,7 +88,7 @@ class _PiutangPageState extends State<PiutangPage> {
 
             final items = state.salesOrders ?? [];
             if (items.isEmpty) {
-              return const Center(child: Text('Tidak ada piutang saat ini.'));
+              return const Center(child: HrText('Tidak ada piutang saat ini.'));
             }
 
             return RefreshIndicator(
@@ -135,7 +136,7 @@ class _PiutangPageState extends State<PiutangPage> {
                                   AppDimens.radiusSmall,
                                 ),
                               ),
-                              child: Text(
+                              child: HrText(
                                 isPartial ? 'Dibayar Sebagian' : 'Belum Lunas',
                                 style: const TextStyle(
                                   color: AppColors.danger,
@@ -148,17 +149,17 @@ class _PiutangPageState extends State<PiutangPage> {
                         ),
                         const SizedBox(height: AppDimens.paddingMedium),
                         Text('Outlet: ${item.outletNama ?? '-'}'),
-                        Text(
+                        HrText(
                           'Tipe Order: ${item.tipeOrder?.replaceAll('_', ' ').toUpperCase() ?? '-'}',
                         ),
-                        Text(
+                        HrText(
                           'Tgl Order: ${item.tanggal?.split('T').first ?? '-'}',
                         ),
                         const Divider(),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text(
+                            const HrText(
                               'Total Piutang',
                               style: TextStyle(fontWeight: FontWeight.w500),
                             ),

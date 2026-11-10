@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
@@ -28,7 +29,7 @@ class CheckInPage extends StatelessWidget {
       builder: (context, appState) {
         final setting = appState.setting.data;
         if (!appState.setting.isSuccess || setting == null) {
-          return const _SettingUnavailablePage(title: 'Check In');
+          return _SettingUnavailablePage(title: ('Check In').tr(context));
         }
         final completedAttendance =
             appState.activeAttendance.data?.jamPulang != null;
@@ -108,8 +109,8 @@ Future<bool> ensureAttendanceSettingAvailable(BuildContext context) async {
     barrierDismissible: false,
     builder: (dialogContext) => StatefulBuilder(
       builder: (context, setDialogState) => AlertDialog(
-        title: const Text('Pengaturan presensi belum tersedia'),
-        content: const Text(
+        title: const HrText('Pengaturan presensi belum tersedia'),
+        content: const HrText(
           'Perbarui data terlebih dahulu sebelum melakukan presensi.',
         ),
         actions: [
@@ -117,7 +118,7 @@ Future<bool> ensureAttendanceSettingAvailable(BuildContext context) async {
             onPressed: refreshing
                 ? null
                 : () => Navigator.of(dialogContext).pop(false),
-            child: const Text('Tutup'),
+            child: const HrText('Tutup'),
           ),
           FilledButton(
             onPressed: refreshing
@@ -135,7 +136,7 @@ Future<bool> ensureAttendanceSettingAvailable(BuildContext context) async {
                     setDialogState(() => refreshing = false);
                     ScaffoldMessenger.of(dialogContext).showSnackBar(
                       const SnackBar(
-                        content: Text(
+                        content: HrText(
                           'Pengaturan belum dapat dimuat. Periksa koneksi lalu coba lagi.',
                         ),
                       ),
@@ -147,7 +148,7 @@ Future<bool> ensureAttendanceSettingAvailable(BuildContext context) async {
                     height: 18,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Text('Perbarui'),
+                : const HrText('Perbarui'),
           ),
         ],
       ),
@@ -360,7 +361,7 @@ class _CheckInViewState extends State<CheckInView> {
                       imageFile: state.form.photo.value,
                       onTap: () => onTapPhoto(),
                       onDelete: () => cubit.onChangePhoto(null),
-                      errorText: state.form.photo.errorMessage,
+                      errorText: (state.form.photo.errorMessage)?.tr(context),
                     ),
                   ),
 
@@ -490,7 +491,7 @@ class _CheckInViewState extends State<CheckInView> {
                 AppDimens.paddingMedium.hSpace,
                 AppButton(
                   onPressed: cubit.submit,
-                  text: 'Check In',
+                  text: ('Check In').tr(context),
                   isLoading:
                       state.checkIn.isLoading ||
                       _isOpeningPhoto ||
@@ -503,19 +504,19 @@ class _CheckInViewState extends State<CheckInView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               AppTextField(
-                label: 'Catatan (Opsional)',
-                hintText: 'Masukkan catatan untuk kehadiran ini',
+                label: ('Catatan (Opsional)').tr(context),
+                hintText: ('Masukkan catatan untuk kehadiran ini').tr(context),
                 maxLines: 3,
                 onChanged: cubit.onChangeKeterangan,
-                errorText: state.form.keterangan.errorMessage,
+                errorText: (state.form.keterangan.errorMessage)?.tr(context),
               ),
               AppDimens.paddingMedium.hSpace,
               AppAttachmentField(
-                label: state.form.attachment.isRequired
-                    ? 'Bukti pendukung (Wajib)'
-                    : 'Lampiran (Opsional)',
-                hintText: 'Tambahkan foto atau dokumen pendukung',
-                errorText: state.form.attachment.errorMessage,
+                label: (state.form.attachment.isRequired
+                    ? ('Bukti pendukung (Wajib)').tr(context)
+                    : ('Lampiran (Opsional)').tr(context)),
+                hintText: ('Tambahkan foto atau dokumen pendukung').tr(context),
+                errorText: (state.form.attachment.errorMessage)?.tr(context),
                 value: state.form.attachment.value
                     .map((e) => e.name)
                     .join(', '),

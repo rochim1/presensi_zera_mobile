@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -108,7 +109,7 @@ class _GoogleAccountButtonState extends State<GoogleAccountButton> {
     setState(() => _error = message);
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    ).showSnackBar(SnackBar(content: HrText(message)));
   }
 
   Future<void> _authenticate() async {
@@ -238,7 +239,7 @@ class _GoogleAccountButtonState extends State<GoogleAccountButton> {
             minimumSize: const Size.fromHeight(48),
           ),
           icon: const Icon(PhosphorIcons.googleLogo),
-          label: Text(
+          label: HrText(
             _error == null
                 ? 'Lanjutkan dengan Google'
                 : 'Coba hubungkan Google',
@@ -253,7 +254,7 @@ class _GoogleAccountButtonState extends State<GoogleAccountButton> {
               children: [
                 const LinearProgressIndicator(),
                 const SizedBox(height: 8),
-                Text(
+                HrText(
                   _busy ? _progress : 'Menyiapkan login Google…',
                   textAlign: TextAlign.center,
                 ),
@@ -264,7 +265,7 @@ class _GoogleAccountButtonState extends State<GoogleAccountButton> {
       if (_error != null)
         Padding(
           padding: const EdgeInsets.only(top: 8),
-          child: Text(
+          child: HrText(
             _error!,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodySmall,
@@ -276,7 +277,7 @@ class _GoogleAccountButtonState extends State<GoogleAccountButton> {
           Expanded(child: Divider()),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 12),
-            child: Text('atau dengan email'),
+            child: HrText('atau dengan email'),
           ),
           Expanded(child: Divider()),
         ],

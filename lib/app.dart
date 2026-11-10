@@ -1,3 +1,6 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
+import 'l10n/app_language_controller.dart';
+import 'l10n/generated/app_localizations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -89,7 +92,7 @@ class _AppState extends State<App> {
                     color: Colors.red,
                   ),
                   const SizedBox(height: 16),
-                  const Text(
+                  const HrText(
                     'Koneksi Gagal',
                     style: TextStyle(
                       fontSize: 18,
@@ -124,7 +127,7 @@ class _AppState extends State<App> {
                             ),
                             padding: const EdgeInsets.symmetric(vertical: 12),
                           ),
-                          child: const Text(
+                          child: const HrText(
                             'Logout',
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
@@ -142,7 +145,7 @@ class _AppState extends State<App> {
                             ),
                             padding: const EdgeInsets.symmetric(vertical: 12),
                           ),
-                          child: const Text(
+                          child: const HrText(
                             'Tutup',
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
@@ -178,45 +181,52 @@ class _AppState extends State<App> {
         ? logicalSize
         : const Size(411, 731);
 
-    return ScreenUtilInit(
-      designSize: adaptiveDesignSize,
-      minTextAdapt: true,
-      splitScreenMode: true,
-      child: MaterialApp.router(
-        debugShowCheckedModeBanner: false,
-        routeInformationParser: _routeInformationParser,
-        routeInformationProvider: _routeInformationProvider,
-        routerDelegate: _routerDelegate,
-        theme: _lightTheme,
-        title: sl<FlavorConfig>().values!.appName!,
-        themeMode: ThemeMode.system,
-        localizationsDelegates: const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: const [Locale('id'), Locale('en')],
-        builder: FlutterSmartDialog.init(
-          loadingBuilder: (String value) => const LoadingIndicatorWidget(),
-          builder: (_, child) => ResponsiveBreakpoints.builder(
-            child: BlocProvider(
-              create: (_) => sl<AppCubit>()..init(),
-              // Android 15/16 draws the app edge-to-edge. Keep every route's
-              // footer above the system navigation area, including legacy
-              // forms whose bottomNavigationBar does not wrap itself in a
-              // SafeArea. Descendant SafeAreas consume the same inset, so it
-              // does not create double bottom padding.
-              child: SafeArea(
-                top: false,
-                maintainBottomViewPadding: true,
-                child: child ?? const PantooLaunchScreen(),
+    return ValueListenableBuilder<Locale?>(
+      valueListenable: AppLanguageController.instance,
+      builder: (_, selectedLocale, __) => ScreenUtilInit(
+        designSize: adaptiveDesignSize,
+        minTextAdapt: true,
+        splitScreenMode: true,
+        child: MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          routeInformationParser: _routeInformationParser,
+          routeInformationProvider: _routeInformationProvider,
+          routerDelegate: _routerDelegate,
+          theme: _lightTheme,
+          title: sl<FlavorConfig>().values!.appName!,
+          themeMode: ThemeMode.system,
+          locale: selectedLocale,
+          localeResolutionCallback: (device, supported) =>
+              AppLanguageController.resolve(device),
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [Locale('id'), Locale('en')],
+          builder: FlutterSmartDialog.init(
+            loadingBuilder: (String value) => const LoadingIndicatorWidget(),
+            builder: (_, child) => ResponsiveBreakpoints.builder(
+              child: BlocProvider(
+                create: (_) => sl<AppCubit>()..init(),
+                // Android 15/16 draws the app edge-to-edge. Keep every route's
+                // footer above the system navigation area, including legacy
+                // forms whose bottomNavigationBar does not wrap itself in a
+                // SafeArea. Descendant SafeAreas consume the same inset, so it
+                // does not create double bottom padding.
+                child: SafeArea(
+                  top: false,
+                  maintainBottomViewPadding: true,
+                  child: child ?? const PantooLaunchScreen(),
+                ),
               ),
+              breakpoints: const [
+                Breakpoint(start: 0, end: 450, name: MOBILE),
+                Breakpoint(start: 451, end: 800, name: TABLET),
+                Breakpoint(start: 801, end: 1920, name: DESKTOP),
+              ],
             ),
-            breakpoints: const [
-              Breakpoint(start: 0, end: 450, name: MOBILE),
-              Breakpoint(start: 451, end: 800, name: TABLET),
-              Breakpoint(start: 801, end: 1920, name: DESKTOP),
-            ],
           ),
         ),
       ),

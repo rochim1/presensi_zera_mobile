@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
 import 'package:presensi_mobile/presentation/widgets/global/list_item_attachment.dart';
@@ -53,8 +54,8 @@ class AppAttachmentField extends StatelessWidget {
               borderRadius: BorderRadius.circular(AppDimens.radiusMediumX),
               child: InputDecorator(
                 decoration: InputDecoration(
-                  errorText: errorText,
-                  hintText: hintText,
+                  errorText: (errorText)?.tr(context),
+                  hintText: (hintText)?.tr(context),
                   hintStyle: context.theme.textTheme.bodyMedium?.copyWith(
                     color: AppColors.labelSecondary.withValues(alpha: 0.5),
                   ),

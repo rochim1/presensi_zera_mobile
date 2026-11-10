@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
 
@@ -16,7 +17,7 @@ class ProfileFieldRow extends StatelessWidget {
         children: [
           Expanded(
             flex: 2,
-            child: Text(
+            child: HrText(
               title,
               style: context.textStyle.bodyMedium?.copyWith(
                 color: AppColors.labelSecondary,

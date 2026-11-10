@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -52,7 +53,9 @@ class ApprovalShiftSwapView extends StatelessWidget {
               onClose: () {
                 cubit.onChangeApprovalAction(null);
               },
-              title: const AppBottomSheetTitle(title: 'Detail Tukar Shift'),
+              title: AppBottomSheetTitle(
+                title: ('Detail Tukar Shift').tr(context),
+              ),
               child: SwapRequestDetailView(request: request),
               actionsBuilder: request.status == RequestStatus.pending
                   ? (_) => _buildApprovalActions(cubit, request)
@@ -113,8 +116,8 @@ class ApprovalShiftSwapView extends StatelessWidget {
               if (isActionSelected) ...[
                 if (isRejected) ...[
                   AppTextField(
-                    label: 'Alasan Penolakan',
-                    hintText: 'Masukkan alasan...',
+                    label: ('Alasan Penolakan').tr(context),
+                    hintText: ('Masukkan alasan...').tr(context),
                     maxLines: 3,
                     isRequired: true,
                     onChanged: cubit.onChangeReason,
@@ -124,7 +127,7 @@ class ApprovalShiftSwapView extends StatelessWidget {
                 ],
                 AppButtonNew(
                   onPressed: () => cubit.submitApproval(request),
-                  text: 'Kirim',
+                  text: ('Kirim').tr(context),
                   variant: approvalAction == RequestStatus.approved
                       ? AppButtonNewVariant.primary
                       : AppButtonNewVariant.tertiary,
@@ -138,7 +141,7 @@ class ApprovalShiftSwapView extends StatelessWidget {
                   actions: [
                     AppFlatSheetAction(
                       icon: Icons.close_rounded,
-                      label: 'Tolak',
+                      label: ('Tolak').tr(context),
                       color: AppColors.danger,
                       onTap: () {
                         cubit.onChangeApprovalAction(RequestStatus.rejected);
@@ -146,7 +149,7 @@ class ApprovalShiftSwapView extends StatelessWidget {
                     ),
                     AppFlatSheetAction(
                       icon: Icons.check_rounded,
-                      label: 'Setujui',
+                      label: ('Setujui').tr(context),
                       color: AppColors.primary,
                       onTap: () {
                         cubit.onChangeApprovalAction(RequestStatus.approved);

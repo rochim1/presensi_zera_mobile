@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -78,12 +79,12 @@ class _AppSmartRefresherState extends State<AppSmartRefresher> {
       scrollController: widget.scrollController,
       onRefresh: widget.onRefresh != null ? _handleRefresh : null,
       onLoading: widget.onLoadMore != null ? _handleLoadMore : null,
-      footer: const ClassicFooter(
-        idleText: "Tarik untuk muat lagi",
-        loadingText: "Memuat...",
-        noDataText: "Tidak ada data lagi",
-        failedText: "Gagal, coba lagi",
-        canLoadingText: "Lepas untuk memuat lagi",
+      footer: ClassicFooter(
+        idleText: ("Tarik untuk muat lagi").tr(context),
+        loadingText: ("Memuat...").tr(context),
+        noDataText: ("Tidak ada data lagi").tr(context),
+        failedText: ("Gagal, coba lagi").tr(context),
+        canLoadingText: ("Lepas untuk memuat lagi").tr(context),
       ),
       child: widget.child,
     );

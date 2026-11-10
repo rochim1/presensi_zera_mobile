@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
@@ -23,7 +24,8 @@ class ApotekDetailPage extends StatefulWidget {
   State<ApotekDetailPage> createState() => _ApotekDetailPageState();
 }
 
-class _ApotekDetailPageState extends State<ApotekDetailPage> with SingleTickerProviderStateMixin {
+class _ApotekDetailPageState extends State<ApotekDetailPage>
+    with SingleTickerProviderStateMixin {
   late Completer<GoogleMapController> mapController = Completer();
   GoogleMapController? _mapCtrl;
   late TabController _tabController;
@@ -69,8 +71,8 @@ class _ApotekDetailPageState extends State<ApotekDetailPage> with SingleTickerPr
   Widget build(BuildContext context) {
     if (widget.apotek == null) {
       return Scaffold(
-        appBar: const AppTopBar(title: 'Detail Outlet'),
-        body: const Center(child: Text('Data Outlet tidak ditemukan')),
+        appBar: AppTopBar(title: ('Detail Outlet').tr(context)),
+        body: const Center(child: HrText('Data Outlet tidak ditemukan')),
       );
     }
 
@@ -81,7 +83,7 @@ class _ApotekDetailPageState extends State<ApotekDetailPage> with SingleTickerPr
       child: BlocConsumer<GlobalMapCubit, GlobalMapState>(
         listener: (context, state) {
           if (state.typeState.isNotLoaded) {
-            Fluttertoast.showToast(msg: state.message!);
+            Fluttertoast.showToast(msg: (state.message!).trCurrent());
             if (!state.isLocationGranted) {
               context.router.pop();
             }
@@ -91,7 +93,7 @@ class _ApotekDetailPageState extends State<ApotekDetailPage> with SingleTickerPr
           return Scaffold(
             backgroundColor: AppColors.bgSecondary,
             appBar: AppTopBar(
-              title: 'Detail Outlet',
+              title: ('Detail Outlet').tr(context),
               backgroundColor: AppColors.white,
             ),
             body: NestedScrollView(
@@ -126,24 +128,27 @@ class _ApotekDetailPageState extends State<ApotekDetailPage> with SingleTickerPr
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                HrText(
                                   apotek.namaApotik ?? 'Outlet Tanpa Nama',
-                                  style: context.textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.labelPrimary,
-                                  ),
+                                  style: context.textTheme.titleMedium
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.labelPrimary,
+                                      ),
                                 ),
                                 SizedBox(height: AppDimens.h4),
                                 Row(
                                   children: [
                                     AppChip(
-                                      label: apotek.tipeOutlet ?? 'Umum',
+                                      label:
+                                          (apotek.tipeOutlet ??
+                                          ('Umum').tr(context)),
                                       color: AppColors.blue,
                                       borderRadius: AppDimens.r8,
                                     ),
                                     SizedBox(width: AppDimens.w8),
                                     AppChip(
-                                      label: 'Aktif',
+                                      label: ('Aktif').tr(context),
                                       color: AppColors.green,
                                       borderRadius: AppDimens.r8,
                                     ),
@@ -188,15 +193,21 @@ class _ApotekDetailPageState extends State<ApotekDetailPage> with SingleTickerPr
                   ApotekDetailIdentitasTab(apotek: apotek),
                   ApotekDetailLokasiTab(
                     apotek: apotek,
-                    position: state.targetPosition ?? LatLng(double.parse(kDefaultLat), double.parse(kDefaultLong)),
+                    position:
+                        state.targetPosition ??
+                        LatLng(
+                          double.parse(kDefaultLat),
+                          double.parse(kDefaultLong),
+                        ),
                     address: state.address?.toApotekAddress() ?? '',
                     isLoading: state.typeState.isLoading,
-                    onMapCreated: (controller) => onMapCreate(context, controller),
+                    onMapCreated: (controller) =>
+                        onMapCreate(context, controller),
                   ),
-                  const ApotekDetailEmptyTab(title: 'Piutang'),
-                  const ApotekDetailEmptyTab(title: 'Hutang'),
-                  const ApotekDetailEmptyTab(title: 'Barang MSL'),
-                  const ApotekDetailEmptyTab(title: 'Riwayat Order'),
+                  ApotekDetailEmptyTab(title: ('Piutang').tr(context)),
+                  ApotekDetailEmptyTab(title: ('Hutang').tr(context)),
+                  ApotekDetailEmptyTab(title: ('Barang MSL').tr(context)),
+                  ApotekDetailEmptyTab(title: ('Riwayat Order').tr(context)),
                   ApotekDetailStatistikTab(apotek: apotek),
                 ],
               ),
@@ -229,7 +240,7 @@ class _StickyTabBarDelegate extends SliverPersistentHeaderDelegate {
                   color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
-                )
+                ),
               ]
             : null,
       ),

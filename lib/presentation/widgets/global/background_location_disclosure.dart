@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
@@ -10,11 +11,11 @@ Future<bool> showBackgroundLocationDisclosure(BuildContext context) async {
     barrierDismissible: false,
     builder: (dialogContext) => AlertDialog(
       icon: const Icon(Icons.location_on_rounded, color: Colors.redAccent),
-      title: const Text(
+      title: const HrText(
         kIsWeb ? 'Izin lokasi browser' : 'Izin lokasi latar belakang',
       ),
       content: const SingleChildScrollView(
-        child: Text(
+        child: HrText(
           kIsWeb
               ? 'Pantoo menggunakan dan mengirimkan lokasi presisi untuk presensi '
                     'dan permintaan lokasi selama sesi kerja aktif. Lokasi dapat dilihat '
@@ -38,11 +39,11 @@ Future<bool> showBackgroundLocationDisclosure(BuildContext context) async {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(dialogContext).pop(false),
-          child: const Text('Tidak setuju'),
+          child: const HrText('Tidak setuju'),
         ),
         FilledButton(
           onPressed: () => Navigator.of(dialogContext).pop(true),
-          child: const Text('Setuju & lanjutkan'),
+          child: const HrText('Setuju & lanjutkan'),
         ),
       ],
     ),
@@ -73,7 +74,7 @@ class BackgroundLocationDisclosureNotice extends StatelessWidget {
           ),
           SizedBox(width: 10),
           Expanded(
-            child: Text(
+            child: HrText(
               kIsWeb
                   ? 'Lokasi digunakan untuk presensi dan permintaan lokasi saat sesi kerja aktif. '
                         'Browser dapat membatasi lokasi saat tab tidak aktif; pelacakan '

@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -45,13 +46,15 @@ class MyShiftSwapView extends StatelessWidget {
           void onTapSwapCard(ShiftSwapRequest request) {
             AppBottomSheet.show(
               context: context,
-              title: const AppBottomSheetTitle(title: 'Detail Tukar Shift'),
+              title: AppBottomSheetTitle(
+                title: ('Detail Tukar Shift').tr(context),
+              ),
               child: SwapRequestDetailView(request: request),
               actionsBuilder: (sheetContext) => AppFlatSheetActions(
                 actions: [
                   AppFlatSheetAction(
                     icon: Icons.cancel_outlined,
-                    label: 'Batalkan',
+                    label: ('Batalkan').tr(context),
                     color: AppColors.danger,
                     onTap: request.status == RequestStatus.pending
                         ? () async {
@@ -59,20 +62,20 @@ class MyShiftSwapView extends StatelessWidget {
                             final confirmed = await showDialog<bool>(
                               context: context,
                               builder: (_) => AlertDialog(
-                                title: const Text('Batalkan tukar shift?'),
-                                content: const Text(
+                                title: const HrText('Batalkan tukar shift?'),
+                                content: const HrText(
                                   'Pengajuan yang dibatalkan tidak dapat diproses kembali.',
                                 ),
                                 actions: [
                                   TextButton(
                                     onPressed: () =>
                                         Navigator.pop(context, false),
-                                    child: const Text('Kembali'),
+                                    child: const HrText('Kembali'),
                                   ),
                                   TextButton(
                                     onPressed: () =>
                                         Navigator.pop(context, true),
-                                    child: const Text('Batalkan'),
+                                    child: const HrText('Batalkan'),
                                   ),
                                 ],
                               ),
@@ -84,7 +87,7 @@ class MyShiftSwapView extends StatelessWidget {
                               if (context.mounted && error != null) {
                                 AppBottomSheet.showError(
                                   context: context,
-                                  titleText: 'Gagal membatalkan',
+                                  titleText: ('Gagal membatalkan').tr(context),
                                   message: error,
                                 );
                               }
@@ -94,7 +97,7 @@ class MyShiftSwapView extends StatelessWidget {
                   ),
                   AppFlatSheetAction(
                     icon: Icons.edit_outlined,
-                    label: 'Edit',
+                    label: ('Edit').tr(context),
                     color: AppColors.primary,
                     onTap: request.status == RequestStatus.pending
                         ? () async {
@@ -111,7 +114,7 @@ class MyShiftSwapView extends StatelessWidget {
                   ),
                   AppFlatSheetAction(
                     icon: Icons.close_rounded,
-                    label: 'Tutup',
+                    label: ('Tutup').tr(context),
                     color: AppColors.labelSecondary,
                     onTap: () => Navigator.of(sheetContext).pop(),
                   ),

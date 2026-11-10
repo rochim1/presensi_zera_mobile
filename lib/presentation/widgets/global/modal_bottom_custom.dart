@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -53,7 +54,7 @@ class AppModalBottom {
               backgroundColor: AppColors.fillTertiary,
               foregroundColor: AppColors.labelPrimary,
             ),
-            child: const Text('Tutup'),
+            child: const HrText('Tutup'),
           ),
         ),
       ],
@@ -128,7 +129,7 @@ class AppModalBottom {
                       ? AppColors.white
                       : AppColors.labelPrimary,
                 ),
-                child: Text(yesOkLabel!),
+                child: HrText(yesOkLabel!),
               ),
             ),
         ],
@@ -195,7 +196,7 @@ class AppModalBottom {
                         backgroundColor: AppColors.fillTertiary,
                         foregroundColor: AppColors.labelPrimary,
                       ),
-                  child: Text(cancelLabel),
+                  child: HrText(cancelLabel),
                 ),
               ),
               const SizedBox(width: AppDimens.paddingMediumX),
@@ -209,7 +210,7 @@ class AppModalBottom {
                         backgroundColor: AppColors.red,
                         foregroundColor: AppColors.white,
                       ),
-                  child: Text(yesOkLabel),
+                  child: HrText(yesOkLabel),
                 ),
               ),
             ],
@@ -286,7 +287,7 @@ class AppModalBottom {
                               backgroundColor: AppColors.lightRed,
                               foregroundColor: AppColors.red,
                             ),
-                        child: Text(cancelLabel),
+                        child: HrText(cancelLabel),
                       ),
                     ),
                     const SizedBox(width: AppDimens.paddingMediumX),
@@ -300,7 +301,7 @@ class AppModalBottom {
                               backgroundColor: AppColors.lightBlue,
                               foregroundColor: AppColors.blue,
                             ),
-                        child: Text(yesOkLabel),
+                        child: HrText(yesOkLabel),
                       ),
                     ),
                   ],
@@ -332,7 +333,7 @@ class AppModalBottom {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 IconButtonCustom(
-                  label: 'Kamera',
+                  label: ('Kamera').tr(context),
                   icon: const Icon(Icons.camera_alt_rounded),
                   color: AppColors.labelPrimary,
                   onTap: () => context.router.pop<AvatarAnswerState>(
@@ -340,7 +341,7 @@ class AppModalBottom {
                   ),
                 ),
                 IconButtonCustom(
-                  label: 'Galeri',
+                  label: ('Galeri').tr(context),
                   icon: const Icon(Icons.collections_rounded),
                   color: AppColors.labelPrimary,
                   onTap: () => context.router.pop<AvatarAnswerState>(
@@ -349,7 +350,7 @@ class AppModalBottom {
                 ),
                 if (hasDelete)
                   IconButtonCustom(
-                    label: 'Hapus',
+                    label: ('Hapus').tr(context),
                     icon: const Icon(Icons.delete_rounded),
                     color: AppColors.labelPrimary,
                     onTap: () => context.router.pop<AvatarAnswerState>(
@@ -397,7 +398,7 @@ class _ModalBottomView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (title != null)
-                Text(
+                HrText(
                   title!,
                   textAlign: TextAlign.start,
                   style: context.textStyle.titleLarge,
@@ -416,7 +417,7 @@ class _ModalBottomView extends StatelessWidget {
                         : AppDimens.emptyStateSize.height,
                   ),
                   const SizedBox(height: AppDimens.sizeL),
-                  Text(
+                  HrText(
                     contentTitle,
                     textAlign: TextAlign.center,
                     style: context.textStyle.titleLarge!.copyWith(
@@ -424,7 +425,7 @@ class _ModalBottomView extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: AppDimens.size3S),
-                  Text(
+                  HrText(
                     contentSubtitle,
                     textAlign: TextAlign.center,
                     style: context.textStyle.bodyMedium!.copyWith(
@@ -487,7 +488,7 @@ class _ModalBottomDetailView extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
+                  HrText(
                     title,
                     textAlign: TextAlign.center,
                     style: context.textStyle.titleMedium?.copyWith(

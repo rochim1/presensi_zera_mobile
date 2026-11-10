@@ -10,8 +10,6 @@ class ChatListState {
   ChatListState copyWith({
     BasePaginatedState<ConversationEntity>? conversations,
   }) {
-    return ChatListState(
-      conversations: conversations ?? this.conversations,
-    );
+    return ChatListState(conversations: conversations ?? this.conversations);
   }
 }

@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -81,7 +82,9 @@ class OvertimeRequestFormView extends StatelessWidget {
                 child: Column(
                   children: [
                     AppTopBar(
-                      title: request == null ? 'Ajukan Lembur' : 'Ubah Lembur',
+                      title: (request == null
+                          ? ('Ajukan Lembur').tr(context)
+                          : ('Ubah Lembur').tr(context)),
                       useGradient: false,
                       backgroundColor: Colors.transparent,
                       titleColor: AppColors.white,
@@ -113,48 +116,50 @@ class OvertimeRequestFormView extends StatelessWidget {
                             spacing: AppDimens.h16,
                             children: [
                               AppDateTimeField(
-                                label: 'Tanggal',
+                                label: ('Tanggal').tr(context),
                                 isRequired: true,
                                 firstDate: DateTime.now(),
-                                hintText: 'Pilih Tanggal',
+                                hintText: ('Pilih Tanggal').tr(context),
                                 value: state.form.date.value,
                                 onConfirmed: cubit.onChangeDate,
                                 errorText: state.form.date.errorMessage,
                               ),
                               AppDateTimeField(
-                                label: 'Jam Mulai',
+                                label: ('Jam Mulai').tr(context),
                                 isRequired: true,
                                 mode: AppDateTimeFieldMode.time,
-                                hintText: 'Masukkan Jam Mulai',
+                                hintText: ('Masukkan Jam Mulai').tr(context),
                                 value: state.form.startTime.value,
                                 onConfirmed: cubit.onChangeStartTime,
                                 errorText: state.form.startTime.errorMessage,
                               ),
                               AppDateTimeField(
-                                label: 'Jam Selesai',
+                                label: ('Jam Selesai').tr(context),
                                 isRequired: true,
                                 mode: AppDateTimeFieldMode.time,
-                                hintText: 'Masukkan Jam Selesai',
+                                hintText: ('Masukkan Jam Selesai').tr(context),
                                 value: state.form.endTime.value,
                                 onConfirmed: cubit.onChangeEndTime,
                                 errorText: state.form.endTime.errorMessage,
                               ),
                               AppTextField(
-                                label: 'Alasan',
+                                label: ('Alasan').tr(context),
                                 isRequired: true,
                                 hintText:
-                                    'Masukkan alasan lembur dan deskripsi pekerjaan yang akan dilakukan',
+                                    ('Masukkan alasan lembur dan deskripsi pekerjaan yang akan dilakukan')
+                                        .tr(context),
                                 maxLines: 3,
                                 initialValue: request?.reason,
                                 onChanged: cubit.onChangeReason,
                                 errorText: state.form.reason.errorMessage,
                               ),
                               AppAttachmentField(
-                                label: 'Bukti Pendukung',
+                                label: ('Bukti Pendukung').tr(context),
                                 isRequired:
                                     isAttachmentRequired && request == null,
                                 hintText:
-                                    'Tambahkan foto atau dokumen pendukung',
+                                    ('Tambahkan foto atau dokumen pendukung')
+                                        .tr(context),
                                 value: state.form.attachments.value
                                     .map((e) => e.name)
                                     .join(', '),
@@ -178,7 +183,9 @@ class OvertimeRequestFormView extends StatelessWidget {
             color: context.theme.scaffoldBackgroundColor,
             padding: EdgeInsets.all(AppDimens.w16),
             child: AppButtonNew(
-              text: request == null ? 'Buat Request' : 'Simpan Perubahan',
+              text: (request == null
+                  ? ('Buat Request').tr(context)
+                  : ('Simpan Perubahan').tr(context)),
               onPressed: () => cubit.submit(
                 isAttachmentRequired: isAttachmentRequired && request == null,
               ),

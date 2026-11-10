@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:presensi_domain/presensi_domain.dart';
@@ -55,33 +56,33 @@ class AttendanceRequestDetailView extends StatelessWidget {
 
   Widget _buildRequestDetails(BuildContext context) {
     return AppDetailSectionCard(
-      title: 'Informasi Request',
+      title: ('Informasi Request').tr(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         spacing: AppDimens.h12,
         children: [
-          Text(
+          HrText(
             'Detail Request',
             style: context.textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),
           AppLabeledValue(
-            label: 'Jenis Request',
+            label: ('Jenis Request').tr(context),
             value: request.type.displayName,
             icon: PhosphorIcons.article,
             iconColor: request.status.toDisplayColor,
           ),
           if (request.tanggalPresensi != null)
             AppLabeledValue(
-              label: 'Tanggal Presensi',
+              label: ('Tanggal Presensi').tr(context),
               value: request.tanggalPresensi!.format(
                 pattern: 'EEEE, dd MMMM yyyy',
               ),
               icon: PhosphorIcons.calendarBlank,
             ),
           AppLabeledValue(
-            label: 'Waktu yang Diminta',
+            label: ('Waktu yang Diminta').tr(context),
             value: request.waktuYangDiminta.isEmpty
                 ? '-'
                 : request.waktuYangDiminta,
@@ -95,7 +96,7 @@ class AttendanceRequestDetailView extends StatelessWidget {
 
   Widget _buildReason(BuildContext context) {
     return AppDetailSectionCard(
-      title: 'Alasan',
+      title: ('Alasan').tr(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -117,7 +118,7 @@ class AttendanceRequestDetailView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (request.approvalHistory == null)
-            Text(
+            HrText(
               'Belum ada riwayat persetujuan.',
               style: context.textTheme.bodyMedium?.copyWith(
                 color: AppColors.labelSecondary,

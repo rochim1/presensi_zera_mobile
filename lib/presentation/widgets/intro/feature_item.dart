@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/themes/colors_theme.dart';
@@ -35,14 +36,14 @@ class FeatureItem extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              HrText(
                 title,
                 style: AppTextStyle.fieldLabel.copyWith(
                   color: AppColors.labelPrimary,
                 ),
               ),
               const SizedBox(height: AppDimens.size2S),
-              Text(
+              HrText(
                 subtitle,
                 style: AppTextStyle.fieldHint.copyWith(fontSize: 14),
               ),

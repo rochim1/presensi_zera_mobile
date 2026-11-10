@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
 
@@ -13,7 +14,7 @@ class FailureNotFound extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
+          HrText(
             'Belum ada Kunjungan hari ini',
             textAlign: TextAlign.center,
             style: context.textStyle.titleMedium!.copyWith(
@@ -21,7 +22,7 @@ class FailureNotFound extends StatelessWidget {
             ),
           ),
           AppDimens.size3S.hSpace,
-          Text(
+          HrText(
             'Belum ada kunjungan untuk memulai produktivitas Anda',
             textAlign: TextAlign.center,
             style: context.textStyle.titleSmall!.copyWith(

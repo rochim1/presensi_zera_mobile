@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:presensi_mobile/presentation/session_restore_gate.dart';
 import 'package:presensi_mobile/presentation/attendance_navigation.dart';
 import 'package:auto_route/auto_route.dart';
@@ -128,19 +129,19 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
       final openSettings = await showDialog<bool>(
         context: context,
         builder: (dialogContext) => AlertDialog(
-          title: const Text('Aktifkan lokasi latar belakang'),
-          content: const Text(
+          title: const HrText('Aktifkan lokasi latar belakang'),
+          content: const HrText(
             'Agar live tracking tetap berjalan selama sesi kerja, buka pengaturan '
             'Pantoo lalu pilih Izin > Lokasi > Izinkan sepanjang waktu.',
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: const Text('Nanti'),
+              child: const HrText('Nanti'),
             ),
             FilledButton(
               onPressed: () => Navigator.of(dialogContext).pop(true),
-              child: const Text('Buka Pengaturan'),
+              child: const HrText('Buka Pengaturan'),
             ),
           ],
         ),
@@ -151,7 +152,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
         if (!opened) {
           _waitingForLocationSettings = false;
           Fluttertoast.showToast(
-            msg: 'Pengaturan aplikasi tidak dapat dibuka.',
+            msg: ('Pengaturan aplikasi tidak dapat dibuka.').trCurrent(),
           );
         }
       }
@@ -247,19 +248,23 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                 listener: (context, state) {
                   if (state.typeState.isNotLoaded) {
                     if (!state.isLocationGranted) {
-                      Fluttertoast.showToast(msg: state.message!);
+                      Fluttertoast.showToast(msg: (state.message!).trCurrent());
                     }
                   }
                 },
                 child: BlocListener<GlobalPostFcmCubit, GlobalPostFcmState>(
                   listener: (context, state) {
                     if (state.authorizationStatus !=
-                        AuthorizationStatus.authorized) {
+                            AuthorizationStatus.authorized &&
+                        state.authorizationStatus !=
+                            AuthorizationStatus.provisional) {
                       if (state.message != null) {
-                        Fluttertoast.showToast(msg: state.message!);
+                        Fluttertoast.showToast(
+                          msg: (state.message!).trCurrent(),
+                        );
                       } else {
                         Fluttertoast.showToast(
-                          msg: 'Maaf, Notifikasi Anda tidak aktif',
+                          msg: ('Maaf, Notifikasi Anda tidak aktif').trCurrent(),
                         );
                       }
                     }
@@ -267,7 +272,9 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                   child: BlocListener<GlobalInAppUpgradeCubit, GlobalInAppUpgradeState>(
                     listener: (_, state) async {
                       if (state.status.isLoaded) {
-                        Fluttertoast.showToast(msg: state.message!);
+                        Fluttertoast.showToast(
+                          msg: (state.message!).trCurrent(),
+                        );
                       } else if (state.status.isNotLoaded) {
                         final answer = await AppModalBottom.handleError(
                           context,
@@ -295,7 +302,9 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                       child: BlocListener<UserGetDataCubit, UserGetDataState>(
                         listener: (context, state) {
                           if (state.status.isNotLoaded) {
-                            Fluttertoast.showToast(msg: state.failure!.message);
+                            Fluttertoast.showToast(
+                              msg: (state.failure!.message).trCurrent(),
+                            );
                           }
                         },
                         child:
@@ -332,7 +341,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                                   if (!(state.failure?.code.isArrayEmpty ??
                                       true)) {
                                     Fluttertoast.showToast(
-                                      msg: state.failure!.message,
+                                      msg: (state.failure!.message).trCurrent(),
                                     );
                                   }
                                 }

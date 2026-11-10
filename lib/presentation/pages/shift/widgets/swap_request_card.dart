@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:presensi_domain/presensi_domain.dart';
@@ -17,10 +18,7 @@ class SwapRequestCard extends StatelessWidget {
     this.showUser = true,
   }) : isLoading = false;
 
-  const SwapRequestCard.shimmer({
-    super.key,
-    this.showUser = true,
-  })
+  const SwapRequestCard.shimmer({super.key, this.showUser = true})
     : swapRequest = null,
       isLoading = true,
       onTap = null;
@@ -45,7 +43,7 @@ class SwapRequestCard extends StatelessWidget {
         if (request.alasan.isNotEmpty) ...[
           SizedBox(height: AppDimens.h12),
           AppLabeledValue(
-            label: 'Alasan Tukar',
+            label: ('Alasan Tukar').tr(context),
             value: request.alasan,
             maxLines: 3,
             icon: PhosphorIcons.chatText,
@@ -55,7 +53,6 @@ class SwapRequestCard extends StatelessWidget {
       ],
     );
   }
-
 
   Widget _buildSwapDetails(
     BuildContext context,
@@ -69,7 +66,7 @@ class SwapRequestCard extends StatelessWidget {
           context,
           user: request.requesterUser,
           schedule: request.requesterSchedule,
-          label: 'Dari',
+          label: ('Dari').tr(context),
           accent: accent,
           isRequester: true,
         ),
@@ -91,7 +88,7 @@ class SwapRequestCard extends StatelessWidget {
           context,
           user: request.targetUser,
           schedule: request.targetSchedule,
-          label: 'Ke',
+          label: ('Ke').tr(context),
           accent: accent,
           isRequester: false,
         ),
@@ -113,7 +110,7 @@ class SwapRequestCard extends StatelessWidget {
       children: [
         Row(
           children: [
-            Text(
+            HrText(
               label,
               style: context.textTheme.bodySmall?.copyWith(
                 color: AppColors.labelSecondary,
@@ -135,7 +132,7 @@ class SwapRequestCard extends StatelessWidget {
           children: [
             Expanded(
               child: AppLabeledValue(
-                label: 'Shift',
+                label: ('Shift').tr(context),
                 value: schedule.shift.name,
                 icon: PhosphorIcons.calendarCheckFill,
                 iconColor: isRequester ? accent : AppColors.orange,
@@ -143,7 +140,7 @@ class SwapRequestCard extends StatelessWidget {
             ),
             Expanded(
               child: AppLabeledValue(
-                label: 'Waktu',
+                label: ('Waktu').tr(context),
                 value:
                     '${schedule.shift.jamMasuk?.format(pattern: 'HH:mm')} - ${schedule.shift.jamPulang?.format(pattern: 'HH:mm')}',
                 icon: PhosphorIcons.clockFill,
@@ -155,6 +152,4 @@ class SwapRequestCard extends StatelessWidget {
       ],
     );
   }
-
-
 }

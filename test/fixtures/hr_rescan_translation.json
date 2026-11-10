@@ -1,0 +1,372 @@
+[
+  {
+    "source": "Diproses",
+    "id": "Diproses",
+    "en": "Processing"
+  },
+  {
+    "source": "Dibatalkan",
+    "id": "Dibatalkan",
+    "en": "Cancelled"
+  },
+  {
+    "source": "Istirahat",
+    "id": "Istirahat",
+    "en": "Break"
+  },
+  {
+    "source": "Galat",
+    "id": "Galat",
+    "en": "Error"
+  },
+  {
+    "source": "Diajukan",
+    "id": "Diajukan",
+    "en": "Submitted"
+  },
+  {
+    "source": "Diterima",
+    "id": "Diterima",
+    "en": "Accepted"
+  },
+  {
+    "source": "Mobil",
+    "id": "Mobil",
+    "en": "Car"
+  },
+  {
+    "source": "Motor",
+    "id": "Motor",
+    "en": "Motorcycle"
+  },
+  {
+    "source": "Truk Ekspedisi",
+    "id": "Truk Ekspedisi",
+    "en": "Freight Truck"
+  },
+  {
+    "source": "Reguler",
+    "id": "Reguler",
+    "en": "Regular"
+  },
+  {
+    "source": "Koreksi Pulang",
+    "id": "Koreksi Pulang",
+    "en": "Check-out Correction"
+  },
+  {
+    "source": "Koreksi Istirahat",
+    "id": "Koreksi Istirahat",
+    "en": "Break Correction"
+  },
+  {
+    "source": "Dinas Luar",
+    "id": "Dinas Luar",
+    "en": "Business Trip"
+  },
+  {
+    "source": "Approved",
+    "id": "Disetujui",
+    "en": "Approved"
+  },
+  {
+    "source": "Rejected",
+    "id": "Ditolak",
+    "en": "Rejected"
+  },
+  {
+    "source": "Cancelled",
+    "id": "Dibatalkan",
+    "en": "Cancelled"
+  },
+  {
+    "source": "Draft",
+    "id": "Draf",
+    "en": "Draft"
+  },
+  {
+    "source": "Paid",
+    "id": "Lunas",
+    "en": "Paid"
+  },
+  {
+    "source": "Unknown",
+    "id": "Tidak diketahui",
+    "en": "Unknown"
+  },
+  {
+    "source": "Satu Orang",
+    "id": "Satu Orang",
+    "en": "Single Approver"
+  },
+  {
+    "source": "Bertahap",
+    "id": "Bertahap",
+    "en": "Sequential"
+  },
+  {
+    "source": "Parallel",
+    "id": "Paralel",
+    "en": "Parallel"
+  },
+  {
+    "source": "In Progress",
+    "id": "Sedang Berlangsung",
+    "en": "In Progress"
+  },
+  {
+    "source": "Terjadwal",
+    "id": "Terjadwal",
+    "en": "Scheduled"
+  },
+  {
+    "source": "Request Tukar",
+    "id": "Request Tukar",
+    "en": "Swap Request"
+  },
+  {
+    "source": "Lupa Absen",
+    "id": "Lupa Absen",
+    "en": "Missed Attendance"
+  },
+  {
+    "source": "Ambil Foto",
+    "id": "Ambil Foto",
+    "en": "Take Photo"
+  },
+  {
+    "source": "Full Day",
+    "id": "Sehari Penuh",
+    "en": "Full Day"
+  },
+  {
+    "source": "Akan datang",
+    "id": "Akan datang",
+    "en": "Upcoming"
+  },
+  {
+    "source": "Isi Survey",
+    "id": "Isi Survei",
+    "en": "Take Survey"
+  },
+  {
+    "source": "Opsi",
+    "id": "Opsi",
+    "en": "Options"
+  },
+  {
+    "source": "Laki-laki",
+    "id": "Laki-laki",
+    "en": "Male"
+  },
+  {
+    "source": "Perempuan",
+    "id": "Perempuan",
+    "en": "Female"
+  },
+  {
+    "source": "WFH",
+    "id": "WFH",
+    "en": "WFH"
+  },
+  {
+    "source": "Rupiah (IDR)",
+    "id": "Rupiah (IDR)",
+    "en": "Rupiah (IDR)"
+  },
+  {
+    "source": "Euro (EUR)",
+    "id": "Euro (EUR)",
+    "en": "Euro (EUR)"
+  },
+  {
+    "source": "Trial",
+    "id": "Uji Coba",
+    "en": "Trial"
+  },
+  {
+    "source": "Masa Tenggang",
+    "id": "Masa Tenggang",
+    "en": "Grace Period"
+  },
+  {
+    "source": "Ditangguhkan",
+    "id": "Ditangguhkan",
+    "en": "Suspended"
+  },
+  {
+    "source": "Buruk",
+    "id": "Buruk",
+    "en": "Poor"
+  },
+  {
+    "source": "Kurang",
+    "id": "Kurang",
+    "en": "Not good"
+  },
+  {
+    "source": "Biasa",
+    "id": "Biasa",
+    "en": "Okay"
+  },
+  {
+    "source": "Baik",
+    "id": "Baik",
+    "en": "Good"
+  },
+  {
+    "source": "Sangat baik",
+    "id": "Sangat baik",
+    "en": "Very good"
+  },
+  {
+    "source": "{nilai1} Outlet",
+    "id": "{nilai1} Outlet",
+    "en": "{nilai1} Outlets"
+  },
+  {
+    "source": "{nilai1} Dipilih",
+    "id": "{nilai1} Dipilih",
+    "en": "{nilai1} Selected"
+  },
+  {
+    "source": "DIAJUKAN {nilai1}",
+    "id": "DIAJUKAN {nilai1}",
+    "en": "SUBMITTED {nilai1}"
+  },
+  {
+    "source": "Stok: {nilai1}",
+    "id": "Stok: {nilai1}",
+    "en": "Stock: {nilai1}"
+  },
+  {
+    "source": "Habis",
+    "id": "Habis",
+    "en": "Out of stock"
+  },
+  {
+    "source": "Catatan: {nilai1}",
+    "id": "Catatan: {nilai1}",
+    "en": "Notes: {nilai1}"
+  },
+  {
+    "source": "Tujuan: {nilai1}",
+    "id": "Tujuan: {nilai1}",
+    "en": "Purpose: {nilai1}"
+  },
+  {
+    "source": "{nilai1} aktivitas",
+    "id": "{nilai1} aktivitas",
+    "en": "{nilai1} activities"
+  },
+  {
+    "source": "Pengaju payroll",
+    "id": "Pengaju payroll",
+    "en": "Payroll requester"
+  },
+  {
+    "source": "Uncategorized",
+    "id": "Tanpa kategori",
+    "en": "Uncategorized"
+  },
+  {
+    "source": "Terlambat",
+    "id": "Terlambat",
+    "en": "Late"
+  },
+  {
+    "source": "{nilai1} Menit",
+    "id": "{nilai1} Menit",
+    "en": "{nilai1} Minutes"
+  },
+  {
+    "source": "App Information",
+    "id": "Informasi Aplikasi",
+    "en": "App Information"
+  },
+  {
+    "source": "Firebase Information",
+    "id": "Informasi Firebase",
+    "en": "Firebase Information"
+  },
+  {
+    "source": "Graphql Information",
+    "id": "Informasi GraphQL",
+    "en": "GraphQL Information"
+  },
+  {
+    "source": "CHECK IN",
+    "id": "PRESENSI MASUK",
+    "en": "CHECK IN"
+  },
+  {
+    "source": "CHECK OUT",
+    "id": "PRESENSI PULANG",
+    "en": "CHECK OUT"
+  },
+  {
+    "source": "Final Score",
+    "id": "Nilai Akhir",
+    "en": "Final Score"
+  },
+  {
+    "source": "Grade",
+    "id": "Predikat",
+    "en": "Grade"
+  },
+  {
+    "source": "Max:",
+    "id": "Maks:",
+    "en": "Max:"
+  },
+  {
+    "source": "Reset",
+    "id": "Atur Ulang",
+    "en": "Reset"
+  },
+  {
+    "source": "Urgent",
+    "id": "Mendesak",
+    "en": "Urgent"
+  },
+  {
+    "source": "Halo, {nilai1}!",
+    "id": "Halo, {nilai1}!",
+    "en": "Hello, {nilai1}!"
+  },
+  {
+    "source": "{nilai1} balasan",
+    "id": "{nilai1} balasan",
+    "en": "{nilai1} replies"
+  },
+  {
+    "source": "Berulang mingguan",
+    "id": "Berulang mingguan",
+    "en": "Repeats weekly"
+  },
+  {
+    "source": "Berulang bulanan",
+    "id": "Berulang bulanan",
+    "en": "Repeats monthly"
+  },
+  {
+    "source": "Berulang tahunan",
+    "id": "Berulang tahunan",
+    "en": "Repeats yearly"
+  },
+  {
+    "source": "Event berulang",
+    "id": "Event berulang",
+    "en": "Recurring event"
+  },
+  {
+    "source": "No Subject",
+    "id": "Tanpa Subjek",
+    "en": "No Subject"
+  },
+  {
+    "source": "{nilai1} meter",
+    "id": "{nilai1} meter",
+    "en": "{nilai1} m"
+  }
+]

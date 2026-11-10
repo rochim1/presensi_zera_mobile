@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,12 +17,12 @@ class KpiPage extends StatelessWidget {
           cubit.state.user.data?.hasPermission('kpi', action: 'view') ?? false,
     );
     if (!canViewKpi) {
-      return const Scaffold(
-        appBar: AppTopBar(title: 'Penilaian Kinerja (KPI)'),
+      return Scaffold(
+        appBar: AppTopBar(title: ('Penilaian Kinerja (KPI)').tr(context)),
         body: Center(
           child: Padding(
             padding: EdgeInsets.all(24),
-            child: Text(
+            child: HrText(
               'Anda tidak memiliki izin untuk melihat KPI.',
               textAlign: TextAlign.center,
             ),
@@ -31,8 +32,8 @@ class KpiPage extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: const AppTopBar(
-        title: 'Penilaian Kinerja (KPI)',
+      appBar: AppTopBar(
+        title: ('Penilaian Kinerja (KPI)').tr(context),
         backgroundColor: AppColors.transparent,
       ),
       body: AutoTabsRouter.tabBar(

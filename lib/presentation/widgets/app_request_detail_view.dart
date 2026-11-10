@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:presensi_domain/presensi_domain.dart';
@@ -41,12 +42,12 @@ class AppRequestDetailView extends StatelessWidget {
           _buildHeaderSection(context),
           if (reason != null)
             AppDetailSectionCard(
-              title: 'Alasan',
+              title: ('Alasan').tr(context),
               child: _buildReasonSection(context),
             ),
           if (middleContent.isNotEmpty)
             AppDetailSectionCard(
-              title: 'Informasi Pengajuan',
+              title: ('Informasi Pengajuan').tr(context),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: middleContent,
@@ -104,7 +105,7 @@ class AppRequestDetailView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              HrText(
                 'Tanggal Pengajuan',
                 style: context.theme.textTheme.bodySmall?.copyWith(
                   color: AppColors.labelSecondary,
@@ -154,7 +155,7 @@ class AppRequestDetailItem extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        HrText(
           label,
           style: context.theme.textTheme.bodySmall?.copyWith(
             color: AppColors.labelSecondary,

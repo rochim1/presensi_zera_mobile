@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
 import 'package:presensi_mobile/presentation/_presentation.dart';
@@ -43,7 +44,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
       centerTitle: centerTitle,
       title:
           title ??
-          Text(
+          HrText(
             titleText ?? '',
             style: context.theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,

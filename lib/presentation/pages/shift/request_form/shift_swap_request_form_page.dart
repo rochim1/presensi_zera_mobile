@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -99,7 +100,7 @@ class ShiftSwapRequestFormView extends StatelessWidget {
                 child: Column(
                   children: [
                     AppTopBar(
-                      title: 'Ajukan Tukar Shift',
+                      title: ('Ajukan Tukar Shift').tr(context),
                       useGradient: false,
                       backgroundColor: Colors.transparent,
                       titleColor: AppColors.white,
@@ -143,14 +144,18 @@ class ShiftSwapRequestFormView extends StatelessWidget {
                                     children: [
                                       _buildShiftDetails(
                                         context,
-                                        title: 'Shift Saya (Requester)',
+                                        title: ('Shift Saya (Requester)').tr(
+                                          context,
+                                        ),
                                         schedule: state.shiftSchedule.data,
                                         user: state.shiftSchedule.data?.user,
                                       ),
                                       _buildDividerIcon(context),
                                       _buildShiftDetails(
                                         context,
-                                        title: 'Shift Tujuan (Target)',
+                                        title: ('Shift Tujuan (Target)').tr(
+                                          context,
+                                        ),
                                         schedule: state
                                             .form
                                             .targetShiftSchedule
@@ -166,21 +171,28 @@ class ShiftSwapRequestFormView extends StatelessWidget {
                                     ],
                                   ),
                                 AppDateTimeField(
-                                  label: 'Tanggal Shift Tujuan',
+                                  label: ('Tanggal Shift Tujuan').tr(context),
                                   isRequired: true,
                                   mode: AppDateTimeFieldMode.date,
-                                  hintText: 'Pilih Tanggal Shift Tujuan',
+                                  hintText: ('Pilih Tanggal Shift Tujuan').tr(
+                                    context,
+                                  ),
                                   value: state.form.date.value,
                                   onConfirmed: cubit.onChangeDate,
                                   errorText: state.form.date.errorMessage,
                                 ),
                                 AppDropdownField<AvailableShiftForSwap>(
                                   compareFn: (a, b) => a.id == b.id,
-                                  label: 'Jadwal Shift Tujuan',
+                                  label: ('Jadwal Shift Tujuan').tr(context),
                                   isRequired: true,
-                                  hintText: state.targetShiftSchedules.isLoading
-                                      ? 'Memuat jadwal shift tujuan...'
-                                      : 'Pilih Jadwal Shift Tujuan',
+                                  hintText:
+                                      (state.targetShiftSchedules.isLoading
+                                      ? ('Memuat jadwal shift tujuan...').tr(
+                                          context,
+                                        )
+                                      : ('Pilih Jadwal Shift Tujuan').tr(
+                                          context,
+                                        )),
                                   itemBuilder: (context, item, isDisabled, isSelected) {
                                     final shift = item.currentShift;
                                     final jamMasuk =
@@ -246,9 +258,11 @@ class ShiftSwapRequestFormView extends StatelessWidget {
                                   showSearchBox: false,
                                 ),
                                 AppTextField(
-                                  label: 'Alasan',
+                                  label: ('Alasan').tr(context),
                                   isRequired: true,
-                                  hintText: 'Masukkan alasan tukar shift',
+                                  hintText: ('Masukkan alasan tukar shift').tr(
+                                    context,
+                                  ),
                                   maxLines: 3,
                                   onChanged: cubit.onChangeReason,
                                   errorText: state.form.reason.errorMessage,
@@ -268,7 +282,7 @@ class ShiftSwapRequestFormView extends StatelessWidget {
             color: context.theme.scaffoldBackgroundColor,
             padding: EdgeInsets.all(AppDimens.w16),
             child: AppButtonNew(
-              text: 'Kirim Request',
+              text: ('Kirim Request').tr(context),
               onPressed: shiftSchedule == null ? null : cubit.submit,
               isLoading: state.submit.isLoading,
             ),
@@ -325,7 +339,7 @@ class ShiftSwapRequestFormView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: AppDimens.h8,
       children: [
-        Text(
+        HrText(
           title,
           style: context.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,
@@ -344,7 +358,7 @@ class ShiftSwapRequestFormView extends StatelessWidget {
             spacing: AppDimens.h8,
             children: [
               AppLabeledValue(
-                label: 'Tanggal',
+                label: ('Tanggal').tr(context),
                 value:
                     schedule?.assignedDate?.format(
                       pattern: 'EEEE, dd MMMM yyyy',
@@ -353,7 +367,7 @@ class ShiftSwapRequestFormView extends StatelessWidget {
                 icon: PhosphorIcons.calendarBlank,
               ),
               AppLabeledValue(
-                label: 'Nama Shift',
+                label: ('Nama Shift').tr(context),
                 value: schedule?.shift.name ?? '-',
                 icon: PhosphorIcons.calendarCheck,
               ),
@@ -361,7 +375,7 @@ class ShiftSwapRequestFormView extends StatelessWidget {
                 children: [
                   Expanded(
                     child: AppLabeledValue(
-                      label: 'Jam Masuk',
+                      label: ('Jam Masuk').tr(context),
                       value:
                           schedule?.shift.jamMasuk?.format(pattern: 'HH:mm') ??
                           '--:--',
@@ -370,7 +384,7 @@ class ShiftSwapRequestFormView extends StatelessWidget {
                   ),
                   Expanded(
                     child: AppLabeledValue(
-                      label: 'Jam Pulang',
+                      label: ('Jam Pulang').tr(context),
                       value:
                           schedule?.shift.jamPulang?.format(pattern: 'HH:mm') ??
                           '--:--',

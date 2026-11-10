@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,9 +38,9 @@ class PayrollView extends StatelessWidget {
           // Let's just use the MyPayrollPage widget since it expects PayrollCubit in context
           return Scaffold(
             appBar: AppTopBar(
-              title: 'Slip Gaji',
+              title: ('Slip Gaji').tr(context),
               centerTitle: false,
-              subtitle: 'Lihat dan unduh slip gaji Anda',
+              subtitle: ('Lihat dan unduh slip gaji Anda').tr(context),
               actions: [const _PayrollDownloadButton()],
             ),
             body: const MyPayrollPage(),
@@ -62,11 +63,11 @@ class PayrollView extends StatelessWidget {
               },
               child: Scaffold(
                 appBar: AppTopBar(
-                  title: 'Slip Gaji',
+                  title: ('Slip Gaji').tr(context),
                   centerTitle: false,
-                  subtitle: showingApproval
-                      ? 'Tinjau pengajuan payroll karyawan'
-                      : 'Lihat dan unduh slip gaji Anda',
+                  subtitle: (showingApproval
+                      ? ('Tinjau pengajuan payroll karyawan').tr(context)
+                      : ('Lihat dan unduh slip gaji Anda').tr(context)),
                   onBackTap: showingApproval ? showMyPayroll : null,
                   actions: const [_PayrollDownloadButton()],
                 ),
@@ -111,7 +112,7 @@ class _PayrollDownloadButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Tooltip(
-    message: 'Unduhan Slip Gaji',
+    message: ('Unduhan Slip Gaji').tr(context),
     child: AppTopBarActionButton(
       icon: PhosphorIcons.downloadSimple,
       onTap: () => context.router.push(const PayrollDownloadPageRoute()),

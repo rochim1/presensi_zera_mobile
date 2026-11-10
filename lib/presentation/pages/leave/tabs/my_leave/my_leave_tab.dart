@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -85,18 +86,18 @@ class MyLeaveView extends StatelessWidget {
                   final confirmed = await showDialog<bool>(
                     context: context,
                     builder: (_) => AlertDialog(
-                      title: const Text('Hapus pengajuan cuti?'),
-                      content: const Text(
+                      title: const HrText('Hapus pengajuan cuti?'),
+                      content: const HrText(
                         'Pengajuan yang dihapus tidak dapat dikembalikan.',
                       ),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.pop(context, false),
-                          child: const Text('Batal'),
+                          child: const HrText('Batal'),
                         ),
                         TextButton(
                           onPressed: () => Navigator.pop(context, true),
-                          child: const Text('Hapus'),
+                          child: const HrText('Hapus'),
                         ),
                       ],
                     ),
@@ -106,7 +107,7 @@ class MyLeaveView extends StatelessWidget {
                     if (context.mounted && error != null) {
                       AppBottomSheet.showError(
                         context: context,
-                        titleText: 'Gagal menghapus',
+                        titleText: ('Gagal menghapus').tr(context),
                         message: error,
                       );
                     }
@@ -144,7 +145,7 @@ class MyLeaveView extends StatelessWidget {
                       children: [
                         AppDimens.w8.wSpace,
                         AppFilterChip(
-                          label: 'Semua',
+                          label: ('Semua').tr(context),
                           isSelected: state.filterLeaveStatus == null,
                           onTap: () => cubit.onChangeFilterLeaveStatus(null),
                         ),
@@ -180,9 +181,9 @@ class _LeaveDetailTitle extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Detail Cuti'),
+        const HrText('Detail Cuti'),
         SizedBox(height: AppDimens.h2),
-        Text(
+        HrText(
           'Informasi pengajuan cuti',
           style: context.textStyle.bodySmall?.copyWith(
             color: AppColors.labelSecondary,
@@ -215,7 +216,7 @@ class _LeaveDetailActions extends StatelessWidget {
         Expanded(
           child: _LeaveDetailActionItem(
             icon: Icons.delete_outline_rounded,
-            label: 'Hapus',
+            label: ('Hapus').tr(context),
             color: AppColors.danger,
             onTap: canModify ? onDelete : null,
           ),
@@ -223,7 +224,7 @@ class _LeaveDetailActions extends StatelessWidget {
         Expanded(
           child: _LeaveDetailActionItem(
             icon: Icons.edit_outlined,
-            label: 'Edit',
+            label: ('Edit').tr(context),
             color: AppColors.primary,
             onTap: canModify ? onEdit : null,
           ),
@@ -231,7 +232,7 @@ class _LeaveDetailActions extends StatelessWidget {
         Expanded(
           child: _LeaveDetailActionItem(
             icon: Icons.close_rounded,
-            label: 'Tutup',
+            label: ('Tutup').tr(context),
             color: AppColors.labelSecondary,
             onTap: onClose,
           ),
@@ -275,7 +276,7 @@ class _LeaveDetailActionItem extends StatelessWidget {
             children: [
               Icon(icon, size: AppDimens.iconSmall, color: effectiveColor),
               SizedBox(width: AppDimens.w6),
-              Text(
+              HrText(
                 label,
                 style: context.textStyle.bodyMedium?.copyWith(
                   color: effectiveColor,

@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -52,7 +53,7 @@ class SurveyView extends StatelessWidget {
     final baseUrl = flavorConfig.baseApi ?? flavorConfig.values?.baseApi;
     final serverUrl = baseUrl?.replaceAll(RegExp(r'/graphql/?$'), '') ?? '';
     final uri = Uri.parse(serverUrl);
-    
+
     return Uri(
       scheme: uri.scheme,
       host: uri.host,
@@ -83,8 +84,8 @@ class SurveyView extends StatelessWidget {
         final cubit = context.read<SurveyCubit>();
 
         return Scaffold(
-          appBar: const AppTopBar(
-            title: 'Survey Saya',
+          appBar: AppTopBar(
+            title: ('Survey Saya').tr(context),
             backgroundColor: AppColors.transparent,
           ),
           body: AppInfiniteScrollView<Survey>(

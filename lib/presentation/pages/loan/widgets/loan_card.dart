@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:presensi_mobile/presentation/widgets/app_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -50,7 +51,7 @@ class LoanCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  child: Text(
+                  child: HrText(
                     item.loanTypeLabel ?? 'Pinjaman',
                     style: context.textStyle.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
@@ -72,21 +73,21 @@ class LoanCard extends StatelessWidget {
               ],
             ),
             const Divider(height: 25, color: AppColors.divider),
-            Text(
+            HrText(
               'Nominal: Rp ${item.principalAmount?.toStringAsFixed(0) ?? 0}',
               style: context.textStyle.bodyMedium?.copyWith(
                 color: AppColors.labelSecondary,
               ),
             ),
             AppDimens.h4.hSpace,
-            Text(
+            HrText(
               'Tenor: ${item.loanTermMonths ?? 0} Bulan',
               style: context.textStyle.bodyMedium?.copyWith(
                 color: AppColors.labelSecondary,
               ),
             ),
             AppDimens.h4.hSpace,
-            Text(
+            HrText(
               'Tujuan: ${item.purpose ?? '-'}',
               style: context.textStyle.bodySmall?.copyWith(
                 color: AppColors.labelTertiary,

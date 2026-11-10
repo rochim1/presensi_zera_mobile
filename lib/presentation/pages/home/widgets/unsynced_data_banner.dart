@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -38,7 +39,7 @@ class UnsyncedDataBanner extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    const HrText(
                       'Data Belum Tersinkronisasi',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
@@ -46,7 +47,7 @@ class UnsyncedDataBanner extends StatelessWidget {
                         color: Colors.orange,
                       ),
                     ),
-                    Text(
+                    HrText(
                       '$count data offline menunggu sinkronisasi',
                       style: TextStyle(
                         fontSize: 11,
@@ -60,7 +61,7 @@ class UnsyncedDataBanner extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
-                    tooltip: 'Lihat data offline',
+                    tooltip: ('Lihat data offline').tr(context),
                     onPressed: () =>
                         context.router.push(const ProfileSyncPageRoute()),
                     icon: const Icon(Icons.chevron_right_rounded),

@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
 
@@ -24,7 +25,7 @@ class AppDetailSectionCard extends StatelessWidget {
           if (title != null) ...[
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-              child: Text(
+              child: HrText(
                 title!,
                 style: context.textStyle.titleSmall?.copyWith(
                   color: AppColors.labelPrimary,

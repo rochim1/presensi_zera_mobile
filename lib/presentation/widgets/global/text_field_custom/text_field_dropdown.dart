@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -45,7 +46,7 @@ class TextFieldDropdown<T> extends StatelessWidget {
           padding: const EdgeInsets.only(left: AppDimens.size2S),
           child: RichText(
             text: TextSpan(
-              text: title,
+              text: title.tr(context),
               style: AppTextStyle.fieldLabel.copyWith(
                 color: colorTitle ?? AppColors.labelPrimary,
               ),
@@ -83,12 +84,16 @@ class TextFieldDropdown<T> extends StatelessWidget {
               ),
               items: (filter, loadProps) => items,
               decoratorProps: DropDownDecoratorProps(
-                decoration: InputDecoration(hintText: hint),
+                decoration: InputDecoration(hintText: hint?.tr(context)),
               ),
-              itemAsString: itemAsString,
+              itemAsString: itemAsString == null
+                  ? null
+                  : (item) => hrOptionLabel(item, itemAsString!(item), context),
               onChanged: onChanged,
               selectedItem: selectedItem,
-              validator: validator,
+              validator: validator == null
+                  ? null
+                  : (value) => validator?.call(value)?.tr(context),
             ),
           ),
         ),

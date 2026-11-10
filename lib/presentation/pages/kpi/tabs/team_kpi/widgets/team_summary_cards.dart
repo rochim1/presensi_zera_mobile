@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_domain/presensi_domain.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -20,7 +21,7 @@ class TeamSummaryCards extends StatelessWidget {
         children: [
           _buildCard(
             context,
-            'Total Anggota',
+            ('Total Anggota').tr(context),
             summary.totalKaryawan?.toString() ?? '0',
             AppColors.primary,
           ),
@@ -32,13 +33,13 @@ class TeamSummaryCards extends StatelessWidget {
           ),
           _buildCard(
             context,
-            'Menunggu Review',
+            ('Menunggu Review').tr(context),
             summary.inProgress?.toString() ?? '0',
             Colors.blue,
           ),
           _buildCard(
             context,
-            'Selesai',
+            ('Selesai').tr(context),
             summary.completed?.toString() ?? '0',
             AppColors.green,
           ),
@@ -64,7 +65,7 @@ class TeamSummaryCards extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
+          HrText(
             title,
             style: context.textStyle.bodySmall?.copyWith(
               color: color,

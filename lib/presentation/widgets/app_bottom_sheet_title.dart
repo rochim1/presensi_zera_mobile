@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
 
@@ -16,9 +17,9 @@ class AppBottomSheetTitle extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title),
+        HrText(title),
         SizedBox(height: AppDimens.h2),
-        Text(
+        HrText(
           subtitle,
           style: context.textStyle.bodySmall?.copyWith(
             color: AppColors.labelSecondary,

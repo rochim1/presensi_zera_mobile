@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'dart:io';
 import 'package:auto_route/auto_route.dart';
 import 'package:camera/camera.dart';
@@ -47,7 +48,7 @@ class _TextFieldCameraState extends State<TextFieldCamera> {
             padding: const EdgeInsets.only(left: AppDimens.size2S),
             child: RichText(
               text: TextSpan(
-                text: widget.title,
+                text: widget.title?.tr(context),
                 style: context.textStyle.bodySmall?.copyWith(
                   color: widget.colorTitle ?? AppColors.labelPrimary,
                   fontSize: 14,
@@ -212,7 +213,7 @@ class _TextFieldCameraState extends State<TextFieldCamera> {
               ),
               children: [
                 TextSpan(
-                  text: widget.helperText!,
+                  text: widget.helperText!.tr(context),
                   style: context.textStyle.labelSmall!.copyWith(
                     letterSpacing: 0.25,
                   ),

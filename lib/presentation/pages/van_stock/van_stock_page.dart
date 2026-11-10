@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,7 +19,7 @@ class VanStockPage extends StatelessWidget {
     return BlocProvider(
       create: (context) => sl<VanStockCubit>()..loadStocks(isRefresh: true),
       child: Scaffold(
-        appBar: const AppTopBar(title: 'Van Stock'),
+        appBar: AppTopBar(title: ('Van Stock').tr(context)),
         body: BlocBuilder<VanStockCubit, VanStockState>(
           builder: (context, state) {
             return state.maybeWhen(
@@ -28,7 +29,7 @@ class VanStockPage extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    HrText(
                       'Gagal memuat Van Stock: \$message',
                       textAlign: TextAlign.center,
                     ),
@@ -37,7 +38,7 @@ class VanStockPage extends StatelessWidget {
                       onPressed: () => context.read<VanStockCubit>().loadStocks(
                         isRefresh: true,
                       ),
-                      child: const Text('Coba Lagi'),
+                      child: const HrText('Coba Lagi'),
                     ),
                   ],
                 ),
@@ -45,7 +46,7 @@ class VanStockPage extends StatelessWidget {
               loaded: (stocks, hasReachedMax) {
                 if (stocks.isEmpty) {
                   return const Center(
-                    child: Text('Tidak ada stok di kendaraan Anda saat ini.'),
+                    child: HrText('Tidak ada stok di kendaraan Anda saat ini.'),
                   );
                 }
 
@@ -143,7 +144,7 @@ class _VanStockItemCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: AppDimens.paddingSmall),
-            Text(
+            HrText(
               'Tanggal Load: $loadDate',
               style: context.textStyle.bodySmall?.copyWith(
                 color: AppColors.labelSecondary,
@@ -151,7 +152,7 @@ class _VanStockItemCard extends StatelessWidget {
             ),
             if (stock.catatan != null && stock.catatan!.isNotEmpty) ...[
               const SizedBox(height: 4),
-              Text(
+              HrText(
                 'Catatan: ${stock.catatan}',
                 style: context.textStyle.bodySmall?.copyWith(
                   fontStyle: FontStyle.italic,
@@ -210,7 +211,7 @@ class _VanStockItemCard extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 2),
-        Text(
+        HrText(
           label,
           style: context.textStyle.bodySmall?.copyWith(
             color: AppColors.labelSecondary,

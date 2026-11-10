@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,7 +34,7 @@ class _DeliveryPageState extends State<DeliveryPage> {
       create: (context) => sl<SalesTargetCubit>()..loadMyTarget(),
       child: Scaffold(
         appBar: AppTopBar(
-          title: 'Kunjungan',
+          title: ('Kunjungan').tr(context),
           leading:
               BlocBuilder<
                 TasksGetAllPerjalananCubit,
@@ -92,9 +93,10 @@ class _DeliveryPageState extends State<DeliveryPage> {
                                   await AppModalBottom.showDefault(
                                     context,
                                     emptyState: EmptyState.confirmation,
-                                    contentTitle: 'Peringatan',
+                                    contentTitle: ('Peringatan').tr(context),
                                     contentSubtitle:
-                                        'Anda sudah pulang. Tekan tombol "Mulai Lembur" di Beranda terlebih dahulu jika ingin membuat Kunjungan tambahan.',
+                                        ('Anda sudah pulang. Tekan tombol "Mulai Lembur" di Beranda terlebih dahulu jika ingin membuat Kunjungan tambahan.')
+                                            .tr(context),
                                     hasActionPop: true,
                                   );
                                   return;
@@ -106,9 +108,10 @@ class _DeliveryPageState extends State<DeliveryPage> {
                                   await AppModalBottom.showDefault(
                                     context,
                                     emptyState: EmptyState.confirmation,
-                                    contentTitle: 'Konfirmasi',
+                                    contentTitle: ('Konfirmasi').tr(context),
                                     contentSubtitle:
-                                        'Tidak bisa membuat Kunjungan, status kerja anda masih Istirahat',
+                                        ('Tidak bisa membuat Kunjungan, status kerja anda masih Istirahat')
+                                            .tr(context),
                                     hasActionPop: true,
                                   );
                                   return;
@@ -188,13 +191,13 @@ class _DeliveryPageState extends State<DeliveryPage> {
             // You tab view goes here
             body: Column(
               children: [
-                const TabBar(
+                TabBar(
                   isScrollable: true,
                   tabAlignment: TabAlignment.start,
                   tabs: [
-                    Tab(text: 'Journey Plan'),
-                    Tab(text: 'Visited (Selesai)'),
-                    Tab(text: 'Unvisited / Missed'),
+                    Tab(text: ('Journey Plan').tr(context)),
+                    Tab(text: ('Visited (Selesai)').tr(context)),
+                    Tab(text: ('Unvisited / Missed').tr(context)),
                   ],
                 ),
                 Expanded(

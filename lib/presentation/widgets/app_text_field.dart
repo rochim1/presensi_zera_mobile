@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -75,8 +76,8 @@ class AppTextField extends StatelessWidget {
             maxLines: maxLines,
             inputFormatters: inputFormatters,
             decoration: InputDecoration(
-              errorText: errorText,
-              hintText: hintText,
+              errorText: errorText?.tr(context),
+              hintText: hintText?.tr(context),
               hintStyle: context.theme.textTheme.bodyMedium?.copyWith(
                 color: AppColors.labelSecondary.withValues(alpha: 0.5),
               ),

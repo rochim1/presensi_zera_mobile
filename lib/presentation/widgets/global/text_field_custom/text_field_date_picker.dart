@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -52,7 +53,7 @@ class _TextFieldDatePickerState extends State<TextFieldDatePicker> {
           padding: const EdgeInsets.only(left: AppDimens.size2S),
           child: RichText(
             text: TextSpan(
-              text: widget.title ?? "",
+              text: widget.title?.tr(context) ?? "",
               style: AppTextStyle.fieldLabel.copyWith(
                 color: widget.colorTitle ?? AppColors.labelPrimary,
               ),
@@ -75,10 +76,12 @@ class _TextFieldDatePickerState extends State<TextFieldDatePicker> {
           onChanged: widget.onChanged,
           enabled: widget.enabled,
           autovalidateMode: AutovalidateMode.onUserInteraction,
-          validator: widget.validator,
+          validator: widget.validator == null
+              ? null
+              : (value) => widget.validator?.call(value)?.tr(context),
           decoration: InputDecoration(
             floatingLabelStyle: const TextStyle(color: AppColors.grey),
-            hintText: widget.hint,
+            hintText: widget.hint.tr(context),
             contentPadding: const EdgeInsets.all(AppDimens.paddingMedium),
             enabledBorder: context.theme.inputDecorationTheme.enabledBorder,
             fillColor: !widget.enabled

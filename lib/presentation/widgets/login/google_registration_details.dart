@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -37,12 +38,12 @@ class _GoogleRegistrationDetailsState extends State<GoogleRegistrationDetails> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
+            HrText(
               'Lengkapi akun Pantoo',
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 8),
-            const Text(
+            const HrText(
               'Nama dan email menggunakan akun Google Anda. Tambahkan nomor telepon untuk melanjutkan.',
             ),
             const SizedBox(height: 20),
@@ -54,9 +55,9 @@ class _GoogleRegistrationDetailsState extends State<GoogleRegistrationDetails> {
                 FilteringTextInputFormatter.digitsOnly,
                 LengthLimitingTextInputFormatter(15),
               ],
-              decoration: const InputDecoration(
-                labelText: 'Nomor telepon',
-                hintText: '08xxxxxxxxxx',
+              decoration: InputDecoration(
+                labelText: ('Nomor telepon').tr(context),
+                hintText: ('08xxxxxxxxxx').tr(context),
               ),
               validator: (value) =>
                   RegExp(r'^\d{8,15}$').hasMatch(value?.trim() ?? '')
@@ -68,7 +69,7 @@ class _GoogleRegistrationDetailsState extends State<GoogleRegistrationDetails> {
               contentPadding: EdgeInsets.zero,
               controlAffinity: ListTileControlAffinity.leading,
               value: _consent,
-              title: const Text(
+              title: const HrText(
                 'Saya menyetujui Kebijakan Privasi dan Ketentuan Layanan Pantoo.',
               ),
               onChanged: (value) => setState(() {
@@ -80,18 +81,18 @@ class _GoogleRegistrationDetailsState extends State<GoogleRegistrationDetails> {
               children: [
                 TextButton(
                   onPressed: () => AppUtility.launchLink(kUrlKebijakanPrivasi),
-                  child: const Text('Kebijakan Privasi'),
+                  child: const HrText('Kebijakan Privasi'),
                 ),
                 TextButton(
                   onPressed: () => AppUtility.launchLink(
                     'https://app.pantoo.id/ketentuan-layanan',
                   ),
-                  child: const Text('Ketentuan Layanan'),
+                  child: const HrText('Ketentuan Layanan'),
                 ),
               ],
             ),
             if (_showConsentError)
-              Text(
+              HrText(
                 'Persetujuan diperlukan untuk membuat akun.',
                 style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
@@ -104,7 +105,7 @@ class _GoogleRegistrationDetailsState extends State<GoogleRegistrationDetails> {
                   Navigator.pop(context, _phone.text.trim());
                 }
               },
-              child: const Text('Buat akun dan lanjutkan'),
+              child: const HrText('Buat akun dan lanjutkan'),
             ),
           ],
         ),

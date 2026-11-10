@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,7 @@ class ApotekMapsPage extends StatefulWidget {
 
 class _ApotekMapsPageState extends State<ApotekMapsPage> {
   final Completer<GoogleMapController> _controller = Completer();
-  
+
   // Default to Jakarta
   static const CameraPosition _kDefaultInitialPosition = CameraPosition(
     target: LatLng(-6.2088, 106.8456),
@@ -29,16 +30,17 @@ class _ApotekMapsPageState extends State<ApotekMapsPage> {
     return BlocProvider(
       create: (context) => sl<ApotekGetAllDataCubit>()..initLoadAllData(),
       child: Scaffold(
-        appBar: const AppTopBar(title: 'Peta Outlet'),
+        appBar: AppTopBar(title: ('Peta Outlet').tr(context)),
         body: BlocBuilder<ApotekGetAllDataCubit, ApotekGetAllDataState>(
           builder: (context, state) {
-            if (state.status == TypeState.loading || state.status == TypeState.initial) {
+            if (state.status == TypeState.loading ||
+                state.status == TypeState.initial) {
               return const Center(child: CircularProgressIndicator());
             }
 
             if (state.status == TypeState.notLoaded) {
               return Center(
-                child: Text(
+                child: HrText(
                   state.failure?.message ?? 'Gagal memuat data outlet',
                   style: const TextStyle(color: Colors.red),
                 ),
@@ -47,7 +49,7 @@ class _ApotekMapsPageState extends State<ApotekMapsPage> {
 
             final apotekList = state.apoteks ?? [];
             final Set<Marker> markers = {};
-            
+
             // Calculate center
             double totalLat = 0;
             double totalLng = 0;
@@ -57,24 +59,30 @@ class _ApotekMapsPageState extends State<ApotekMapsPage> {
               if (apotek.latitude != null && apotek.longitude != null) {
                 final lat = double.tryParse(apotek.latitude!);
                 final lng = double.tryParse(apotek.longitude!);
-                
+
                 if (lat != null && lng != null && lat != 0 && lng != 0) {
                   totalLat += lat;
                   totalLng += lng;
                   validCount++;
-                  
+
                   markers.add(
                     Marker(
-                      markerId: MarkerId(apotek.id ?? apotek.hashCode.toString()),
+                      markerId: MarkerId(
+                        apotek.id ?? apotek.hashCode.toString(),
+                      ),
                       position: LatLng(lat, lng),
                       infoWindow: InfoWindow(
                         title: apotek.namaApotik,
                         snippet: apotek.alamat,
                         onTap: () {
-                          context.router.push(ApotekDetailPageRoute(apotek: apotek));
+                          context.router.push(
+                            ApotekDetailPageRoute(apotek: apotek),
+                          );
                         },
                       ),
-                      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+                      icon: BitmapDescriptor.defaultMarkerWithHue(
+                        BitmapDescriptor.hueRed,
+                      ),
                     ),
                   );
                 }

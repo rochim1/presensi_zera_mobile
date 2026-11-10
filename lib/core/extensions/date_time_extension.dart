@@ -1,11 +1,11 @@
+import 'package:flutter/widgets.dart' show Locale;
+import 'package:presensi_mobile/l10n/generated/app_localizations.dart';
+import 'package:presensi_mobile/l10n/app_language_controller.dart';
 import 'package:intl/intl.dart';
 
 extension DateTimeExt on DateTime {
   /// Default date format pattern (e.g. 21 Januari 2026)
   static const String _defaultPattern = "dd MMMM yyyy";
-
-  /// Default locale (Indonesian)
-  static const String _defaultLocale = "id";
 
   /// Formats this [DateTime] into a readable string.
   ///
@@ -14,11 +14,11 @@ extension DateTimeExt on DateTime {
   /// date.format() // 21 Januari 2026
   /// date.format(pattern: 'dd/MM/yyyy') // 21/01/2026
   /// ```
-  String format({
-    String pattern = _defaultPattern,
-    String locale = _defaultLocale,
-  }) {
-    return DateFormat(pattern, locale).format(this);
+  String format({String pattern = _defaultPattern, String? locale}) {
+    return DateFormat(
+      pattern,
+      locale ?? AppLanguageController.instance.effectiveLocale.languageCode,
+    ).format(this);
   }
 
   /// Returns the start of the day (00:00:00.000)
@@ -146,21 +146,25 @@ extension DateTimeExt on DateTime {
   /// - "2 jam yang lalu"
   /// - "3 hari yang lalu"
   /// - fallback → formatted date
-  String timeAgo({
-    String pattern = _defaultPattern,
-    String locale = _defaultLocale,
-  }) {
+  String timeAgo({String pattern = _defaultPattern, String? locale}) {
+    final copy = lookupAppLocalizations(
+      AppLanguageController.resolve(
+        locale == null
+            ? AppLanguageController.instance.effectiveLocale
+            : Locale(locale.split(RegExp('[-_]')).first),
+      ),
+    );
     final now = DateTime.now();
     final difference = now.difference(this);
 
     if (difference.inSeconds < 60) {
-      return 'baru saja';
+      return copy.relativeJustNow;
     } else if (difference.inMinutes < 60) {
-      return '${difference.inMinutes} menit yang lalu';
+      return copy.relativeMinutes(difference.inMinutes);
     } else if (difference.inHours < 24) {
-      return '${difference.inHours} jam yang lalu';
+      return copy.relativeHours(difference.inHours);
     } else if (difference.inDays < 7) {
-      return '${difference.inDays} hari yang lalu';
+      return copy.relativeDays(difference.inDays);
     } else {
       return format(pattern: pattern, locale: locale);
     }

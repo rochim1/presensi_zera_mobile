@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:presensi_domain/presensi_domain.dart';
@@ -36,7 +37,7 @@ class ShiftScheduleDetailView extends StatelessWidget {
           children: [
             Expanded(
               child: AppLabeledValue(
-                label: 'Nama Shift',
+                label: ('Nama Shift').tr(context),
                 value: schedule.shift.name,
               ),
             ),
@@ -48,7 +49,7 @@ class ShiftScheduleDetailView extends StatelessWidget {
           ],
         ),
         AppLabeledValue(
-          label: 'Tanggal Penugasan',
+          label: ('Tanggal Penugasan').tr(context),
           value:
               schedule.assignedDate?.format(pattern: 'EEEE, dd MMMM yyyy') ??
               '-',
@@ -64,7 +65,7 @@ class ShiftScheduleDetailView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: AppDimens.h12,
       children: [
-        Text(
+        HrText(
           'Waktu Kerja',
           style: context.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,
@@ -74,7 +75,7 @@ class ShiftScheduleDetailView extends StatelessWidget {
           children: [
             Expanded(
               child: AppLabeledValue(
-                label: 'Check In',
+                label: ('Check In').tr(context),
                 value:
                     schedule.shift.jamMasuk?.format(pattern: 'HH:mm:ss') ??
                     '--:--:--',
@@ -84,7 +85,7 @@ class ShiftScheduleDetailView extends StatelessWidget {
             ),
             Expanded(
               child: AppLabeledValue(
-                label: 'Check Out',
+                label: ('Check Out').tr(context),
                 value:
                     schedule.shift.jamPulang?.format(pattern: 'HH:mm:ss') ??
                     '--:--:--',
@@ -98,7 +99,7 @@ class ShiftScheduleDetailView extends StatelessWidget {
           children: [
             Expanded(
               child: AppLabeledValue(
-                label: 'Durasi Kerja',
+                label: ('Durasi Kerja').tr(context),
                 value: schedule.shift.totalKerja?.timeDuration() ?? '--:--',
                 icon: PhosphorIcons.hourglass,
                 iconColor: AppColors.primary,
@@ -106,7 +107,7 @@ class ShiftScheduleDetailView extends StatelessWidget {
             ),
             Expanded(
               child: AppLabeledValue(
-                label: 'Durasi Istirahat',
+                label: ('Durasi Istirahat').tr(context),
                 value:
                     schedule.shift.durasiIstirahat?.timeDuration() ?? '--:--',
                 icon: PhosphorIcons.coffee,
@@ -125,7 +126,7 @@ class ShiftScheduleDetailView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: AppDimens.h12,
       children: [
-        Text(
+        HrText(
           'Catatan',
           style: context.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,

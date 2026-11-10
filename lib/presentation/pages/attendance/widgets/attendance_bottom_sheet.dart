@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -76,7 +77,7 @@ class AttendanceBottomSheet extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          HrText(
                             'Lokasi Anda Saat Ini',
                             style: context.textStyle.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
@@ -93,7 +94,7 @@ class AttendanceBottomSheet extends StatelessWidget {
                                 height: 1.4,
                               ),
                             ),
-                            failure: (failure) => Text(
+                            failure: (failure) => HrText(
                               failure.message.isNotEmpty
                                   ? failure.message
                                   : 'Tidak dapat mengambil lokasi. Pastikan izin lokasi aktif lalu coba lagi.',
@@ -101,7 +102,7 @@ class AttendanceBottomSheet extends StatelessWidget {
                                 color: AppColors.red,
                               ),
                             ),
-                            orElse: () => Text(
+                            orElse: () => HrText(
                               'Lokasi belum tersedia.',
                               style: context.textStyle.bodyMedium?.copyWith(
                                 color: AppColors.labelSecondary,
@@ -110,7 +111,7 @@ class AttendanceBottomSheet extends StatelessWidget {
                           ),
                           if (locationError != null) ...[
                             const SizedBox(height: 4),
-                            Text(
+                            HrText(
                               locationError!,
                               style: context.textStyle.labelSmall?.copyWith(
                                 color: AppColors.danger,
@@ -152,7 +153,7 @@ class AttendanceBottomSheet extends StatelessWidget {
         ),
         SizedBox(width: AppDimens.w8),
         Expanded(
-          child: Text(
+          child: HrText(
             'Mencari lokasi anda...',
             style: context.theme.textTheme.bodyMedium?.copyWith(
               color: AppColors.labelSecondary,

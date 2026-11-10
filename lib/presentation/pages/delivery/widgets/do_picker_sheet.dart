@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_domain/presensi_domain.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -6,10 +7,7 @@ import 'package:presensi_mobile/presentation/_presentation.dart';
 class DoPickerSheet extends StatefulWidget {
   final List<DeliveryOrderEntity> deliveryOrders;
 
-  const DoPickerSheet({
-    super.key,
-    required this.deliveryOrders,
-  });
+  const DoPickerSheet({super.key, required this.deliveryOrders});
 
   @override
   State<DoPickerSheet> createState() => _DoPickerSheetState();
@@ -141,14 +139,14 @@ class _DoPickerSheetState extends State<DoPickerSheet> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    HrText(
                       'Pilih Surat Jalan (DO)',
                       style: context.textStyle.titleLarge!.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text(
+                    HrText(
                       '${_items.length} surat jalan tersedia',
                       style: context.textStyle.bodySmall?.copyWith(
                         color: AppColors.grey,
@@ -171,13 +169,12 @@ class _DoPickerSheetState extends State<DoPickerSheet> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Cari No. DO / No. Order...',
+                hintText: ('Cari No. DO / No. Order...').tr(context),
                 prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppDimens.radiusMedium),
                 ),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16),
               ),
               onChanged: (val) {
                 setState(() {
@@ -195,10 +192,13 @@ class _DoPickerSheetState extends State<DoPickerSheet> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.search_off,
-                            size: 48, color: AppColors.grey.shade300),
+                        Icon(
+                          Icons.search_off,
+                          size: 48,
+                          color: AppColors.grey.shade300,
+                        ),
                         const SizedBox(height: 8),
-                        Text(
+                        HrText(
                           'Tidak ada DO ditemukan',
                           style: context.textStyle.bodyMedium?.copyWith(
                             color: AppColors.grey,
@@ -230,8 +230,9 @@ class _DoPickerSheetState extends State<DoPickerSheet> {
                                 : AppColors.borderGrey,
                             width: item.isSelected ? 1.5 : 1,
                           ),
-                          borderRadius:
-                              BorderRadius.circular(AppDimens.radiusMediumX),
+                          borderRadius: BorderRadius.circular(
+                            AppDimens.radiusMediumX,
+                          ),
                         ),
                         child: Column(
                           children: [
@@ -239,13 +240,14 @@ class _DoPickerSheetState extends State<DoPickerSheet> {
                             InkWell(
                               onTap: () => _toggleSelection(gIdx),
                               borderRadius: BorderRadius.circular(
-                                  AppDimens.radiusMediumX),
+                                AppDimens.radiusMediumX,
+                              ),
                               child: Padding(
                                 padding: const EdgeInsets.all(
-                                    AppDimens.paddingMediumX),
+                                  AppDimens.paddingMediumX,
+                                ),
                                 child: Row(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     // Checkbox
                                     SizedBox(
@@ -257,8 +259,9 @@ class _DoPickerSheetState extends State<DoPickerSheet> {
                                             _toggleSelection(gIdx),
                                         activeColor: AppColors.primary,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(4),
+                                          borderRadius: BorderRadius.circular(
+                                            4,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -275,39 +278,41 @@ class _DoPickerSheetState extends State<DoPickerSheet> {
                                                 child: Text(
                                                   item.noDo ?? '-',
                                                   style: context
-                                                      .textStyle.titleSmall
+                                                      .textStyle
+                                                      .titleSmall
                                                       ?.copyWith(
-                                                    fontWeight:
-                                                        FontWeight.bold,
-                                                    color:
-                                                        AppColors.primary,
-                                                  ),
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color:
+                                                            AppColors.primary,
+                                                      ),
                                                 ),
                                               ),
                                               // Status badge
                                               Container(
-                                                padding: const EdgeInsets
-                                                    .symmetric(
-                                                  horizontal: 8,
-                                                  vertical: 3,
-                                                ),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 3,
+                                                    ),
                                                 decoration: BoxDecoration(
                                                   color: _statusBgColor(
-                                                      item.status),
+                                                    item.status,
+                                                  ),
                                                   borderRadius:
                                                       BorderRadius.circular(
-                                                          AppDimens
-                                                              .radiusSmall),
+                                                        AppDimens.radiusSmall,
+                                                      ),
                                                 ),
                                                 child: Text(
                                                   (item.status ?? '-')
                                                       .toUpperCase(),
                                                   style: TextStyle(
                                                     color: _statusColor(
-                                                        item.status),
+                                                      item.status,
+                                                    ),
                                                     fontSize: 10,
-                                                    fontWeight:
-                                                        FontWeight.bold,
+                                                    fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
                                               ),
@@ -316,18 +321,16 @@ class _DoPickerSheetState extends State<DoPickerSheet> {
                                           const SizedBox(height: 4),
                                           Text(
                                             'Order: ${item.noOrder ?? '-'}',
-                                            style: context
-                                                .textStyle.bodySmall
+                                            style: context.textStyle.bodySmall
                                                 ?.copyWith(
-                                              color: AppColors.grey,
-                                            ),
+                                                  color: AppColors.grey,
+                                                ),
                                           ),
                                           const SizedBox(height: 8),
                                           // Items count & expand
                                           if (itemCount > 0)
                                             InkWell(
-                                              onTap: () =>
-                                                  _toggleExpand(index),
+                                              onTap: () => _toggleExpand(index),
                                               child: Row(
                                                 children: [
                                                   Icon(
@@ -336,23 +339,24 @@ class _DoPickerSheetState extends State<DoPickerSheet> {
                                                     color: AppColors.primary,
                                                   ),
                                                   const SizedBox(width: 4),
-                                                  Text(
+                                                  HrText(
                                                     '$itemCount item produk',
                                                     style: context
-                                                        .textStyle.bodySmall
+                                                        .textStyle
+                                                        .bodySmall
                                                         ?.copyWith(
-                                                      color:
-                                                          AppColors.primary,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
+                                                          color:
+                                                              AppColors.primary,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        ),
                                                   ),
                                                   Icon(
                                                     isExpanded
                                                         ? Icons
-                                                            .keyboard_arrow_up
+                                                              .keyboard_arrow_up
                                                         : Icons
-                                                            .keyboard_arrow_down,
+                                                              .keyboard_arrow_down,
                                                     size: 18,
                                                     color: AppColors.primary,
                                                   ),
@@ -360,13 +364,12 @@ class _DoPickerSheetState extends State<DoPickerSheet> {
                                               ),
                                             )
                                           else
-                                            Text(
+                                            HrText(
                                               'Total: ${(item.totalItem?.toInt() ?? 0)} item',
-                                              style: context
-                                                  .textStyle.bodySmall
+                                              style: context.textStyle.bodySmall
                                                   ?.copyWith(
-                                                color: AppColors.grey,
-                                              ),
+                                                    color: AppColors.grey,
+                                                  ),
                                             ),
                                         ],
                                       ),
@@ -385,42 +388,46 @@ class _DoPickerSheetState extends State<DoPickerSheet> {
                                   bottom: AppDimens.paddingMediumX,
                                 ),
                                 padding: const EdgeInsets.all(
-                                    AppDimens.paddingSmallX),
+                                  AppDimens.paddingSmallX,
+                                ),
                                 decoration: BoxDecoration(
                                   color: AppColors.bgSecondary,
                                   borderRadius: BorderRadius.circular(
-                                      AppDimens.radiusMedium),
+                                    AppDimens.radiusMedium,
+                                  ),
                                 ),
                                 child: Column(
-                                  children: item.items!
-                                      .asMap()
-                                      .entries
-                                      .map((entry) {
+                                  children: item.items!.asMap().entries.map((
+                                    entry,
+                                  ) {
                                     final product = entry.value;
                                     final isLast =
                                         entry.key == item.items!.length - 1;
                                     return Column(
                                       children: [
                                         Padding(
-                                          padding:
-                                              const EdgeInsets.symmetric(
-                                                  vertical: 4),
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 4,
+                                          ),
                                           child: Row(
                                             children: [
                                               Expanded(
                                                 child: Text(
                                                   product.namaProduk ?? '-',
                                                   style: context
-                                                      .textStyle.bodySmall,
+                                                      .textStyle
+                                                      .bodySmall,
                                                 ),
                                               ),
                                               Text(
                                                 '${(product.qty?.toInt() ?? 0)} ${product.satuan ?? ''}',
                                                 style: context
-                                                    .textStyle.bodySmall
+                                                    .textStyle
+                                                    .bodySmall
                                                     ?.copyWith(
-                                                  fontWeight: FontWeight.w600,
-                                                ),
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
                                               ),
                                             ],
                                           ),
@@ -443,7 +450,14 @@ class _DoPickerSheetState extends State<DoPickerSheet> {
           ),
           // Bottom bar
           Container(
-            padding: EdgeInsets.fromLTRB(AppDimens.paddingMediumX, AppDimens.paddingMediumX, AppDimens.paddingMediumX, AppDimens.paddingMediumX + MediaQuery.viewInsetsOf(context).bottom + MediaQuery.paddingOf(context).bottom),
+            padding: EdgeInsets.fromLTRB(
+              AppDimens.paddingMediumX,
+              AppDimens.paddingMediumX,
+              AppDimens.paddingMediumX,
+              AppDimens.paddingMediumX +
+                  MediaQuery.viewInsetsOf(context).bottom +
+                  MediaQuery.paddingOf(context).bottom,
+            ),
             decoration: BoxDecoration(
               color: Colors.white,
               border: Border(
@@ -459,11 +473,12 @@ class _DoPickerSheetState extends State<DoPickerSheet> {
             ),
             child: SafeArea(
               child: AppButton(
-                text: 'Pilih ($_selectedCount DO)',
+                text: ('Pilih ($_selectedCount DO)').tr(context),
                 onPressed: _selectedCount > 0
                     ? () {
-                        final selected =
-                            _items.where((e) => e.isSelected).toList();
+                        final selected = _items
+                            .where((e) => e.isSelected)
+                            .toList();
                         Navigator.of(context).pop(selected);
                       }
                     : () {},

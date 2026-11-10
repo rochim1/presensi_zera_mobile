@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:presensi_domain/presensi_domain.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
@@ -43,7 +44,7 @@ class SelfAssessmentView extends StatelessWidget {
       builder: (context, state) {
         return Scaffold(
           backgroundColor: AppColors.bgPrimary,
-          appBar: AppBar(title: const Text('Self Assessment')),
+          appBar: AppBar(title: const HrText('Self Assessment')),
           body: state.detailState.when(
             initial: () => const SizedBox(),
             loading: () => const Center(child: CircularProgressIndicator()),
@@ -71,7 +72,12 @@ class SelfAssessmentView extends StatelessWidget {
                         children: [
                           _buildHeader(context, data),
                           if (data.finalScore != null)
-                            Padding(padding: const EdgeInsets.only(top: 12), child: Text('Hasil review: ${data.finalScore} / 5 • Grade ${data.finalGrade ?? "-"}')),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 12),
+                              child: HrText(
+                                'Hasil review: ${data.finalScore} / 5 • Grade ${data.finalGrade ?? "-"}',
+                              ),
+                            ),
                           if (data.sourceUpdateMessage?.isNotEmpty == true)
                             Padding(
                               padding: const EdgeInsets.only(top: 16),
@@ -91,7 +97,7 @@ class SelfAssessmentView extends StatelessWidget {
                               }).toList() ??
                               [],
                           const SizedBox(height: 16),
-                          Text(
+                          HrText(
                             'Catatan Global',
                             style: context.textStyle.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
@@ -101,7 +107,9 @@ class SelfAssessmentView extends StatelessWidget {
                           AppTextField(
                             initialValue: state.globalComment,
                             hintText:
-                                'Tambahkan catatan keseluruhan (opsional)',
+                                ('Tambahkan catatan keseluruhan (opsional)').tr(
+                                  context,
+                                ),
                             maxLines: 3,
                             readOnly: isReadonly,
                             onChanged: isReadonly
@@ -129,7 +137,7 @@ class SelfAssessmentView extends StatelessWidget {
                       ),
                       child: SafeArea(
                         child: AppButton(
-                          text: 'Kirim Penilaian',
+                          text: ('Kirim Penilaian').tr(context),
                           isLoading: state.submitState.isLoading,
                           onPressed: () => _confirmSubmit(context, data),
                         ),
@@ -162,7 +170,7 @@ class SelfAssessmentView extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 4),
-          Text(
+          HrText(
             'Periode: ${data.periodeLabel ?? '-'}',
             style: context.textStyle.bodyMedium,
           ),
@@ -197,7 +205,7 @@ class SelfAssessmentView extends StatelessWidget {
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
-                indicator.category?.namaKategori ?? 'Uncategorized',
+                indicator.category?.namaKategori ?? 'Uncategorized'.tr(context),
                 style: context.textStyle.bodySmall,
               ),
             ),
@@ -246,16 +254,21 @@ class SelfAssessmentView extends StatelessWidget {
               ],
             ),
             if (isReadonly && score.managerRating != null)
-              Padding(padding: const EdgeInsets.only(top: 12), child: Text('Nilai pemeriksa: ${score.managerRating} / 5 • Kontribusi: ${score.nilaiTerbobot ?? 0}')),
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: HrText(
+                  'Nilai pemeriksa: ${score.managerRating} / 5 • Kontribusi: ${score.nilaiTerbobot ?? 0}',
+                ),
+              ),
             if (score.nilaiRating != null)
               Padding(
                 padding: const EdgeInsets.only(top: 12),
-                child: Text(
+                child: HrText(
                   'Rating otomatis: ${score.nilaiRating} / 5. Nilai akhir mengikuti penilaian pemeriksa.',
                 ),
               ),
             const SizedBox(height: 16),
-            Text(
+            HrText(
               isReadonly ? 'Penilaian pribadi sebelumnya' : 'Penilaian Anda',
               style: context.textStyle.bodyMedium?.copyWith(
                 fontWeight: FontWeight.bold,
@@ -278,7 +291,7 @@ class SelfAssessmentView extends StatelessWidget {
                     },
             ),
             Center(
-              child: Text(
+              child: HrText(
                 hasRating
                     ? '${rating.round()} / 5'
                     : 'Geser untuk memberi nilai',
@@ -292,7 +305,7 @@ class SelfAssessmentView extends StatelessWidget {
             const SizedBox(height: 16),
             AppTextField(
               initialValue: state.comments[indicatorId] ?? '',
-              hintText: 'Catatan (Opsional)',
+              hintText: ('Catatan (Opsional)').tr(context),
               maxLines: 2,
               readOnly: isReadonly,
               onChanged: isReadonly
@@ -336,18 +349,18 @@ class SelfAssessmentView extends StatelessWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Kirim penilaian?'),
-        content: const Text(
+        title: const HrText('Kirim penilaian?'),
+        content: const HrText(
           'Pastikan seluruh nilai sudah benar. Setelah dikirim, penilaian akan masuk ke tahap review manager.',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('Periksa Lagi'),
+            child: const HrText('Periksa Lagi'),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text('Kirim'),
+            child: const HrText('Kirim'),
           ),
         ],
       ),
@@ -366,12 +379,12 @@ class SelfAssessmentView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(message, textAlign: TextAlign.center),
+            HrText(message, textAlign: TextAlign.center),
             const SizedBox(height: 12),
             OutlinedButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh),
-              label: const Text('Coba Lagi'),
+              label: const HrText('Coba Lagi'),
             ),
           ],
         ),
@@ -383,7 +396,7 @@ class SelfAssessmentView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        HrText(
           label,
           style: context.textStyle.bodySmall?.copyWith(color: AppColors.grey),
         ),

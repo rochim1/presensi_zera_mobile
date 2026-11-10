@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -52,13 +53,13 @@ class TeamKpiView extends StatelessWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(f.message, textAlign: TextAlign.center),
+                        HrText(f.message, textAlign: TextAlign.center),
                         const SizedBox(height: 8),
                         TextButton.icon(
                           onPressed: () =>
                               context.read<TeamKpiCubit>().fetchSummary(),
                           icon: const Icon(Icons.refresh),
-                          label: const Text('Coba Lagi'),
+                          label: const HrText('Coba Lagi'),
                         ),
                       ],
                     ),
@@ -74,7 +75,7 @@ class TeamKpiView extends StatelessWidget {
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
-                child: Text(
+                child: HrText(
                   'Daftar KPI Tim',
                   style: context.textStyle.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,

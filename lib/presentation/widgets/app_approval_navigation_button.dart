@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -45,7 +46,7 @@ class AppApprovalNavigationButton extends StatelessWidget {
                   size: AppDimens.iconSmall,
                 ),
                 SizedBox(width: AppDimens.w6),
-                Text(
+                HrText(
                   showingApproval ? returnLabel : 'Persetujuan',
                   style: Theme.of(context).textTheme.labelMedium?.copyWith(
                     color: AppColors.white,

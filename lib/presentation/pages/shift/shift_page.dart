@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -51,11 +52,15 @@ class _ShiftViewState extends State<ShiftView> {
           },
           child: Scaffold(
             appBar: AppTopBar(
-              title: _showingApproval ? 'Approval Tukar Shift' : 'Shift',
+              title: (_showingApproval
+                  ? ('Approval Tukar Shift').tr(context)
+                  : ('Shift').tr(context)),
               centerTitle: false,
-              subtitle: _showingApproval
-                  ? 'Tinjau pengajuan tukar shift karyawan'
-                  : 'Kelola jadwal dan pengajuan tukar shift Anda',
+              subtitle: (_showingApproval
+                  ? ('Tinjau pengajuan tukar shift karyawan').tr(context)
+                  : ('Kelola jadwal dan pengajuan tukar shift Anda').tr(
+                      context,
+                    )),
               onBackTap: _showingApproval && !widget.initialApproval
                   ? () => setState(() => _showingApproval = false)
                   : null,

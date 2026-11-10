@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:presensi_mobile/presentation/attendance_navigation.dart';
 import 'package:action_slider/action_slider.dart';
 import 'package:auto_route/auto_route.dart';
@@ -410,7 +411,7 @@ class _HomeViewState extends State<HomeView> {
         } else {
           AppBottomSheet.showError(
             context: context,
-            titleText: 'Gagal',
+            titleText: ('Gagal').tr(context),
             message: errorMessage,
           );
         }
@@ -491,7 +492,7 @@ class _HomeViewState extends State<HomeView> {
           failure: (v) async {
             AppBottomSheet.showError(
               context: context,
-              titleText: 'Gagal Memulai Istirahat',
+              titleText: ('Gagal Memulai Istirahat').tr(context),
               message: v.message,
             );
             attendanceSliderController.failure();
@@ -517,7 +518,7 @@ class _HomeViewState extends State<HomeView> {
           failure: (v) {
             AppBottomSheet.showError(
               context: context,
-              titleText: 'Gagal Menyelesaikan Istirahat',
+              titleText: ('Gagal Menyelesaikan Istirahat').tr(context),
               message: v.message,
             );
             attendanceSliderController.failure();
@@ -603,7 +604,7 @@ class _HomeViewState extends State<HomeView> {
                     height: 20,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : Text(text);
+                : HrText(text);
             return PopScope(
               canPop: !busy,
               child: Padding(
@@ -620,7 +621,7 @@ class _HomeViewState extends State<HomeView> {
                     Row(
                       children: [
                         const Expanded(
-                          child: Text(
+                          child: HrText(
                             'Akhiri Lembur',
                             style: TextStyle(
                               fontSize: 18,
@@ -639,17 +640,21 @@ class _HomeViewState extends State<HomeView> {
                       enabled: !busy,
                       controller: reasonController,
                       maxLines: 3,
-                      decoration: const InputDecoration(
-                        labelText: 'Alasan Lembur (Opsional)',
-                        hintText: 'Tuliskan alasan/kegiatan lembur...',
+                      decoration: InputDecoration(
+                        labelText: ('Alasan Lembur (Opsional)').tr(ctx),
+                        hintText: ('Tuliskan alasan/kegiatan lembur...').tr(
+                          ctx,
+                        ),
                         border: OutlineInputBorder(),
                       ),
                     ),
                     const SizedBox(height: 16),
                     AppAttachmentField(
-                      label: 'Bukti Pendukung',
+                      label: ('Bukti Pendukung').tr(ctx),
                       isRequired: isAttachmentRequired,
-                      hintText: 'Tambahkan foto atau dokumen pendukung',
+                      hintText: ('Tambahkan foto atau dokumen pendukung').tr(
+                        ctx,
+                      ),
                       value: attachments.map((file) => file.name).join(', '),
                       onDelete: () {
                         if (!busy) update(() => attachments = []);
@@ -713,20 +718,20 @@ class _HomeViewState extends State<HomeView> {
                               final confirmed = await showDialog<bool>(
                                 context: ctx,
                                 builder: (dialogContext) => AlertDialog(
-                                  title: const Text('Batalkan Lembur?'),
-                                  content: const Text(
+                                  title: const HrText('Batalkan Lembur?'),
+                                  content: const HrText(
                                     'Mode lembur akan dihentikan tanpa menyimpan request lembur.',
                                   ),
                                   actions: [
                                     TextButton(
                                       onPressed: () =>
                                           Navigator.pop(dialogContext, false),
-                                      child: const Text('Tidak'),
+                                      child: const HrText('Tidak'),
                                     ),
                                     TextButton(
                                       onPressed: () =>
                                           Navigator.pop(dialogContext, true),
-                                      child: const Text('Ya, Batalkan'),
+                                      child: const HrText('Ya, Batalkan'),
                                     ),
                                   ],
                                 ),

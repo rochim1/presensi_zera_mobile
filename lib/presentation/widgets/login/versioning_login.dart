@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -20,7 +21,7 @@ class VersioningLogin extends StatelessWidget {
             builder: (_, AsyncSnapshot<PackageInfo> snapshot) {
               if (snapshot.connectionState == ConnectionState.done &&
                   snapshot.hasData) {
-                return Text(
+                return HrText(
                   'Versi Aplikasi ${snapshot.data?.version}+${snapshot.data?.buildNumber} ${state.version == null ? '' : '|'} ${state.version ?? ''}',
                   textAlign: TextAlign.center,
                   style: context.textStyle.bodySmall,

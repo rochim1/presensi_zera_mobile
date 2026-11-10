@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:presensi_domain/presensi_domain.dart';
@@ -63,7 +64,7 @@ class ApotekMapCardWidget extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Flexible(
-                          child: Text(
+                          child: HrText(
                             'Lokasi',
                             style: context.textStyle.titleMedium?.copyWith(
                               fontWeight: FontWeight.w600,
@@ -98,7 +99,7 @@ class ApotekMapCardWidget extends StatelessWidget {
                           Expanded(
                             child: _buildCoordinateItem(
                               context,
-                              'Latitude',
+                              ('Latitude').tr(context),
                               target?.latitude.langLatSubString ?? '-',
                               Icons.my_location_outlined,
                             ),
@@ -114,7 +115,7 @@ class ApotekMapCardWidget extends StatelessWidget {
                           Expanded(
                             child: _buildCoordinateItem(
                               context,
-                              'Longitude',
+                              ('Longitude').tr(context),
                               target?.longitude.langLatSubString ?? '-',
                               Icons.explore_outlined,
                             ),
@@ -145,7 +146,7 @@ class ApotekMapCardWidget extends StatelessWidget {
                         ),
                         const SizedBox(width: AppDimens.size3S),
                         Expanded(
-                          child: Text(
+                          child: HrText(
                             addreass?.toApotekAddress() ?? kAddressNotFound,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
@@ -177,7 +178,7 @@ class ApotekMapCardWidget extends StatelessWidget {
           children: [
             Icon(icon, size: 16, color: AppColors.primary),
             const SizedBox(width: AppDimens.paddingSmall),
-            Text(
+            HrText(
               label,
               style: context.textStyle.bodySmall?.copyWith(
                 color: AppColors.labelSecondary,

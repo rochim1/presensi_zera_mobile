@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_domain/presensi_domain.dart';
 
@@ -80,7 +81,7 @@ class ItemActivityHome extends StatelessWidget {
                                 AppDimens.radiusSmall,
                               ),
                             ),
-                            child: Text(
+                            child: HrText(
                               'Kode',
                               style: context.textStyle.labelSmall!.copyWith(
                                 color: AppColors.labelSecondary,
@@ -140,7 +141,7 @@ class ItemActivityHome extends StatelessWidget {
           width: 1,
         ),
       ),
-      child: Text(
+      child: HrText(
         statusTask.toName,
         style: TextStyle(
           color: statusTask.toColor,

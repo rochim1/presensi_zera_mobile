@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
 import 'package:presensi_mobile/presentation/_presentation.dart';
@@ -60,7 +61,7 @@ class ItemCardWidget extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
+                              HrText(
                                 title ?? '',
                                 style: context.textStyle.titleMedium!.copyWith(
                                   fontWeight: FontWeight.w600,
@@ -70,7 +71,7 @@ class ItemCardWidget extends StatelessWidget {
                               ),
                               if (subTitle != null && subTitle!.isNotEmpty) ...[
                                 AppDimens.size2S.hSpace,
-                                Text(
+                                HrText(
                                   subTitle!,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
@@ -120,7 +121,7 @@ class ItemCardWidget extends StatelessWidget {
                       bottom: Radius.circular(AppDimens.radiusLarge),
                     ),
                   ),
-                  child: Text(
+                  child: HrText(
                     onCanceled != null ? 'Batalkan Kunjungan' : 'Ubah Lokasi',
                     textAlign: TextAlign.center,
                     style: context.textStyle.bodyMedium!.copyWith(

@@ -1,3 +1,5 @@
+import 'package:presensi_mobile/l10n/language_picker.dart';
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -82,7 +84,7 @@ class _IntroPageState extends State<IntroPage> {
                     const SizedBox(height: AppDimens.size2L),
 
                     // App Name / Title
-                    Text(
+                    HrText(
                       title,
                       style: context.textStyle.titleLarge?.copyWith(
                         // Smaller than headlineMedium
@@ -96,7 +98,7 @@ class _IntroPageState extends State<IntroPage> {
                       height: AppDimens.sizeS,
                     ), // Reduced from sizeM
                     // Simple description
-                    Text(
+                    HrText(
                       description,
                       style: context.textStyle.bodyMedium?.copyWith(
                         // Smaller than bodyLarge
@@ -126,7 +128,9 @@ class _IntroPageState extends State<IntroPage> {
                           openPantooLogin(context.router);
                         }
                       },
-                      text: pageIndex < 2 ? 'Selanjutnya' : 'Mulai Sekarang',
+                      text: (pageIndex < 2
+                          ? ('Selanjutnya').tr(context)
+                          : ('Mulai Sekarang').tr(context)),
                     ),
                   ],
                 ),
@@ -145,7 +149,7 @@ class _IntroPageState extends State<IntroPage> {
       child: BlocListener<GlobalInAppUpgradeCubit, GlobalInAppUpgradeState>(
         listener: (_, state) async {
           if (state.status.isLoaded) {
-            Fluttertoast.showToast(msg: state.message!);
+            Fluttertoast.showToast(msg: (state.message!).trCurrent());
           } else if (state.status.isNotLoaded) {
             final answer = await AppModalBottom.handleError(
               context,
@@ -193,6 +197,17 @@ class _IntroPageState extends State<IntroPage> {
                 SafeArea(
                   child: Column(
                     children: [
+                      const Align(
+                        alignment: Alignment.centerRight,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          child: Material(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(Radius.circular(12)),
+                            child: LanguagePicker(),
+                          ),
+                        ),
+                      ),
                       Expanded(
                         child: PageView(
                           controller: _pageController,
@@ -206,26 +221,34 @@ class _IntroPageState extends State<IntroPage> {
                             _buildCard(
                               context: context,
                               pageIndex: 0,
-                              title: 'Presensi Mobile',
+                              title: ('Presensi Mobile').tr(context),
                               description:
-                                  'Solusi absensi modern untuk perusahaan Anda',
-                              features: const [
+                                  ('Solusi absensi modern untuk perusahaan Anda')
+                                      .tr(context),
+                              features: [
                                 FeatureItem(
                                   icon: Icons.access_time_rounded,
-                                  title: 'Absensi Real-time',
-                                  subtitle: 'Catat kehadiran dengan GPS akurat',
+                                  title: ('Absensi Real-time').tr(context),
+                                  subtitle:
+                                      ('Catat kehadiran dengan GPS akurat').tr(
+                                        context,
+                                      ),
                                 ),
                                 SizedBox(height: AppDimens.sizeM),
                                 FeatureItem(
                                   icon: Icons.analytics_rounded,
-                                  title: 'Laporan Lengkap',
-                                  subtitle: 'Monitor produktivitas tim',
+                                  title: ('Laporan Lengkap').tr(context),
+                                  subtitle: ('Monitor produktivitas tim').tr(
+                                    context,
+                                  ),
                                 ),
                                 SizedBox(height: AppDimens.sizeM),
                                 FeatureItem(
                                   icon: Icons.touch_app_rounded,
-                                  title: 'Mudah Digunakan',
-                                  subtitle: 'Interface yang user-friendly',
+                                  title: ('Mudah Digunakan').tr(context),
+                                  subtitle: ('Interface yang user-friendly').tr(
+                                    context,
+                                  ),
                                 ),
                               ],
                             ),
@@ -233,29 +256,33 @@ class _IntroPageState extends State<IntroPage> {
                             _buildCard(
                               context: context,
                               pageIndex: 1,
-                              title: 'HRMS & Sales Terpadu',
+                              title: ('HRMS & Sales Terpadu').tr(context),
                               description:
-                                  'Sistem lengkap dengan berbagai fitur andalan.',
-                              features: const [
+                                  ('Sistem lengkap dengan berbagai fitur andalan.')
+                                      .tr(context),
+                              features: [
                                 FeatureItem(
                                   icon: Icons.shopping_cart_checkout_rounded,
-                                  title: 'Taking Order',
+                                  title: ('Taking Order').tr(context),
                                   subtitle:
-                                      'Fitur manajemen order untuk tim sales',
+                                      ('Fitur manajemen order untuk tim sales')
+                                          .tr(context),
                                 ),
                                 SizedBox(height: AppDimens.sizeM),
                                 FeatureItem(
                                   icon: Icons.local_shipping_rounded,
-                                  title: 'Checkpoint Pengantaran',
+                                  title: ('Checkpoint Pengantaran').tr(context),
                                   subtitle:
-                                      'Pantau rute dan pengantaran real-time',
+                                      ('Pantau rute dan pengantaran real-time')
+                                          .tr(context),
                                 ),
                                 SizedBox(height: AppDimens.sizeM),
                                 FeatureItem(
                                   icon: Icons.people_alt_rounded,
-                                  title: 'Manajemen Presensi',
+                                  title: ('Manajemen Presensi').tr(context),
                                   subtitle:
-                                      'Cuti, izin, dan shift dalam satu aplikasi',
+                                      ('Cuti, izin, dan shift dalam satu aplikasi')
+                                          .tr(context),
                                 ),
                               ],
                             ),
@@ -263,35 +290,42 @@ class _IntroPageState extends State<IntroPage> {
                             _buildCard(
                               context: context,
                               pageIndex: 2,
-                              title: 'Mulai Lebih Cepat',
+                              title: ('Mulai Lebih Cepat').tr(context),
                               description:
-                                  'Tingkatkan produktivitas tim Anda sekarang juga.',
-                              features: const [
+                                  ('Tingkatkan produktivitas tim Anda sekarang juga.')
+                                      .tr(context),
+                              features: [
                                 FeatureItem(
                                   icon: Icons.speed_rounded,
-                                  title: 'Kinerja Cepat',
+                                  title: ('Kinerja Cepat').tr(context),
                                   subtitle:
-                                      'Akses data di mana saja tanpa hambatan',
+                                      ('Akses data di mana saja tanpa hambatan')
+                                          .tr(context),
                                 ),
                                 SizedBox(height: AppDimens.sizeM),
                                 FeatureItem(
                                   icon: Icons.security_rounded,
-                                  title: 'Data Aman',
-                                  subtitle: 'Privasi dan keamanan terjamin',
+                                  title: ('Data Aman').tr(context),
+                                  subtitle: ('Privasi dan keamanan terjamin')
+                                      .tr(context),
                                 ),
                                 SizedBox(height: AppDimens.sizeM),
                                 FeatureItem(
                                   icon: Icons.rocket_launch_rounded,
-                                  title: 'Siap Digunakan',
+                                  title: ('Siap Digunakan').tr(context),
                                   subtitle:
-                                      'Login sekarang dan rasakan kemudahannya',
+                                      ('Login sekarang dan rasakan kemudahannya')
+                                          .tr(context),
                                 ),
                                 SizedBox(height: AppDimens.sizeM),
                                 FeatureItem(
                                   icon: Icons.location_on_outlined,
-                                  title: 'Live Tracking Transparan',
+                                  title: ('Live Tracking Transparan').tr(
+                                    context,
+                                  ),
                                   subtitle:
-                                      'Lokasi hanya digunakan saat sesi kerja aktif dan setelah persetujuan Anda',
+                                      ('Lokasi hanya digunakan saat sesi kerja aktif dan setelah persetujuan Anda')
+                                          .tr(context),
                                 ),
                               ],
                             ),

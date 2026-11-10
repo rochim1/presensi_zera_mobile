@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:presensi_domain/presensi_domain.dart';
@@ -57,7 +58,7 @@ class ReimbursementDetailView extends StatelessWidget {
           children: [
             Expanded(
               child: AppLabeledValue(
-                label: 'Judul',
+                label: ('Judul').tr(context),
                 value: reimbursement.judul ?? '-',
               ),
             ),
@@ -68,13 +69,13 @@ class ReimbursementDetailView extends StatelessWidget {
           ],
         ),
         AppLabeledValue(
-          label: 'Kategori',
+          label: ('Kategori').tr(context),
           value: reimbursement.kategori ?? '-',
           icon: PhosphorIcons.tag,
           iconColor: AppColors.primary,
         ),
         AppLabeledValue(
-          label: 'Tanggal Pengajuan',
+          label: ('Tanggal Pengajuan').tr(context),
           value:
               reimbursement.tanggalPengajuan?.format(
                 pattern: 'EEEE, dd MMMM yyyy HH:mm',
@@ -92,7 +93,7 @@ class ReimbursementDetailView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: AppDimens.h12,
       children: [
-        Text(
+        HrText(
           'Informasi Keuangan',
           style: context.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,
@@ -102,7 +103,7 @@ class ReimbursementDetailView extends StatelessWidget {
           children: [
             Expanded(
               child: AppLabeledValue(
-                label: 'Tanggal Transaksi',
+                label: ('Tanggal Transaksi').tr(context),
                 value:
                     reimbursement.tanggal?.format(pattern: 'dd MMMM yyyy') ??
                     '-',
@@ -112,7 +113,7 @@ class ReimbursementDetailView extends StatelessWidget {
             ),
             Expanded(
               child: AppLabeledValue(
-                label: 'Nominal',
+                label: ('Nominal').tr(context),
                 value:
                     reimbursement.nominal?.toCurrency(
                       reimbursement.mataUang ?? CurrencySymbol.IDR,
@@ -127,7 +128,7 @@ class ReimbursementDetailView extends StatelessWidget {
         if (reimbursement.buktiPembayaran != null &&
             reimbursement.buktiPembayaran!.isNotEmpty) ...[
           AppLabeledValue(
-            label: 'Bukti Pembayaran',
+            label: ('Bukti Pembayaran').tr(context),
             value: reimbursement.filename ?? 'File bukti',
             icon: PhosphorIcons.fileImage,
             iconColor: AppColors.primary,
@@ -143,7 +144,7 @@ class ReimbursementDetailView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: AppDimens.h12,
       children: [
-        Text(
+        HrText(
           'Deskripsi',
           style: context.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,
@@ -166,7 +167,7 @@ class ReimbursementDetailView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: AppDimens.h12,
       children: [
-        Text(
+        HrText(
           title,
           style: context.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,

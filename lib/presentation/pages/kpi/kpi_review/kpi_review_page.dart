@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:presensi_domain/presensi_domain.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
@@ -43,7 +44,7 @@ class KpiReviewView extends StatelessWidget {
       builder: (context, state) {
         return Scaffold(
           backgroundColor: AppColors.bgPrimary,
-          appBar: AppBar(title: const Text('Review KPI Tim')),
+          appBar: AppBar(title: const HrText('Review KPI Tim')),
           body: state.detailState.when(
             initial: () => const SizedBox(),
             loading: () => const Center(child: CircularProgressIndicator()),
@@ -85,7 +86,7 @@ class KpiReviewView extends StatelessWidget {
                               }).toList() ??
                               [],
                           const SizedBox(height: 16),
-                          Text(
+                          HrText(
                             'Catatan Global',
                             style: context.textStyle.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
@@ -95,7 +96,9 @@ class KpiReviewView extends StatelessWidget {
                           AppTextField(
                             initialValue: state.globalComment,
                             hintText:
-                                'Tambahkan catatan keseluruhan (opsional)',
+                                ('Tambahkan catatan keseluruhan (opsional)').tr(
+                                  context,
+                                ),
                             maxLines: 3,
                             readOnly: isReadonly,
                             onChanged: isReadonly
@@ -123,7 +126,7 @@ class KpiReviewView extends StatelessWidget {
                       ),
                       child: SafeArea(
                         child: AppButton(
-                          text: 'Selesaikan Review',
+                          text: ('Selesaikan Review').tr(context),
                           isLoading: state.submitState.isLoading,
                           onPressed: () => _confirmSubmit(context, data),
                         ),
@@ -172,7 +175,7 @@ class KpiReviewView extends StatelessWidget {
                   style: context.textStyle.bodySmall,
                 ),
                 const SizedBox(height: 4),
-                Text(
+                HrText(
                   'Periode: ${data.periodeLabel ?? '-'}',
                   style: context.textStyle.bodyMedium,
                 ),
@@ -210,7 +213,7 @@ class KpiReviewView extends StatelessWidget {
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
-                indicator.category?.namaKategori ?? 'Uncategorized',
+                indicator.category?.namaKategori ?? 'Uncategorized'.tr(context),
                 style: context.textStyle.bodySmall,
               ),
             ),
@@ -251,7 +254,7 @@ class KpiReviewView extends StatelessWidget {
             if (score.nilaiRating != null)
               Padding(
                 padding: const EdgeInsets.only(top: 12),
-                child: Text(
+                child: HrText(
                   'Rating otomatis: ${score.nilaiRating} / 5. Nilai akhir mengikuti penilaian pemeriksa.',
                 ),
               ),
@@ -268,7 +271,7 @@ class KpiReviewView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  HrText(
                     'Self Assessment Karyawan',
                     style: context.textStyle.bodySmall?.copyWith(
                       color: AppColors.orange,
@@ -279,7 +282,7 @@ class KpiReviewView extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Nilai:', style: context.textStyle.bodyMedium),
+                      HrText('Nilai:', style: context.textStyle.bodyMedium),
                       Text(
                         '${score.selfRating ?? 0}',
                         style: context.textStyle.titleMedium?.copyWith(
@@ -291,7 +294,7 @@ class KpiReviewView extends StatelessWidget {
                   if (score.catatanKaryawan != null &&
                       score.catatanKaryawan!.isNotEmpty) ...[
                     const SizedBox(height: 4),
-                    Text(
+                    HrText(
                       'Catatan: ${score.catatanKaryawan}',
                       style: context.textStyle.bodySmall,
                     ),
@@ -300,7 +303,7 @@ class KpiReviewView extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            Text(
+            HrText(
               'Penilaian Manager',
               style: context.textStyle.bodyMedium?.copyWith(
                 fontWeight: FontWeight.bold,
@@ -323,7 +326,7 @@ class KpiReviewView extends StatelessWidget {
                     },
             ),
             Center(
-              child: Text(
+              child: HrText(
                 hasRating
                     ? '${rating.round()} / 5'
                     : 'Geser untuk memberi nilai',
@@ -337,7 +340,7 @@ class KpiReviewView extends StatelessWidget {
             const SizedBox(height: 16),
             AppTextField(
               initialValue: state.comments[indicatorId] ?? '',
-              hintText: 'Catatan Review (Opsional)',
+              hintText: ('Catatan Review (Opsional)').tr(context),
               maxLines: 2,
               readOnly: isReadonly,
               onChanged: isReadonly
@@ -386,18 +389,18 @@ class KpiReviewView extends StatelessWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Selesaikan review?'),
-        content: const Text(
+        title: const HrText('Selesaikan review?'),
+        content: const HrText(
           'Nilai akhir KPI akan dihitung dan disimpan. Koreksi presensi yang disetujui dapat meminta review ulang.',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('Periksa Lagi'),
+            child: const HrText('Periksa Lagi'),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text('Selesaikan'),
+            child: const HrText('Selesaikan'),
           ),
         ],
       ),
@@ -416,12 +419,12 @@ class KpiReviewView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(message, textAlign: TextAlign.center),
+            HrText(message, textAlign: TextAlign.center),
             const SizedBox(height: 12),
             OutlinedButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh),
-              label: const Text('Coba Lagi'),
+              label: const HrText('Coba Lagi'),
             ),
           ],
         ),
@@ -433,7 +436,7 @@ class KpiReviewView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        HrText(
           label,
           style: context.textStyle.bodySmall?.copyWith(color: AppColors.grey),
         ),

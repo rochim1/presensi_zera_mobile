@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
 
@@ -39,7 +40,7 @@ class AppSnackbar {
             Icon(icon, color: Colors.white, size: AppDimens.w20),
             SizedBox(width: AppDimens.w12),
             Expanded(
-              child: Text(
+              child: HrText(
                 message,
                 style: const TextStyle(
                   color: Colors.white,

@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
@@ -77,7 +78,7 @@ class _DeliveryDetailPageState extends State<DeliveryDetailPage> {
             }
           }
           if (mapState.typeState.isNotLoaded) {
-            Fluttertoast.showToast(msg: mapState.message!);
+            Fluttertoast.showToast(msg: (mapState.message!).trCurrent());
             if (!mapState.isLocationGranted) {
               context.router.pop();
             }
@@ -85,7 +86,7 @@ class _DeliveryDetailPageState extends State<DeliveryDetailPage> {
         },
         builder: (ctxMap, mapState) {
           return Scaffold(
-            appBar: const AppTopBar(title: 'Detail Kunjungan'),
+            appBar: AppTopBar(title: ('Detail Kunjungan').tr(context)),
             body: SingleChildScrollView(
               padding: const EdgeInsets.all(AppDimens.paddingMediumX),
               child: Column(
@@ -109,17 +110,17 @@ class _DeliveryDetailPageState extends State<DeliveryDetailPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           DeliveryCardWidget(
-                            title: 'Kunjungan',
+                            title: ('Kunjungan').tr(context),
                             titleTime:
-                                widget
+                                (widget
                                         .tasks
                                         ?.aktivitas
                                         ?.statusTask
                                         ?.toStatusTask
                                         ?.isDone ??
                                     false
-                                ? 'Waktu kunjungan'
-                                : 'Waktu dibatalkan',
+                                ? ('Waktu kunjungan').tr(context)
+                                : ('Waktu dibatalkan').tr(context)),
                             dateNow: widget
                                 .tasks
                                 ?.taskDateDone
@@ -161,7 +162,7 @@ class _DeliveryDetailPageState extends State<DeliveryDetailPage> {
                                     ),
                                     const SizedBox(width: 8),
                                     Expanded(
-                                      child: Text(
+                                      child: HrText(
                                         'Kunjungan ini dikerjakan oleh ${task.aktivitas?.completedByName ?? 'admin lain'}.',
                                         style: const TextStyle(
                                           color: Color(0xFF9A3412),
@@ -179,7 +180,7 @@ class _DeliveryDetailPageState extends State<DeliveryDetailPage> {
                             if (task.aktivitas?.noReferensi?.isNotEmpty ??
                                 false) ...[
                               AppDimens.size3M.hSpace,
-                              Text(
+                              HrText(
                                 'No Referensi / Faktur / DO',
                                 style: context.textStyle.titleMedium!.copyWith(
                                   fontWeight: FontWeight.w500,
@@ -204,7 +205,7 @@ class _DeliveryDetailPageState extends State<DeliveryDetailPage> {
 
                             if ((task.aktivitas?.orderValue ?? 0) > 0) ...[
                               AppDimens.size3M.hSpace,
-                              Text(
+                              HrText(
                                 'Nominal Transaksi/Penagihan',
                                 style: context.textStyle.titleMedium!.copyWith(
                                   fontWeight: FontWeight.w500,
@@ -223,7 +224,7 @@ class _DeliveryDetailPageState extends State<DeliveryDetailPage> {
                           ],
 
                           AppDimens.size3M.hSpace,
-                          Text(
+                          HrText(
                             'Bukti Kunjungan',
                             style: context.textStyle.titleMedium!.copyWith(
                               fontWeight: FontWeight.w500,
@@ -233,9 +234,9 @@ class _DeliveryDetailPageState extends State<DeliveryDetailPage> {
                               false) ...[
                             AppDimens.size3M.hSpace,
                             TextFieldImageView(
-                              title: usrState.isMarketing
-                                  ? 'Foto Plakat Lokasi'
-                                  : 'Foto Bukti',
+                              title: (usrState.isMarketing
+                                  ? ('Foto Plakat Lokasi').tr(context)
+                                  : ('Foto Bukti').tr(context)),
                               fileName: widget
                                   .tasks
                                   ?.aktivitas
@@ -273,9 +274,9 @@ class _DeliveryDetailPageState extends State<DeliveryDetailPage> {
                               false) ...[
                             AppDimens.size3M.hSpace,
                             TextFieldImageView(
-                              title: usrState.isMarketing
-                                  ? 'Foto Pendukung / Nota'
-                                  : 'Foto Stample',
+                              title: (usrState.isMarketing
+                                  ? ('Foto Pendukung / Nota').tr(context)
+                                  : ('Foto Stample').tr(context)),
                               fileName: widget
                                   .tasks
                                   ?.aktivitas

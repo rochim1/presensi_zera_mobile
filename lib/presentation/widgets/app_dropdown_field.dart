@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -66,13 +67,15 @@ class AppDropdownField<T> extends StatelessWidget {
             onChanged: onChanged,
             compareFn: compareFn,
             filterFn: filterFn,
-            itemAsString: itemAsString,
+            itemAsString: itemAsString == null
+                ? null
+                : (item) => hrOptionLabel(item, itemAsString!(item), context),
             dropdownBuilder: dropdownBuilder,
             decoratorProps: DropDownDecoratorProps(
               textAlignVertical: TextAlignVertical.center,
               decoration: InputDecoration(
-                errorText: errorText,
-                hintText: hintText,
+                errorText: (errorText)?.tr(context),
+                hintText: (hintText)?.tr(context),
                 hintStyle: context.textStyle.bodyMedium?.copyWith(
                   color: AppColors.labelSecondary.withValues(alpha: 0.5),
                 ),
@@ -131,7 +134,7 @@ class AppDropdownField<T> extends StatelessWidget {
               ),
               searchFieldProps: TextFieldProps(
                 decoration: InputDecoration(
-                  hintText: 'Cari...',
+                  hintText: ('Cari...').tr(context),
                   prefixIcon: const Icon(
                     Icons.search,
                     color: AppColors.primary,
@@ -180,7 +183,11 @@ class AppDropdownField<T> extends StatelessWidget {
                             child: ListTile(
                               selected: isSelected,
                               title: Text(
-                                itemAsString?.call(item) ?? item.toString(),
+                                hrOptionLabel(
+                                  item,
+                                  itemAsString?.call(item) ?? item.toString(),
+                                  context,
+                                ),
                                 style: context.textStyle.bodyMedium?.copyWith(
                                   color: isSelected
                                       ? AppColors.primary
@@ -231,8 +238,8 @@ class AppDropdownField<T> extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: AppDimens.paddingMediumX),
-                    Text(
-                      'Pilih ${label ?? "Opsi"}',
+                    HrText(
+                      'Pilih ${label ?? ("Opsi").tr(context)}',
                       style: context.textStyle.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),

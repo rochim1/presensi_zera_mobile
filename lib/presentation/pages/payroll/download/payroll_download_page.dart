@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
@@ -66,8 +67,8 @@ class _PayrollDownloadPageState extends State<PayrollDownloadPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const AppTopBar(
-        title: 'Unduhan Slip Gaji',
+      appBar: AppTopBar(
+        title: ('Unduhan Slip Gaji').tr(context),
         backgroundColor: AppColors.transparent,
       ),
       body: _isLoading
@@ -147,7 +148,7 @@ class _PayrollDownloadPageState extends State<PayrollDownloadPage> {
             color: AppColors.labelSecondary.withValues(alpha: 0.5),
           ),
           AppDimens.h16.hSpace,
-          Text(
+          HrText(
             'Belum ada slip gaji yang diunduh',
             style: context.theme.textTheme.bodyLarge?.copyWith(
               color: AppColors.labelSecondary,

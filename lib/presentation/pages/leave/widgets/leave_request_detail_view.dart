@@ -1,3 +1,5 @@
+import 'package:presensi_mobile/l10n/app_language_controller.dart';
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -51,8 +53,10 @@ class _LeaveRequestDetailViewState extends State<LeaveRequestDetailView> {
     );
   }
 
-  String _formatDate(DateTime dt) =>
-      DateFormat("dd MMM yyyy", "id_ID").format(dt);
+  String _formatDate(DateTime dt) => DateFormat(
+    "dd MMM yyyy",
+    AppLanguageController.instance.effectiveLocale.languageCode,
+  ).format(dt);
 
   int get _calendarDays {
     final start = request.tanggalIzin;
@@ -146,6 +150,7 @@ class _LeaveRequestDetailViewState extends State<LeaveRequestDetailView> {
 
   @override
   Widget build(BuildContext context) {
+    hrLocale(context); // Rebuild formatted dates when the language changes.
     final color = request.status.toDisplayColor;
     return SingleChildScrollView(
       child: Column(
@@ -159,7 +164,8 @@ class _LeaveRequestDetailViewState extends State<LeaveRequestDetailView> {
                   color: color,
                   avatarSize: AppDimens.w56,
                   subtitle:
-                      request.category?.name ?? 'Kategori tidak diketahui',
+                      (request.category?.name ??
+                      ('Kategori tidak diketahui').tr(context)),
                   padding: EdgeInsets.zero,
                 ),
               ),
@@ -179,7 +185,7 @@ class _LeaveRequestDetailViewState extends State<LeaveRequestDetailView> {
               children: [
                 SizedBox(
                   width: AppDimens.w96,
-                  child: Text('Alasan Cuti', style: _labelStyle(context)),
+                  child: HrText('Alasan Cuti', style: _labelStyle(context)),
                 ),
                 Expanded(
                   child: Text(
@@ -195,14 +201,14 @@ class _LeaveRequestDetailViewState extends State<LeaveRequestDetailView> {
           SizedBox(height: AppDimens.h12),
           _sectionCard(
             context,
-            title: 'Informasi Cuti',
+            title: ('Informasi Cuti').tr(context),
             child: _buildLeaveSummary(context, color),
           ),
           if (request.fileIzin != null && request.fileIzin!.isNotEmpty) ...[
             SizedBox(height: AppDimens.h12),
             _sectionCard(
               context,
-              title: 'Lampiran',
+              title: ('Lampiran').tr(context),
               child: Material(
                 color: Colors.transparent,
                 child: InkWell(
@@ -227,7 +233,7 @@ class _LeaveRequestDetailViewState extends State<LeaveRequestDetailView> {
                         ),
                         SizedBox(width: AppDimens.w12),
                         Expanded(
-                          child: Text(
+                          child: HrText(
                             'Lampiran Bukti',
                             style: context.textStyle.bodyMedium?.copyWith(
                               fontWeight: FontWeight.w600,
@@ -252,7 +258,7 @@ class _LeaveRequestDetailViewState extends State<LeaveRequestDetailView> {
               child: _infoRow(
                 context,
                 icon: PhosphorIcons.calendarCheck,
-                label: 'Tanggal Pengajuan',
+                label: ('Tanggal Pengajuan').tr(context),
                 value: _formatDate(request.tanggalPengajuan!),
               ),
             ),
@@ -294,7 +300,7 @@ class _LeaveRequestDetailViewState extends State<LeaveRequestDetailView> {
                 AppDimens.w12,
                 AppDimens.h10,
               ),
-              child: Text(
+              child: HrText(
                 title,
                 style: context.textStyle.titleSmall?.copyWith(
                   fontWeight: FontWeight.w700,
@@ -323,7 +329,7 @@ class _LeaveRequestDetailViewState extends State<LeaveRequestDetailView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: _labelStyle(context)),
+              HrText(label, style: _labelStyle(context)),
               SizedBox(height: AppDimens.h2),
               Text(
                 value,
@@ -360,7 +366,7 @@ class _LeaveRequestDetailViewState extends State<LeaveRequestDetailView> {
                 Expanded(
                   child: _summaryItem(
                     context,
-                    label: 'Tanggal Izin',
+                    label: ('Tanggal Izin').tr(context),
                     value: request.tanggalIzin == null
                         ? '-'
                         : _formatDate(request.tanggalIzin!),
@@ -372,7 +378,7 @@ class _LeaveRequestDetailViewState extends State<LeaveRequestDetailView> {
                 Expanded(
                   child: _summaryItem(
                     context,
-                    label: 'Tanggal Masuk',
+                    label: ('Tanggal Masuk').tr(context),
                     value: request.tanggalMasuk == null
                         ? '-'
                         : _formatDate(request.tanggalMasuk!),
@@ -390,8 +396,8 @@ class _LeaveRequestDetailViewState extends State<LeaveRequestDetailView> {
                 Expanded(
                   child: _summaryItem(
                     context,
-                    label: 'Total Durasi',
-                    value: '$_durationLabel$halfDayDescription',
+                    label: ('Total Durasi').tr(context),
+                    value: '${_durationLabel.tr(context)}$halfDayDescription',
                     icon: PhosphorIcons.timer,
                     color: color,
                   ),
@@ -400,10 +406,10 @@ class _LeaveRequestDetailViewState extends State<LeaveRequestDetailView> {
                 Expanded(
                   child: _summaryItem(
                     context,
-                    label: 'Hari Kerja',
+                    label: ('Hari Kerja').tr(context),
                     value: workingDays == null
-                        ? (isLoading ? 'Memuat...' : '-')
-                        : _dayCountLabel(workingDays),
+                        ? (isLoading ? ('Memuat...').tr(context) : '-')
+                        : _dayCountLabel(workingDays).tr(context),
                     icon: PhosphorIcons.briefcase,
                     color: color,
                   ),
@@ -412,10 +418,10 @@ class _LeaveRequestDetailViewState extends State<LeaveRequestDetailView> {
                 Expanded(
                   child: _summaryItem(
                     context,
-                    label: 'Hari Libur',
+                    label: ('Hari Libur').tr(context),
                     value: holidays == null
-                        ? (isLoading ? 'Memuat...' : '-')
-                        : '${holidays.length} hari',
+                        ? (isLoading ? ('Memuat...').tr(context) : '-')
+                        : ('${holidays.length} hari').tr(context),
                     icon: PhosphorIcons.coffee,
                     color: color,
                   ),
@@ -444,7 +450,7 @@ class _LeaveRequestDetailViewState extends State<LeaveRequestDetailView> {
             Icon(icon, size: AppDimens.w14, color: color),
             SizedBox(width: AppDimens.w4),
             Expanded(
-              child: Text(
+              child: HrText(
                 label,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,

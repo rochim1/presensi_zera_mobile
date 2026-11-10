@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -35,7 +36,7 @@ class _TextFieldTimePickerState extends State<TextFieldTimePicker> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(widget.title, textAlign: TextAlign.left),
+        HrText(widget.title, textAlign: TextAlign.left),
         AppDimens.size3S.hSpace,
         TextFormField(
           autocorrect: true,
@@ -43,10 +44,12 @@ class _TextFieldTimePickerState extends State<TextFieldTimePicker> {
           onChanged: widget.onChanged,
           enabled: widget.enabled,
           autovalidateMode: AutovalidateMode.onUserInteraction,
-          validator: widget.validator,
+          validator: widget.validator == null
+              ? null
+              : (value) => widget.validator?.call(value)?.tr(context),
           decoration: InputDecoration(
             floatingLabelStyle: const TextStyle(color: AppColors.grey),
-            hintText: widget.hint,
+            hintText: widget.hint.tr(context),
             contentPadding: const EdgeInsets.all(AppDimens.paddingMedium),
             enabledBorder: context.theme.inputDecorationTheme.enabledBorder,
             fillColor: !widget.enabled

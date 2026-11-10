@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
@@ -35,7 +36,7 @@ class _AppApprovalHistoryState extends State<AppApprovalHistory> {
       children: [
         Row(
           children: [
-            Text(
+            HrText(
               widget.title,
               style: context.theme.textTheme.bodySmall?.copyWith(
                 color: AppColors.labelSecondary,
@@ -87,7 +88,7 @@ class _AppApprovalHistoryState extends State<AppApprovalHistory> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
+                  HrText(
                     _isExpanded ? 'Lihat Lebih Sedikit' : 'Lihat Selengkapnya',
                     style: context.theme.textTheme.bodySmall?.copyWith(
                       color: AppColors.primary,
@@ -218,7 +219,7 @@ class _ApproverItem extends StatelessWidget {
                     ),
                   ],
                 ),
-                subtitle: Text(
+                subtitle: HrText(
                   'Level ${approver.level}',
                   style: context.theme.textTheme.bodySmall?.copyWith(
                     color: AppColors.labelSecondary,
@@ -228,7 +229,7 @@ class _ApproverItem extends StatelessWidget {
                 children: [
                   _buildDetailRow(
                     context,
-                    label: 'Approver',
+                    label: ('Approver').tr(context),
                     value: approver.user.name.isEmptyStrip,
                     icon: PhosphorIcons.user,
                   ),
@@ -236,7 +237,7 @@ class _ApproverItem extends StatelessWidget {
                     SizedBox(height: AppDimens.h12),
                     _buildDetailRow(
                       context,
-                      label: 'Waktu',
+                      label: ('Waktu').tr(context),
                       value: approver.actedAt!.format(
                         pattern: 'dd MMM yyyy, HH:mm',
                       ),
@@ -248,7 +249,7 @@ class _ApproverItem extends StatelessWidget {
                     SizedBox(height: AppDimens.h12),
                     _buildDetailRow(
                       context,
-                      label: 'Catatan',
+                      label: ('Catatan').tr(context),
                       value: approver.catatan!,
                       icon: PhosphorIcons.notebook,
                     ),
@@ -278,7 +279,7 @@ Widget _buildDetailRow(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            HrText(
               label,
               style: context.theme.textTheme.bodySmall?.copyWith(
                 color: AppColors.labelSecondary,

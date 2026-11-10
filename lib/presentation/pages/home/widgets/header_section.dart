@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -46,7 +47,7 @@ class HeaderSection extends StatelessWidget {
             padding: EdgeInsets.zero,
             subtitle:
                 '${user?.department?.name ?? '-'} • ${user?.organization?.namaResmi ?? '-'}',
-            titleBuilder: (context, title) => Text(
+            titleBuilder: (context, title) => HrText(
               'Halo, $title!',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -56,7 +57,7 @@ class HeaderSection extends StatelessWidget {
                 letterSpacing: -0.5,
               ),
             ),
-            subtitleBuilder: (context, subtitle) => Text(
+            subtitleBuilder: (context, subtitle) => HrText(
               subtitle,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

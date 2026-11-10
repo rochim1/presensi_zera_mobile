@@ -1,3 +1,5 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
+import '../../../l10n/language_picker.dart';
 import 'dart:convert';
 import 'package:presensi_data/presensi_data.dart'
     show LoginCaptchaFailure, ServerFailure;
@@ -141,11 +143,16 @@ class _LoginFormState extends State<LoginForm> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                const Align(
+                  alignment: Alignment.centerRight,
+                  child: LanguagePicker(),
+                ),
+
                 // Brand Logo
                 const BrandWidget(),
 
                 // Form title
-                Text(
+                HrText(
                   'Masuk ke Akun Anda',
                   textAlign: TextAlign.center,
                   style: context.textStyle.headlineSmall?.copyWith(
@@ -161,8 +168,8 @@ class _LoginFormState extends State<LoginForm> {
                   TextFieldBasic(
                     controller: _urlController,
                     focusNode: _fnUrl,
-                    title: 'Base URL',
-                    hint: 'Masukan URL server',
+                    title: ('Base URL').tr(context),
+                    hint: ('Masukan URL server').tr(context),
                     prefixIcon: const Icon(Icons.link_rounded),
                     inputAction: TextInputAction.next,
                     inputType: TextInputType.url,
@@ -189,8 +196,8 @@ class _LoginFormState extends State<LoginForm> {
                 TextFieldBasic(
                   controller: _usernameController,
                   focusNode: _fnUsername,
-                  title: 'Username/Email',
-                  hint: 'Masukan username atau email Anda',
+                  title: ('Username/Email').tr(context),
+                  hint: ('Masukan username atau email Anda').tr(context),
                   prefixIcon: const Icon(Icons.person_outline_rounded),
                   inputAction: TextInputAction.next,
                   inputType: TextInputType.emailAddress,
@@ -212,8 +219,8 @@ class _LoginFormState extends State<LoginForm> {
                 TextFieldPassword(
                   controller: _passwordController,
                   focusNode: _fnPassword,
-                  title: 'Password',
-                  hint: 'Masukan password Anda',
+                  title: ('Password').tr(context),
+                  hint: ('Masukan password Anda').tr(context),
                   hasPrefixIcon: true,
                   inputAction: TextInputAction.done,
                   autofillHints: const [AutofillHints.password],
@@ -229,22 +236,22 @@ class _LoginFormState extends State<LoginForm> {
                 const SizedBox(height: AppDimens.size3L),
 
                 if (_captcha != null) ...[
-                  const Text('Verifikasi CAPTCHA'),
+                  const HrText('Verifikasi CAPTCHA'),
                   const SizedBox(height: 8),
                   Image.memory(
                     base64Decode(_captcha!.image.split(',').last),
                     height: 70,
                     fit: BoxFit.contain,
-                    errorBuilder: (_, error, stack) => const Text(
+                    errorBuilder: (_, error, stack) => const HrText(
                       'Gambar CAPTCHA tidak dapat ditampilkan. Coba login kembali.',
                     ),
                   ),
                   const SizedBox(height: 8),
                   TextFormField(
                     controller: _captchaController,
-                    decoration: const InputDecoration(
-                      labelText: 'Kode CAPTCHA',
-                      hintText: 'Masukkan kode pada gambar',
+                    decoration: InputDecoration(
+                      labelText: ('Kode CAPTCHA').tr(context),
+                      hintText: ('Masukkan kode pada gambar').tr(context),
                     ),
                     autocorrect: false,
                     enableSuggestions: false,
@@ -262,7 +269,7 @@ class _LoginFormState extends State<LoginForm> {
                 BlocBuilder<LoginSignInCubit, LoginSignInState>(
                   builder: (_, state) {
                     return AppButton(
-                      text: 'Masuk',
+                      text: hrLocale(context).signInAction,
                       onPressed: _handleLogin,
                       isLoading: state.status.isLoading || _googleBusy,
                     );
@@ -289,7 +296,7 @@ class _LoginFormState extends State<LoginForm> {
     return Center(
       child: RichText(
         text: TextSpan(
-          text: 'Belum punya akun? ',
+          text: ('Belum punya akun? ').tr(context),
           style: context.textStyle.bodyMedium?.copyWith(
             color: AppColors.labelSecondary,
           ),
@@ -299,7 +306,7 @@ class _LoginFormState extends State<LoginForm> {
                 onTap: () {
                   context.router.push(const RegisterPageRoute());
                 },
-                child: Text(
+                child: HrText(
                   'Daftar di sini',
                   style: context.textStyle.bodyMedium?.copyWith(
                     color: AppColors.primary,
@@ -329,7 +336,7 @@ class _LoginFormState extends State<LoginForm> {
       child: TextButton.icon(
         onPressed: () => AppUtility.launchLink(kUrlKebijakanPrivasi),
         icon: const Icon(Icons.privacy_tip_outlined, size: 18),
-        label: const Text('Kebijakan Privasi'),
+        label: const HrText('Kebijakan Privasi'),
       ),
     );
   }

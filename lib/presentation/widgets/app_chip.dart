@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:presensi_mobile/core/themes/pantoo_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -40,7 +41,7 @@ class AppChip extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Flexible(
-            child: Text(
+            child: HrText(
               label,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,

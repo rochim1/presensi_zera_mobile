@@ -1,3 +1,5 @@
+import 'package:presensi_mobile/l10n/app_language_controller.dart';
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -51,13 +53,13 @@ class _ReimbursementViewState extends State<ReimbursementView> {
             },
             child: Scaffold(
               appBar: AppTopBar(
-                title: _showingApproval
-                    ? 'Approval Reimbursement'
-                    : 'Reimbursement',
+                title: (_showingApproval
+                    ? ('Approval Reimbursement').tr(context)
+                    : ('Reimbursement').tr(context)),
                 centerTitle: false,
-                subtitle: _showingApproval
-                    ? 'Tinjau pengajuan reimbursement karyawan'
-                    : 'Kelola pengajuan reimbursement Anda',
+                subtitle: (_showingApproval
+                    ? ('Tinjau pengajuan reimbursement karyawan').tr(context)
+                    : ('Kelola pengajuan reimbursement Anda').tr(context)),
                 onBackTap: _showingApproval && !widget.initialApproval
                     ? () => setState(() => _showingApproval = false)
                     : null,
@@ -130,10 +132,16 @@ class _MonthFilter extends StatelessWidget {
             const Icon(Icons.date_range, color: AppColors.primary, size: 20),
             const SizedBox(width: 8),
             Expanded(
-              child: Text(
+              child: HrText(
                 state.startDate == null
                     ? 'Bulan Ini'
-                    : DateFormat('MMMM yyyy', 'id_ID').format(state.startDate!),
+                    : DateFormat(
+                        'MMMM yyyy',
+                        AppLanguageController
+                            .instance
+                            .effectiveLocale
+                            .languageCode,
+                      ).format(state.startDate!),
                 style: context.textStyle.bodyMedium?.copyWith(
                   color: AppColors.labelPrimary,
                 ),

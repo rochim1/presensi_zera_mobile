@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:group_radio_button/group_radio_button.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -59,7 +60,7 @@ class _TextFieldRadioState extends State<TextFieldRadio> {
               padding: const EdgeInsets.only(left: AppDimens.size2S),
               child: RichText(
                 text: TextSpan(
-                  text: widget.title,
+                  text: widget.title.tr(context),
                   style: context.textStyle.bodySmall?.copyWith(
                     color: widget.colorTitle ?? AppColors.labelPrimary,
                     fontSize: 14,

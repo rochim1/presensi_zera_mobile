@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -149,7 +150,7 @@ class _ShiftFilterBottomSheetState extends State<ShiftFilterBottomSheet> {
                             ),
                           ),
                         ),
-                        child: Text(
+                        child: HrText(
                           months[index],
                           style: context.textStyle.bodySmall,
                           maxLines: 1,
@@ -201,7 +202,7 @@ class _ShiftFilterBottomSheetState extends State<ShiftFilterBottomSheet> {
               ),
             ),
 
-            Text(
+            HrText(
               'Filter Shift',
               style: context.textStyle.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
@@ -214,7 +215,7 @@ class _ShiftFilterBottomSheetState extends State<ShiftFilterBottomSheet> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                HrText(
                   'Rentang Waktu',
                   style: context.textStyle.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
@@ -230,7 +231,7 @@ class _ShiftFilterBottomSheetState extends State<ShiftFilterBottomSheet> {
                     minimumSize: Size.zero,
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
-                  child: Text(
+                  child: HrText(
                     'Pilih Bulan',
                     style: context.textStyle.bodyMedium?.copyWith(
                       color: AppColors.primary,
@@ -256,7 +257,7 @@ class _ShiftFilterBottomSheetState extends State<ShiftFilterBottomSheet> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
+                    HrText(
                       (_startDate != null && _endDate != null)
                           ? '${DateFormat('dd MMM yyyy').format(_startDate!)} - ${DateFormat('dd MMM yyyy').format(_endDate!)}'
                           : 'Pilih Rentang Waktu',
@@ -298,7 +299,7 @@ class _ShiftFilterBottomSheetState extends State<ShiftFilterBottomSheet> {
                         ),
                       ),
                     ),
-                    child: Text(
+                    child: HrText(
                       'Reset',
                       style: context.textStyle.bodyLarge?.copyWith(
                         color: AppColors.primary,
@@ -314,7 +315,7 @@ class _ShiftFilterBottomSheetState extends State<ShiftFilterBottomSheet> {
                       Navigator.pop(context);
                       widget.onApply(_startDate, _endDate);
                     },
-                    text: 'Terapkan',
+                    text: ('Terapkan').tr(context),
                   ),
                 ),
               ],

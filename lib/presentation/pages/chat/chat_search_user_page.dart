@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -57,7 +58,7 @@ class _ChatSearchUserPageState extends State<ChatSearchUserPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppTopBar(
-        title: 'Cari Pengguna',
+        title: ('Cari Pengguna').tr(context),
         backgroundColor: AppColors.transparent,
       ),
       body: Column(
@@ -85,7 +86,7 @@ class _ChatSearchUserPageState extends State<ChatSearchUserPage> {
                 controller: _searchController,
                 onChanged: _onSearchChanged,
                 decoration: InputDecoration(
-                  hintText: 'Ketik nama pengguna...',
+                  hintText: ('Ketik nama pengguna...').tr(context),
                   hintStyle: TextStyle(
                     color: AppColors.labelSecondary,
                     fontSize: 14,
@@ -101,24 +102,27 @@ class _ChatSearchUserPageState extends State<ChatSearchUserPage> {
                     vertical: AppDimens.h14,
                   ),
                 ),
-                style: TextStyle(
-                  fontSize: 14,
-                  color: AppColors.labelPrimary,
-                ),
+                style: TextStyle(fontSize: 14, color: AppColors.labelPrimary),
               ),
             ),
           ),
 
           // Buat Grup Baru Button
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: AppDimens.w16, vertical: AppDimens.h8),
+            padding: EdgeInsets.symmetric(
+              horizontal: AppDimens.w16,
+              vertical: AppDimens.h8,
+            ),
             child: InkWell(
               onTap: () {
                 context.router.push(const ChatCreateGroupPageRoute());
               },
               borderRadius: BorderRadius.circular(AppDimens.r12),
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: AppDimens.w16, vertical: AppDimens.h12),
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppDimens.w16,
+                  vertical: AppDimens.h12,
+                ),
                 decoration: BoxDecoration(
                   border: Border.all(color: AppColors.borderGrey),
                   borderRadius: BorderRadius.circular(AppDimens.r12),
@@ -128,11 +132,15 @@ class _ChatSearchUserPageState extends State<ChatSearchUserPage> {
                     CircleAvatar(
                       radius: AppDimens.r20,
                       backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-                      child: Icon(PhosphorIcons.usersThree, color: AppColors.primary, size: 20),
+                      child: Icon(
+                        PhosphorIcons.usersThree,
+                        color: AppColors.primary,
+                        size: 20,
+                      ),
                     ),
                     SizedBox(width: AppDimens.w12),
                     Expanded(
-                      child: Text(
+                      child: HrText(
                         'Buat Grup Baru',
                         style: context.textStyle.titleSmall?.copyWith(
                           fontWeight: FontWeight.w600,
@@ -140,13 +148,17 @@ class _ChatSearchUserPageState extends State<ChatSearchUserPage> {
                         ),
                       ),
                     ),
-                    Icon(PhosphorIcons.caretRight, color: AppColors.labelSecondary, size: 20),
+                    Icon(
+                      PhosphorIcons.caretRight,
+                      color: AppColors.labelSecondary,
+                      size: 20,
+                    ),
                   ],
                 ),
               ),
             ),
           ),
-          
+
           // Results
           Expanded(
             child: BlocBuilder<ChatSearchUserCubit, ChatSearchUserState>(
@@ -185,10 +197,12 @@ class _ChatSearchUserPageState extends State<ChatSearchUserPage> {
                         Icon(
                           PhosphorIcons.userCircleFill,
                           size: 56,
-                          color: AppColors.labelSecondary.withValues(alpha: 0.25),
+                          color: AppColors.labelSecondary.withValues(
+                            alpha: 0.25,
+                          ),
                         ),
                         AppDimens.h12.hSpace,
-                        Text(
+                        HrText(
                           'Pengguna tidak ditemukan',
                           style: context.textStyle.titleSmall?.copyWith(
                             color: AppColors.labelSecondary,
@@ -296,24 +310,27 @@ class _ChatSearchUserPageState extends State<ChatSearchUserPage> {
       return;
     }
 
-    final result = await sl<ChatGetOrCreatePrivateConversationUseCase>()(userId);
+    final result = await sl<ChatGetOrCreatePrivateConversationUseCase>()(
+      userId,
+    );
     if (!context.mounted) return;
 
-    result.fold(
-      (failure) => AppSnackbar.showError(context, failure.message),
-      (conversation) {
-        final conversationId = conversation.id;
-        if (conversationId == null || conversationId.isEmpty) {
-          AppSnackbar.showError(context, 'Percakapan tidak dapat dibuat.');
-          return;
-        }
-        context.router.push(ChatRoomPageRoute(
+    result.fold((failure) => AppSnackbar.showError(context, failure.message), (
+      conversation,
+    ) {
+      final conversationId = conversation.id;
+      if (conversationId == null || conversationId.isEmpty) {
+        AppSnackbar.showError(context, 'Percakapan tidak dapat dibuat.');
+        return;
+      }
+      context.router.push(
+        ChatRoomPageRoute(
           conversationId: conversationId,
           chatTitle: user.name ?? user.username ?? 'Percakapan',
           chatAvatar: user.urlFoto ?? '',
-        ));
-      },
-    );
+        ),
+      );
+    });
   }
 
   Widget _buildShimmerCard() {

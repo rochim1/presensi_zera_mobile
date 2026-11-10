@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -37,7 +38,7 @@ class LoadingIndicatorWidget extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: AppDimens.sizeM),
-              Text('Memuat', style: AppTextStyle.titleLoading),
+              HrText('Memuat', style: AppTextStyle.titleLoading),
             ],
           ),
         ),

@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
@@ -82,11 +83,10 @@ class ApotekPageState extends State<ApotekPage>
         builder: (context) {
           return Scaffold(
             appBar: AppTopBar(
-              title: 'Daftar Outlet',
+              title: ('Daftar Outlet').tr(context),
               actions: [
                 AppTopBarActionButton(
-                  onTap: () =>
-                      context.router.push(const ApotekMapsPageRoute()),
+                  onTap: () => context.router.push(const ApotekMapsPageRoute()),
                   icon: Icons.map_rounded,
                 ),
               ],
@@ -124,27 +124,39 @@ class ApotekPageState extends State<ApotekPage>
                     color: Colors.white,
                     child: TextField(
                       decoration: InputDecoration(
-                        hintText: 'Cari outlet...',
+                        hintText: ('Cari outlet...').tr(context),
                         prefixIcon: Icon(PhosphorIcons.magnifyingGlass),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AppDimens.radiusMedium),
+                          borderRadius: BorderRadius.circular(
+                            AppDimens.radiusMedium,
+                          ),
                           borderSide: BorderSide(color: AppColors.divider),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AppDimens.radiusMedium),
+                          borderRadius: BorderRadius.circular(
+                            AppDimens.radiusMedium,
+                          ),
                           borderSide: BorderSide(color: AppColors.divider),
                         ),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                        ),
                       ),
                       onChanged: (value) {
                         if (_debounce?.isActive ?? false) _debounce?.cancel();
-                        _debounce = Timer(const Duration(milliseconds: 500), () {
-                          _searchQuery = value;
-                          String? status;
-                          if (_currentTabIndex == 1) status = 'active';
-                          if (_currentTabIndex == 2) status = 'deleted';
-                          _cubit.initLoadAllData(query: value, status: status);
-                        });
+                        _debounce = Timer(
+                          const Duration(milliseconds: 500),
+                          () {
+                            _searchQuery = value;
+                            String? status;
+                            if (_currentTabIndex == 1) status = 'active';
+                            if (_currentTabIndex == 2) status = 'deleted';
+                            _cubit.initLoadAllData(
+                              query: value,
+                              status: status,
+                            );
+                          },
+                        );
                       },
                     ),
                   ),
@@ -156,10 +168,10 @@ class ApotekPageState extends State<ApotekPage>
                       unselectedLabelColor: AppColors.labelSecondary,
                       indicatorColor: AppColors.primary,
                       indicatorWeight: 3,
-                      tabs: const [
-                        Tab(text: 'Semua'),
-                        Tab(text: 'Aktif'),
-                        Tab(text: 'Nonaktif'),
+                      tabs: [
+                        Tab(text: ('Semua').tr(context)),
+                        Tab(text: ('Aktif').tr(context)),
+                        Tab(text: ('Nonaktif').tr(context)),
                       ],
                     ),
                   ),
@@ -197,7 +209,7 @@ class ApotekPageState extends State<ApotekPage>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
+          HrText(
             'Total Data Dimuat',
             style: context.textStyle.bodyMedium?.copyWith(
               color: AppColors.labelSecondary,
@@ -210,7 +222,7 @@ class ApotekPageState extends State<ApotekPage>
               color: AppColors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Text(
+            child: HrText(
               '$total Outlet',
               style: context.textStyle.titleSmall?.copyWith(
                 color: AppColors.primary,
@@ -240,7 +252,7 @@ class ApotekPageState extends State<ApotekPage>
   Widget setList(ApotekGetAllDataState state, int tabIndex) {
     if (state.status.isLoaded) {
       if (state.apoteks == null || state.apoteks!.isEmpty) {
-        return const Center(child: Text("Tidak ada outlet ditemukan."));
+        return const Center(child: HrText("Tidak ada outlet ditemukan."));
       }
       return ListView.separated(
         itemCount: state.hasMax!

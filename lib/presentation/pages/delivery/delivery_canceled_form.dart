@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
@@ -40,140 +41,148 @@ class _DeliveryCanceledFormState extends State<DeliveryCanceledForm> {
       ],
       child: UnfocuserForm(
         child: Scaffold(
-          appBar: const AppTopBar(title: 'Batalkan Kunjungan'),
+          appBar: AppTopBar(title: ('Batalkan Kunjungan').tr(context)),
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(AppDimens.paddingMediumX),
             child: Column(
               children: [
-                    BlocBuilder<UserGetLocalCubit, UserGetLocalState>(
-                      builder: (_, usrState) {
-                        final task = widget.tasks;
-                        return Form(
-                          key: formKey,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              StreamBuilder(
-                                stream: Stream.periodic(
-                                  const Duration(seconds: 1),
-                                  (i) => i,
-                                ),
-                                builder: (context, snapshot) {
-                                  return DeliveryCardWidget(
-                                    title: 'Pembatalan Kunjungan',
-                                    titleTime: 'Waktu dibatalkan',
-                                    dateNow: DateTime.now().toEEEdMMMy,
-                                    timeNow: DateTime.now().toHHmmss,
-                                    isLoading: false,
-                                    addreass: null,
-                                  );
-                                },
+                BlocBuilder<UserGetLocalCubit, UserGetLocalState>(
+                  builder: (_, usrState) {
+                    final task = widget.tasks;
+                    return Form(
+                      key: formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          StreamBuilder(
+                            stream: Stream.periodic(
+                              const Duration(seconds: 1),
+                              (i) => i,
+                            ),
+                            builder: (context, snapshot) {
+                              return DeliveryCardWidget(
+                                title: ('Pembatalan Kunjungan').tr(context),
+                                titleTime: ('Waktu dibatalkan').tr(context),
+                                dateNow: DateTime.now().toEEEdMMMy,
+                                timeNow: DateTime.now().toHHmmss,
+                                isLoading: false,
+                                addreass: null,
+                              );
+                            },
+                          ),
+                          if (task != null) ...[
+                            AppDimens.size3M.hSpace,
+                            DeliveryTaskItemCard(task: task),
+                          ],
+                          AppDimens.size4M.hSpace,
+                          Container(
+                            padding: const EdgeInsets.all(
+                              AppDimens.paddingMedium,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.orange.shade50,
+                              border: Border.all(color: Colors.orange.shade200),
+                              borderRadius: BorderRadius.circular(
+                                AppDimens.radiusMedium,
                               ),
-                              if (task != null) ...[
-                                AppDimens.size3M.hSpace,
-                                DeliveryTaskItemCard(task: task),
-                              ],
-                              AppDimens.size4M.hSpace,
-                              Container(
-                                padding: const EdgeInsets.all(AppDimens.paddingMedium),
-                                decoration: BoxDecoration(
-                                  color: Colors.orange.shade50,
-                                  border: Border.all(color: Colors.orange.shade200),
-                                  borderRadius: BorderRadius.circular(AppDimens.radiusMedium),
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Icon(
+                                  Icons.info_outline,
+                                  color: Colors.orange.shade800,
+                                  size: 20,
                                 ),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Icon(Icons.info_outline, color: Colors.orange.shade800, size: 20),
-                                    const SizedBox(width: AppDimens.paddingSmall),
-                                    Expanded(
-                                      child: Text(
-                                        'Jika membatalkan kunjungan, maka BBM / Reimburse transport tidak akan dihitung.',
-                                        style: context.textStyle.bodySmall?.copyWith(
+                                const SizedBox(width: AppDimens.paddingSmall),
+                                Expanded(
+                                  child: HrText(
+                                    'Jika membatalkan kunjungan, maka BBM / Reimburse transport tidak akan dihitung.',
+                                    style: context.textStyle.bodySmall
+                                        ?.copyWith(
                                           color: Colors.orange.shade900,
                                         ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              AppDimens.size4M.hSpace,
-                              Text(
-                                'Detail Pembatalan',
-                                style: context.textStyle.titleMedium!.copyWith(
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              AppDimens.size3M.hSpace,
-                              TextFieldRadio(
-                                title: 'Jenis Pembatalan',
-                                colorTitle: AppColors.labelSecondary,
-                                initialValue: jenisPembatalan?.index,
-                                isRequired: true,
-                                contentValue: const [
-                                  'Salah memilih Kunjungan',
-                                  'Lainnya',
-                                ],
-                                leftFlex: true,
-                                onChanged: (value) {
-                                  if (value == 0) {
-                                    jenisPembatalan =
-                                        JenisPembatalan.wrongSelected;
-                                    alasanController = TextEditingController(
-                                      text: 'Salah memilih Kunjungan',
-                                    );
-                                  } else if (value == 1) {
-                                    jenisPembatalan = JenisPembatalan.other;
-                                    alasanController = TextEditingController(
-                                      text: '',
-                                    );
-                                  }
-                                  setState(() {});
-                                },
-                              ),
-                              AppDimens.size3M.hSpace,
-                              TextFieldAttachment(
-                                title: 'File Pendukung',
-                                hint: 'Upload File Optional',
-                                initFile: pathAttachment,
-                                colorTitle: AppColors.labelSecondary,
-                                onUpload: (List<PlatformFile>? files) {
-                                  if (files!.isEmpty) {
-                                    pathAttachment = null;
-                                  } else {
-                                    pathAttachment = files.first;
-                                  }
-                                },
-                              ),
-                              if (jenisPembatalan?.isOther ?? false) ...[
-                                AppDimens.size3M.hSpace,
-                                TextFieldBasic(
-                                  controller: alasanController,
-                                  title: 'Alasan',
-                                  colorTitle: AppColors.labelSecondary,
-                                  hint: 'Masukan Alasan Pembatalan',
-                                  required: true,
-                                  multiline: true,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return kEmptyValidator.rich(['Alasan']);
-                                    }
-                                    return null;
-                                  },
+                                  ),
                                 ),
                               ],
-                            ],
+                            ),
                           ),
-                        );
-                      },
-                    ),
-                    _buildConfirmButton(),
-                  ],
+                          AppDimens.size4M.hSpace,
+                          HrText(
+                            'Detail Pembatalan',
+                            style: context.textStyle.titleMedium!.copyWith(
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          AppDimens.size3M.hSpace,
+                          TextFieldRadio(
+                            title: ('Jenis Pembatalan').tr(context),
+                            colorTitle: AppColors.labelSecondary,
+                            initialValue: jenisPembatalan?.index,
+                            isRequired: true,
+                            contentValue: const [
+                              'Salah memilih Kunjungan',
+                              'Lainnya',
+                            ],
+                            leftFlex: true,
+                            onChanged: (value) {
+                              if (value == 0) {
+                                jenisPembatalan = JenisPembatalan.wrongSelected;
+                                alasanController = TextEditingController(
+                                  text: ('Salah memilih Kunjungan').tr(context),
+                                );
+                              } else if (value == 1) {
+                                jenisPembatalan = JenisPembatalan.other;
+                                alasanController = TextEditingController(
+                                  text: '',
+                                );
+                              }
+                              setState(() {});
+                            },
+                          ),
+                          AppDimens.size3M.hSpace,
+                          TextFieldAttachment(
+                            title: ('File Pendukung').tr(context),
+                            hint: ('Upload File Optional').tr(context),
+                            initFile: pathAttachment,
+                            colorTitle: AppColors.labelSecondary,
+                            onUpload: (List<PlatformFile>? files) {
+                              if (files!.isEmpty) {
+                                pathAttachment = null;
+                              } else {
+                                pathAttachment = files.first;
+                              }
+                            },
+                          ),
+                          if (jenisPembatalan?.isOther ?? false) ...[
+                            AppDimens.size3M.hSpace,
+                            TextFieldBasic(
+                              controller: alasanController,
+                              title: ('Alasan').tr(context),
+                              colorTitle: AppColors.labelSecondary,
+                              hint: ('Masukan Alasan Pembatalan').tr(context),
+                              required: true,
+                              multiline: true,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return kEmptyValidator.rich(['Alasan']);
+                                }
+                                return null;
+                              },
+                            ),
+                          ],
+                        ],
+                      ),
+                    );
+                  },
                 ),
-              ),
+                _buildConfirmButton(),
+              ],
             ),
           ),
-        );
+        ),
+      ),
+    );
   }
 
   Widget _buildConfirmButton() {
@@ -182,9 +191,10 @@ class _DeliveryCanceledFormState extends State<DeliveryCanceledForm> {
         if (state.status.isLoaded) {
           await AppModalBottom.showDefault(
             context,
-            contentTitle: 'Pembatalan Kunjungan Berhasil',
+            contentTitle: ('Pembatalan Kunjungan Berhasil').tr(context),
             contentSubtitle:
-                'Anda baru saja membatalkan kunjungan untuk ${widget.tasks?.aktivitas?.apotikId?.namaApotik ?? ''}',
+                ('Anda baru saja membatalkan kunjungan untuk ${widget.tasks?.aktivitas?.apotikId?.namaApotik ?? ''}')
+                    .tr(context),
             hasActionPop: true,
           );
 
@@ -209,10 +219,7 @@ class _DeliveryCanceledFormState extends State<DeliveryCanceledForm> {
                 jenisPembatalan: jenisPembatalan?.toKey,
                 taskId: widget.tasks?.id,
                 aktivitasId: widget.tasks?.aktivitas?.id,
-                lokasi: const LocationEntity(
-                  longitude: '0',
-                  latitude: '0',
-                ),
+                lokasi: const LocationEntity(longitude: '0', latitude: '0'),
                 fotoPendukung: GlobalImageParamsEntity(
                   file: AppUtility.toMultipartFile(pathAttachment?.path),
                   path: pathAttachment?.path,
@@ -226,7 +233,7 @@ class _DeliveryCanceledFormState extends State<DeliveryCanceledForm> {
             }
           },
           isLoading: state.status.isLoading,
-          text: 'Konfirmasi',
+          text: ('Konfirmasi').tr(context),
         );
       },
     );

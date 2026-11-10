@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -60,7 +61,7 @@ class AppLabeledValue extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (hasLabel) ...[
-          Text(
+          HrText(
             label!,
             style: textTheme.bodySmall?.copyWith(
               color: AppColors.labelSecondary,

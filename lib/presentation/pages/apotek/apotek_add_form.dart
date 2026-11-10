@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
@@ -208,7 +209,7 @@ class _ApotekAddFormState extends State<ApotekAddForm> {
 
             if (mapState.isLocationGranted) {
               if (mapState.address?.isEmpty ?? false) {
-                Fluttertoast.showToast(msg: kAddressNotFound);
+                Fluttertoast.showToast(msg: (kAddressNotFound).trCurrent());
               } else if (mapState.address != null) {
                 final newAddress = mapState.address!.toString();
                 if (newAddress != '-' && _lastAutoAddress != newAddress) {
@@ -233,7 +234,7 @@ class _ApotekAddFormState extends State<ApotekAddForm> {
             }
           }
           if (mapState.typeState.isNotLoaded) {
-            Fluttertoast.showToast(msg: mapState.message!);
+            Fluttertoast.showToast(msg: (mapState.message!).trCurrent());
             if (!mapState.isLocationGranted) {
               context.router.pop();
             }
@@ -268,8 +269,8 @@ class _ApotekAddFormState extends State<ApotekAddForm> {
                   SafeArea(
                     child: Column(
                       children: [
-                        const AppTopBar(
-                          title: 'Tambah Outlet Baru',
+                        AppTopBar(
+                          title: ('Tambah Outlet Baru').tr(context),
                           useGradient: false,
                           backgroundColor: Colors.transparent,
                           titleColor: AppColors.white,
@@ -347,8 +348,12 @@ class _ApotekAddFormState extends State<ApotekAddForm> {
                                               false,
                                           child: TextFieldBasic(
                                             controller: alamatController,
-                                            title: 'Detail Alamat',
-                                            hint: 'Masukan detail alamat',
+                                            title: ('Detail Alamat').tr(
+                                              context,
+                                            ),
+                                            hint: ('Masukan detail alamat').tr(
+                                              context,
+                                            ),
                                             multiline: true,
                                             required: true,
                                             validator: (value) {
@@ -368,11 +373,15 @@ class _ApotekAddFormState extends State<ApotekAddForm> {
                                               false,
                                           child:
                                               TextFieldDropdownSearch<String>(
-                                                title: 'Provinsi',
+                                                title: ('Provinsi').tr(context),
                                                 hintSearch: 'Cari provinsi...',
-                                                hint: _isLoadingProvinsi
-                                                    ? 'Memuat provinsi...'
-                                                    : 'Pilih provinsi',
+                                                hint: (_isLoadingProvinsi
+                                                    ? ('Memuat provinsi...').tr(
+                                                        context,
+                                                      )
+                                                    : ('Pilih provinsi').tr(
+                                                        context,
+                                                      )),
                                                 items: _provinsiOptions,
                                                 itemAsString: (item) => item,
                                                 compareFn: (a, b) =>
@@ -409,46 +418,50 @@ class _ApotekAddFormState extends State<ApotekAddForm> {
                                           visible:
                                               mapState.address?.isNotEmpty ??
                                               false,
-                                          child:
-                                              TextFieldDropdownSearch<String>(
-                                                title: 'Kabupaten/Kota',
-                                                hintSearch:
-                                                    'Cari kabupaten/kota...',
-                                                hint: _isLoadingKabupaten
-                                                    ? 'Memuat kabupaten/kota...'
-                                                    : 'Pilih kabupaten/kota',
-                                                items: _kabupatenOptions,
-                                                itemAsString: (item) => item,
-                                                compareFn: (a, b) =>
-                                                    a.toLowerCase() ==
-                                                    b?.toLowerCase(),
-                                                selectedItem: _findMatchingItem(
-                                                  _kabupatenOptions,
-                                                  kabupatenController.text,
-                                                ),
-                                                onChanged: (val) {
-                                                  if (val != null) {
-                                                    setState(() {
-                                                      kabupatenController.text =
-                                                          val;
-                                                    });
-                                                  }
-                                                },
-                                                required: true,
-                                                validator: (value) {
-                                                  if (kabupatenController
-                                                      .text
-                                                      .isEmpty) {
-                                                    return kEmptyValidator.rich(
-                                                      ['Kabupaten/Kota'],
-                                                    );
-                                                  }
-                                                  return null;
-                                                },
-                                              ),
+                                          child: TextFieldDropdownSearch<String>(
+                                            title: ('Kabupaten/Kota').tr(
+                                              context,
+                                            ),
+                                            hintSearch:
+                                                'Cari kabupaten/kota...',
+                                            hint: (_isLoadingKabupaten
+                                                ? ('Memuat kabupaten/kota...')
+                                                      .tr(context)
+                                                : ('Pilih kabupaten/kota').tr(
+                                                    context,
+                                                  )),
+                                            items: _kabupatenOptions,
+                                            itemAsString: (item) => item,
+                                            compareFn: (a, b) =>
+                                                a.toLowerCase() ==
+                                                b?.toLowerCase(),
+                                            selectedItem: _findMatchingItem(
+                                              _kabupatenOptions,
+                                              kabupatenController.text,
+                                            ),
+                                            onChanged: (val) {
+                                              if (val != null) {
+                                                setState(() {
+                                                  kabupatenController.text =
+                                                      val;
+                                                });
+                                              }
+                                            },
+                                            required: true,
+                                            validator: (value) {
+                                              if (kabupatenController
+                                                  .text
+                                                  .isEmpty) {
+                                                return kEmptyValidator.rich([
+                                                  'Kabupaten/Kota',
+                                                ]);
+                                              }
+                                              return null;
+                                            },
+                                          ),
                                         ),
                                         AppDimens.size2L.hSpace,
-                                        Text(
+                                        HrText(
                                           'Data Outlet',
                                           style: context.textStyle.titleMedium!
                                               .copyWith(
@@ -458,10 +471,10 @@ class _ApotekAddFormState extends State<ApotekAddForm> {
                                         AppDimens.size3M.hSpace,
                                         TextFieldBasic(
                                           controller: kodeOutletController,
-                                          title: 'Kode Outlet',
-                                          hint: _isLoadingCode
-                                              ? 'Memuat kode...'
-                                              : 'Kode outlet',
+                                          title: ('Kode Outlet').tr(context),
+                                          hint: (_isLoadingCode
+                                              ? ('Memuat kode...').tr(context)
+                                              : ('Kode outlet').tr(context)),
                                           enabled: !_isLoadingCode,
                                           required: true,
                                           validator: (value) {
@@ -476,8 +489,10 @@ class _ApotekAddFormState extends State<ApotekAddForm> {
                                         AppDimens.size3M.hSpace,
                                         TextFieldBasic(
                                           controller: namaApotekController,
-                                          title: 'Nama Outlet',
-                                          hint: 'Masukan nama outlet',
+                                          title: ('Nama Outlet').tr(context),
+                                          hint: ('Masukan nama outlet').tr(
+                                            context,
+                                          ),
                                           maxLength: 40,
                                           required: true,
                                           validator: (value) {
@@ -492,8 +507,10 @@ class _ApotekAddFormState extends State<ApotekAddForm> {
                                         AppDimens.size3M.hSpace,
                                         TextFieldBasic(
                                           controller: noTelpController,
-                                          title: 'Nomor Telepon',
-                                          hint: 'Masukan Nomor Telepon',
+                                          title: ('Nomor Telepon').tr(context),
+                                          hint: ('Masukan Nomor Telepon').tr(
+                                            context,
+                                          ),
                                           required: true,
                                           inputType: TextInputType.number,
                                           inputFormatters: [
@@ -526,9 +543,11 @@ class _ApotekAddFormState extends State<ApotekAddForm> {
                                               await AppModalBottom.showDefault(
                                                 context,
                                                 contentTitle:
-                                                    'Outlet Baru berhasil dibuat',
+                                                    ('Outlet Baru berhasil dibuat')
+                                                        .tr(context),
                                                 contentSubtitle:
-                                                    'Anda berhasil membuat Outlet ${namaApotekController.text}.',
+                                                    ('Anda berhasil membuat Outlet ${namaApotekController.text}.')
+                                                        .tr(context),
                                                 hasActionPop: true,
                                               );
 
@@ -559,7 +578,7 @@ class _ApotekAddFormState extends State<ApotekAddForm> {
                                                     .typeState
                                                     .isLoading) {
                                                   Fluttertoast.showToast(
-                                                    msg: kMapWaiting,
+                                                    msg: (kMapWaiting).trCurrent(),
                                                   );
                                                   return;
                                                 }
@@ -633,7 +652,7 @@ class _ApotekAddFormState extends State<ApotekAddForm> {
                                                   );
                                                 }
                                               },
-                                              text: 'Simpan',
+                                              text: ('Simpan').tr(context),
                                               isLoading: state.status.isLoading,
                                             );
                                           },

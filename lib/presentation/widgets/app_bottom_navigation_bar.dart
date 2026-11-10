@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -54,14 +55,14 @@ class AppBottomNavigationBar extends StatelessWidget {
                   index: 0,
                   icon: PhosphorIcons.squaresFour,
                   assetName: 'home',
-                  label: "Home",
+                  label: ("Home").tr(context),
                 ),
                 _buildItem(
                   context,
                   index: 1,
                   icon: PhosphorIcons.calendarCheck,
                   assetName: 'attendance',
-                  label: "Presensi",
+                  label: ("Presensi").tr(context),
                 ),
 
                 // Space for main button
@@ -72,14 +73,14 @@ class AppBottomNavigationBar extends StatelessWidget {
                   index: 2,
                   icon: PhosphorIcons.cardsThree,
                   assetName: 'visits',
-                  label: 'Kunjungan',
+                  label: ('Kunjungan').tr(context),
                 ),
                 _buildItem(
                   context,
                   index: 3,
                   icon: PhosphorIcons.user,
                   assetName: 'profile',
-                  label: 'Profile',
+                  label: ('Profile').tr(context),
                 ),
               ],
             ),
@@ -164,7 +165,7 @@ class AppBottomNavigationBar extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 2),
-              Text(
+              HrText(
                 label,
                 style: context.theme.textTheme.labelSmall?.copyWith(
                   color: color,
@@ -249,7 +250,7 @@ class AppBottomNavigationBar extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 6),
-          Text(
+          HrText(
             isLoading ? 'Memproses...' : label,
             style: context.theme.textTheme.labelSmall?.copyWith(
               color: AppColors.labelSecondary,

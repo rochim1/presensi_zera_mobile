@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,7 +27,9 @@ class ProfileOfficePage extends StatelessWidget {
                   stateLocal.data?.user?.instansiId;
               return Scaffold(
                 backgroundColor: AppColors.bgPrimary,
-                appBar: const AppTopBar(title: 'Detail Instansi/Organisasi'),
+                appBar: AppTopBar(
+                  title: ('Detail Instansi/Organisasi').tr(context),
+                ),
                 body: Stack(
                   children: [
                     SingleChildScrollView(
@@ -37,7 +40,7 @@ class ProfileOfficePage extends StatelessWidget {
                           children: [
                             AppCard(
                               showHeaderDivider: true,
-                              header: Text(
+                              header: HrText(
                                 'Informasi Instansi/Organisasi',
                                 style: context.textStyle.titleMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
@@ -58,14 +61,16 @@ class ProfileOfficePage extends StatelessWidget {
                                   ),
                                   AppDimens.size3M.hSpace,
                                   ProfileFieldRow(
-                                    title: 'Nama Instansi/Organisasi',
+                                    title: ('Nama Instansi/Organisasi').tr(
+                                      context,
+                                    ),
                                     value: AppUtility.nullHandler(
                                       userInstance?.namaInstansi,
                                       fallback: '-',
                                     ),
                                   ),
                                   ProfileFieldRow(
-                                    title: 'Nama Resmi',
+                                    title: ('Nama Resmi').tr(context),
                                     value: AppUtility.nullHandler(
                                       userInstance?.namaResmi,
                                       fallback: '-',
@@ -73,21 +78,22 @@ class ProfileOfficePage extends StatelessWidget {
                                   ),
                                   const _SubscriptionStatusWidget(),
                                   ProfileFieldRow(
-                                    title: 'Nomor Telepon Instansi/Organisasi',
+                                    title: ('Nomor Telepon Instansi/Organisasi')
+                                        .tr(context),
                                     value: AppUtility.nullHandler(
                                       userInstance?.telponNumber,
                                       fallback: '-',
                                     ),
                                   ),
                                   ProfileFieldRow(
-                                    title: 'Website',
+                                    title: ('Website').tr(context),
                                     value: AppUtility.nullHandler(
                                       userInstance?.website,
                                       fallback: '-',
                                     ),
                                   ),
                                   ProfileFieldRow(
-                                    title: 'Tanggal Berdiri',
+                                    title: ('Tanggal Berdiri').tr(context),
                                     value: AppUtility.nullHandler(
                                       userInstance
                                           ?.tahunBerdiri
@@ -97,21 +103,21 @@ class ProfileOfficePage extends StatelessWidget {
                                     ),
                                   ),
                                   ProfileFieldRow(
-                                    title: 'Dasar Hukum',
+                                    title: ('Dasar Hukum').tr(context),
                                     value: AppUtility.nullHandler(
                                       userInstance?.dasarHukumPendirian,
                                       fallback: '-',
                                     ),
                                   ),
                                   ProfileFieldRow(
-                                    title: 'Alamat',
+                                    title: ('Alamat').tr(context),
                                     value: AppUtility.nullHandler(
                                       userInstance?.alamat,
                                       fallback: '-',
                                     ),
                                   ),
                                   ProfileFieldRow(
-                                    title: 'Kegiatan Utama',
+                                    title: ('Kegiatan Utama').tr(context),
                                     value: AppUtility.nullHandler(
                                       userInstance?.kegiatanUsaha,
                                       fallback: '-',
@@ -200,8 +206,8 @@ query GetSubscriptionStatus {
       );
     }
     if (_errorMsg != null) {
-      return const ProfileFieldRow(
-        title: 'Status Langganan',
+      return ProfileFieldRow(
+        title: ('Status Langganan').tr(context),
         value: 'Tidak tersedia',
       );
     }
@@ -225,7 +231,7 @@ query GetSubscriptionStatus {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          HrText(
             'Langganan',
             style: context.textStyle.labelLarge?.copyWith(
               fontWeight: FontWeight.w700,
@@ -247,7 +253,7 @@ query GetSubscriptionStatus {
                 color: AppColors.primary,
               ),
               _SubscriptionPill(
-                label: '$days hari tersisa',
+                label: ('$days hari tersisa').tr(context),
                 icon: Icons.schedule_outlined,
                 color: AppColors.labelSecondary,
               ),
@@ -299,7 +305,7 @@ class _SubscriptionPill extends StatelessWidget {
       children: [
         Icon(icon, size: 15, color: color),
         const SizedBox(width: 5),
-        Text(
+        HrText(
           label,
           style: context.textStyle.labelMedium?.copyWith(
             color: color,

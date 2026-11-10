@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_domain/presensi_domain.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -116,21 +117,21 @@ class DeliveryTaskItemCard extends StatelessWidget {
                       if (aktivitas?.tujuanPengantaran ?? false)
                         _buildTujuanBadge(
                           context,
-                          label: 'Pengantaran (DO)',
+                          label: ('Pengantaran (DO)').tr(context),
                           icon: Icons.local_shipping_outlined,
                           color: const Color(0xFF0EA5E9), // biru sky
                         ),
                       if (aktivitas?.tujuanPenawaran ?? false)
                         _buildTujuanBadge(
                           context,
-                          label: 'Penawaran (SO)',
+                          label: ('Penawaran (SO)').tr(context),
                           icon: Icons.shopping_cart_outlined,
                           color: const Color(0xFF22C55E), // hijau
                         ),
                       if (aktivitas?.tujuanPenagihan ?? false)
                         _buildTujuanBadge(
                           context,
-                          label: 'Penagihan',
+                          label: ('Penagihan').tr(context),
                           icon: Icons.credit_card_outlined,
                           color: AppColors.warning,
                         ),
@@ -160,7 +161,7 @@ class DeliveryTaskItemCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 5),
                         Flexible(
-                          child: Text(
+                          child: HrText(
                             'Dikerjakan oleh ${aktivitas?.completedByName ?? 'admin lain'}',
                             style: context.textStyle.bodySmall?.copyWith(
                               color: const Color(0xFF7E22CE),
@@ -189,7 +190,7 @@ class DeliveryTaskItemCard extends StatelessWidget {
                   children: [
                     _buildDetailRow(
                       context,
-                      'Kendaraan',
+                      ('Kendaraan').tr(context),
                       AppUtility.getTransportasi(task.inventaris) ?? '-',
                       Icons.directions_car,
                     ),
@@ -197,7 +198,7 @@ class DeliveryTaskItemCard extends StatelessWidget {
                       AppDimens.paddingMedium.hSpace,
                       _buildDetailRow(
                         context,
-                        'No Telepon Outlet',
+                        ('No Telepon Outlet').tr(context),
                         telponOutlet,
                         Icons.phone,
                       ),
@@ -205,7 +206,7 @@ class DeliveryTaskItemCard extends StatelessWidget {
                     AppDimens.paddingMedium.hSpace,
                     _buildDetailRow(
                       context,
-                      'Alamat Outlet',
+                      ('Alamat Outlet').tr(context),
                       alamatOutlet,
                       Icons.location_pin,
                       maxLines: 3,
@@ -213,7 +214,7 @@ class DeliveryTaskItemCard extends StatelessWidget {
                     AppDimens.paddingMedium.hSpace,
                     _buildDetailRow(
                       context,
-                      'Jarak Estimasi',
+                      ('Jarak Estimasi').tr(context),
                       task
                               .countJarakFromAttendance
                               ?.toKilometer
@@ -225,7 +226,7 @@ class DeliveryTaskItemCard extends StatelessWidget {
                     AppDimens.paddingMedium.hSpace,
                     _buildDetailRow(
                       context,
-                      'Biaya Estimasi',
+                      ('Biaya Estimasi').tr(context),
                       task.biayaActually?.toCurrency.isEmptyStrip ?? '-',
                       Icons.attach_money_rounded,
                       maxLines: 3,
@@ -250,7 +251,7 @@ class DeliveryTaskItemCard extends StatelessWidget {
                       AppDimens.paddingMedium.hSpace,
                       _buildDetailRow(
                         context,
-                        'Catatan',
+                        ('Catatan').tr(context),
                         aktivitas?.note ?? '-',
                         Icons.edit_note,
                         maxLines: 3,
@@ -288,7 +289,7 @@ class DeliveryTaskItemCard extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            child: const Text(
+                            child: const HrText(
                               'Batalkan',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -306,7 +307,7 @@ class DeliveryTaskItemCard extends StatelessWidget {
                               Icons.play_circle_outline,
                               size: 18,
                             ),
-                            label: const Text(
+                            label: const HrText(
                               'Kerjakan Kunjungan',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -354,7 +355,7 @@ class DeliveryTaskItemCard extends StatelessWidget {
         children: [
           Icon(icon, size: 13, color: color),
           const SizedBox(width: 4),
-          Text(
+          HrText(
             label,
             style: TextStyle(
               color: color,
@@ -381,7 +382,7 @@ class DeliveryTaskItemCard extends StatelessWidget {
           width: 1,
         ),
       ),
-      child: Text(
+      child: HrText(
         statusTask.toName,
         style: TextStyle(
           color: statusTask.toColor,
@@ -415,7 +416,7 @@ class DeliveryTaskItemCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              HrText(
                 label,
                 style: context.textStyle.bodySmall?.copyWith(
                   color: AppColors.labelSecondary,

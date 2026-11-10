@@ -20,9 +20,14 @@ class DeliveryOrderGetAllError extends DeliveryOrderGetAllState {
 class DeliveryOrderGetAllCubit extends Cubit<DeliveryOrderGetAllState> {
   final GetAllDeliveryOrders getAllDeliveryOrders;
 
-  DeliveryOrderGetAllCubit({required this.getAllDeliveryOrders}) : super(DeliveryOrderGetAllInitial());
+  DeliveryOrderGetAllCubit({required this.getAllDeliveryOrders})
+    : super(DeliveryOrderGetAllInitial());
 
-  Future<void> loadDeliveryOrders({String? outletId, String? status, String? driverId}) async {
+  Future<void> loadDeliveryOrders({
+    String? outletId,
+    String? status,
+    String? driverId,
+  }) async {
     emit(DeliveryOrderGetAllLoading());
     final result = await getAllDeliveryOrders(
       outletId: outletId,

@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:presensi_domain/presensi_domain.dart';
@@ -26,7 +27,7 @@ class OvertimeRequestDetailView extends StatelessWidget {
           children: [
             if (request.date != null)
               AppRequestDetailItem(
-                label: 'Tanggal',
+                label: ('Tanggal').tr(context),
                 date: request.date,
                 icon: PhosphorIcons.calendarBlank,
               ),
@@ -46,12 +47,12 @@ class OvertimeRequestDetailView extends StatelessWidget {
                     spacing: AppDimens.h16,
                     children: [
                       AppRequestDetailItem(
-                        label: 'Waktu Mulai',
+                        label: ('Waktu Mulai').tr(context),
                         textValue: request.startTime?.format(pattern: 'HH:mm'),
                         icon: PhosphorIcons.clock,
                       ),
                       AppRequestDetailItem(
-                        label: 'Waktu Selesai',
+                        label: ('Waktu Selesai').tr(context),
                         textValue: request.endTime?.format(pattern: 'HH:mm'),
                         icon: PhosphorIcons.clock,
                       ),

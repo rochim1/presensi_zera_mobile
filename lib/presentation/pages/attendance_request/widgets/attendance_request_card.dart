@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:presensi_domain/presensi_domain.dart';
@@ -19,10 +20,7 @@ class AttendanceRequestCard extends StatelessWidget {
     this.showUser = true,
   }) : isLoading = false;
 
-  const AttendanceRequestCard.shimmer({
-    super.key,
-    this.showUser = true,
-  })
+  const AttendanceRequestCard.shimmer({super.key, this.showUser = true})
     : request = null,
       onTap = null,
       user = null,
@@ -30,6 +28,7 @@ class AttendanceRequestCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    hrLocale(context); // Refresh relative timestamps when the language changes.
     if (isLoading) return AppRequestCard.shimmer(showUser: showUser);
     return _buildCard(context, request!);
   }
@@ -42,18 +41,24 @@ class AttendanceRequestCard extends StatelessWidget {
       showUser: showUser,
       statusColor: request.status.toDisplayColor,
       statusLabel: request.status.toDisplayName,
-      title: 'Request Presensi',
+      title: ('Request Presensi').tr(context),
       subtitle: request.alasan,
       onTap: onTap,
       middleContent: [
         Row(
           children: [
-            Icon(PhosphorIcons.articleFill, size: 16, color: request.status.toDisplayColor),
+            Icon(
+              PhosphorIcons.articleFill,
+              size: 16,
+              color: request.status.toDisplayColor,
+            ),
             SizedBox(width: AppDimens.w8),
             Expanded(
-              child: Text(
+              child: HrText(
                 request.type.displayName,
-                style: context.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                style: context.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],
@@ -64,8 +69,10 @@ class AttendanceRequestCard extends StatelessWidget {
             if (request.tanggalPresensi != null)
               Expanded(
                 child: AppRequestDateRow(
-                  title: 'Tanggal',
-                  value: request.tanggalPresensi!.format(pattern: 'dd MMM yyyy'),
+                  title: ('Tanggal').tr(context),
+                  value: request.tanggalPresensi!.format(
+                    pattern: 'dd MMM yyyy',
+                  ),
                   icon: PhosphorIcons.calendarBlank,
                   iconColor: AppColors.green,
                 ),
@@ -76,8 +83,10 @@ class AttendanceRequestCard extends StatelessWidget {
             ],
             Expanded(
               child: AppRequestDateRow(
-                title: 'Waktu Diminta',
-                value: request.waktuYangDiminta.isEmpty ? '-' : request.waktuYangDiminta,
+                title: ('Waktu Diminta').tr(context),
+                value: request.waktuYangDiminta.isEmpty
+                    ? '-'
+                    : request.waktuYangDiminta,
                 icon: PhosphorIcons.clock,
                 iconColor: AppColors.orange,
               ),
@@ -88,7 +97,7 @@ class AttendanceRequestCard extends StatelessWidget {
       footer: request.createdAt != null
           ? Align(
               alignment: Alignment.centerRight,
-              child: Text(
+              child: HrText(
                 'DIAJUKAN ${request.createdAt!.timeAgo()}',
                 style: context.textTheme.labelSmall?.copyWith(
                   color: AppColors.labelSecondary,

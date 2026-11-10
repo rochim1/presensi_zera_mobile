@@ -1,3 +1,5 @@
+import 'package:presensi_mobile/l10n/app_language_controller.dart';
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,6 +22,7 @@ class KalenderPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    hrLocale(context); // Rebuild formatted dates when the language changes.
     return BlocProvider(
       create: (_) =>
           KalenderCubit(remoteDatasource: sl<KalenderRemoteDatasource>())
@@ -76,6 +79,7 @@ class KalenderView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    hrLocale(context); // Rebuild formatted dates when the language changes.
     return BlocBuilder<KalenderCubit, KalenderState>(
       builder: (context, state) {
         final cubit = context.read<KalenderCubit>();
@@ -105,8 +109,8 @@ class KalenderView extends StatelessWidget {
         );
 
         return Scaffold(
-          appBar: const AppTopBar(
-            title: 'Kalender Kerja',
+          appBar: AppTopBar(
+            title: ('Kalender Kerja').tr(context),
             backgroundColor: AppColors.transparent,
           ),
           floatingActionButton: canCreateEvent
@@ -141,7 +145,7 @@ class KalenderView extends StatelessWidget {
                   firstDay: DateTime.utc(2020, 1, 1),
                   lastDay: DateTime.utc(2030, 12, 31),
                   focusedDay: state.focusedMonth,
-                  locale: 'id_ID',
+                  locale: Localizations.localeOf(context).languageCode,
                   startingDayOfWeek: StartingDayOfWeek.monday,
                   headerStyle: HeaderStyle(
                     formatButtonVisible: false,
@@ -238,7 +242,7 @@ class KalenderView extends StatelessWidget {
                               ),
                             ),
                             SizedBox(width: AppDimens.w4),
-                            Text(
+                            HrText(
                               _eventTypeLabels[e.key] ?? e.key,
                               style: context.textStyle.bodySmall?.copyWith(
                                 color: AppColors.labelSecondary,
@@ -320,7 +324,7 @@ class KalenderView extends StatelessWidget {
             color: AppColors.labelSecondary.withValues(alpha: 0.4),
           );
           final message = Flexible(
-            child: Text(
+            child: HrText(
               emptyMessage,
               style: context.textStyle.bodyMedium?.copyWith(
                 color: AppColors.labelSecondary,
@@ -402,7 +406,7 @@ class KalenderView extends StatelessWidget {
                             ),
                             if (canUpdate || canDelete)
                               PopupMenuButton<String>(
-                                tooltip: 'Aksi event',
+                                tooltip: ('Aksi event').tr(context),
                                 onSelected: (action) async {
                                   if (action == 'edit') {
                                     await CreateCalendarEventSheet.show(
@@ -419,8 +423,8 @@ class KalenderView extends StatelessWidget {
                                   final confirmed = await showDialog<bool>(
                                     context: context,
                                     builder: (dialogContext) => AlertDialog(
-                                      title: const Text('Hapus Event?'),
-                                      content: Text(
+                                      title: const HrText('Hapus Event?'),
+                                      content: HrText(
                                         event.isRecurring
                                             ? 'Seluruh rangkaian "${event.title}" akan dihapus.'
                                             : 'Event "${event.title}" akan dihapus.',
@@ -431,14 +435,14 @@ class KalenderView extends StatelessWidget {
                                             dialogContext,
                                             false,
                                           ),
-                                          child: const Text('Batal'),
+                                          child: const HrText('Batal'),
                                         ),
                                         FilledButton(
                                           onPressed: () => Navigator.pop(
                                             dialogContext,
                                             true,
                                           ),
-                                          child: const Text('Hapus'),
+                                          child: const HrText('Hapus'),
                                         ),
                                       ],
                                     ),
@@ -464,12 +468,12 @@ class KalenderView extends StatelessWidget {
                                   if (canUpdate)
                                     const PopupMenuItem(
                                       value: 'edit',
-                                      child: Text('Edit'),
+                                      child: HrText('Edit'),
                                     ),
                                   if (canDelete)
                                     const PopupMenuItem(
                                       value: 'delete',
-                                      child: Text('Hapus'),
+                                      child: HrText('Hapus'),
                                     ),
                                 ],
                               ),
@@ -477,7 +481,7 @@ class KalenderView extends StatelessWidget {
                         ),
                         SizedBox(height: AppDimens.h4),
                         if (event.isRecurring)
-                          Text(
+                          HrText(
                             switch (event.recurringType) {
                               'weekly' => 'Berulang mingguan',
                               'monthly' => 'Berulang bulanan',
@@ -532,13 +536,19 @@ class KalenderView extends StatelessWidget {
   String _formatDateRange(KalenderOccurrence event) {
     try {
       final start = DateFormat('yyyy-MM-dd').parse(event.startDate);
-      final startFormatted = DateFormat('dd MMM yyyy', 'id').format(start);
+      final startFormatted = DateFormat(
+        'dd MMM yyyy',
+        AppLanguageController.instance.effectiveLocale.languageCode,
+      ).format(start);
 
       if (event.endDate != null &&
           event.endDate!.isNotEmpty &&
           event.endDate != event.startDate) {
         final end = DateFormat('yyyy-MM-dd').parse(event.endDate!);
-        final endFormatted = DateFormat('dd MMM yyyy', 'id').format(end);
+        final endFormatted = DateFormat(
+          'dd MMM yyyy',
+          AppLanguageController.instance.effectiveLocale.languageCode,
+        ).format(end);
         return '$startFormatted - $endFormatted${_eventTime(event)}';
       }
 

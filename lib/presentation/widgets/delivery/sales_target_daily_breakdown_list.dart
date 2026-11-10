@@ -1,3 +1,5 @@
+import 'package:presensi_mobile/l10n/app_language_controller.dart';
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:presensi_domain/src/entities/sales_target/sales_target.dart';
@@ -6,13 +8,11 @@ import 'package:presensi_mobile/core/_core.dart';
 class SalesTargetDailyBreakdownList extends StatelessWidget {
   final List<DailyBreakdownEntity> breakdown;
 
-  const SalesTargetDailyBreakdownList({
-    super.key,
-    required this.breakdown,
-  });
+  const SalesTargetDailyBreakdownList({super.key, required this.breakdown});
 
   @override
   Widget build(BuildContext context) {
+    hrLocale(context); // Rebuild formatted dates when the language changes.
     if (breakdown.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -20,7 +20,7 @@ class SalesTargetDailyBreakdownList extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
+        HrText(
           'Detail Harian',
           style: context.textStyle.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
@@ -32,7 +32,8 @@ class SalesTargetDailyBreakdownList extends StatelessWidget {
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemCount: breakdown.length,
-          separatorBuilder: (context, index) => const SizedBox(height: AppDimens.paddingSmall),
+          separatorBuilder: (context, index) =>
+              const SizedBox(height: AppDimens.paddingSmall),
           itemBuilder: (context, index) {
             final day = breakdown[index];
             return _buildDayCard(context, day);
@@ -43,17 +44,24 @@ class SalesTargetDailyBreakdownList extends StatelessWidget {
   }
 
   Widget _buildDayCard(BuildContext context, DailyBreakdownEntity day) {
-    final isToday = day.date.year == DateTime.now().year &&
+    final isToday =
+        day.date.year == DateTime.now().year &&
         day.date.month == DateTime.now().month &&
         day.date.day == DateTime.now().day;
 
     return Container(
       padding: const EdgeInsets.all(AppDimens.paddingMedium),
       decoration: BoxDecoration(
-        color: day.isWorkingDay ? (isToday ? AppColors.primary.withValues(alpha: 0.05) : AppColors.white) : AppColors.bgPrimary,
+        color: day.isWorkingDay
+            ? (isToday
+                  ? AppColors.primary.withValues(alpha: 0.05)
+                  : AppColors.white)
+            : AppColors.bgPrimary,
         borderRadius: BorderRadius.circular(AppDimens.radiusMedium),
         border: Border.all(
-          color: isToday ? AppColors.primary.withValues(alpha: 0.3) : AppColors.borderGrey,
+          color: isToday
+              ? AppColors.primary.withValues(alpha: 0.3)
+              : AppColors.borderGrey,
         ),
       ),
       child: Column(
@@ -63,24 +71,34 @@ class SalesTargetDailyBreakdownList extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                DateFormat('EEEE, dd MMM yyyy', 'id_ID').format(day.date),
+                DateFormat(
+                  'EEEE, dd MMM yyyy',
+                  AppLanguageController.instance.effectiveLocale.languageCode,
+                ).format(day.date),
                 style: context.textStyle.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: !day.isWorkingDay ? AppColors.labelSecondary : (isToday ? AppColors.primary : AppColors.labelPrimary),
+                  color: !day.isWorkingDay
+                      ? AppColors.labelSecondary
+                      : (isToday ? AppColors.primary : AppColors.labelPrimary),
                 ),
               ),
               if (!day.isWorkingDay)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.grey[200]!,
                     borderRadius: BorderRadius.circular(4),
                   ),
-                  child: Text(
+                  child: HrText(
                     'Libur',
-                    style: context.textStyle.labelSmall?.copyWith(color: AppColors.labelSecondary),
+                    style: context.textStyle.labelSmall?.copyWith(
+                      color: AppColors.labelSecondary,
+                    ),
                   ),
-                )
+                ),
             ],
           ),
           if (day.isWorkingDay) ...[
@@ -89,19 +107,39 @@ class SalesTargetDailyBreakdownList extends StatelessWidget {
               children: [
                 Expanded(
                   flex: 3,
-                  child: _buildMetric(context, 'Omzet', _formatCurrency(day.achievement), _formatCurrency(day.dailyTargetSales)),
+                  child: _buildMetric(
+                    context,
+                    ('Omzet').tr(context),
+                    _formatCurrency(day.achievement),
+                    _formatCurrency(day.dailyTargetSales),
+                  ),
                 ),
                 Expanded(
                   flex: 2,
-                  child: _buildMetric(context, 'Call', day.actualCall.toString(), day.dailyTargetCall.toString()),
+                  child: _buildMetric(
+                    context,
+                    'Call',
+                    day.actualCall.toString(),
+                    day.dailyTargetCall.toString(),
+                  ),
                 ),
                 Expanded(
                   flex: 2,
-                  child: _buildMetric(context, 'EC', day.actualEc.toString(), day.dailyTargetEc.toString()),
+                  child: _buildMetric(
+                    context,
+                    'EC',
+                    day.actualEc.toString(),
+                    day.dailyTargetEc.toString(),
+                  ),
                 ),
                 Expanded(
                   flex: 2,
-                  child: _buildMetric(context, 'NOO', day.actualNoo.toString(), day.dailyTargetNoo.toString()),
+                  child: _buildMetric(
+                    context,
+                    'NOO',
+                    day.actualNoo.toString(),
+                    day.dailyTargetNoo.toString(),
+                  ),
                 ),
               ],
             ),
@@ -109,7 +147,9 @@ class SalesTargetDailyBreakdownList extends StatelessWidget {
             const SizedBox(height: AppDimens.paddingSmall),
             Text(
               day.reason,
-              style: context.textStyle.bodySmall?.copyWith(color: AppColors.labelSecondary),
+              style: context.textStyle.bodySmall?.copyWith(
+                color: AppColors.labelSecondary,
+              ),
             ),
           ],
         ],
@@ -117,18 +157,27 @@ class SalesTargetDailyBreakdownList extends StatelessWidget {
     );
   }
 
-  Widget _buildMetric(BuildContext context, String label, String actual, String target) {
+  Widget _buildMetric(
+    BuildContext context,
+    String label,
+    String actual,
+    String target,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        HrText(
           label,
-          style: context.textStyle.labelSmall?.copyWith(color: AppColors.labelSecondary),
+          style: context.textStyle.labelSmall?.copyWith(
+            color: AppColors.labelSecondary,
+          ),
         ),
         const SizedBox(height: 2),
         RichText(
           text: TextSpan(
-            style: context.textStyle.bodySmall?.copyWith(color: AppColors.labelPrimary),
+            style: context.textStyle.bodySmall?.copyWith(
+              color: AppColors.labelPrimary,
+            ),
             children: [
               TextSpan(
                 text: actual,

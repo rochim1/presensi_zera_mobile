@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
 
@@ -28,7 +29,7 @@ class AppFilterChip extends StatelessWidget {
               ? null
               : Border.all(color: AppColors.neutralBorder, width: 1),
         ),
-        child: Text(
+        child: HrText(
           label,
           style: context.theme.textTheme.bodyMedium?.copyWith(
             color: isSelected

@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
@@ -77,7 +78,7 @@ class _AttendanceStatsCardState extends State<AttendanceStatsCard> {
         children: [
           Row(
             children: [
-              Text(
+              HrText(
                 'Ringkasan Kehadiran',
                 style: const TextStyle(
                   fontSize: 14,
@@ -123,7 +124,7 @@ class _AttendanceStatsCardState extends State<AttendanceStatsCard> {
         borderRadius: BorderRadius.circular(24),
       ),
       child: Center(
-        child: Text(
+        child: HrText(
           'Gagal memuat statistik',
           style: TextStyle(color: AppColors.labelSecondary, fontSize: 13),
         ),
@@ -155,7 +156,7 @@ class _AttendanceStatsCardState extends State<AttendanceStatsCard> {
           Row(
             children: [
               Expanded(
-                child: Text(
+                child: HrText(
                   'Ringkasan Kehadiran',
                   style: const TextStyle(
                     fontSize: 14,
@@ -176,7 +177,7 @@ class _AttendanceStatsCardState extends State<AttendanceStatsCard> {
                   ).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Text(
+                child: HrText(
                   _getTypeLabel(stats[currentPage].typePresensi),
                   style: TextStyle(
                     fontSize: 11,
@@ -243,7 +244,7 @@ class _AttendanceStatsCardState extends State<AttendanceStatsCard> {
                 ),
                 const SizedBox(width: 8),
                 Expanded(
-                  child: Text(
+                  child: HrText(
                     'Konsistensi presensi',
                     style: TextStyle(
                       fontSize: 13,
@@ -281,7 +282,7 @@ class _AttendanceStatsCardState extends State<AttendanceStatsCard> {
         children: [
           _buildStatItem(
             value: stat.totalHadir.toString(),
-            label: 'Total Hadir',
+            label: ('Total Hadir').tr(context),
             sublabel: '',
           ),
         ],
@@ -291,33 +292,33 @@ class _AttendanceStatsCardState extends State<AttendanceStatsCard> {
     final items = <Widget>[
       _buildStatItem(
         value: stat.totalHariKerja.toString(),
-        label: 'Hari Kerja',
+        label: ('Hari Kerja').tr(context),
         sublabel: 'Total',
       ),
       _buildStatItem(
         value: stat.totalHadir.toString(),
-        label: 'Hadir',
+        label: ('Hadir').tr(context),
         sublabel: stat.totalHariKerja > 0
             ? '${((stat.totalHadir / stat.totalHariKerja) * 100).toStringAsFixed(0)}%'
             : '-',
       ),
       _buildStatItem(
         value: stat.totalTerlambat.toString(),
-        label: 'Terlambat',
+        label: ('Terlambat').tr(context),
         sublabel: stat.totalHariKerja > 0
             ? '${((stat.totalTerlambat / stat.totalHariKerja) * 100).toStringAsFixed(0)}%'
             : '-',
       ),
       _buildStatItem(
         value: stat.totalTidakHadir.toString(),
-        label: 'Tidak Hadir',
+        label: ('Tidak Hadir').tr(context),
         sublabel: stat.totalHariKerja > 0
             ? '${((stat.totalTidakHadir / stat.totalHariKerja) * 100).toStringAsFixed(0)}%'
             : '-',
       ),
       _buildStatItem(
         value: stat.totalCutiIzin.toString(),
-        label: 'Cuti / Izin',
+        label: ('Cuti / Izin').tr(context),
         sublabel: stat.totalHariKerja > 0
             ? '${((stat.totalCutiIzin / stat.totalHariKerja) * 100).toStringAsFixed(0)}%'
             : '-',
@@ -329,7 +330,7 @@ class _AttendanceStatsCardState extends State<AttendanceStatsCard> {
       items.add(
         _buildStatItem(
           value: stat.totalLibur.toString(),
-          label: 'Libur',
+          label: ('Libur').tr(context),
           sublabel: '',
         ),
       );
@@ -356,7 +357,7 @@ class _AttendanceStatsCardState extends State<AttendanceStatsCard> {
             ),
           ),
           const SizedBox(height: 2),
-          Text(
+          HrText(
             label,
             style: TextStyle(
               fontSize: 10,
@@ -366,7 +367,7 @@ class _AttendanceStatsCardState extends State<AttendanceStatsCard> {
             textAlign: TextAlign.center,
           ),
           if (sublabel.isNotEmpty)
-            Text(
+            HrText(
               sublabel,
               style: TextStyle(
                 fontSize: 10,

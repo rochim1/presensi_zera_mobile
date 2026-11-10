@@ -116,9 +116,9 @@ class _DeliveryPendingTabState extends State<DeliveryPendingTab> {
                 await AppModalBottom.showDefault(
                   context,
                   emptyState: EmptyState.confirmation,
-                  contentTitle: 'Peringatan',
+                  contentTitle: ('Peringatan').tr(ctxSuccess),
                   contentSubtitle:
-                      'Anda sudah pulang. Tekan tombol "Mulai Lembur" di Beranda terlebih dahulu jika ingin membatalkan Kunjungan.',
+                      ('Anda sudah pulang. Tekan tombol "Mulai Lembur" di Beranda terlebih dahulu jika ingin membatalkan Kunjungan.').tr(ctxSuccess),
                   hasActionPop: true,
                 );
                 return;
@@ -130,9 +130,9 @@ class _DeliveryPendingTabState extends State<DeliveryPendingTab> {
                 await AppModalBottom.showDefault(
                   context,
                   emptyState: EmptyState.confirmation,
-                  contentTitle: 'Konfirmasi',
+                  contentTitle: ('Konfirmasi').tr(ctxSuccess),
                   contentSubtitle:
-                      'Tidak bisa membatalkan Kunjungan, status kerja anda masih Istirahat',
+                      ('Tidak bisa membatalkan Kunjungan, status kerja anda masih Istirahat').tr(ctxSuccess),
                   hasActionPop: true,
                 );
                 return;
@@ -164,9 +164,9 @@ class _DeliveryPendingTabState extends State<DeliveryPendingTab> {
                 await AppModalBottom.showDefault(
                   context,
                   emptyState: EmptyState.confirmation,
-                  contentTitle: 'Peringatan',
+                  contentTitle: ('Peringatan').tr(ctxSuccess),
                   contentSubtitle:
-                      'Anda sudah pulang. Tekan tombol "Mulai Lembur" di Beranda terlebih dahulu jika ingin mengerjakan Kunjungan.',
+                      ('Anda sudah pulang. Tekan tombol "Mulai Lembur" di Beranda terlebih dahulu jika ingin mengerjakan Kunjungan.').tr(ctxSuccess),
                   hasActionPop: true,
                 );
                 return;
@@ -178,9 +178,9 @@ class _DeliveryPendingTabState extends State<DeliveryPendingTab> {
                 await AppModalBottom.showDefault(
                   context,
                   emptyState: EmptyState.confirmation,
-                  contentTitle: 'Konfirmasi',
+                  contentTitle: ('Konfirmasi').tr(ctxSuccess),
                   contentSubtitle:
-                      'Tidak bisa memeriksa Kunjungan, status kerja anda masih Istirahat',
+                      ('Tidak bisa memeriksa Kunjungan, status kerja anda masih Istirahat').tr(ctxSuccess),
                   hasActionPop: true,
                 );
                 return;

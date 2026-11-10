@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -57,11 +58,13 @@ class _LeaveViewState extends State<LeaveView> {
           },
           child: Scaffold(
             appBar: AppTopBar(
-              title: _showingApproval ? 'Approval Cuti' : 'Cuti',
+              title: (_showingApproval
+                  ? ('Approval Cuti').tr(context)
+                  : ('Cuti').tr(context)),
               centerTitle: false,
-              subtitle: _showingApproval
-                  ? 'Tinjau pengajuan cuti karyawan'
-                  : 'Kelola pengajuan cuti Anda',
+              subtitle: (_showingApproval
+                  ? ('Tinjau pengajuan cuti karyawan').tr(context)
+                  : ('Kelola pengajuan cuti Anda').tr(context)),
               onBackTap: _showingApproval && !widget.initialApproval
                   ? () => setState(() => _showingApproval = false)
                   : null,
@@ -154,7 +157,7 @@ class _MonthFilter extends StatelessWidget {
               const Icon(Icons.date_range, color: AppColors.primary, size: 20),
               const SizedBox(width: 8),
               Expanded(
-                child: Text(
+                child: HrText(
                   state.startDate != null
                       ? DateFormat(
                           'MMMM yyyy',

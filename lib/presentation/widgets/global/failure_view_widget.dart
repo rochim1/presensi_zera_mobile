@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -55,7 +56,7 @@ class _FailureViewWidgetState extends State<FailureViewWidget> {
             ),
             const SizedBox(height: AppDimens.size4S),
             Text(
-              '${sl<FlavorConfig>().env?.isDev ?? false ? '[${widget.failure!.code}]\n' : ''} ${widget.failure?.message ?? ''}',
+              '${sl<FlavorConfig>().env?.isDev ?? false ? '[${widget.failure!.code}]\n' : ''} ${(widget.failure?.message ?? '').tr(context)}',
               textAlign: TextAlign.center,
               style: context.textStyle.titleMedium!.copyWith(
                 color: AppColors.labelSecondary,

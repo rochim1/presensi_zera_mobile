@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -84,7 +85,7 @@ class _LeaveRequestView extends StatelessWidget {
                 child: Column(
                   children: [
                     AppTopBar(
-                      title: 'Request Cuti',
+                      title: ('Request Cuti').tr(context),
                       useGradient: false,
                       backgroundColor: Colors.transparent,
                       titleColor: AppColors.white,
@@ -116,9 +117,9 @@ class _LeaveRequestView extends StatelessWidget {
                             spacing: AppDimens.h16,
                             children: [
                               AppDropdownField<LeaveCategory>(
-                                label: 'Jenis Cuti',
+                                label: ('Jenis Cuti').tr(context),
                                 isRequired: true,
-                                hintText: 'Pilih Jenis Cuti',
+                                hintText: ('Pilih Jenis Cuti').tr(context),
                                 selectedItem: state.form.category.value,
                                 items: leaveCategories,
                                 compareFn: (item, filter) =>
@@ -129,9 +130,9 @@ class _LeaveRequestView extends StatelessWidget {
                               ),
                               if (showMode) ...[
                                 AppDropdownField<LeaveMode>(
-                                  label: 'Mode Cuti',
+                                  label: ('Mode Cuti').tr(context),
                                   isRequired: true,
-                                  hintText: 'Pilih Mode Cuti',
+                                  hintText: ('Pilih Mode Cuti').tr(context),
                                   selectedItem: state.form.mode.value,
                                   items: LeaveMode.values,
                                   compareFn: (item, filter) => item == filter,
@@ -141,37 +142,42 @@ class _LeaveRequestView extends StatelessWidget {
                                 ),
                               ],
                               AppDateTimeField(
-                                label: 'Tanggal Mulai',
+                                label: ('Tanggal Mulai').tr(context),
                                 isRequired: true,
                                 firstDate: DateTime.now(),
-                                hintText: 'Pilih tanggal mulai',
+                                hintText: ('Pilih tanggal mulai').tr(context),
                                 value: state.form.startDate.value,
                                 onConfirmed: cubit.onChangeStartDate,
                                 errorText: state.form.startDate.errorMessage,
                               ),
                               if (showEndDate)
                                 AppDateTimeField(
-                                  label: 'Tanggal Selesai',
+                                  label: ('Tanggal Selesai').tr(context),
                                   isRequired: true,
                                   firstDate:
                                       state.form.startDate.value ??
                                       DateTime.now(),
-                                  hintText: 'Pilih tanggal selesai',
+                                  hintText: ('Pilih tanggal selesai').tr(
+                                    context,
+                                  ),
                                   value: state.form.endDate.value,
                                   onConfirmed: cubit.onChangeEndDate,
                                   errorText: state.form.endDate.errorMessage,
                                 ),
                               AppTextField(
-                                label: 'Alasan',
+                                label: ('Alasan').tr(context),
                                 isRequired: true,
-                                hintText: 'Masukkan alasan untuk request ini',
+                                hintText: ('Masukkan alasan untuk request ini')
+                                    .tr(context),
                                 maxLines: 3,
                                 onChanged: cubit.onChangeReason,
                                 errorText: state.form.reason.errorMessage,
                               ),
                               AppDropdownField<User>(
-                                label: 'Delegasikan Tugas Kepada',
-                                hintText: 'Pilih delegasi (opsional)',
+                                label: ('Delegasikan Tugas Kepada').tr(context),
+                                hintText: ('Pilih delegasi (opsional)').tr(
+                                  context,
+                                ),
                                 selectedItem: state.form.delegation.value,
                                 items: users,
                                 compareFn: (item, filter) =>
@@ -218,17 +224,22 @@ class _LeaveRequestView extends StatelessWidget {
                                 },
                               ),
                               AppTextField(
-                                label: 'Kontak Darurat (Opsional)',
-                                hintText: 'Masukkan nomor kontak darurat',
+                                label: ('Kontak Darurat (Opsional)').tr(
+                                  context,
+                                ),
+                                hintText: ('Masukkan nomor kontak darurat').tr(
+                                  context,
+                                ),
                                 onChanged: cubit.onChangeEmergencyContact,
                                 errorText:
                                     state.form.emergencyContact.errorMessage,
                               ),
                               AppAttachmentField(
-                                label: 'Bukti Pendukung',
+                                label: ('Bukti Pendukung').tr(context),
                                 isRequired: needsAttachment,
                                 hintText:
-                                    'Tambahkan foto atau dokumen pendukung',
+                                    ('Tambahkan foto atau dokumen pendukung')
+                                        .tr(context),
                                 value: state.form.attachment.value.isNotEmpty
                                     ? state.form.attachment.value
                                           .map((e) => e.name)
@@ -265,30 +276,35 @@ class _LeaveRequestView extends StatelessWidget {
                   Row(
                     spacing: AppDimens.w8,
                     children: [
-                      Text("Max:"),
+                      HrText("Max:"),
                       state.cutiQuota.maybeWhen(
                         success: (quota) => AppChip(
-                          label: '${quota['kuota_cuti'] ?? '-'} Hari',
+                          label: ('${quota['kuota_cuti'] ?? '-'} Hari').tr(
+                            context,
+                          ),
                           color: AppColors.primary,
                           borderRadius: AppDimens.r12,
                         ),
                         orElse: () => AppChip(
-                          label: '${selectedCategory.maxDurationInDays} Hari',
+                          label: ('${selectedCategory.maxDurationInDays} Hari')
+                              .tr(context),
                           color: AppColors.primary,
                           borderRadius: AppDimens.r12,
                         ),
                       ),
-                      Text("Sisa:"),
+                      HrText("Sisa:"),
                       state.cutiQuota.maybeWhen(
                         success: (quota) => AppChip(
-                          label: '${quota['sisa_cuti'] ?? '-'} Hari',
+                          label: ('${quota['sisa_cuti'] ?? '-'} Hari').tr(
+                            context,
+                          ),
                           color: (quota['sisa_cuti'] ?? 0) > 0
                               ? AppColors.success
                               : AppColors.danger,
                           borderRadius: AppDimens.r12,
                         ),
                         orElse: () => AppChip(
-                          label: '- Hari',
+                          label: ('- Hari').tr(context),
                           color: AppColors.labelSecondary,
                           borderRadius: AppDimens.r12,
                         ),
@@ -318,7 +334,7 @@ class _LeaveRequestView extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         Expanded(
-                          child: Text(
+                          child: HrText(
                             'Info: Jika durasi pengajuan Anda melebihi sisa cuti, maka hari yang berlebih akan dihitung sebagai Unpaid Leave (Potong Gaji).',
                             style: TextStyle(
                               fontSize: 12,
@@ -330,7 +346,7 @@ class _LeaveRequestView extends StatelessWidget {
                     ),
                   ),
                 AppButtonNew(
-                  text: 'Buat Request',
+                  text: ('Buat Request').tr(context),
                   isLoading: state.submit.isLoading,
                   onPressed: cubit.submit,
                 ),

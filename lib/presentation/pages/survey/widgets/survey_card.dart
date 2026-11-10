@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:presensi_domain/presensi_domain.dart';
@@ -83,7 +84,7 @@ class SurveyCard extends StatelessWidget {
 
             const Divider(height: 1, color: AppColors.divider),
             AppRequestDateRow(
-              title: 'Periode',
+              title: ('Periode').tr(context),
               value: _periodText(
                 currentSurvey.startDate,
                 currentSurvey.endDate,
@@ -95,7 +96,9 @@ class SurveyCard extends StatelessWidget {
             Row(
               children: [
                 AppChip(
-                  label: currentSurvey.isRequired ? 'Wajib' : 'Opsional',
+                  label: (currentSurvey.isRequired
+                      ? ('Wajib').tr(context)
+                      : ('Opsional').tr(context)),
                   color: currentSurvey.isRequired
                       ? AppColors.warning
                       : AppColors.labelSecondary,

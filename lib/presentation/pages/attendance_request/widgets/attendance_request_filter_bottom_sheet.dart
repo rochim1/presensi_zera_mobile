@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -190,7 +191,7 @@ class _AttendanceRequestFilterBottomSheetState
                             ),
                           ),
                         ),
-                        child: Text(
+                        child: HrText(
                           months[index],
                           style: context.textStyle.bodySmall,
                           maxLines: 1,
@@ -242,7 +243,7 @@ class _AttendanceRequestFilterBottomSheetState
               ),
             ),
 
-            Text(
+            HrText(
               'Filter Request Presensi',
               style: context.textStyle.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
@@ -255,7 +256,7 @@ class _AttendanceRequestFilterBottomSheetState
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                HrText(
                   'Rentang Waktu',
                   style: context.textStyle.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
@@ -271,7 +272,7 @@ class _AttendanceRequestFilterBottomSheetState
                     minimumSize: Size.zero,
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
-                  child: Text(
+                  child: HrText(
                     'Pilih Bulan',
                     style: context.textStyle.bodyMedium?.copyWith(
                       color: AppColors.primary,
@@ -297,7 +298,7 @@ class _AttendanceRequestFilterBottomSheetState
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
+                    HrText(
                       (_startDate != null && _endDate != null)
                           ? '${DateFormat('dd MMM yyyy').format(_startDate!)} - ${DateFormat('dd MMM yyyy').format(_endDate!)}'
                           : 'Pilih Rentang Waktu',
@@ -319,7 +320,7 @@ class _AttendanceRequestFilterBottomSheetState
             AppDimens.paddingLarge.hSpace,
 
             // Status
-            Text(
+            HrText(
               'Status',
               style: context.textStyle.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w600,
@@ -331,7 +332,7 @@ class _AttendanceRequestFilterBottomSheetState
               children: _statusOptions.map((status) {
                 final isSelected = _status == status;
                 return ChoiceChip(
-                  label: Text(_formatStatusLabel(status)),
+                  label: HrText(_formatStatusLabel(status)),
                   selected: isSelected,
                   onSelected: (selected) {
                     if (selected) {
@@ -359,7 +360,7 @@ class _AttendanceRequestFilterBottomSheetState
             AppDimens.paddingLarge.hSpace,
 
             // Jenis Request
-            Text(
+            HrText(
               'Jenis Request',
               style: context.textStyle.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w600,
@@ -371,7 +372,7 @@ class _AttendanceRequestFilterBottomSheetState
               children: _jenisRequestOptions.map((jenis) {
                 final isSelected = _jenisRequest == jenis;
                 return ChoiceChip(
-                  label: Text(_formatJenisRequestLabel(jenis)),
+                  label: HrText(_formatJenisRequestLabel(jenis)),
                   selected: isSelected,
                   onSelected: (selected) {
                     if (selected) {
@@ -421,7 +422,7 @@ class _AttendanceRequestFilterBottomSheetState
                         ),
                       ),
                     ),
-                    child: Text(
+                    child: HrText(
                       'Reset',
                       style: context.textStyle.bodyLarge?.copyWith(
                         color: AppColors.primary,
@@ -442,7 +443,7 @@ class _AttendanceRequestFilterBottomSheetState
                         _jenisRequest == 'Semua' ? null : _jenisRequest,
                       );
                     },
-                    text: 'Terapkan',
+                    text: ('Terapkan').tr(context),
                   ),
                 ),
               ],

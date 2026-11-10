@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'dart:convert';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
@@ -38,8 +39,8 @@ class EmailDetailPage extends StatelessWidget {
     return Scaffold(
       appBar: embedded
           ? null
-          : const AppTopBar(
-              title: 'Detail Pesan Internal',
+          : AppTopBar(
+              title: ('Detail Pesan Internal').tr(context),
               backgroundColor: AppColors.white,
             ),
       body: Column(
@@ -51,7 +52,7 @@ class EmailDetailPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                HrText(
                   email.title ?? 'No Subject',
                   style: context.textStyle.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,

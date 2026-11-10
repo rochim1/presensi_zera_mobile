@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -76,7 +77,7 @@ class _ProfileInventoryPageState extends State<ProfileInventoryPage> {
         builder: (context, setSheetState) {
           InputDecoration decoration(String label, {IconData? icon}) {
             return InputDecoration(
-              hintText: 'Masukkan $label',
+              hintText: ('Masukkan $label').tr(context),
               suffixIcon: icon == null ? null : Icon(icon),
               border: const OutlineInputBorder(),
             );
@@ -86,7 +87,7 @@ class _ProfileInventoryPageState extends State<ProfileInventoryPage> {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                HrText(
                   label,
                   style: context.textStyle.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
@@ -121,7 +122,7 @@ class _ProfileInventoryPageState extends State<ProfileInventoryPage> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text(
+                    HrText(
                       'Perbarui Kendaraan',
                       style: context.textStyle.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
@@ -195,7 +196,7 @@ class _ProfileInventoryPageState extends State<ProfileInventoryPage> {
                     ),
                     const SizedBox(height: 20),
                     AppButtonNew(
-                      text: 'Simpan Perubahan',
+                      text: ('Simpan Perubahan').tr(context),
                       isLoading: isSaving,
                       onPressed: () async {
                         if (isSaving ||
@@ -258,7 +259,7 @@ class _ProfileInventoryPageState extends State<ProfileInventoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgPrimary,
-      appBar: const AppTopBar(title: 'Kendaraan'),
+      appBar: AppTopBar(title: ('Kendaraan').tr(context)),
       body: MultiBlocProvider(
         providers: [
           BlocProvider(create: (context) => sl<UserGetLocalCubit>()..getData()),
@@ -282,7 +283,7 @@ class _ProfileInventoryPageState extends State<ProfileInventoryPage> {
                           header: Row(
                             children: [
                               Expanded(
-                                child: Text(
+                                child: HrText(
                                   'Data Kendaraan',
                                   style: context.textStyle.titleMedium
                                       ?.copyWith(
@@ -293,7 +294,7 @@ class _ProfileInventoryPageState extends State<ProfileInventoryPage> {
                               ),
                               if (userInventory?.id != null)
                                 IconButton(
-                                  tooltip: 'Perbarui kendaraan',
+                                  tooltip: ('Perbarui kendaraan').tr(context),
                                   onPressed: () => _showEditVehicle(
                                     context,
                                     userInventory!,
@@ -307,7 +308,7 @@ class _ProfileInventoryPageState extends State<ProfileInventoryPage> {
                           content: Column(
                             children: [
                               ProfileFieldRow(
-                                title: 'Jenis Kendaraan',
+                                title: ('Jenis Kendaraan').tr(context),
                                 value: AppUtility.nullHandler(
                                   userInventory
                                       ?.jenisKendaraan
@@ -317,21 +318,21 @@ class _ProfileInventoryPageState extends State<ProfileInventoryPage> {
                                 ),
                               ),
                               ProfileFieldRow(
-                                title: 'Merk/Plat Nomor',
+                                title: ('Merk/Plat Nomor').tr(context),
                                 value: AppUtility.nullHandler(
                                   '${userInventory?.merk ?? ''} ${userInventory?.platNomer ?? '-'}',
                                   fallback: '-',
                                 ),
                               ),
                               ProfileFieldRow(
-                                title: 'Kilomenter Terakhir',
+                                title: ('Kilomenter Terakhir').tr(context),
                                 value: AppUtility.nullHandler(
                                   userInventory?.kilometerTerakhir?.toKilometer,
                                   fallback: '-',
                                 ),
                               ),
                               ProfileFieldRow(
-                                title: 'Tanggal Pembayaran',
+                                title: ('Tanggal Pembayaran').tr(context),
                                 value: AppUtility.nullHandler(
                                   userInventory
                                       ?.tanggalPembayaranPajak
@@ -341,7 +342,7 @@ class _ProfileInventoryPageState extends State<ProfileInventoryPage> {
                                 ),
                               ),
                               ProfileFieldRow(
-                                title: 'Jadwal Service',
+                                title: ('Jadwal Service').tr(context),
                                 value: AppUtility.nullHandler(
                                   userInventory
                                       ?.jadwalServisTerakhir
@@ -351,7 +352,7 @@ class _ProfileInventoryPageState extends State<ProfileInventoryPage> {
                                 ),
                               ),
                               ProfileFieldRow(
-                                title: 'Biaya Pajak',
+                                title: ('Biaya Pajak').tr(context),
                                 value: AppUtility.nullHandler(
                                   userInventory?.totalBiayaPajak?.toCurrency,
                                   fallback: '-',

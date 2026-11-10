@@ -61,9 +61,9 @@ class _HomePanelState extends State<HomePanel> {
                                               context,
                                               emptyState:
                                                   EmptyState.confirmation,
-                                              contentTitle: 'Konfirmasi',
+                                              contentTitle: ('Konfirmasi').tr(context),
                                               contentSubtitle:
-                                                  'Tidak bisa memeriksa Kunjungan, status kerja anda masih Istirahat',
+                                                  ('Tidak bisa memeriksa Kunjungan, status kerja anda masih Istirahat').tr(context),
                                               hasActionPop: true,
                                             );
 
@@ -154,7 +154,7 @@ class _HomePanelState extends State<HomePanel> {
                 ),
               ),
               AppDimens.paddingMediumX.hSpace,
-              Text(
+              HrText(
                 'Tidak Ada Kunjungan',
                 style: context.textStyle.titleMedium!.copyWith(
                   fontWeight: FontWeight.w600,
@@ -162,7 +162,7 @@ class _HomePanelState extends State<HomePanel> {
                 ),
               ),
               AppDimens.size2S.hSpace,
-              Text(
+              HrText(
                 'Belum ada kunjungan yang dijadwalkan untuk hari ini',
                 textAlign: TextAlign.center,
                 style: context.textStyle.bodyMedium!.copyWith(

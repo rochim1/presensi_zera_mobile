@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
 
@@ -20,7 +21,7 @@ class TextFieldClickable extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (title.isNotEmpty) Text(title, textAlign: TextAlign.left),
+        if (title.isNotEmpty) HrText(title, textAlign: TextAlign.left),
         if (title.isNotEmpty) const SizedBox(height: AppDimens.size3S),
         InkWell(
           onTap: onTap,
@@ -42,7 +43,7 @@ class TextFieldClickable extends StatelessWidget {
               labelStyle: const TextStyle(color: AppColors.grey),
               floatingLabelStyle: const TextStyle(color: AppColors.grey),
               hintStyle: const TextStyle(color: AppColors.grey),
-              hintText: hint,
+              hintText: hint.tr(context),
               contentPadding: const EdgeInsets.all(AppDimens.paddingMedium),
             ),
             enabled: false,

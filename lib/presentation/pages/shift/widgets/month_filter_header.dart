@@ -1,3 +1,5 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
+import 'package:presensi_mobile/l10n/app_language_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -14,9 +16,13 @@ class MonthFilterHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    hrLocale(context); // Rebuild formatted dates when the language changes.
     return Container(
       margin: EdgeInsets.only(bottom: AppDimens.h16),
-      padding: EdgeInsets.symmetric(horizontal: AppDimens.w16, vertical: AppDimens.h8),
+      padding: EdgeInsets.symmetric(
+        horizontal: AppDimens.w16,
+        vertical: AppDimens.h8,
+      ),
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(AppDimens.radiusLarge),
@@ -27,23 +33,35 @@ class MonthFilterHeader extends StatelessWidget {
         children: [
           IconButton(
             onPressed: () {
-              final newMonth = DateTime(currentMonth.year, currentMonth.month - 1);
+              final newMonth = DateTime(
+                currentMonth.year,
+                currentMonth.month - 1,
+              );
               onMonthChanged(newMonth);
             },
             icon: const Icon(Icons.chevron_left, color: AppColors.labelPrimary),
           ),
           Text(
-            DateFormat('MMMM yyyy', 'id_ID').format(currentMonth),
+            DateFormat(
+              'MMMM yyyy',
+              AppLanguageController.instance.effectiveLocale.languageCode,
+            ).format(currentMonth),
             style: context.textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),
           IconButton(
             onPressed: () {
-              final newMonth = DateTime(currentMonth.year, currentMonth.month + 1);
+              final newMonth = DateTime(
+                currentMonth.year,
+                currentMonth.month + 1,
+              );
               onMonthChanged(newMonth);
             },
-            icon: const Icon(Icons.chevron_right, color: AppColors.labelPrimary),
+            icon: const Icon(
+              Icons.chevron_right,
+              color: AppColors.labelPrimary,
+            ),
           ),
         ],
       ),

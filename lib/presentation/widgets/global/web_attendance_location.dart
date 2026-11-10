@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 
 /// Coordinates remain the source for server-side attendance/location rules.
@@ -28,7 +29,7 @@ class WebAttendanceLocation extends StatelessWidget {
               color: const Color(0xFF087F78),
             ),
             const SizedBox(height: 12),
-            Text(
+            HrText(
               ready
                   ? 'Lokasi dari browser ditemukan'
                   : 'Mencari lokasi browser…',
@@ -41,7 +42,7 @@ class WebAttendanceLocation extends StatelessWidget {
               ),
             ],
             const SizedBox(height: 12),
-            const Text(
+            const HrText(
               'Peta tidak ditampilkan. Presensi tetap memakai titik lokasi perangkat dan aturan lokasi perusahaan.',
               textAlign: TextAlign.center,
             ),

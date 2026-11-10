@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -47,16 +48,18 @@ class _ApprovalCenterPageState extends State<ApprovalCenterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const AppTopBar(
-        title: 'Pusat Persetujuan',
+      appBar: AppTopBar(
+        title: ('Pusat Persetujuan').tr(context),
         centerTitle: false,
-        subtitle: 'Kelola persetujuan sesuai kewenangan Anda',
+        subtitle: ('Kelola persetujuan sesuai kewenangan Anda').tr(context),
       ),
       body: FutureBuilder<ApprovalAccess>(
         future: _access,
         builder: (context, snapshot) {
           if (_access == null) {
-            return const Center(child: Text('Informasi akun belum tersedia.'));
+            return const Center(
+              child: HrText('Informasi akun belum tersedia.'),
+            );
           }
           if (snapshot.connectionState != ConnectionState.done) {
             return const Center(child: CircularProgressIndicator());
@@ -66,7 +69,7 @@ class _ApprovalCenterPageState extends State<ApprovalCenterPage> {
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              const Text(
+              const HrText(
                 'Tinjau pengajuan sesuai kewenangan Anda. Setiap jenis memiliki antrean dan filter sendiri.',
                 style: TextStyle(
                   fontSize: 14,
@@ -76,7 +79,7 @@ class _ApprovalCenterPageState extends State<ApprovalCenterPage> {
               ),
               const SizedBox(height: 24),
               if (snapshot.hasError || access == null || access.hasFailure) ...[
-                const Text(
+                const HrText(
                   'Sebagian akses belum berhasil diperiksa. Coba lagi untuk memperbarui daftar.',
                 ),
                 Align(
@@ -84,7 +87,7 @@ class _ApprovalCenterPageState extends State<ApprovalCenterPage> {
                   child: TextButton.icon(
                     onPressed: _retry,
                     icon: const Icon(Icons.refresh),
-                    label: const Text('Coba lagi'),
+                    label: const HrText('Coba lagi'),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -134,7 +137,7 @@ class _ApprovalCenterPageState extends State<ApprovalCenterPage> {
                 const SizedBox(height: 16),
                 const _SectionTitle('Payroll'),
                 const SizedBox(height: 8),
-                const Text(
+                const HrText(
                   'Antrean payroll dipisahkan dari pengajuan harian agar peninjauan periode dan batch tetap fokus.',
                   style: TextStyle(
                     fontSize: 13,
@@ -155,7 +158,7 @@ class _ApprovalCenterPageState extends State<ApprovalCenterPage> {
               if (allowed.isEmpty && access != null && !access.hasFailure)
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 32),
-                  child: Text(
+                  child: HrText(
                     'Belum ada jenis persetujuan yang ditugaskan kepada Anda.',
                     textAlign: TextAlign.center,
                     style: TextStyle(height: 1.5),
@@ -222,7 +225,7 @@ class _SectionTitle extends StatelessWidget {
   final String title;
   const _SectionTitle(this.title);
   @override
-  Widget build(BuildContext context) => Text(
+  Widget build(BuildContext context) => HrText(
     title,
     style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
   );
@@ -247,13 +250,13 @@ class _Destination extends StatelessWidget {
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: Icon(icon, color: AppColors.primary),
-        title: Text(
+        title: HrText(
           title,
           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
         ),
         subtitle: Padding(
           padding: const EdgeInsets.only(top: 4),
-          child: Text(
+          child: HrText(
             subtitle,
             style: const TextStyle(fontSize: 12, height: 1.5),
           ),

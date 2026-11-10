@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
 import 'package:presensi_mobile/presentation/_presentation.dart';
@@ -14,7 +15,7 @@ class TextFieldShimmer extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (title != null)
-          Text(
+          HrText(
             title!,
             textAlign: TextAlign.left,
             style: TextStyle(color: colorTitle ?? AppColors.labelPrimary),

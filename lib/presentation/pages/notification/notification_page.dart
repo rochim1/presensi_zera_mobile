@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -56,8 +57,8 @@ class NotificationView extends StatelessWidget {
 
           return Scaffold(
             appBar: AppTopBar(
-              title: 'Notifikasi',
-              subtitle: 'Informasi dan pembaruan terbaru',
+              title: ('Notifikasi').tr(context),
+              subtitle: ('Informasi dan pembaruan terbaru').tr(context),
               centerTitle: false,
             ),
             body: AppSmartRefresher(
@@ -119,7 +120,7 @@ class NotificationView extends StatelessWidget {
         AppDimens.h8,
       ),
       alignment: Alignment.centerLeft,
-      child: Text(
+      child: HrText(
         title,
         style: context.textTheme.titleSmall!.copyWith(
           color: AppColors.labelPrimary,

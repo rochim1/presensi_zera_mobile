@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:presensi_domain/presensi_domain.dart';
@@ -34,7 +35,7 @@ class OvertimeRequestCard extends StatelessWidget {
       showUser: showUser,
       statusColor: request.status.toDisplayColor,
       statusLabel: request.status.toDisplayName,
-      title: 'Lembur',
+      title: ('Lembur').tr(context),
       subtitle: request.reason,
       onTap: onTap,
       middleContent: [
@@ -43,7 +44,7 @@ class OvertimeRequestCard extends StatelessWidget {
             if (request.date != null)
               Expanded(
                 child: AppRequestDateRow(
-                  title: 'Tanggal',
+                  title: ('Tanggal').tr(context),
                   value: request.date!.format(pattern: 'EE, dd MMM yyyy'),
                   icon: PhosphorIcons.calendarBlank,
                   iconColor: AppColors.green,
@@ -55,7 +56,7 @@ class OvertimeRequestCard extends StatelessWidget {
             ],
             Expanded(
               child: AppRequestDateRow(
-                title: 'Total Jam',
+                title: ('Total Jam').tr(context),
                 value: request.durationInHours != 0
                     ? '${request.durationInHours} Jam'
                     : '-',
@@ -70,7 +71,7 @@ class OvertimeRequestCard extends StatelessWidget {
           children: [
             Expanded(
               child: AppRequestDateRow(
-                title: 'Waktu Mulai',
+                title: ('Waktu Mulai').tr(context),
                 value: request.startTime?.format(pattern: 'HH:mm') ?? '--:--',
                 icon: PhosphorIcons.signIn,
                 iconColor: AppColors.orange,
@@ -80,7 +81,7 @@ class OvertimeRequestCard extends StatelessWidget {
             SizedBox(width: AppDimens.w16),
             Expanded(
               child: AppRequestDateRow(
-                title: 'Waktu Selesai',
+                title: ('Waktu Selesai').tr(context),
                 value: request.endTime?.format(pattern: 'HH:mm') ?? '--:--',
                 icon: PhosphorIcons.signOut,
                 iconColor: AppColors.red,

@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
@@ -93,10 +94,12 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
       if (await canLaunchUrl(url)) {
         await launchUrl(url, mode: LaunchMode.externalApplication);
       } else {
-        Fluttertoast.showToast(msg: 'Tidak dapat membuka Google Maps');
+        Fluttertoast.showToast(
+          msg: ('Tidak dapat membuka Google Maps').trCurrent(),
+        );
       }
     } catch (e) {
-      Fluttertoast.showToast(msg: 'Gagal membuka Google Maps');
+      Fluttertoast.showToast(msg: ('Gagal membuka Google Maps').trCurrent());
     }
   }
 
@@ -117,7 +120,7 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
       child: BlocConsumer<GlobalMapCubit, GlobalMapState>(
         listener: (context, state) {
           if (state.typeState.isNotLoaded && state.message != null) {
-            Fluttertoast.showToast(msg: state.message!);
+            Fluttertoast.showToast(msg: (state.message!).trCurrent());
           }
         },
         builder: (context, state) {
@@ -206,7 +209,7 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                     elevation: 4,
                     child: IconButton(
                       icon: const Icon(Icons.map_outlined),
-                      tooltip: 'Buka di Google Maps',
+                      tooltip: ('Buka di Google Maps').tr(context),
                       onPressed: () {
                         _openInGoogleMaps(target);
                       },
@@ -247,7 +250,7 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      HrText(
                         'Lokasi Terpilih',
                         style: context.textStyle.titleMedium?.copyWith(
                           fontWeight: FontWeight.w700,
@@ -263,7 +266,7 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                               size: AppDimens.sizeM,
                             ),
                             SizedBox(width: AppDimens.sizeS),
-                            Text(
+                            HrText(
                               'Mencari lokasi...',
                               style: TextStyle(fontWeight: FontWeight.w600),
                             ),
@@ -291,7 +294,7 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                         foregroundColor: AppColors.white,
                       ),
                       onPressed: () => context.router.pop(),
-                      child: const Text('Tutup'),
+                      child: const HrText('Tutup'),
                     ),
                   ),
                 ],
@@ -307,7 +310,7 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                             foregroundColor: AppColors.labelPrimary,
                           ),
                           onPressed: () => context.router.pop(),
-                          child: const Text('Batal'),
+                          child: const HrText('Batal'),
                         ),
                       ),
                       AppDimens.size3M.wSpace,
@@ -319,7 +322,7 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                                 : AppColors.primary,
                             foregroundColor: AppColors.white,
                           ),
-                          child: const Text('Pilih Lokasi'),
+                          child: const HrText('Pilih Lokasi'),
                           onPressed: () {
                             if (state.typeState.isLoading) return;
                             final result = LocationPickerResult(

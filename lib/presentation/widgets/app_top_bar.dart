@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
 import 'app_top_bar_action_button.dart';
@@ -74,7 +75,7 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  HrText(
                     title ?? '',
                     style: context.theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
@@ -89,7 +90,7 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                   if (subtitle != null) ...[
                     const SizedBox(height: 2),
-                    Text(
+                    HrText(
                       subtitle!,
                       style: context.textStyle.bodySmall?.copyWith(
                         color:

@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -146,7 +147,7 @@ class _ChatListPageState extends State<ChatListPage>
                 autofocus: true,
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
-                  hintText: 'Cari pesan...',
+                  hintText: ('Cari pesan...').tr(context),
                   hintStyle: TextStyle(
                     color: Colors.white.withValues(alpha: 0.7),
                   ),
@@ -162,7 +163,7 @@ class _ChatListPageState extends State<ChatListPage>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
+                  HrText(
                     'Pesan Internal',
                     style: TextStyle(
                       color: Colors.white,
@@ -170,7 +171,7 @@ class _ChatListPageState extends State<ChatListPage>
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  Text(
+                  HrText(
                     'Komunikasi aman dalam perusahaan',
                     style: TextStyle(
                       color: Color(0xCCFFFFFF),
@@ -321,14 +322,14 @@ class _ChatListPageState extends State<ChatListPage>
                         color: AppColors.labelSecondary.withValues(alpha: 0.3),
                       ),
                       AppDimens.h16.hSpace,
-                      Text(
+                      HrText(
                         'Belum ada percakapan',
                         style: context.textStyle.titleMedium?.copyWith(
                           color: AppColors.labelSecondary,
                         ),
                       ),
                       AppDimens.h8.hSpace,
-                      Text(
+                      HrText(
                         'Mulai percakapan baru dengan\nmenekan tombol pesan di bawah',
                         textAlign: TextAlign.center,
                         style: context.textStyle.bodySmall?.copyWith(
@@ -406,7 +407,7 @@ class _ChatListPageState extends State<ChatListPage>
               color: AppColors.primary.withValues(alpha: 0.25),
             ),
             const SizedBox(height: 16),
-            Text(
+            HrText(
               _tabController.index == 2
                   ? 'Pilih email untuk melihat detail'
                   : 'Pilih percakapan untuk mulai melihat pesan',
@@ -537,7 +538,7 @@ class _ChatListPageState extends State<ChatListPage>
                           ),
                         ),
                         if (timeLabel.isNotEmpty)
-                          Text(
+                          HrText(
                             timeLabel,
                             style: context.textStyle.bodySmall?.copyWith(
                               color: unread > 0
@@ -606,13 +607,13 @@ class _ChatListPageState extends State<ChatListPage>
         }
 
         if (state is EmailListError) {
-          return Center(child: Text(state.message));
+          return Center(child: HrText(state.message));
         }
 
         if (state is EmailListLoaded) {
           final emails = state.emails;
           if (emails.isEmpty) {
-            return const Center(child: Text('Belum ada email'));
+            return const Center(child: HrText('Belum ada email'));
           }
 
           return RefreshIndicator(

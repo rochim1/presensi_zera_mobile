@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/app_language_controller.dart';
 import 'package:flutter/material.dart';
 import 'dart:io' show Platform;
 import 'dart:math';
@@ -7,8 +8,10 @@ import 'package:presensi_domain/presensi_domain.dart';
 
 extension DateTimeExtension on DateTime {
   /// e.g [DateTime] convert to `12:20, Kam, 21 Sep 2023`
-  String get toHhmmEEEdMMMy =>
-      DateFormat('HH:mm, dd MMM yyyy', 'id').format(this);
+  String get toHhmmEEEdMMMy => DateFormat(
+    'HH:mm, dd MMM yyyy',
+    AppLanguageController.instance.effectiveLocale.languageCode,
+  ).format(this);
 
   /// e.g [DateTime] convert to `2000-12-02`
   String get yMMdMin => DateFormat('yyyy-MM-dd', 'id').format(this);
@@ -23,16 +26,28 @@ extension DateTimeExtension on DateTime {
   String get dMMyMin => DateFormat('dd-MM-yyyy', 'id').format(this);
 
   /// e.g [DateTime] convert to `12 Agu 2022`
-  String get yMMMd => DateFormat('dd MMM yyyy', 'id').format(this);
+  String get yMMMd => DateFormat(
+    'dd MMM yyyy',
+    AppLanguageController.instance.effectiveLocale.languageCode,
+  ).format(this);
 
   /// e.g [DateTime] convert to `12 January 2022`
-  String get yMMMMd => DateFormat('dd MMMM yyyy', 'id').format(this);
+  String get yMMMMd => DateFormat(
+    'dd MMMM yyyy',
+    AppLanguageController.instance.effectiveLocale.languageCode,
+  ).format(this);
 
   /// e.g [DateTime] convert to `January`
-  String get toMMMM => DateFormat('MMMM', 'id').format(this);
+  String get toMMMM => DateFormat(
+    'MMMM',
+    AppLanguageController.instance.effectiveLocale.languageCode,
+  ).format(this);
 
   /// e.g [DateTime] convert to `Kam, 21 Sep 2023`
-  String get toEEEdMMMy => DateFormat('EEE, dd MMM yyy', 'id').format(this);
+  String get toEEEdMMMy => DateFormat(
+    'EEE, dd MMM yyy',
+    AppLanguageController.instance.effectiveLocale.languageCode,
+  ).format(this);
 
   /// e.g [DateTime] convert to `23:10`
   String get toHHmm => DateFormat('HH:mm', 'id').format(this);
@@ -68,7 +83,9 @@ extension IntExtension on int {
   /// e.g `12 Agustus 2022 4:23 PM`
   String get formMillisecondsSinceEpoch {
     final date = DateTime.fromMillisecondsSinceEpoch(this);
-    return DateFormat.yMMMd('id').add_jm().format(date);
+    return DateFormat.yMMMd(
+      AppLanguageController.instance.effectiveLocale.languageCode,
+    ).add_jm().format(date);
   }
 
   /// converter int number to decimal `000`.

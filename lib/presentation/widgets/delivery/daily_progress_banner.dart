@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -48,7 +49,7 @@ class DailyProgressBanner extends StatelessWidget {
                       color: AppColors.primary,
                     ),
                     const SizedBox(width: 8),
-                    Text(
+                    HrText(
                       'Progress Hari Ini',
                       style: context.textStyle.labelLarge?.copyWith(
                         fontWeight: FontWeight.bold,
@@ -57,7 +58,9 @@ class DailyProgressBanner extends StatelessWidget {
                     ),
                     const Spacer(),
                     Text(
-                      'Omzet: ${_formatCurrency(todayBreakdown.achievement)}',
+                      hrLocale(context).dailyRevenueSummary(
+                        _formatCurrency(todayBreakdown.achievement),
+                      ),
                       style: context.textStyle.labelMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: AppColors.labelPrimary,
@@ -122,7 +125,7 @@ class DailyProgressBanner extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
+            HrText(
               label,
               style: context.textStyle.labelSmall?.copyWith(
                 color: AppColors.labelSecondary,

@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,7 +24,7 @@ class _ProductCatalogPageState extends State<ProductCatalogPage> {
     return BlocProvider(
       create: (context) => sl<ProductGetAllCubit>()..fetch(),
       child: Scaffold(
-        appBar: const AppTopBar(title: 'Katalog Produk Digital'),
+        appBar: AppTopBar(title: ('Katalog Produk Digital').tr(context)),
         body: Column(
           children: [
             // Search Bar & Filters
@@ -34,17 +35,23 @@ class _ProductCatalogPageState extends State<ProductCatalogPage> {
                 children: [
                   TextField(
                     decoration: InputDecoration(
-                      hintText: 'Cari nama atau SKU produk...',
+                      hintText: ('Cari nama atau SKU produk...').tr(context),
                       prefixIcon: Icon(PhosphorIcons.magnifyingGlass),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(AppDimens.radiusMedium),
+                        borderRadius: BorderRadius.circular(
+                          AppDimens.radiusMedium,
+                        ),
                         borderSide: BorderSide(color: AppColors.divider),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(AppDimens.radiusMedium),
+                        borderRadius: BorderRadius.circular(
+                          AppDimens.radiusMedium,
+                        ),
                         borderSide: BorderSide(color: AppColors.divider),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                      ),
                     ),
                     onChanged: (value) {
                       setState(() {
@@ -57,18 +64,19 @@ class _ProductCatalogPageState extends State<ProductCatalogPage> {
                 ],
               ),
             ),
-            
+
             // Product List
             Expanded(
               child: BlocBuilder<ProductGetAllCubit, ProductGetAllState>(
                 builder: (context, state) {
-                  if (state.status == TypeState.loading || state.status == TypeState.initial) {
+                  if (state.status == TypeState.loading ||
+                      state.status == TypeState.initial) {
                     return const Center(child: CircularProgressIndicator());
                   }
-                  
+
                   if (state.status == TypeState.notLoaded) {
                     return Center(
-                      child: Text(
+                      child: HrText(
                         state.failure?.message ?? 'Gagal memuat katalog',
                         style: const TextStyle(color: Colors.red),
                       ),
@@ -76,12 +84,18 @@ class _ProductCatalogPageState extends State<ProductCatalogPage> {
                   }
 
                   final allProducts = state.data ?? [];
-                  
+
                   // Filter products
                   final filteredProducts = allProducts.where((p) {
-                    final matchesSearch = (p.namaInventaris?.toLowerCase().contains(_searchQuery) ?? false) ||
-                                          (p.sku?.toLowerCase().contains(_searchQuery) ?? false);
-                    final matchesCategory = _selectedCategory == 'Semua' || (p.kategori == _selectedCategory);
+                    final matchesSearch =
+                        (p.namaInventaris?.toLowerCase().contains(
+                              _searchQuery,
+                            ) ??
+                            false) ||
+                        (p.sku?.toLowerCase().contains(_searchQuery) ?? false);
+                    final matchesCategory =
+                        _selectedCategory == 'Semua' ||
+                        (p.kategori == _selectedCategory);
                     return matchesSearch && matchesCategory;
                   }).toList();
 
@@ -90,9 +104,13 @@ class _ProductCatalogPageState extends State<ProductCatalogPage> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(PhosphorIcons.package, size: 64, color: AppColors.labelSecondary),
+                          Icon(
+                            PhosphorIcons.package,
+                            size: 64,
+                            color: AppColors.labelSecondary,
+                          ),
                           const SizedBox(height: 16),
-                          const Text('Produk tidak ditemukan'),
+                          const HrText('Produk tidak ditemukan'),
                         ],
                       ),
                     );
@@ -100,21 +118,24 @@ class _ProductCatalogPageState extends State<ProductCatalogPage> {
 
                   return GridView.builder(
                     padding: const EdgeInsets.all(AppDimens.paddingMediumX),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 0.75,
-                      crossAxisSpacing: AppDimens.paddingMediumX,
-                      mainAxisSpacing: AppDimens.paddingMediumX,
-                    ),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          childAspectRatio: 0.75,
+                          crossAxisSpacing: AppDimens.paddingMediumX,
+                          mainAxisSpacing: AppDimens.paddingMediumX,
+                        ),
                     itemCount: filteredProducts.length,
                     itemBuilder: (context, index) {
                       final product = filteredProducts[index];
                       final isOutOfStock = (product.stok ?? 0) <= 0;
-                      
+
                       return Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(AppDimens.radiusMedium),
+                          borderRadius: BorderRadius.circular(
+                            AppDimens.radiusMedium,
+                          ),
                           border: Border.all(color: AppColors.divider),
                           boxShadow: [
                             BoxShadow(
@@ -133,7 +154,11 @@ class _ProductCatalogPageState extends State<ProductCatalogPage> {
                               child: Container(
                                 decoration: BoxDecoration(
                                   color: const Color(0xFFF5F7F9),
-                                  borderRadius: const BorderRadius.vertical(top: Radius.circular(AppDimens.radiusMedium)),
+                                  borderRadius: const BorderRadius.vertical(
+                                    top: Radius.circular(
+                                      AppDimens.radiusMedium,
+                                    ),
+                                  ),
                                 ),
                                 child: Center(
                                   child: Icon(
@@ -144,48 +169,68 @@ class _ProductCatalogPageState extends State<ProductCatalogPage> {
                                 ),
                               ),
                             ),
-                            
+
                             // Product Details
                             Expanded(
                               flex: 4,
                               child: Padding(
-                                padding: const EdgeInsets.all(AppDimens.paddingMedium),
+                                padding: const EdgeInsets.all(
+                                  AppDimens.paddingMedium,
+                                ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 6,
+                                        vertical: 2,
+                                      ),
                                       decoration: BoxDecoration(
-                                        color: isOutOfStock ? Colors.red.withValues(alpha: 0.1) : Colors.green.withValues(alpha: 0.1),
+                                        color: isOutOfStock
+                                            ? Colors.red.withValues(alpha: 0.1)
+                                            : Colors.green.withValues(
+                                                alpha: 0.1,
+                                              ),
                                         borderRadius: BorderRadius.circular(4),
                                       ),
-                                      child: Text(
-                                        isOutOfStock ? 'Habis' : 'Stok: ${product.stok?.toInt()}',
+                                      child: HrText(
+                                        isOutOfStock
+                                            ? 'Habis'
+                                            : 'Stok: ${product.stok?.toInt()}',
                                         style: TextStyle(
                                           fontSize: 10,
                                           fontWeight: FontWeight.bold,
-                                          color: isOutOfStock ? Colors.red : Colors.green,
+                                          color: isOutOfStock
+                                              ? Colors.red
+                                              : Colors.green,
                                         ),
                                       ),
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
                                       product.namaInventaris ?? '-',
-                                      style: context.textStyle.labelLarge?.copyWith(fontWeight: FontWeight.bold),
+                                      style: context.textStyle.labelLarge
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                     ),
-                                    Text(
+                                    HrText(
                                       'SKU: ${product.sku ?? '-'}',
-                                      style: context.textStyle.bodySmall?.copyWith(color: AppColors.labelSecondary),
+                                      style: context.textStyle.bodySmall
+                                          ?.copyWith(
+                                            color: AppColors.labelSecondary,
+                                          ),
                                     ),
                                     const Spacer(),
                                     Text(
                                       'Rp ${(product.hargaJual ?? 0).toInt().textDecimalDigit}',
-                                      style: context.textStyle.titleSmall?.copyWith(
-                                        color: AppColors.primary,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                      style: context.textStyle.titleSmall
+                                          ?.copyWith(
+                                            color: AppColors.primary,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                     ),
                                   ],
                                 ),

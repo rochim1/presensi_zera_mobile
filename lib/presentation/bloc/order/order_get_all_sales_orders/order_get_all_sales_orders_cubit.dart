@@ -7,7 +7,8 @@ import 'order_get_all_sales_orders_state.dart';
 class OrderGetAllSalesOrdersCubit extends Cubit<OrderGetAllSalesOrdersState> {
   final OrderGetAllSalesOrdersUsecase usecase;
 
-  OrderGetAllSalesOrdersCubit({required this.usecase}) : super(OrderGetAllSalesOrdersState.initial());
+  OrderGetAllSalesOrdersCubit({required this.usecase})
+    : super(OrderGetAllSalesOrdersState.initial());
 
   Future<void> getAllData({String? statusPembayaran}) async {
     emit(state.copyWith(status: TypeState.loading));
@@ -19,28 +20,28 @@ class OrderGetAllSalesOrdersCubit extends Cubit<OrderGetAllSalesOrdersState> {
         emit(state.copyWith(status: TypeState.notLoaded, failure: failure));
       },
       (data) {
-        emit(state.copyWith(
-          status: TypeState.loaded,
-          salesOrders: data,
-        ));
+        emit(state.copyWith(status: TypeState.loaded, salesOrders: data));
       },
     );
   }
 
-  Future<void> getAllSalesOrders({String? statusPembayaran, String? outletId}) async {
+  Future<void> getAllSalesOrders({
+    String? statusPembayaran,
+    String? outletId,
+  }) async {
     emit(state.copyWith(status: TypeState.loading));
 
-    final result = await usecase(statusPembayaran: statusPembayaran, outletId: outletId);
+    final result = await usecase(
+      statusPembayaran: statusPembayaran,
+      outletId: outletId,
+    );
 
     result.fold(
       (failure) {
         emit(state.copyWith(status: TypeState.notLoaded, failure: failure));
       },
       (data) {
-        emit(state.copyWith(
-          status: TypeState.loaded,
-          salesOrders: data,
-        ));
+        emit(state.copyWith(status: TypeState.loaded, salesOrders: data));
       },
     );
   }

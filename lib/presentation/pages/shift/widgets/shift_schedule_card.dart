@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:presensi_domain/presensi_domain.dart';
@@ -51,16 +52,22 @@ class ShiftScheduleCard extends StatelessWidget {
               const SizedBox(height: 12),
               const Divider(height: 1, color: AppColors.dividerLight),
               const SizedBox(height: 12),
-              
+
               // Nama Shift (Always Visible)
               Row(
                 children: [
-                  Icon(PhosphorIcons.briefcaseFill, size: 16, color: AppColors.primary),
+                  Icon(
+                    PhosphorIcons.briefcaseFill,
+                    size: 16,
+                    color: AppColors.primary,
+                  ),
                   SizedBox(width: AppDimens.w8),
                   Expanded(
                     child: Text(
                       '${schedule.shift.name} (${schedule.shift.jamMasuk?.format(pattern: 'HH:mm') ?? '--:--'} - ${schedule.shift.jamPulang?.format(pattern: 'HH:mm') ?? '--:--'})',
-                      style: context.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                      style: context.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
@@ -86,7 +93,7 @@ class ShiftScheduleCard extends StatelessWidget {
             if (schedule.assignedDate != null) ...[
               SizedBox(width: AppDimens.w8),
               Text(
-                '${schedule.assignedDate!.format(pattern: 'EE, dd MMM yyyy')}${_isToday ? " (Hari Ini)" : ""}',
+                '${schedule.assignedDate!.format(pattern: 'EE, dd MMM yyyy')}${_isToday ? (" (Hari Ini)").tr(context) : ""}',
                 style: context.textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: AppColors.labelPrimary,

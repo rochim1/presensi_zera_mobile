@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
@@ -12,6 +13,7 @@ class AnnouncementDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    hrLocale(context); // Refresh relative timestamps when the language changes.
     return SingleChildScrollView(
       padding: EdgeInsets.all(AppDimens.w16),
       child: Column(
@@ -52,7 +54,9 @@ class AnnouncementDetailView extends StatelessWidget {
                   ),
                   SizedBox(width: AppDimens.w6),
                   Text(
-                    announcement.prioritas.name.toUpperCase(),
+                    announcement.prioritas.name.capitalize
+                        .tr(context)
+                        .toUpperCase(),
                     style: context.textStyle.labelSmall?.copyWith(
                       color: _getPriorityColor(announcement.prioritas),
                       fontWeight: FontWeight.w700,
@@ -105,7 +109,7 @@ class AnnouncementDetailView extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      HrText(
                         'Periode pengumuman',
                         style: context.textStyle.labelSmall?.copyWith(
                           color: AppColors.labelSecondary,
@@ -182,7 +186,7 @@ class AnnouncementDetailView extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    HrText(
                       'Dibuat oleh',
                       style: context.textStyle.labelSmall?.copyWith(
                         color: AppColors.labelSecondary,
@@ -202,7 +206,7 @@ class AnnouncementDetailView extends StatelessWidget {
 
           if (announcement.lampiran.isNotEmpty) ...[
             SizedBox(height: AppDimens.h20),
-            Text(
+            HrText(
               'Lampiran',
               style: context.textStyle.titleSmall?.copyWith(
                 fontWeight: FontWeight.w600,
@@ -241,6 +245,7 @@ class _LinkTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    hrLocale(context); // Refresh relative timestamps when the language changes.
     return InkWell(
       borderRadius: BorderRadius.circular(AppDimens.r12),
       onTap: () => context.router.push(InAppBrowserPageRoute(url: url)),
@@ -280,6 +285,7 @@ class _AttachmentTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    hrLocale(context); // Refresh relative timestamps when the language changes.
     return InkWell(
       borderRadius: BorderRadius.circular(AppDimens.r12),
       onTap: () {

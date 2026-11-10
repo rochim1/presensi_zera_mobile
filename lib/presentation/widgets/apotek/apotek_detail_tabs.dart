@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
@@ -23,7 +24,7 @@ class ApotekDetailIdentitasTab extends StatelessWidget {
         children: [
           Expanded(
             flex: 2,
-            child: Text(
+            child: HrText(
               label,
               style: context.textTheme.bodyMedium?.copyWith(
                 color: AppColors.labelSecondary,
@@ -70,7 +71,7 @@ class ApotekDetailIdentitasTab extends StatelessWidget {
                 ),
                 SizedBox(width: AppDimens.w10),
                 Expanded(
-                  child: Text(
+                  child: HrText(
                     'Identitas Outlet',
                     style: context.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
@@ -85,28 +86,28 @@ class ApotekDetailIdentitasTab extends StatelessWidget {
               children: [
                 _infoRow(
                   context,
-                  label: 'Nama Outlet',
+                  label: ('Nama Outlet').tr(context),
                   value: apotek.namaApotik?.isEmptyStrip ?? '-',
                 ),
 
                 _infoRow(
                   context,
-                  label: 'Nama Pemilik',
+                  label: ('Nama Pemilik').tr(context),
                   value: apotek.namaOwner?.isEmptyStrip ?? '-',
                 ),
                 _infoRow(
                   context,
-                  label: 'Penanggung Jawab',
+                  label: ('Penanggung Jawab').tr(context),
                   value: apotek.namaAPJ?.isEmptyStrip ?? '-',
                 ),
                 _infoRow(
                   context,
-                  label: 'Nomor Telepon',
+                  label: ('Nomor Telepon').tr(context),
                   value: apotek.telponNumber?.isEmptyStrip ?? '-',
                 ),
                 _infoRow(
                   context,
-                  label: 'Ditambahkan Oleh',
+                  label: ('Ditambahkan Oleh').tr(context),
                   value: apotek.userCreatedName?.isEmptyStrip ?? '-',
                 ),
               ],
@@ -124,7 +125,7 @@ class ApotekDetailIdentitasTab extends StatelessWidget {
                 ),
                 SizedBox(width: AppDimens.w10),
                 Expanded(
-                  child: Text(
+                  child: HrText(
                     'Aksi Cepat',
                     style: context.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
@@ -163,7 +164,7 @@ class ApotekDetailIdentitasTab extends StatelessWidget {
                           size: 18,
                           color: Colors.white,
                         ),
-                        label: const Text(
+                        label: const HrText(
                           'Telepon',
                           style: TextStyle(
                             color: Colors.white,
@@ -207,7 +208,7 @@ class ApotekDetailIdentitasTab extends StatelessWidget {
                           size: 18,
                           color: Colors.white,
                         ),
-                        label: const Text(
+                        label: const HrText(
                           'WhatsApp',
                           style: TextStyle(
                             color: Colors.white,
@@ -236,7 +237,7 @@ class ApotekDetailIdentitasTab extends StatelessWidget {
                     size: 18,
                     color: Colors.white,
                   ),
-                  label: const Text(
+                  label: const HrText(
                     'Buat Order (Taking Order)',
                     style: TextStyle(
                       color: Colors.white,
@@ -302,7 +303,7 @@ class ApotekDetailLokasiTab extends StatelessWidget {
                 ),
                 SizedBox(width: AppDimens.w10),
                 Expanded(
-                  child: Text(
+                  child: HrText(
                     'Alamat',
                     style: context.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
@@ -314,7 +315,7 @@ class ApotekDetailLokasiTab extends StatelessWidget {
             ),
             content: isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : Text(
+                : HrText(
                     address.isNotEmpty ? address : 'Alamat tidak ditemukan',
                     style: context.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w500,
@@ -344,7 +345,7 @@ class ApotekDetailStatistikTab extends StatelessWidget {
         children: [
           Expanded(
             flex: 2,
-            child: Text(
+            child: HrText(
               label,
               style: context.textTheme.bodyMedium?.copyWith(
                 color: AppColors.labelSecondary,
@@ -388,7 +389,7 @@ class ApotekDetailStatistikTab extends StatelessWidget {
             ),
             SizedBox(width: AppDimens.w10),
             Expanded(
-              child: Text(
+              child: HrText(
                 'Statistik & CRM',
                 style: context.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
@@ -403,24 +404,24 @@ class ApotekDetailStatistikTab extends StatelessWidget {
           children: [
             _infoRow(
               context,
-              label: 'Tipe Outlet',
+              label: ('Tipe Outlet').tr(context),
               value: apotek.tipeOutlet?.isEmptyStrip ?? '-',
             ),
             _infoRow(
               context,
-              label: 'Kategori Produk',
+              label: ('Kategori Produk').tr(context),
               value: apotek.kategoriProduk?.isEmptyStrip ?? '-',
             ),
             _infoRow(
               context,
-              label: 'Total Pembelian',
+              label: ('Total Pembelian').tr(context),
               value: apotek.totalValue != null
                   ? 'Rp ${apotek.totalValue!.toStringAsFixed(0)}'
                   : '-',
             ),
             _infoRow(
               context,
-              label: 'Transaksi Terakhir',
+              label: ('Transaksi Terakhir').tr(context),
               value: apotek.lastOrderDate?.isEmptyStrip ?? '-',
             ),
           ],
@@ -449,14 +450,14 @@ class ApotekDetailEmptyTab extends StatelessWidget {
               color: AppColors.labelTertiary,
             ),
             SizedBox(height: AppDimens.h16),
-            Text(
+            HrText(
               'Belum Ada Data $title',
               style: context.textTheme.titleMedium?.copyWith(
                 color: AppColors.labelSecondary,
               ),
             ),
             SizedBox(height: AppDimens.h8),
-            Text(
+            HrText(
               'Data $title saat ini belum tersedia untuk diakses dari aplikasi mobile.',
               textAlign: TextAlign.center,
               style: context.textTheme.bodyMedium?.copyWith(

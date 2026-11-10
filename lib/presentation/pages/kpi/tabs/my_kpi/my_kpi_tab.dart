@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -139,18 +140,18 @@ class MyKpiView extends StatelessWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Konfirmasi KPI'),
-        content: const Text(
+        title: const HrText('Konfirmasi KPI'),
+        content: const HrText(
           'Konfirmasi bahwa Anda sudah membaca hasil KPI. Jika ada koreksi presensi yang disetujui, sistem dapat meminta review dan konfirmasi ulang.',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('Batal'),
+            child: const HrText('Batal'),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text('Akui Hasil'),
+            child: const HrText('Akui Hasil'),
           ),
         ],
       ),

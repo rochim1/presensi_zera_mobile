@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/presentation/widgets/pantoo_launch_screen.dart';
 import 'package:presensi_data/presensi_data.dart';
@@ -75,13 +76,13 @@ class _SessionRestoreGateState extends State<SessionRestoreGate> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
+                      HrText(
                         'Data akun atau presensi belum dapat dimuat. Periksa koneksi lalu coba lagi.',
                         textAlign: TextAlign.center,
                       ),
                       TextButton(
                         onPressed: widget.onRetry,
-                        child: const Text('Coba lagi'),
+                        child: const HrText('Coba lagi'),
                       ),
                     ],
                   ),

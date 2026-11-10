@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -61,13 +62,13 @@ class MyOvertimeRequestView extends StatelessWidget {
 
             AppBottomSheet.show(
               context: context,
-              title: const AppBottomSheetTitle(title: 'Detail Lembur'),
+              title: AppBottomSheetTitle(title: ('Detail Lembur').tr(context)),
               child: OvertimeRequestDetailView(request: request),
               actionsBuilder: (sheetContext) => AppFlatSheetActions(
                 actions: [
                   AppFlatSheetAction(
                     icon: Icons.delete_outline_rounded,
-                    label: 'Hapus',
+                    label: ('Hapus').tr(context),
                     color: AppColors.danger,
                     onTap: canDelete
                         ? () async {
@@ -75,20 +76,20 @@ class MyOvertimeRequestView extends StatelessWidget {
                             final confirmed = await showDialog<bool>(
                               context: context,
                               builder: (dialogContext) => AlertDialog(
-                                title: const Text('Hapus pengajuan lembur?'),
-                                content: const Text(
+                                title: const HrText('Hapus pengajuan lembur?'),
+                                content: const HrText(
                                   'Pengajuan yang dihapus tidak dapat dikembalikan.',
                                 ),
                                 actions: [
                                   TextButton(
                                     onPressed: () =>
                                         Navigator.of(dialogContext).pop(false),
-                                    child: const Text('Batal'),
+                                    child: const HrText('Batal'),
                                   ),
                                   FilledButton(
                                     onPressed: () =>
                                         Navigator.of(dialogContext).pop(true),
-                                    child: const Text('Hapus'),
+                                    child: const HrText('Hapus'),
                                   ),
                                 ],
                               ),
@@ -111,7 +112,7 @@ class MyOvertimeRequestView extends StatelessWidget {
                   ),
                   AppFlatSheetAction(
                     icon: Icons.edit_outlined,
-                    label: 'Edit',
+                    label: ('Edit').tr(context),
                     color: AppColors.primary,
                     onTap: canEdit
                         ? () async {
@@ -127,7 +128,7 @@ class MyOvertimeRequestView extends StatelessWidget {
                   ),
                   AppFlatSheetAction(
                     icon: Icons.close_rounded,
-                    label: 'Tutup',
+                    label: ('Tutup').tr(context),
                     color: AppColors.labelSecondary,
                     onTap: () => Navigator.of(sheetContext).pop(),
                   ),
@@ -163,7 +164,7 @@ class MyOvertimeRequestView extends StatelessWidget {
                       children: [
                         AppDimens.w8.wSpace,
                         AppFilterChip(
-                          label: 'Semua',
+                          label: ('Semua').tr(context),
                           isSelected: state.filterStatus == null,
                           onTap: () => cubit.onChangeFilterStatus(null),
                         ),

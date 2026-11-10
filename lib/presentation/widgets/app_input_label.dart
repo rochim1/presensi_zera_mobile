@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
 
@@ -15,7 +16,7 @@ class AppInputLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text.rich(
       TextSpan(
-        text: label,
+        text: label.tr(context),
         style: context.theme.textTheme.labelLarge?.copyWith(
           color: AppColors.labelSecondary,
           fontWeight: FontWeight.w500,

@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:presensi_domain/presensi_domain.dart';
@@ -25,6 +26,7 @@ class NotificationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    hrLocale(context); // Refresh relative timestamps when the language changes.
     if (isLoading) return _buildLoading(context);
     final notification = this.notification!;
     return Dismissible(
@@ -45,7 +47,7 @@ class NotificationCard extends StatelessWidget {
           children: [
             Icon(PhosphorIconsFill.trash, color: AppColors.danger),
             SizedBox(width: 8),
-            Text(
+            HrText(
               'Hapus',
               style: TextStyle(
                 color: AppColors.danger,

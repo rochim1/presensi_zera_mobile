@@ -1,0 +1,20 @@
+[
+  {"source":"App Information","id":"Informasi Aplikasi","en":"App Information"},
+  {"source":"Firebase Information","id":"Informasi Firebase","en":"Firebase Information"},
+  {"source":"Graphql Information","id":"Informasi GraphQL","en":"GraphQL Information"},
+  {"source":"CHECK IN","id":"PRESENSI MASUK","en":"CHECK IN"},
+  {"source":"CHECK OUT","id":"PRESENSI PULANG","en":"CHECK OUT"},
+  {"source":"Final Score","id":"Nilai Akhir","en":"Final Score"},
+  {"source":"Grade","id":"Predikat","en":"Grade"},
+  {"source":"Max:","id":"Maks:","en":"Max:"},
+  {"source":"Reset","id":"Atur Ulang","en":"Reset"},
+  {"source":"Urgent","id":"Mendesak","en":"Urgent"},
+  {"source":"Halo, {nilai1}!","id":"Halo, {nilai1}!","en":"Hello, {nilai1}!"},
+  {"source":"{nilai1} balasan","id":"{nilai1} balasan","en":"{nilai1} replies"},
+  {"source":"Berulang mingguan","id":"Berulang mingguan","en":"Repeats weekly"},
+  {"source":"Berulang bulanan","id":"Berulang bulanan","en":"Repeats monthly"},
+  {"source":"Berulang tahunan","id":"Berulang tahunan","en":"Repeats yearly"},
+  {"source":"Event berulang","id":"Event berulang","en":"Recurring event"},
+  {"source":"No Subject","id":"Tanpa Subjek","en":"No Subject"},
+  {"source":"{nilai1} meter","id":"{nilai1} meter","en":"{nilai1} m"}
+]

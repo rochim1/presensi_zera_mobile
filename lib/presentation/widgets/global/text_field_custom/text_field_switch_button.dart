@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 
 import 'package:presensi_mobile/core/_core.dart';
@@ -21,14 +22,14 @@ class TextFieldSwitchButton extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (title != null) Text(title!, textAlign: TextAlign.left),
+        if (title != null) HrText(title!, textAlign: TextAlign.left),
         if (title != null) const SizedBox(height: AppDimens.size3S),
         SwitchListTile(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppDimens.radiusMedium),
           ),
           controlAffinity: ListTileControlAffinity.leading,
-          title: Text(label),
+          title: HrText(label),
           value: initialValue!,
           onChanged: onChanged,
         ),

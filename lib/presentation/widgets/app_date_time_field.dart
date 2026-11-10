@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:board_datetime_picker/board_datetime_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -74,14 +75,13 @@ class _AppDateTimeFieldState extends State<AppDateTimeField> {
       ),
       customCloseButtonBuilder: (context, isModal, onClose) => IconButton(
         onPressed: onClose,
-        icon: Icon(
-          PhosphorIcons.checkCircleBold,
-          color: AppColors.primary,
-        ),
+        icon: Icon(PhosphorIcons.checkCircleBold, color: AppColors.primary),
       ),
       options: BoardDateTimeOptions(
-        languages: const BoardPickerLanguages(locale: 'id'),
-        boardTitle: widget.label ?? _getDefaultTitle(),
+        languages: BoardPickerLanguages(
+          locale: Localizations.localeOf(context).languageCode,
+        ),
+        boardTitle: (widget.label ?? _getDefaultTitle()),
         showDateButton: false,
         calendarItemDecoration: (context, day, date, isSelected) =>
             BoxDecoration(
@@ -112,11 +112,11 @@ class _AppDateTimeFieldState extends State<AppDateTimeField> {
         inputable: true,
         useResetButton: true,
         pickerSubTitles: BoardDateTimeItemTitles(
-          day: 'Tanggal',
-          month: 'Bulan',
-          year: 'Tahun',
-          hour: 'Jam',
-          minute: 'Menit',
+          day: ('Tanggal').tr(context),
+          month: ('Bulan').tr(context),
+          year: ('Tahun').tr(context),
+          hour: ('Jam').tr(context),
+          minute: ('Menit').tr(context),
         ),
         separators: BoardDateTimePickerSeparators(),
         boardTitleTextStyle: context.theme.textTheme.titleSmall?.copyWith(
@@ -146,11 +146,20 @@ class _AppDateTimeFieldState extends State<AppDateTimeField> {
 
     switch (widget.mode) {
       case AppDateTimeFieldMode.date:
-        return DateFormat('dd MMMM yyyy', 'id_ID').format(widget.value!);
+        return DateFormat(
+          'dd MMMM yyyy',
+          Localizations.localeOf(context).languageCode,
+        ).format(widget.value!);
       case AppDateTimeFieldMode.time:
-        return DateFormat('HH:mm', 'id_ID').format(widget.value!);
+        return DateFormat(
+          'HH:mm',
+          Localizations.localeOf(context).languageCode,
+        ).format(widget.value!);
       case AppDateTimeFieldMode.datetime:
-        return DateFormat('dd MMMM yyyy, HH:mm', 'id_ID').format(widget.value!);
+        return DateFormat(
+          'dd MMMM yyyy, HH:mm',
+          Localizations.localeOf(context).languageCode,
+        ).format(widget.value!);
     }
   }
 
@@ -191,8 +200,8 @@ class _AppDateTimeFieldState extends State<AppDateTimeField> {
             borderRadius: BorderRadius.circular(AppDimens.radiusMediumX),
             child: InputDecorator(
               decoration: InputDecoration(
-                errorText: widget.errorText,
-                hintText: widget.hintText,
+                errorText: widget.errorText?.tr(context),
+                hintText: widget.hintText?.tr(context),
                 hintStyle: context.theme.textTheme.bodyMedium?.copyWith(
                   color: AppColors.labelSecondary.withValues(alpha: 0.5),
                 ),
@@ -244,7 +253,7 @@ class _AppDateTimeFieldState extends State<AppDateTimeField> {
               ),
               child: Text(
                 formattedValue.isEmpty
-                    ? (widget.hintText ?? '')
+                    ? (widget.hintText?.tr(context) ?? '')
                     : formattedValue,
                 style: context.theme.textTheme.bodyMedium?.copyWith(
                   color: formattedValue.isEmpty

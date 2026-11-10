@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -45,11 +46,11 @@ class _ApprovalPayrollView extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(state.errorMessage!, textAlign: TextAlign.center),
+                  HrText(state.errorMessage!, textAlign: TextAlign.center),
                   const SizedBox(height: 12),
                   FilledButton(
                     onPressed: context.read<ApprovalPayrollCubit>().load,
-                    child: const Text('Coba Lagi'),
+                    child: const HrText('Coba Lagi'),
                   ),
                 ],
               ),
@@ -70,7 +71,7 @@ class _ApprovalPayrollView extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 const Center(
-                  child: Text('Tidak ada payroll yang menunggu approval'),
+                  child: HrText('Tidak ada payroll yang menunggu approval'),
                 ),
               ],
             ),
@@ -144,14 +145,14 @@ class _ApprovalCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      HrText(
                         'Approval Payroll',
                         style: context.textStyle.titleSmall?.copyWith(
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                       Text(
-                        approval.requester?.name ?? 'Pengaju payroll',
+                        approval.requester?.name ?? 'Pengaju payroll'.tr(context),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: context.textStyle.bodySmall,
@@ -168,7 +169,7 @@ class _ApprovalCard extends StatelessWidget {
                     color: const Color(0xFFFFF7E6),
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: const Text(
+                  child: const HrText(
                     'Menunggu',
                     style: TextStyle(
                       fontSize: 11,
@@ -180,11 +181,14 @@ class _ApprovalCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 14),
-            _info('Diajukan', submittedAt),
-            _info('Periode', batch?.period ?? '-'),
-            _info('Jumlah slip', '${batch?.totalSlips ?? 0} karyawan'),
+            _info(('Diajukan').tr(context), submittedAt),
+            _info(('Periode').tr(context), batch?.period ?? '-'),
             _info(
-              'Total payroll',
+              ('Jumlah slip').tr(context),
+              ('${batch?.totalSlips ?? 0} karyawan').tr(context),
+            ),
+            _info(
+              ('Total payroll').tr(context),
               NumberFormat.simpleCurrency(
                 locale: 'id_ID',
                 name: 'Rp',
@@ -193,7 +197,9 @@ class _ApprovalCard extends StatelessWidget {
             ),
             _info(
               'Tahap approval',
-              '${approval.currentLevel} dari ${approval.totalLevel}',
+              ('${approval.currentLevel} dari ${approval.totalLevel}').tr(
+                context,
+              ),
             ),
             _info('ID batch', approval.requestId ?? '-'),
             const SizedBox(height: 12),
@@ -204,7 +210,7 @@ class _ApprovalCard extends StatelessWidget {
                     onPressed: submitting
                         ? null
                         : () => _confirm(context, approve: false),
-                    child: const Text('Tolak'),
+                    child: const HrText('Tolak'),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -218,7 +224,7 @@ class _ApprovalCard extends StatelessWidget {
                             dimension: 18,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : const Text('Setujui'),
+                        : const HrText('Setujui'),
                   ),
                 ),
               ],
@@ -235,7 +241,7 @@ class _ApprovalCard extends StatelessWidget {
       children: [
         SizedBox(
           width: 112,
-          child: Text(
+          child: HrText(
             label,
             style: TextStyle(fontSize: 12, color: AppColors.labelSecondary),
           ),
@@ -255,22 +261,24 @@ class _ApprovalCard extends StatelessWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: Text(approve ? 'Setujui payroll?' : 'Tolak payroll?'),
+        title: HrText(approve ? 'Setujui payroll?' : 'Tolak payroll?'),
         content: TextField(
           controller: controller,
           maxLines: 3,
           decoration: InputDecoration(
-            labelText: approve ? 'Catatan (opsional)' : 'Alasan penolakan',
+            labelText: (approve
+                ? ('Catatan (opsional)').tr(context)
+                : ('Alasan penolakan').tr(context)),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('Batal'),
+            child: const HrText('Batal'),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(dialogContext, true),
-            child: Text(approve ? 'Setujui' : 'Tolak'),
+            child: HrText(approve ? 'Setujui' : 'Tolak'),
           ),
         ],
       ),

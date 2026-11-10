@@ -65,6 +65,7 @@ class LocalNotificationServiceImpl extends LocalNotificationService {
         AndroidNotificationDetails(
           'pantoo',
           'Pantoo Notifikasi',
+          icon: 'ic_notif',
           importance: Importance.max,
           priority: Priority.high,
           ticker: 'ticker',
@@ -94,6 +95,7 @@ class LocalNotificationServiceImpl extends LocalNotificationService {
         AndroidNotificationDetails(
           'pantoo',
           'Pantoo Notifikasi',
+          icon: 'ic_notif',
           importance: Importance.max,
           priority: Priority.high,
           ticker: 'ticker',

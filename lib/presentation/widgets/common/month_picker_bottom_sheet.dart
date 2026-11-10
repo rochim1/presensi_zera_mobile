@@ -1,3 +1,5 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
 
@@ -39,21 +41,6 @@ class MonthPickerBottomSheet extends StatefulWidget {
 class _MonthPickerBottomSheetState extends State<MonthPickerBottomSheet> {
   late int selectedYear;
 
-  final List<String> months = [
-    'Januari',
-    'Februari',
-    'Maret',
-    'April',
-    'Mei',
-    'Juni',
-    'Juli',
-    'Agustus',
-    'September',
-    'Oktober',
-    'November',
-    'Desember',
-  ];
-
   @override
   void initState() {
     super.initState();
@@ -67,7 +54,8 @@ class _MonthPickerBottomSheetState extends State<MonthPickerBottomSheet> {
         left: AppDimens.paddingLarge,
         right: AppDimens.paddingLarge,
         top: AppDimens.paddingLarge,
-        bottom: MediaQuery.of(context).viewInsets.bottom + AppDimens.paddingLarge,
+        bottom:
+            MediaQuery.of(context).viewInsets.bottom + AppDimens.paddingLarge,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -103,7 +91,9 @@ class _MonthPickerBottomSheetState extends State<MonthPickerBottomSheet> {
             ),
             itemCount: 12,
             itemBuilder: (context, index) {
-              final isSelected = selectedYear == widget.initialDate.year && (index + 1) == widget.initialDate.month;
+              final isSelected =
+                  selectedYear == widget.initialDate.year &&
+                  (index + 1) == widget.initialDate.month;
 
               return OutlinedButton(
                 onPressed: () {
@@ -112,20 +102,33 @@ class _MonthPickerBottomSheetState extends State<MonthPickerBottomSheet> {
                   Navigator.pop(context);
                 },
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: isSelected ? AppColors.primary : AppColors.labelPrimary,
-                  backgroundColor: isSelected ? AppColors.primary.withValues(alpha: 0.1) : Colors.transparent,
+                  foregroundColor: isSelected
+                      ? AppColors.primary
+                      : AppColors.labelPrimary,
+                  backgroundColor: isSelected
+                      ? AppColors.primary.withValues(alpha: 0.1)
+                      : Colors.transparent,
                   side: BorderSide(
-                    color: isSelected ? AppColors.primary : AppColors.dividerLight,
+                    color: isSelected
+                        ? AppColors.primary
+                        : AppColors.dividerLight,
                   ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(AppDimens.radiusMedium),
                   ),
                 ),
                 child: Text(
-                  months[index],
+                  DateFormat(
+                    'MMMM',
+                    hrLocale(context).localeName,
+                  ).format(DateTime(selectedYear, index + 1)),
                   style: context.textStyle.bodySmall?.copyWith(
-                    color: isSelected ? AppColors.primary : AppColors.labelPrimary,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    color: isSelected
+                        ? AppColors.primary
+                        : AppColors.labelPrimary,
+                    fontWeight: isSelected
+                        ? FontWeight.bold
+                        : FontWeight.normal,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

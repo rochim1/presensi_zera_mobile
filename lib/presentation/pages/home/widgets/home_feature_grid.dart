@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -52,108 +53,108 @@ class _HomeFeatureGridState extends State<HomeFeatureGrid> {
     final features = [
       _Feature(
         icon: PhosphorIcons.calendarCheck,
-        label: 'Presensi',
+        label: ('Presensi').tr(context),
         onTap: () => context.router.navigate(const AttendancePageRoute()),
       ),
       _Feature(
         icon: PhosphorIcons.suitcase,
-        label: 'Cuti',
+        label: ('Cuti').tr(context),
         onTap: () => context.router.push(LeavePageRoute()),
       ),
       _Feature(
         icon: PhosphorIcons.clock,
-        label: 'Lembur',
+        label: ('Lembur').tr(context),
         onTap: () => context.router.push(OvertimePageRoute()),
       ),
       _Feature(
         icon: PhosphorIcons.wallet,
-        label: 'Gaji',
+        label: ('Gaji').tr(context),
         onTap: () => context.router.push(PayrollPageRoute()),
       ),
       _Feature(
         icon: PhosphorIcons.clipboardText,
-        label: 'Request\nPresensi',
+        label: ('Request\nPresensi').tr(context),
         onTap: () => context.router.push(AttendanceRequestPageRoute()),
       ),
       _Feature(
         icon: PhosphorIcons.clockCountdown,
-        label: 'Shift',
+        label: ('Shift').tr(context),
         onTap: () => context.router.push(ShiftPageRoute()),
       ),
       _Feature(
         icon: PhosphorIcons.receipt,
-        label: 'Reimbursement',
+        label: ('Reimbursement').tr(context),
         onTap: () => context.router.push(ReimbursementPageRoute()),
       ),
       _Feature(
         icon: PhosphorIcons.calendarDots,
-        label: 'Kalender Kerja',
+        label: ('Kalender Kerja').tr(context),
         onTap: () => context.router.push(const KalenderPageRoute()),
       ),
       _Feature(
         icon: PhosphorIcons.usersThree,
-        label: 'Kegiatan &\nKehadiran',
+        label: ('Kegiatan &\nKehadiran').tr(context),
         onTap: () => context.router.push(const ActivityPageRoute()),
       ),
       _Feature(
         icon: PhosphorIcons.target,
-        label: 'KPI',
+        label: ('KPI').tr(context),
         onTap: () => context.router.push(const KpiPageRoute()),
       ),
       _Feature(
         icon: PhosphorIcons.megaphone,
-        label: 'Pengumuman',
+        label: ('Pengumuman').tr(context),
         onTap: () => context.router.push(const AnnouncementPageRoute()),
         hasBadge: true,
       ),
       _Feature(
         icon: PhosphorIcons.chartBar,
-        label: 'Performa Sales',
+        label: ('Performa Sales').tr(context),
         onTap: () => context.router.push(const SalesDashboardPageRoute()),
       ),
       _Feature(
         icon: PhosphorIcons.money,
-        label: 'Piutang',
+        label: ('Piutang').tr(context),
         onTap: () => context.router.push(const PiutangPageRoute()),
       ),
       _Feature(
         icon: PhosphorIcons.package,
-        label: 'Katalog',
+        label: ('Katalog').tr(context),
         onTap: () => context.router.push(const ProductCatalogPageRoute()),
       ),
       _Feature(
         icon: PhosphorIcons.money,
-        label: 'Kasbon\n(Loan)',
+        label: ('Kasbon\n(Loan)').tr(context),
         onTap: () => context.router.push(const LoanPageRoute()),
       ),
       _Feature(
         icon: PhosphorIcons.storefront,
-        label: 'Outlet',
+        label: ('Outlet').tr(context),
         onTap: () => context.router.push(const ApotekPageRoute()),
       ),
       _Feature(
         icon: PhosphorIcons.shoppingCart,
-        label: 'Taking Order',
+        label: ('Taking Order').tr(context),
         onTap: () => context.router.push(TakingOrderPageRoute()),
       ),
       _Feature(
         icon: PhosphorIcons.warningCircle,
-        label: 'Incidental\nReport',
+        label: ('Incidental\nReport').tr(context),
         onTap: () => context.router.push(const IncidentalReportPageRoute()),
       ),
       _Feature(
         icon: PhosphorIcons.clipboard,
-        label: 'Survey Saya',
+        label: ('Survey Saya').tr(context),
         onTap: () => context.router.push(const SurveyPageRoute()),
       ),
       _Feature(
         icon: PhosphorIcons.notebook,
-        label: 'Logbook',
+        label: ('Logbook').tr(context),
         onTap: () => context.router.push(const LogbookPageRoute()),
       ),
       _Feature(
         icon: PhosphorIcons.truck,
-        label: 'Van Stock',
+        label: ('Van Stock').tr(context),
         onTap: () => context.router.push(const VanStockPageRoute()),
       ),
     ];
@@ -305,7 +306,7 @@ class _HomeFeatureGridState extends State<HomeFeatureGrid> {
             ],
           ),
           const SizedBox(height: 10),
-          Text(
+          HrText(
             label,
             style: const TextStyle(
               fontSize: 12,

@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -52,11 +53,11 @@ class _ProfileSyncPageState extends State<ProfileSyncPage> {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Sinkronisasi Data'),
+          title: const HrText('Sinkronisasi Data'),
           actions: [
             IconButton(
               icon: const Icon(Icons.sync_rounded),
-              tooltip: 'Sinkronisasi Sekarang',
+              tooltip: ('Sinkronisasi Sekarang').tr(context),
               onPressed: () {
                 _syncService.syncPendingOrders();
               },
@@ -67,10 +68,10 @@ class _ProfileSyncPageState extends State<ProfileSyncPage> {
             unselectedLabelColor: Colors.white.withValues(alpha: 0.7),
             indicatorColor: Colors.white,
             indicatorWeight: 3,
-            tabs: const [
-              Tab(text: 'Sales Order'),
-              Tab(text: 'Presensi'),
-              Tab(text: 'Kunjungan'),
+            tabs: [
+              Tab(text: ('Sales Order').tr(context)),
+              Tab(text: ('Presensi').tr(context)),
+              Tab(text: ('Kunjungan').tr(context)),
             ],
           ),
         ),
@@ -96,7 +97,7 @@ class _ProfileSyncPageState extends State<ProfileSyncPage> {
                   const Icon(Icons.info_outline_rounded, color: AppColors.info),
                   AppDimens.w8.wSpace,
                   Expanded(
-                    child: Text(
+                    child: HrText(
                       'Sinkronisasi otomatis tersedia untuk Sales Order dan checkout offline. '
                       'Data akan dikirim setelah server kembali. '
                       'Check-in, istirahat, dan kunjungan masih menunggu dukungan sinkronisasi. '
@@ -140,7 +141,9 @@ class _ProfileSyncPageState extends State<ProfileSyncPage> {
         }
         final items = snapshot.data ?? [];
         if (items.isEmpty) {
-          return _buildEmptyState('Tidak ada antrean Sales Order');
+          return _buildEmptyState(
+            ('Tidak ada antrean Sales Order').tr(context),
+          );
         }
 
         return ListView.separated(
@@ -151,9 +154,11 @@ class _ProfileSyncPageState extends State<ProfileSyncPage> {
             final data = items[index];
             final entity = SalesOrderParamsEntity.fromJson(data);
             return _buildListItem(
-              title: entity.outletNama ?? 'Outlet Tidak Diketahui',
+              title:
+                  (entity.outletNama ?? ('Outlet Tidak Diketahui').tr(context)),
               subtitle:
-                  'Tipe: ${entity.tipeOrder ?? '-'} • Item: ${entity.items?.length ?? 0}',
+                  ('Tipe: ${entity.tipeOrder ?? '-'} • Item: ${entity.items?.length ?? 0}')
+                      .tr(context),
               date: _formatDate(entity.tanggal),
               icon: Icons.shopping_cart_rounded,
             );
@@ -172,7 +177,7 @@ class _ProfileSyncPageState extends State<ProfileSyncPage> {
         }
         final items = snapshot.data ?? [];
         if (items.isEmpty) {
-          return _buildEmptyState('Tidak ada antrean Presensi');
+          return _buildEmptyState(('Tidak ada antrean Presensi').tr(context));
         }
 
         return ListView.separated(
@@ -193,7 +198,8 @@ class _ProfileSyncPageState extends State<ProfileSyncPage> {
             return _buildListItem(
               title: type,
               subtitle:
-                  'Koordinat: ${data['latitude'] ?? '-'}, ${data['longitude'] ?? '-'}',
+                  ('Koordinat: ${data['latitude'] ?? '-'}, ${data['longitude'] ?? '-'}')
+                      .tr(context),
               date: _formatDate(waktu),
               icon: Icons.fingerprint_rounded,
               status: isCheckout
@@ -215,7 +221,7 @@ class _ProfileSyncPageState extends State<ProfileSyncPage> {
         }
         final items = snapshot.data ?? [];
         if (items.isEmpty) {
-          return _buildEmptyState('Tidak ada antrean Kunjungan');
+          return _buildEmptyState(('Tidak ada antrean Kunjungan').tr(context));
         }
 
         return ListView.separated(
@@ -233,7 +239,8 @@ class _ProfileSyncPageState extends State<ProfileSyncPage> {
 
             return _buildListItem(
               title: type,
-              subtitle: 'ID Tugas: ${data['task_id'] ?? data['id'] ?? '-'}',
+              subtitle: ('ID Tugas: ${data['task_id'] ?? data['id'] ?? '-'}')
+                  .tr(context),
               date: '-',
               icon: Icons.directions_walk_rounded,
               status: 'Menunggu dukungan sinkronisasi',
@@ -279,14 +286,14 @@ class _ProfileSyncPageState extends State<ProfileSyncPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                HrText(
                   title,
                   style: context.textStyle.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 AppDimens.paddingSmall.hSpace,
-                Text(
+                HrText(
                   subtitle,
                   style: context.textStyle.bodySmall?.copyWith(
                     color: AppColors.labelSecondary,
@@ -294,7 +301,7 @@ class _ProfileSyncPageState extends State<ProfileSyncPage> {
                 ),
                 if (status != null) ...[
                   AppDimens.h4.hSpace,
-                  Text(
+                  HrText(
                     status,
                     style: context.textStyle.labelSmall?.copyWith(
                       color: AppColors.warning,
@@ -328,7 +335,7 @@ class _ProfileSyncPageState extends State<ProfileSyncPage> {
             color: AppColors.dividerLight,
           ),
           AppDimens.paddingMedium.hSpace,
-          Text(
+          HrText(
             message,
             style: context.textStyle.titleMedium?.copyWith(
               color: AppColors.labelSecondary,

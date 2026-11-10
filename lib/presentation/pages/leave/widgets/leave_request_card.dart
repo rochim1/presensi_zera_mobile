@@ -1,3 +1,5 @@
+import 'package:presensi_mobile/l10n/app_language_controller.dart';
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
@@ -23,8 +25,10 @@ class LeaveRequestCard extends StatelessWidget {
       onTap = null,
       isLoading = true;
 
-  String _formatDateTime(DateTime dt) =>
-      DateFormat('EEEE, dd MMMM yyyy', 'id').format(dt);
+  String _formatDateTime(DateTime dt) => DateFormat(
+    'EEEE, dd MMMM yyyy',
+    AppLanguageController.instance.effectiveLocale.languageCode,
+  ).format(dt);
 
   String getDurationLabel(
     DateTime fromDate,
@@ -42,6 +46,7 @@ class LeaveRequestCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    hrLocale(context); // Rebuild formatted dates when the language changes.
     if (isLoading) {
       return AppRequestCard.shimmer(showUser: showUser);
     }
@@ -55,7 +60,9 @@ class LeaveRequestCard extends StatelessWidget {
       showUser: showUser,
       statusColor: color,
       statusLabel: leaveRequest!.status.toDisplayName,
-      title: leaveRequest!.category?.name ?? 'Kategori tidak diketahui',
+      title:
+          (leaveRequest!.category?.name ??
+          ('Kategori tidak diketahui').tr(context)),
       subtitle: leaveRequest!.alasan,
       onTap: onTap,
       middleContent: [
@@ -91,7 +98,7 @@ class LeaveRequestCard extends StatelessWidget {
       footer:
           (leaveRequest!.tanggalMasuk != null &&
               leaveRequest!.tanggalIzin != null)
-          ? Text(
+          ? HrText(
               getDurationLabel(
                 leaveRequest!.tanggalIzin!,
                 leaveRequest!.tanggalMasuk!,
@@ -194,7 +201,7 @@ class LeaveRequestCard extends StatelessWidget {
                   Expanded(
                     child: _dateItem(
                       context,
-                      label: 'Tanggal Mulai',
+                      label: ('Tanggal Mulai').tr(context),
                       date: start,
                     ),
                   ),
@@ -207,7 +214,7 @@ class LeaveRequestCard extends StatelessWidget {
                   Expanded(
                     child: _dateItem(
                       context,
-                      label: 'Tanggal Selesai',
+                      label: ('Tanggal Selesai').tr(context),
                       date: end,
                     ),
                   ),
@@ -222,7 +229,7 @@ class LeaveRequestCard extends StatelessWidget {
                     child: _metricItem(
                       context,
                       icon: PhosphorIcons.hourglass,
-                      label: 'Durasi',
+                      label: ('Durasi').tr(context),
                       value: duration,
                     ),
                   ),
@@ -230,7 +237,7 @@ class LeaveRequestCard extends StatelessWidget {
                     child: _metricItem(
                       context,
                       icon: PhosphorIcons.briefcase,
-                      label: 'Jenis',
+                      label: ('Jenis').tr(context),
                       value: request.isHalfDay == true
                           ? 'Setengah Hari'
                           : 'Sehari Penuh',
@@ -263,12 +270,18 @@ class LeaveRequestCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: _smallLabel(context)),
+              HrText(label, style: _smallLabel(context)),
               SizedBox(height: AppDimens.h2),
               Text(
                 date == null
                     ? '-'
-                    : DateFormat('dd MMM yyyy', 'id').format(date),
+                    : DateFormat(
+                        'dd MMM yyyy',
+                        AppLanguageController
+                            .instance
+                            .effectiveLocale
+                            .languageCode,
+                      ).format(date),
                 style: context.textStyle.bodySmall?.copyWith(
                   color: AppColors.labelPrimary,
                   fontWeight: FontWeight.w700,
@@ -276,7 +289,10 @@ class LeaveRequestCard extends StatelessWidget {
               ),
               if (date != null)
                 Text(
-                  DateFormat('EEEE', 'id').format(date),
+                  DateFormat(
+                    'EEEE',
+                    AppLanguageController.instance.effectiveLocale.languageCode,
+                  ).format(date),
                   style: _smallLabel(context),
                 ),
             ],
@@ -300,7 +316,7 @@ class LeaveRequestCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: _smallLabel(context)),
+              HrText(label, style: _smallLabel(context)),
               Text(
                 value,
                 maxLines: 1,

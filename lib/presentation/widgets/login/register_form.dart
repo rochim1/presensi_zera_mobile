@@ -1,3 +1,5 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
+import '../../../l10n/language_picker.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -216,7 +218,7 @@ class _RegisterFormState extends State<RegisterForm> {
               ),
             ),
             const SizedBox(width: 6),
-            Text(
+            HrText(
               'Memeriksa...',
               style: context.textStyle.bodySmall?.copyWith(
                 color: AppColors.labelSecondary,
@@ -233,7 +235,7 @@ class _RegisterFormState extends State<RegisterForm> {
           children: [
             const Icon(Icons.check_circle, size: 16, color: Colors.green),
             const SizedBox(width: 6),
-            Text(
+            HrText(
               availableText,
               style: context.textStyle.bodySmall?.copyWith(color: Colors.green),
             ),
@@ -258,8 +260,12 @@ class _RegisterFormState extends State<RegisterForm> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  const Align(
+                    alignment: Alignment.centerRight,
+                    child: LanguagePicker(),
+                  ),
                   const BrandWidget(),
-                  Text(
+                  HrText(
                     'Daftar Akun Baru',
                     textAlign: TextAlign.center,
                     style: context.textStyle.headlineSmall?.copyWith(
@@ -268,7 +274,7 @@ class _RegisterFormState extends State<RegisterForm> {
                     ),
                   ),
                   const SizedBox(height: AppDimens.sizeL),
-                  Text(
+                  HrText(
                     'Lengkapi data berikut untuk membuat akun.',
                     textAlign: TextAlign.center,
                     style: context.textStyle.bodyMedium?.copyWith(
@@ -285,8 +291,8 @@ class _RegisterFormState extends State<RegisterForm> {
                   TextFieldBasic(
                     controller: _nameController,
                     focusNode: _fnName,
-                    title: 'Nama Lengkap',
-                    hint: 'Masukkan nama lengkap',
+                    title: ('Nama Lengkap').tr(context),
+                    hint: ('Masukkan nama lengkap').tr(context),
                     required: true,
                     inputAction: TextInputAction.next,
                     autofillHints: const [AutofillHints.name],
@@ -296,8 +302,8 @@ class _RegisterFormState extends State<RegisterForm> {
                   TextFieldBasic(
                     controller: _usernameController,
                     focusNode: _fnUsername,
-                    title: 'Username',
-                    hint: 'Masukkan username',
+                    title: ('Username').tr(context),
+                    hint: ('Masukkan username').tr(context),
                     required: true,
                     inputAction: TextInputAction.next,
                     autofillHints: const [AutofillHints.username],
@@ -308,15 +314,15 @@ class _RegisterFormState extends State<RegisterForm> {
                     context,
                     isChecking: state.isCheckingUsername,
                     isAvailable: state.isUsernameAvailable,
-                    availableText: 'Username tersedia',
+                    availableText: ('Username tersedia').tr(context),
                     takenText: 'Username sudah digunakan',
                   ),
                   const SizedBox(height: AppDimens.size4M),
                   TextFieldBasic(
                     controller: _emailController,
                     focusNode: _fnEmail,
-                    title: 'Email',
-                    hint: 'email@example.com',
+                    title: ('Email').tr(context),
+                    hint: ('email@example.com').tr(context),
                     required: true,
                     inputType: TextInputType.emailAddress,
                     inputAction: TextInputAction.next,
@@ -328,15 +334,15 @@ class _RegisterFormState extends State<RegisterForm> {
                     context,
                     isChecking: state.isCheckingEmail,
                     isAvailable: state.isEmailAvailable,
-                    availableText: 'Email tersedia',
+                    availableText: ('Email tersedia').tr(context),
                     takenText: 'Email sudah digunakan',
                   ),
                   const SizedBox(height: AppDimens.size4M),
                   TextFieldBasic(
                     controller: _phoneController,
                     focusNode: _fnPhone,
-                    title: 'Nomor Telepon',
-                    hint: '08xxxxxxxxxx',
+                    title: ('Nomor Telepon').tr(context),
+                    hint: ('08xxxxxxxxxx').tr(context),
                     required: true,
                     inputType: TextInputType.phone,
                     inputAction: TextInputAction.next,
@@ -349,8 +355,8 @@ class _RegisterFormState extends State<RegisterForm> {
                   TextFieldPassword(
                     controller: _passwordController,
                     focusNode: _fnPassword,
-                    title: 'Password',
-                    hint: 'Minimal 8 karakter',
+                    title: ('Password').tr(context),
+                    hint: ('Minimal 8 karakter').tr(context),
                     inputAction: TextInputAction.next,
                     autofillHints: const [AutofillHints.newPassword],
                     validator: _validatePassword,
@@ -359,8 +365,8 @@ class _RegisterFormState extends State<RegisterForm> {
                   TextFieldPassword(
                     controller: _passwordConfirmController,
                     focusNode: _fnPasswordConfirm,
-                    title: 'Konfirmasi Password',
-                    hint: 'Ulangi password',
+                    title: ('Konfirmasi Password').tr(context),
+                    hint: ('Ulangi password').tr(context),
                     inputAction: TextInputAction.done,
                     autofillHints: const [AutofillHints.newPassword],
                     validator: _validatePasswordConfirmation,
@@ -368,20 +374,20 @@ class _RegisterFormState extends State<RegisterForm> {
                   ),
                   const SizedBox(height: AppDimens.size3L),
                   AppButton(
-                    text: 'Daftar',
+                    text: ('Daftar').tr(context),
                     onPressed: () => _handleRegister(cubit),
                     isLoading: state.submitStatus.isLoading || _googleBusy,
                   ),
                   const SizedBox(height: AppDimens.size3M),
                   Text.rich(
                     TextSpan(
-                      text: 'Dengan mendaftar, Anda memahami ',
+                      text: ('Dengan mendaftar, Anda memahami ').tr(context),
                       style: context.textStyle.bodySmall?.copyWith(
                         color: AppColors.labelSecondary,
                       ),
                       children: [
                         TextSpan(
-                          text: 'Kebijakan Privasi Pantoo HRMS',
+                          text: ('Kebijakan Privasi Pantoo HRMS').tr(context),
                           style: context.textStyle.bodySmall?.copyWith(
                             color: AppColors.primary,
                             fontWeight: FontWeight.w600,
@@ -400,13 +406,13 @@ class _RegisterFormState extends State<RegisterForm> {
                   Center(
                     child: RichText(
                       text: TextSpan(
-                        text: 'Sudah punya akun? ',
+                        text: ('Sudah punya akun? ').tr(context),
                         style: context.textStyle.bodyMedium?.copyWith(
                           color: AppColors.labelSecondary,
                         ),
                         children: [
                           TextSpan(
-                            text: 'Masuk di sini',
+                            text: ('Masuk di sini').tr(context),
                             style: context.textStyle.bodyMedium?.copyWith(
                               color: AppColors.primary,
                               fontWeight: FontWeight.w600,

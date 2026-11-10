@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -17,7 +18,7 @@ class FailureUnderDevelopment extends StatelessWidget {
               width: 200.0,
             ),
             AppDimens.size2M.hSpace,
-            Text(
+            HrText(
               'Maaf, Halaman ini dalam proses Pengembangan',
               textAlign: TextAlign.center,
               style: context.textStyle.titleMedium!.copyWith(

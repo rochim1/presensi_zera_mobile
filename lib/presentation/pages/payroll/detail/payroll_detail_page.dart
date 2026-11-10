@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
@@ -92,7 +93,7 @@ class PayrollDetailView extends StatelessWidget {
 
         return Scaffold(
           appBar: AppTopBar(
-            title: 'Detail Slip Gaji',
+            title: ('Detail Slip Gaji').tr(context),
             backgroundColor: AppColors.transparent,
           ),
           body: _buildBody(context, state, cubit),
@@ -148,47 +149,47 @@ class PayrollDetailView extends StatelessWidget {
               statusColor: slip.status.toDisplayColor,
             ),
             AppButtonNew(
-              text: 'Unduh Slip PDF',
+              text: ('Unduh Slip PDF').tr(context),
               onPressed: cubit.downloadPayrollSlipPdf,
               isLoading: state.downloadSlipPdf.isLoading,
             ),
             if (slip.attendance != null)
               _SectionCard(
                 icon: PhosphorIcons.calendarCheck,
-                title: 'Ringkasan Kehadiran',
+                title: ('Ringkasan Kehadiran').tr(context),
                 child: Column(
                   children: [
                     _InfoRow(
-                      label: 'Hari Kerja',
+                      label: ('Hari Kerja').tr(context),
                       value: '${slip.attendance!.totalHariKerja}',
                     ),
                     _InfoRow(
-                      label: 'Hadir',
+                      label: ('Hadir').tr(context),
                       value: '${slip.attendance!.totalHadir}',
                     ),
                     _InfoRow(
-                      label: 'Izin',
+                      label: ('Izin').tr(context),
                       value: '${slip.attendance!.totalIzin}',
                     ),
                     _InfoRow(
-                      label: 'Cuti',
+                      label: ('Cuti').tr(context),
                       value: '${slip.attendance!.totalCuti}',
                     ),
                     _InfoRow(
-                      label: 'Alpha',
+                      label: ('Alpha').tr(context),
                       value: '${slip.attendance!.totalAlpha}',
                     ),
                     _InfoRow(
-                      label: 'Terlambat',
+                      label: ('Terlambat').tr(context),
                       value:
                           '${slip.attendance!.totalTerlambat} (${slip.attendance!.totalMenitTerlambat} menit)',
                     ),
                     _InfoRow(
-                      label: 'Pulang Awal',
+                      label: ('Pulang Awal').tr(context),
                       value: '${slip.attendance!.totalPulangAwal}',
                     ),
                     _InfoRow(
-                      label: 'Lupa Presensi',
+                      label: ('Lupa Presensi').tr(context),
                       value: '${slip.attendance!.totalLupaPresensi}',
                       isLast: true,
                     ),
@@ -197,31 +198,31 @@ class PayrollDetailView extends StatelessWidget {
               ),
             _SectionCard(
               icon: PhosphorIcons.trendUp,
-              title: 'Pendapatan',
+              title: ('Pendapatan').tr(context),
               child: Column(
                 children: [
                   _InfoRow(
-                    label: 'Gaji Pokok',
+                    label: ('Gaji Pokok').tr(context),
                     value: _formatCurrency(slip.baseSalary),
                   ),
                   _InfoRow(
-                    label: 'Total Tunjangan',
+                    label: ('Total Tunjangan').tr(context),
                     value: _formatCurrency(slip.totalAllowance),
                   ),
                   _InfoRow(
-                    label: 'Total Lembur',
+                    label: ('Total Lembur').tr(context),
                     value: _formatCurrency(slip.totalOvertime),
                   ),
                   _InfoRow(
-                    label: 'Total Insentif',
+                    label: ('Total Insentif').tr(context),
                     value: _formatCurrency(slip.totalIncentive),
                   ),
                   _InfoRow(
-                    label: 'Adjustment (+)',
+                    label: ('Adjustment (+)').tr(context),
                     value: _formatCurrency(slip.totalIncomeAdjustment),
                   ),
                   _InfoRow(
-                    label: 'Total Pendapatan',
+                    label: ('Total Pendapatan').tr(context),
                     value: _formatCurrency(slip.totalIncome),
                     isLast: true,
                     valueColor: AppColors.green,
@@ -232,59 +233,59 @@ class PayrollDetailView extends StatelessWidget {
             ),
             _SectionCard(
               icon: PhosphorIcons.trendDown,
-              title: 'Potongan',
+              title: ('Potongan').tr(context),
               child: Column(
                 children: [
                   _InfoRow(
-                    label: 'BPJS Kesehatan',
+                    label: ('BPJS Kesehatan').tr(context),
                     value: _formatCurrency(slip.deductions?.bpjsKesehatan ?? 0),
                   ),
                   _InfoRow(
-                    label: 'BPJS JHT',
+                    label: ('BPJS JHT').tr(context),
                     value: _formatCurrency(
                       slip.deductions?.bpjsKetenagakerjaanJht ?? 0,
                     ),
                   ),
                   _InfoRow(
-                    label: 'BPJS JP',
+                    label: ('BPJS JP').tr(context),
                     value: _formatCurrency(
                       slip.deductions?.bpjsKetenagakerjaanJp ?? 0,
                     ),
                   ),
                   _InfoRow(
-                    label: 'PPh 21',
+                    label: ('PPh 21').tr(context),
                     value: _formatCurrency(slip.deductions?.pajakPph21 ?? 0),
                   ),
                   _InfoRow(
-                    label: 'Punishment Terlambat',
+                    label: ('Punishment Terlambat').tr(context),
                     value: _formatCurrency(
                       slip.deductions?.punishmentKeterlambatan ?? 0,
                     ),
                   ),
                   _InfoRow(
-                    label: 'Punishment Absen',
+                    label: ('Punishment Absen').tr(context),
                     value: _formatCurrency(
                       slip.deductions?.punishmentAbsenTanpaIjin ?? 0,
                     ),
                   ),
                   _InfoRow(
-                    label: 'Punishment Pulang Awal',
+                    label: ('Punishment Pulang Awal').tr(context),
                     value: _formatCurrency(
                       slip.deductions?.punishmentPulangAwal ?? 0,
                     ),
                   ),
                   _InfoRow(
-                    label: 'Punishment Lupa Presensi',
+                    label: ('Punishment Lupa Presensi').tr(context),
                     value: _formatCurrency(
                       slip.deductions?.punishmentLupaPresensi ?? 0,
                     ),
                   ),
                   _InfoRow(
-                    label: 'Adjustment (-)',
+                    label: ('Adjustment (-)').tr(context),
                     value: _formatCurrency(slip.totalDeductionAdjustment),
                   ),
                   _InfoRow(
-                    label: 'Total Potongan',
+                    label: ('Total Potongan').tr(context),
                     value: _formatCurrency(slip.totalDeduction),
                     isLast: true,
                     valueColor: AppColors.danger,
@@ -303,7 +304,7 @@ class PayrollDetailView extends StatelessWidget {
               child: Column(
                 spacing: AppDimens.h4,
                 children: [
-                  Text(
+                  HrText(
                     'Gaji Bersih (Take Home Pay)',
                     style: context.theme.textTheme.bodySmall?.copyWith(
                       color: AppColors.labelSecondary,
@@ -323,7 +324,7 @@ class PayrollDetailView extends StatelessWidget {
                 (slip.cancelReason?.isNotEmpty ?? false))
               _SectionCard(
                 icon: PhosphorIcons.notePencil,
-                title: 'Catatan',
+                title: ('Catatan').tr(context),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   spacing: AppDimens.h10,
@@ -336,7 +337,7 @@ class PayrollDetailView extends StatelessWidget {
                         ),
                       ),
                     if (slip.cancelReason?.isNotEmpty ?? false)
-                      Text(
+                      HrText(
                         'Alasan Pembatalan: ${slip.cancelReason!}',
                         style: context.theme.textTheme.bodyMedium?.copyWith(
                           color: AppColors.danger,
@@ -407,7 +408,7 @@ class _SummaryHeaderCard extends StatelessWidget {
           ),
           _MiniText(text: employeeEmail),
           _MiniText(text: '$employeePosition • $employeeDepartment'),
-          _MiniText(text: 'Periode: $periodLabel', isBold: true),
+          _MiniText(text: ('Periode: $periodLabel').tr(context), isBold: true),
         ],
       ),
     );
@@ -422,7 +423,7 @@ class _MiniText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
+    return HrText(
       text,
       style: context.theme.textTheme.bodySmall?.copyWith(
         color: AppColors.labelSecondary,
@@ -466,7 +467,7 @@ class _SectionCard extends StatelessWidget {
             children: [
               Icon(icon, size: AppDimens.w18, color: AppColors.primary),
               SizedBox(width: AppDimens.w8),
-              Text(
+              HrText(
                 title,
                 style: context.theme.textTheme.titleSmall?.copyWith(
                   color: AppColors.labelPrimary,
@@ -510,7 +511,7 @@ class _InfoRow extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: Text(
+            child: HrText(
               label,
               style: context.theme.textTheme.bodyMedium?.copyWith(
                 color: AppColors.labelSecondary,

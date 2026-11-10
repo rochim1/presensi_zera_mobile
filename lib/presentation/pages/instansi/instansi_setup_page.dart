@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
@@ -79,12 +80,12 @@ class _InstansiSetupPageState extends State<InstansiSetupPage> {
           children: [
             ListTile(
               leading: const Icon(Icons.photo_library_outlined),
-              title: const Text('Pilih dari galeri'),
+              title: const HrText('Pilih dari galeri'),
               onTap: () => Navigator.pop(context, ImageSource.gallery),
             ),
             ListTile(
               leading: const Icon(Icons.camera_alt_outlined),
-              title: const Text('Ambil dengan kamera'),
+              title: const HrText('Ambil dengan kamera'),
               onTap: () => Navigator.pop(context, ImageSource.camera),
             ),
           ],
@@ -169,11 +170,13 @@ class _InstansiSetupPageState extends State<InstansiSetupPage> {
       if (!mounted) return;
       await AppModalBottom.showDefault(
         context,
-        title: 'Instansi berhasil dibuat',
-        contentTitle: 'Ruang kerja Anda siap',
-        contentSubtitle: 'Instansi berhasil dibuat dan siap digunakan.',
+        title: ('Instansi berhasil dibuat').tr(context),
+        contentTitle: ('Ruang kerja Anda siap').tr(context),
+        contentSubtitle: ('Instansi berhasil dibuat dan siap digunakan.').tr(
+          context,
+        ),
         hasActionPop: true,
-        yesOkLabel: 'Lanjutkan',
+        yesOkLabel: ('Lanjutkan').tr(context),
       );
       if (!mounted) return;
       context.read<AppCubit>().onRefresh();
@@ -196,7 +199,7 @@ class _InstansiSetupPageState extends State<InstansiSetupPage> {
       canPop: false,
       child: Scaffold(
         backgroundColor: AppColors.bgPrimary,
-        appBar: const AppTopBar(title: 'Lengkapi Instansi'),
+        appBar: AppTopBar(title: ('Lengkapi Instansi').tr(context)),
         body: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(AppDimens.paddingMedium),
@@ -207,14 +210,14 @@ class _InstansiSetupPageState extends State<InstansiSetupPage> {
                 header: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    HrText(
                       'Buat instansi atau organisasi untuk melanjutkan',
                       style: context.textStyle.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     AppDimens.h8.hSpace,
-                    Text(
+                    HrText(
                       'Isi data dasar berikut. Data lain dapat dilengkapi nanti melalui web.',
                       style: context.textStyle.bodyMedium,
                     ),
@@ -245,7 +248,7 @@ class _InstansiSetupPageState extends State<InstansiSetupPage> {
                           ),
                           TextButton(
                             onPressed: _pickLogo,
-                            child: Text(
+                            child: HrText(
                               _logo == null
                                   ? 'Unggah Logo Instansi/Organisasi (opsional)'
                                   : 'Ganti Logo',
@@ -256,24 +259,26 @@ class _InstansiSetupPageState extends State<InstansiSetupPage> {
                     ),
                     _field(
                       controller: _nameController,
-                      label: 'Nama Instansi/Organisasi',
+                      label: ('Nama Instansi/Organisasi').tr(context),
                       validator: InstansiSetupValidation.requiredText,
                       textCapitalization: TextCapitalization.words,
                     ),
                     _field(
                       controller: _emailController,
-                      label: 'Email Instansi/Organisasi',
+                      label: ('Email Instansi/Organisasi').tr(context),
                       helperText:
-                          'Email kontak aktif. Boleh memakai email pendaftar sementara.',
+                          ('Email kontak aktif. Boleh memakai email pendaftar sementara.')
+                              .tr(context),
                       validator: InstansiSetupValidation.email,
                       keyboardType: TextInputType.emailAddress,
                       autofillHints: const [AutofillHints.email],
                     ),
                     _field(
                       controller: _phoneController,
-                      label: 'Nomor Telepon Instansi/Organisasi',
+                      label: ('Nomor Telepon Instansi/Organisasi').tr(context),
                       helperText:
-                          'Boleh memakai nomor penanggung jawab sementara.',
+                          ('Boleh memakai nomor penanggung jawab sementara.')
+                              .tr(context),
                       validator: InstansiSetupValidation.phone,
                       keyboardType: TextInputType.phone,
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -282,36 +287,37 @@ class _InstansiSetupPageState extends State<InstansiSetupPage> {
                     ),
                     _field(
                       controller: _businessController,
-                      label: 'Kegiatan Utama',
+                      label: ('Kegiatan Utama').tr(context),
                       helperText:
-                          'Contoh: pendidikan, layanan sosial, atau perdagangan.',
+                          ('Contoh: pendidikan, layanan sosial, atau perdagangan.')
+                              .tr(context),
                       validator: InstansiSetupValidation.requiredText,
                       maxLines: 3,
                     ),
                     _selectionField(
-                      label: 'Zona Waktu Operasional',
+                      label: ('Zona Waktu Operasional').tr(context),
                       value: _timezone,
                       onTap: () => _pickOption(
-                        title: 'Zona Waktu Operasional',
+                        title: ('Zona Waktu Operasional').tr(context),
                         options: InstansiOptionCatalog.timezones,
                         onSelected: (value) =>
                             setState(() => _timezone = value),
                       ),
                     ),
                     _selectionField(
-                      label: 'Mata Uang',
+                      label: ('Mata Uang').tr(context),
                       value: InstansiOptionCatalog.currencies
                           .firstWhere((item) => item.value == _currency)
                           .label,
                       onTap: () => _pickOption(
-                        title: 'Mata Uang',
+                        title: ('Mata Uang').tr(context),
                         options: InstansiOptionCatalog.currencies,
                         onSelected: (value) =>
                             setState(() => _currency = value),
                       ),
                     ),
                     AppDimens.h16.hSpace,
-                    Text(
+                    HrText(
                       'Lokasi Instansi/Organisasi *',
                       style: context.textStyle.titleSmall,
                     ),
@@ -331,19 +337,19 @@ class _InstansiSetupPageState extends State<InstansiSetupPage> {
                                     ),
                                   )
                                 : const Icon(Icons.my_location),
-                            label: const Text('Gunakan GPS'),
+                            label: const HrText('Gunakan GPS'),
                           ),
                           TextButton.icon(
                             onPressed: _pickLocationOnMap,
                             icon: const Icon(Icons.map_outlined),
-                            label: const Text('Pilih Peta'),
+                            label: const HrText('Pilih Peta'),
                           ),
                         ],
                       ),
                     ),
                     _field(
                       controller: _latitudeController,
-                      label: 'Latitude',
+                      label: ('Latitude').tr(context),
                       validator: (value) => InstansiSetupValidation.coordinate(
                         value,
                         isLatitude: true,
@@ -355,7 +361,7 @@ class _InstansiSetupPageState extends State<InstansiSetupPage> {
                     ),
                     _field(
                       controller: _longitudeController,
-                      label: 'Longitude',
+                      label: ('Longitude').tr(context),
                       validator: (value) => InstansiSetupValidation.coordinate(
                         value,
                         isLatitude: false,
@@ -374,7 +380,7 @@ class _InstansiSetupPageState extends State<InstansiSetupPage> {
                               height: 22,
                               child: CircularProgressIndicator(strokeWidth: 2),
                             )
-                          : const Text('Simpan dan Lanjutkan'),
+                          : const HrText('Simpan dan Lanjutkan'),
                     ),
                   ],
                 ),
@@ -402,8 +408,8 @@ class _InstansiSetupPageState extends State<InstansiSetupPage> {
     child: TextFormField(
       controller: controller,
       decoration: InputDecoration(
-        labelText: '$label *',
-        helperText: helperText,
+        labelText: ('$label *').tr(context),
+        helperText: (helperText)?.tr(context),
         helperMaxLines: 2,
       ),
       validator: validator,
@@ -425,7 +431,7 @@ class _InstansiSetupPageState extends State<InstansiSetupPage> {
     child: InkWell(
       onTap: onTap,
       child: InputDecorator(
-        decoration: InputDecoration(labelText: '$label *'),
+        decoration: InputDecoration(labelText: ('$label *').tr(context)),
         child: Row(
           children: [
             Expanded(child: Text(value)),
@@ -472,7 +478,7 @@ class _OptionPickerSheetState extends State<_OptionPickerSheet> {
             children: [
               Padding(
                 padding: const EdgeInsets.all(AppDimens.paddingMedium),
-                child: Text(
+                child: HrText(
                   widget.title,
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
@@ -483,8 +489,8 @@ class _OptionPickerSheetState extends State<_OptionPickerSheet> {
                 ),
                 child: TextField(
                   autofocus: true,
-                  decoration: const InputDecoration(
-                    hintText: 'Cari pilihan...',
+                  decoration: InputDecoration(
+                    hintText: ('Cari pilihan...').tr(context),
                     prefixIcon: Icon(Icons.search),
                   ),
                   onChanged: (value) => setState(() => _query = value),
@@ -496,7 +502,7 @@ class _OptionPickerSheetState extends State<_OptionPickerSheet> {
                   itemBuilder: (context, index) {
                     final option = options[index];
                     return ListTile(
-                      title: Text(option.label),
+                      title: HrText(option.label),
                       trailing: option.value == widget.selectedValue
                           ? const Icon(Icons.check)
                           : null,

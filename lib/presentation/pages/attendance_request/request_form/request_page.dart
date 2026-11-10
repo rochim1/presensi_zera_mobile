@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -75,7 +76,7 @@ class AttendanceRequestFormView extends StatelessWidget {
                 child: Column(
                   children: [
                     AppTopBar(
-                      title: 'Ajukan Request Presensi',
+                      title: ('Ajukan Request Presensi').tr(context),
                       useGradient: false,
                       backgroundColor: Colors.transparent,
                       titleColor: AppColors.white,
@@ -108,22 +109,25 @@ class AttendanceRequestFormView extends StatelessWidget {
                             children: [
                               AppDropdownField<AttendanceType>(
                                 compareFn: (a, b) => a.name == b.name,
-                                label: 'Jenis Presensi',
+                                label: ('Jenis Presensi').tr(context),
                                 isRequired: true,
-                                hintText: 'Pilih Jenis Presensi',
+                                hintText: ('Pilih Jenis Presensi').tr(context),
                                 itemAsString: (v) => v.toName,
                                 items: AttendanceType.values,
                                 selectedItem: state.form.attendanceType.value,
                                 onChanged: cubit.onChangeAttendanceType,
                                 errorText:
-                                    state.form.attendanceType.errorMessage,
+                                    (state.form.attendanceType.errorMessage)
+                                        ?.tr(context),
                                 enabled: !hasAttendance,
                               ),
                               AppDropdownField<AttendanceRequestType>(
                                 compareFn: (a, b) => a.name == b.name,
-                                label: 'Jenis Request Presensi',
+                                label: ('Jenis Request Presensi').tr(context),
                                 isRequired: true,
-                                hintText: 'Pilih Jenis Request Presensi',
+                                hintText: ('Pilih Jenis Request Presensi').tr(
+                                  context,
+                                ),
                                 itemAsString: (v) => v.displayName,
                                 items: hasAttendance
                                     ? [
@@ -145,29 +149,34 @@ class AttendanceRequestFormView extends StatelessWidget {
                                 selectedItem:
                                     state.form.attendanceRequestType.value,
                                 onChanged: cubit.onChangeAttendanceRequestType,
-                                errorText: state
-                                    .form
-                                    .attendanceRequestType
-                                    .errorMessage,
+                                errorText:
+                                    (state
+                                            .form
+                                            .attendanceRequestType
+                                            .errorMessage)
+                                        ?.tr(context),
                               ),
                               AppDateTimeField(
-                                label: 'Tanggal Presensi',
+                                label: ('Tanggal Presensi').tr(context),
                                 isRequired: true,
                                 lastDate: DateTime.now(),
-                                hintText: 'Pilih Tanggal Presensi',
+                                hintText: ('Pilih Tanggal Presensi').tr(
+                                  context,
+                                ),
                                 value: state.form.attendanceDate.value,
                                 onConfirmed: cubit.onChangeAttendanceDate,
                                 errorText:
-                                    state.form.attendanceDate.errorMessage,
+                                    (state.form.attendanceDate.errorMessage)
+                                        ?.tr(context),
                                 enabled: !hasAttendance,
                               ),
                               if (state.form.shiftSchedule.isRequired) ...[
                                 AppDropdownField<ShiftSchedule>(
                                   compareFn: (a, b) => a.id == b.id,
-                                  label: 'Jadwal Shift',
+                                  label: ('Jadwal Shift').tr(context),
                                   isRequired:
                                       state.form.shiftSchedule.isRequired,
-                                  hintText: 'Pilih Jadwal Shift',
+                                  hintText: ('Pilih Jadwal Shift').tr(context),
                                   itemAsString: (v) =>
                                       '${v.shift.name} (${v.shift.jamMasuk?.format(pattern: 'HH:mm')} - ${v.shift.jamPulang?.format(pattern: 'HH:mm')})',
                                   items: state.shiftSchedules.maybeWhen(
@@ -176,51 +185,64 @@ class AttendanceRequestFormView extends StatelessWidget {
                                   ),
                                   selectedItem: state.form.shiftSchedule.value,
                                   onChanged: cubit.onChangeShiftSchedule,
-                                  errorText: state
-                                      .form
-                                      .attendanceRequestType
-                                      .errorMessage,
+                                  errorText:
+                                      (state
+                                              .form
+                                              .attendanceRequestType
+                                              .errorMessage)
+                                          ?.tr(context),
                                 ),
                               ],
                               if (state.form.checkInTime.isRequired) ...[
                                 AppDateTimeField(
-                                  label: 'Jam Check In',
+                                  label: ('Jam Check In').tr(context),
                                   isRequired: state.form.checkInTime.isRequired,
                                   firstDate: DateTime.now(),
                                   mode: AppDateTimeFieldMode.time,
-                                  hintText: 'Masukkan Jam Check In',
+                                  hintText: ('Masukkan Jam Check In').tr(
+                                    context,
+                                  ),
                                   value: state.form.checkInTime.value,
                                   onConfirmed: cubit.onChangeCheckInTime,
                                   errorText:
-                                      state.form.checkInTime.errorMessage,
+                                      (state.form.checkInTime.errorMessage)?.tr(
+                                        context,
+                                      ),
                                 ),
                               ],
                               if (state.form.checkOutTime.isRequired) ...[
                                 AppDateTimeField(
-                                  label: 'Jam Check Out',
+                                  label: ('Jam Check Out').tr(context),
                                   isRequired:
                                       state.form.checkOutTime.isRequired,
                                   firstDate: DateTime.now(),
                                   mode: AppDateTimeFieldMode.time,
-                                  hintText: 'Masukkan Jam Check Out',
+                                  hintText: ('Masukkan Jam Check Out').tr(
+                                    context,
+                                  ),
                                   value: state.form.checkOutTime.value,
                                   onConfirmed: cubit.onChangeCheckOutTime,
                                   errorText:
-                                      state.form.checkOutTime.errorMessage,
+                                      (state.form.checkOutTime.errorMessage)
+                                          ?.tr(context),
                                 ),
                               ],
                               AppTextField(
-                                label: 'Alasan',
+                                label: ('Alasan').tr(context),
                                 isRequired: true,
-                                hintText: 'Masukkan alasan untuk request ini',
+                                hintText: ('Masukkan alasan untuk request ini')
+                                    .tr(context),
                                 maxLines: 3,
                                 onChanged: cubit.onChangeReason,
-                                errorText: state.form.reason.errorMessage,
+                                errorText: (state.form.reason.errorMessage)?.tr(
+                                  context,
+                                ),
                               ),
                               AppAttachmentField(
-                                label: 'Bukti Pendukung',
+                                label: ('Bukti Pendukung').tr(context),
                                 hintText:
-                                    'Tambahkan foto atau dokumen pendukung',
+                                    ('Tambahkan foto atau dokumen pendukung')
+                                        .tr(context),
                                 value: state.form.attachments.value
                                     .map((e) => e.name)
                                     .join(', '),
@@ -228,7 +250,8 @@ class AttendanceRequestFormView extends StatelessWidget {
                                   cubit.onChangeAttachments([]);
                                 },
                                 onTap: () => onTapAttachment(context),
-                                errorText: state.form.attachments.errorMessage,
+                                errorText: (state.form.attachments.errorMessage)
+                                    ?.tr(context),
                               ),
                             ],
                           ),
@@ -244,7 +267,7 @@ class AttendanceRequestFormView extends StatelessWidget {
             color: context.theme.scaffoldBackgroundColor,
             padding: EdgeInsets.all(AppDimens.w16),
             child: AppButtonNew(
-              text: 'Buat Request',
+              text: ('Buat Request').tr(context),
               onPressed: () => cubit.submit(),
               isLoading: state.submit.isLoading,
             ),

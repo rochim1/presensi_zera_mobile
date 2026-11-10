@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,7 +17,7 @@ class LoanDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppTopBar(
-        title: 'Detail Pinjaman',
+        title: ('Detail Pinjaman').tr(context),
         showBackButton: true,
         onBackTap: () => context.router.maybePop(),
         backgroundColor: AppColors.transparent,
@@ -48,36 +49,60 @@ class LoanDetailPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          HrText(
             'Nomor Pinjaman: ${loan.loanNumber ?? '-'}',
             style: context.textStyle.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),
           AppDimens.h16.hSpace,
-          _buildRow(context, 'Tipe Pinjaman', loan.loanTypeLabel ?? '-'),
-          _buildRow(context, 'Nominal', _currency(loan.principalAmount)),
           _buildRow(
             context,
-            'Sisa Pinjaman',
+            ('Tipe Pinjaman').tr(context),
+            loan.loanTypeLabel ?? '-',
+          ),
+          _buildRow(
+            context,
+            ('Nominal').tr(context),
+            _currency(loan.principalAmount),
+          ),
+          _buildRow(
+            context,
+            ('Sisa Pinjaman').tr(context),
             _currency(loan.outstandingBalance),
           ),
           if ((loan.monthlyPayment ?? 0) > 0)
-            _buildRow(context, 'Cicilan/Bulan', _currency(loan.monthlyPayment)),
-          _buildRow(context, 'Tenor', '${loan.loanTermMonths ?? 0} Bulan'),
+            _buildRow(
+              context,
+              ('Cicilan/Bulan').tr(context),
+              _currency(loan.monthlyPayment),
+            ),
+          _buildRow(
+            context,
+            'Tenor',
+            ('${loan.loanTermMonths ?? 0} Bulan').tr(context),
+          ),
           _buildRow(context, 'Tujuan', loan.purpose ?? '-'),
-          _buildRow(context, 'Status', loan.approvalStatus ?? 'PENDING'),
+          _buildRow(
+            context,
+            ('Status').tr(context),
+            loan.approvalStatus ?? 'PENDING',
+          ),
           if (loan.createdAt != null)
             _buildRow(
               context,
-              'Tanggal Pengajuan',
+              ('Tanggal Pengajuan').tr(context),
               DateFormat('dd MMM yyyy').format(loan.createdAt!),
             ),
           if ((loan.rejectedReason ?? '').isNotEmpty)
-            _buildRow(context, 'Alasan Ditolak', loan.rejectedReason!),
+            _buildRow(
+              context,
+              ('Alasan Ditolak').tr(context),
+              loan.rejectedReason!,
+            ),
           if ((loan.paymentSchedule ?? []).isNotEmpty) ...[
             AppDimens.h16.hSpace,
-            Text(
+            HrText(
               'Jadwal Cicilan',
               style: context.textStyle.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
@@ -87,8 +112,8 @@ class LoanDetailPage extends StatelessWidget {
             ...loan.paymentSchedule!.map(
               (schedule) => ListTile(
                 contentPadding: EdgeInsets.zero,
-                title: Text('Cicilan ke-${schedule.period ?? '-'}'),
-                subtitle: Text(
+                title: HrText('Cicilan ke-${schedule.period ?? '-'}'),
+                subtitle: HrText(
                   schedule.dueDate == null
                       ? '-'
                       : 'Jatuh tempo ${DateFormat('dd MMM yyyy').format(schedule.dueDate!)}',
@@ -98,7 +123,7 @@ class LoanDetailPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(_currency(schedule.total)),
-                    Text(
+                    HrText(
                       _scheduleStatus(schedule.status),
                       style: context.textStyle.bodySmall?.copyWith(
                         color: _scheduleColor(schedule.status),
@@ -123,7 +148,7 @@ class LoanDetailPage extends StatelessWidget {
         children: [
           Expanded(
             flex: 2,
-            child: Text(
+            child: HrText(
               label,
               style: context.textStyle.bodyMedium?.copyWith(
                 color: AppColors.labelSecondary,

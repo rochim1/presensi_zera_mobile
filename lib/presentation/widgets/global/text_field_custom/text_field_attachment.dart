@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -47,7 +48,7 @@ class TextFieldAttachment extends StatelessWidget {
             onUpload!(state.files);
           }
           if (state.typeState.isNotLoaded) {
-            Fluttertoast.showToast(msg: state.failure!.message);
+            Fluttertoast.showToast(msg: (state.failure!.message).trCurrent());
           }
         },
         builder: (context, state) {
@@ -59,7 +60,7 @@ class TextFieldAttachment extends StatelessWidget {
                   padding: const EdgeInsets.only(left: AppDimens.size2S),
                   child: RichText(
                     text: TextSpan(
-                      text: title,
+                      text: title?.tr(context),
                       style: context.textStyle.bodySmall?.copyWith(
                         color: colorTitle ?? AppColors.labelPrimary,
                         fontSize: 14,
@@ -145,7 +146,7 @@ class TextFieldAttachment extends StatelessWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
+                                HrText(
                                   hint,
                                   style: context
                                       .theme

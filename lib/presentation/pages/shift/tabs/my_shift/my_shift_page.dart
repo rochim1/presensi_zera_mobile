@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -44,15 +45,15 @@ class _MyShiftViewState extends State<MyShiftView> {
 
           AppBottomSheet.show(
             context: context,
-            title: const AppBottomSheetTitle(
-              title: 'Detail Shift',
-              subtitle: 'Informasi jadwal kerja',
+            title: AppBottomSheetTitle(
+              title: ('Detail Shift').tr(context),
+              subtitle: ('Informasi jadwal kerja').tr(context),
             ),
             child: ShiftScheduleDetailView(schedule: schedule),
             actions: [
               AppButtonNew(
                 onPressed: () => context.router.pop(),
-                text: 'Tutup',
+                text: ('Tutup').tr(context),
                 variant: AppButtonNewVariant.tertiary,
                 style: AppButtonNewStyle.ghost,
               ),
@@ -69,7 +70,7 @@ class _MyShiftViewState extends State<MyShiftView> {
                       await cubit.onRefresh();
                     }
                   },
-                  text: 'Tukar Shift',
+                  text: ('Tukar Shift').tr(context),
                 ),
               ],
             ],
@@ -108,13 +109,14 @@ class _MyShiftViewState extends State<MyShiftView> {
                     border: Border.all(color: AppColors.borderGrey),
                   ),
                   child: TableCalendar(
+                    locale: hrLocale(context).localeName,
                     firstDay: DateTime.utc(2020, 1, 1),
                     lastDay: DateTime.utc(2030, 12, 31),
                     focusedDay: _focusedDay,
                     currentDay: DateTime.now(),
                     calendarFormat: CalendarFormat.month,
-                    availableCalendarFormats: const {
-                      CalendarFormat.month: 'Bulan',
+                    availableCalendarFormats: {
+                      CalendarFormat.month: ('Bulan').tr(context),
                     },
                     selectedDayPredicate: (day) =>
                         isSameDay(state.filterDate, day),

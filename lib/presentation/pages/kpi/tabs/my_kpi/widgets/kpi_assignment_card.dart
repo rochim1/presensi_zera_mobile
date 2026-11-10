@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_domain/presensi_domain.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -65,7 +66,7 @@ class KpiAssignmentCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Final Score', style: context.textStyle.bodySmall),
+                      HrText('Final Score', style: context.textStyle.bodySmall),
                       const SizedBox(height: 4),
                       KpiScoreDisplay(score: assignment.finalScore),
                     ],
@@ -75,7 +76,7 @@ class KpiAssignmentCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text('Grade', style: context.textStyle.bodySmall),
+                      HrText('Grade', style: context.textStyle.bodySmall),
                       const SizedBox(height: 4),
                       KpiGradeBadge(grade: assignment.finalGrade),
                     ],
@@ -95,7 +96,7 @@ class KpiAssignmentCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Text('Self Assessment'),
+                  child: const HrText('Self Assessment'),
                 ),
               )
             else if (status == 'completed')
@@ -109,7 +110,7 @@ class KpiAssignmentCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      child: const Text('Detail'),
+                      child: const HrText('Detail'),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -122,7 +123,7 @@ class KpiAssignmentCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      child: const Text('Akui Hasil'),
+                      child: const HrText('Akui Hasil'),
                     ),
                   ),
                 ],
@@ -137,7 +138,7 @@ class KpiAssignmentCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Text('Lihat Detail'),
+                  child: const HrText('Lihat Detail'),
                 ),
               ),
           ],

@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/_core.dart';
@@ -58,7 +59,7 @@ class _TextFieldPasswordState extends State<TextFieldPassword> {
         if (widget.title != null)
           Padding(
             padding: const EdgeInsets.only(left: AppDimens.size2S),
-            child: Text(
+            child: HrText(
               widget.title!,
               style: AppTextStyle.fieldLabel.copyWith(
                 color: widget.colorTitle ?? AppColors.labelPrimary,
@@ -87,7 +88,7 @@ class _TextFieldPasswordState extends State<TextFieldPassword> {
             style: AppTextStyle.fieldInput,
             autofillHints: widget.autofillHints,
             decoration: InputDecoration(
-              hintText: widget.hint,
+              hintText: widget.hint.tr(context),
               hintStyle: AppTextStyle.fieldHint,
               prefixIcon: widget.hasPrefixIcon!
                   ? Container(
@@ -146,7 +147,9 @@ class _TextFieldPasswordState extends State<TextFieldPassword> {
             enabled: widget.enabled,
             maxLines: widget.multiline ? 4 : 1,
             textInputAction: widget.inputAction,
-            validator: widget.validator,
+            validator: widget.validator == null
+                ? null
+                : (value) => widget.validator?.call(value)?.tr(context),
             autovalidateMode: AutovalidateMode.onUserInteraction,
             obscureText: _isVisible,
             onChanged: widget.onChanged,

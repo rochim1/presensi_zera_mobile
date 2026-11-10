@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -34,11 +35,12 @@ class RegisterPage extends StatelessWidget {
                 TextInput.finishAutofillContext(shouldSave: true);
                 await AppModalBottom.showDefault(
                   context,
-                  contentTitle: 'Registrasi Berhasil',
+                  contentTitle: ('Registrasi Berhasil').tr(context),
                   contentSubtitle:
-                      'Kami telah mengirim email verifikasi ke alamat email Anda. Buka email tersebut dan verifikasi akun sebelum login. Jika belum terlihat, periksa folder Spam atau Junk.',
+                      ('Kami telah mengirim email verifikasi ke alamat email Anda. Buka email tersebut dan verifikasi akun sebelum login. Jika belum terlihat, periksa folder Spam atau Junk.')
+                          .tr(context),
                   hasActionPop: true,
-                  yesOkLabel: 'Saya Mengerti',
+                  yesOkLabel: ('Saya Mengerti').tr(context),
                 );
                 if (!context.mounted) return;
                 if (context.router.canPop()) {
@@ -53,11 +55,12 @@ class RegisterPage extends StatelessWidget {
                 await AppModalBottom.showDefault(
                   context,
                   emptyState: EmptyState.somethingWrong,
-                  contentTitle: 'Registrasi Gagal',
+                  contentTitle: ('Registrasi Gagal').tr(context),
                   contentSubtitle:
-                      'Akun belum berhasil dibuat. Silakan periksa data lalu coba lagi.',
+                      ('Akun belum berhasil dibuat. Silakan periksa data lalu coba lagi.')
+                          .tr(context),
                   hasActionPop: true,
-                  yesOkLabel: 'Tutup',
+                  yesOkLabel: ('Tutup').tr(context),
                 );
               }
 
@@ -75,7 +78,7 @@ class RegisterPage extends StatelessWidget {
         child: Scaffold(
           backgroundColor: AppColors.primaryDark,
           appBar: AppTopBar(
-            title: 'Daftar Akun',
+            title: ('Daftar Akun').tr(context),
             backgroundColor: AppColors.transparent,
           ),
           extendBodyBehindAppBar: true,

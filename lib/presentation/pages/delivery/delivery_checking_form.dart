@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'delivery_submission_controller.dart';
 import 'dart:async';
 import 'package:auto_route/auto_route.dart';
@@ -216,14 +217,14 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
+            HrText(
               'Koordinat Outlet',
               style: context.textStyle.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             AppDimens.size1X.hSpace,
-            const Text(
+            const HrText(
               'Apakah kamu sudah di lokasi outlet yang benar saat ini?',
             ),
             AppDimens.size3X.hSpace,
@@ -236,7 +237,7 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                   _submitCoordinateRequest(loc.latitude!, loc.longitude!);
                 }
               },
-              child: const Text('Ya, saya sudah di lokasi'),
+              child: const HrText('Ya, saya sudah di lokasi'),
             ),
             AppDimens.size1X.hSpace,
             OutlinedButton(
@@ -255,7 +256,7 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                   );
                 }
               },
-              child: const Text('Tidak, pilih lewat peta'),
+              child: const HrText('Tidak, pilih lewat peta'),
             ),
           ],
         ),
@@ -297,11 +298,11 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
       );
       Navigator.pop(context); // close loading
       Fluttertoast.showToast(
-        msg: 'Pengajuan update koordinat berhasil dikirim.',
+        msg: ('Pengajuan update koordinat berhasil dikirim.').trCurrent(),
       );
     } catch (e) {
       Navigator.pop(context); // close loading
-      Fluttertoast.showToast(msg: 'Gagal mengirim pengajuan');
+      Fluttertoast.showToast(msg: ('Gagal mengirim pengajuan').trCurrent());
     }
   }
 
@@ -402,7 +403,7 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
             child: BlocConsumer<GlobalMapCubit, GlobalMapState>(
               listener: (context, mapState) {
                 if (mapState.typeState.isNotLoaded) {
-                  Fluttertoast.showToast(msg: mapState.message!);
+                  Fluttertoast.showToast(msg: (mapState.message!).trCurrent());
                 }
               },
               builder: (ctxMap, mapState) {
@@ -451,7 +452,9 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
 
                 return UnfocuserForm(
                   child: Scaffold(
-                    appBar: const AppTopBar(title: 'Pemeriksaan Kunjungan'),
+                    appBar: AppTopBar(
+                      title: ('Pemeriksaan Kunjungan').tr(context),
+                    ),
                     body: SingleChildScrollView(
                       padding: const EdgeInsets.all(AppDimens.paddingMediumX),
                       child: Column(
@@ -514,7 +517,7 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                             color: Colors.blue.shade700,
                                           ),
                                           const SizedBox(width: 4),
-                                          Text(
+                                          HrText(
                                             'Koordinat tidak sesuai?',
                                             style: TextStyle(
                                               color: Colors.blue.shade700,
@@ -545,8 +548,8 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                     ),
                                     builder: (context, snapshot) {
                                       return DeliveryCardWidget(
-                                        title: 'Tiba ditempat',
-                                        titleTime: 'Waktu tiba',
+                                        title: ('Tiba ditempat').tr(context),
+                                        titleTime: ('Waktu tiba').tr(context),
                                         dateNow: DateTime.now().toEEEdMMMy,
                                         timeNow: DateTime.now().toHHmmss,
                                         isLoading: mapState.typeState.isLoading,
@@ -582,7 +585,7 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.stretch,
                                         children: [
-                                          Text(
+                                          HrText(
                                             'Data Order',
                                             style: context
                                                 .textStyle
@@ -593,14 +596,16 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                           ),
                                           const SizedBox(height: 4),
                                           TextFieldDropdown<String>(
-                                            title: 'Tipe Call',
+                                            title: ('Tipe Call').tr(context),
                                             required:
                                                 widget
                                                     .tasks
                                                     ?.aktivitas
                                                     ?.tujuanPenawaran ==
                                                 true,
-                                            hint: 'Pilih Tipe Call',
+                                            hint: ('Pilih Tipe Call').tr(
+                                              context,
+                                            ),
                                             items: const [
                                               'effective_call',
                                               'noc',
@@ -626,9 +631,12 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                               TextFieldBasic(
                                                 controller:
                                                     nominalManualController,
-                                                title: 'Nominal Transaksi (Rp)',
+                                                title:
+                                                    ('Nominal Transaksi (Rp)')
+                                                        .tr(context),
                                                 hint:
-                                                    'Masukkan Nominal (Misal: 150000)',
+                                                    ('Masukkan Nominal (Misal: 150000)')
+                                                        .tr(context),
                                                 colorTitle:
                                                     AppColors.labelSecondary,
                                                 inputType: TextInputType.number,
@@ -650,17 +658,23 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                               ),
                                             ] else ...[
                                               TextFieldDropdown<String>(
-                                                title: 'Tipe Order',
-                                                hint: 'Pilih Tipe Order',
+                                                title: ('Tipe Order').tr(
+                                                  context,
+                                                ),
+                                                hint: ('Pilih Tipe Order').tr(
+                                                  context,
+                                                ),
                                                 items: const [
                                                   'indent',
                                                   'canvas',
                                                 ],
                                                 itemAsString: (item) {
                                                   if (item == 'indent')
-                                                    return 'INDENT / PRE ORDER (PO)';
+                                                    return ('INDENT / PRE ORDER (PO)')
+                                                        .tr(context);
                                                   if (item == 'canvas')
-                                                    return 'CANVAS (JUAL LANGSUNG)';
+                                                    return ('CANVAS (JUAL LANGSUNG)')
+                                                        .tr(context);
                                                   return item
                                                       .replaceAll('_', ' ')
                                                       .toUpperCase();
@@ -671,8 +685,12 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                               ),
                                               AppDimens.size3M.hSpace,
                                               TextFieldDropdown<String>(
-                                                title: 'Kategori Order',
-                                                hint: 'Pilih Kategori',
+                                                title: ('Kategori Order').tr(
+                                                  context,
+                                                ),
+                                                hint: ('Pilih Kategori').tr(
+                                                  context,
+                                                ),
                                                 items: () {
                                                   final outlet = widget
                                                       .tasks
@@ -696,7 +714,8 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                                 }(),
                                                 itemAsString: (item) {
                                                   if (item == 'noo')
-                                                    return 'NOO (NEW OPEN OUTLET)';
+                                                    return ('NOO (NEW OPEN OUTLET)')
+                                                        .tr(context);
                                                   return item
                                                       .replaceAll('_', ' ')
                                                       .toUpperCase();
@@ -713,7 +732,7 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                                         horizontal: AppDimens
                                                             .paddingSmall,
                                                       ),
-                                                  child: Text(
+                                                  child: HrText(
                                                     kategoriOrder == 'noo'
                                                         ? '* NOO: Pemesanan pertama kali dari outlet yang belum pernah order sebelumnya.'
                                                         : kategoriOrder ==
@@ -734,8 +753,12 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                               ],
                                               AppDimens.size3M.hSpace,
                                               TextFieldDropdown<String>(
-                                                title: 'Metode Pembayaran',
-                                                hint: 'Pilih Metode',
+                                                title: ('Metode Pembayaran').tr(
+                                                  context,
+                                                ),
+                                                hint: ('Pilih Metode').tr(
+                                                  context,
+                                                ),
                                                 items: const [
                                                   'cash',
                                                   'cod',
@@ -774,11 +797,17 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                                   'termin') ...[
                                                 AppDimens.size3M.hSpace,
                                                 TextFieldDropdown<int>(
-                                                  title: 'Jumlah Termin',
-                                                  hint: 'Pilih Jumlah',
+                                                  title: ('Jumlah Termin').tr(
+                                                    context,
+                                                  ),
+                                                  hint: ('Pilih Jumlah').tr(
+                                                    context,
+                                                  ),
                                                   items: const [2, 3, 4, 6],
                                                   itemAsString: (item) =>
-                                                      '$item x Cicilan',
+                                                      ('$item x Cicilan').tr(
+                                                        context,
+                                                      ),
                                                   onChanged: (val) {
                                                     setState(() {
                                                       jumlahTermin = val ?? 2;
@@ -790,16 +819,16 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                               AppDimens.size3M.hSpace,
                                               ListTile(
                                                 contentPadding: EdgeInsets.zero,
-                                                title: const Text(
+                                                title: const HrText(
                                                   'Produk Pesanan',
                                                 ),
-                                                subtitle: Text(
+                                                subtitle: HrText(
                                                   '${selectedProducts.length} produk',
                                                 ),
                                                 trailing: SizedBox(
                                                   width: 100,
                                                   child: AppButton(
-                                                    text: 'Pilih',
+                                                    text: ('Pilih').tr(context),
                                                     onPressed: () async {
                                                       final result =
                                                           await showModalBottomSheet<
@@ -836,8 +865,12 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                                 AppDimens.size2X.hSpace,
                                                 TextFieldBasic(
                                                   controller: diskonController,
-                                                  title: 'Diskon (Rp)',
-                                                  hint: 'Masukkan Diskon',
+                                                  title: ('Diskon (Rp)').tr(
+                                                    context,
+                                                  ),
+                                                  hint: ('Masukkan Diskon').tr(
+                                                    context,
+                                                  ),
                                                   colorTitle:
                                                       AppColors.labelSecondary,
                                                   inputType:
@@ -883,7 +916,7 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                                             MainAxisAlignment
                                                                 .spaceBetween,
                                                         children: [
-                                                          const Text(
+                                                          const HrText(
                                                             'Gross Sales',
                                                           ),
                                                           Text(
@@ -897,8 +930,10 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                                             MainAxisAlignment
                                                                 .spaceBetween,
                                                         children: [
-                                                          const Text('Diskon'),
-                                                          Text(
+                                                          const HrText(
+                                                            'Diskon',
+                                                          ),
+                                                          HrText(
                                                             '- Rp ${diskon.toInt().textDecimalDigit}',
                                                             style:
                                                                 const TextStyle(
@@ -914,7 +949,7 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                                             MainAxisAlignment
                                                                 .spaceBetween,
                                                         children: [
-                                                          const Text(
+                                                          const HrText(
                                                             'Net Sales',
                                                             style: TextStyle(
                                                               fontWeight:
@@ -939,7 +974,7 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                                 if (jadwalPembayaran
                                                     .isNotEmpty) ...[
                                                   AppDimens.size3M.hSpace,
-                                                  Text(
+                                                  HrText(
                                                     'Jadwal Pembayaran',
                                                     style: context
                                                         .textStyle
@@ -965,7 +1000,7 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                                             MainAxisAlignment
                                                                 .spaceBetween,
                                                         children: [
-                                                          Text(
+                                                          HrText(
                                                             'Termin ${j.noTermin} (${date?.toEEEdMMMy})',
                                                           ),
                                                           Text(
@@ -1013,7 +1048,7 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.stretch,
                                         children: [
-                                          Text(
+                                          HrText(
                                             'Data Penagihan',
                                             style: context
                                                 .textStyle
@@ -1027,8 +1062,10 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                             TextFieldBasic(
                                               controller:
                                                   noReferensiPenagihanController,
-                                              title: 'No Referensi / Faktur',
-                                              hint: 'Ketik lalu Enter/Koma',
+                                              title: ('No Referensi / Faktur')
+                                                  .tr(context),
+                                              hint: ('Ketik lalu Enter/Koma')
+                                                  .tr(context),
                                               colorTitle:
                                                   AppColors.labelSecondary,
                                               onSubmitted: (val) {
@@ -1112,7 +1149,7 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                                             const EdgeInsets.only(
                                                               bottom: 8,
                                                             ),
-                                                        child: Text(
+                                                        child: HrText(
                                                           'No Referensi dari Admin:',
                                                           style: context
                                                               .textStyle
@@ -1156,7 +1193,7 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                                             .toList(),
                                                       ),
                                                       const SizedBox(height: 8),
-                                                      Text(
+                                                      HrText(
                                                         'Klik nomor referensi untuk melihat detail tagihan',
                                                         style: TextStyle(
                                                           fontSize: 11,
@@ -1195,7 +1232,7 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                                       ),
                                                       const SizedBox(width: 8),
                                                       Expanded(
-                                                        child: Text(
+                                                        child: HrText(
                                                           'Belum ada referensi tagihan yang ditetapkan admin.',
                                                           style: TextStyle(
                                                             fontSize: 12,
@@ -1216,9 +1253,11 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                             controller:
                                                 nominalPenagihanController,
                                             title:
-                                                'Nominal Berhasil Ditagih (Rp)',
+                                                ('Nominal Berhasil Ditagih (Rp)')
+                                                    .tr(context),
                                             hint:
-                                                'Masukkan Nominal (Misal: 150000)',
+                                                ('Masukkan Nominal (Misal: 150000)')
+                                                    .tr(context),
                                             colorTitle:
                                                 AppColors.labelSecondary,
                                             inputType: TextInputType.number,
@@ -1263,7 +1302,7 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.stretch,
                                         children: [
-                                          Text(
+                                          HrText(
                                             'Data Pengantaran',
                                             style: context
                                                 .textStyle
@@ -1274,8 +1313,10 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                           ),
                                           const SizedBox(height: 4),
                                           TextFieldDropdown<String>(
-                                            title: 'Status Pengantaran',
-                                            hint: 'Pilih Status',
+                                            title: ('Status Pengantaran').tr(
+                                              context,
+                                            ),
+                                            hint: ('Pilih Status').tr(context),
                                             items: const ['none', 'noc'],
                                             selectedItem:
                                                 tipeCall == 'none' ||
@@ -1284,9 +1325,12 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                                 : tipeCall,
                                             itemAsString: (item) {
                                               if (item == 'none')
-                                                return 'BERHASIL TERKIRIM';
+                                                return ('BERHASIL TERKIRIM').tr(
+                                                  context,
+                                                );
                                               if (item == 'noc')
-                                                return 'GAGAL (TOKO TUTUP / DITOLAK)';
+                                                return ('GAGAL (TOKO TUTUP / DITOLAK)')
+                                                    .tr(context);
                                               return item.toUpperCase();
                                             },
                                             onChanged: (val) =>
@@ -1297,8 +1341,11 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                             TextFieldBasic(
                                               controller:
                                                   noReferensiPengantaranController,
-                                              title: 'No Referensi DO',
-                                              hint: 'Ketik lalu Enter/Koma',
+                                              title: ('No Referensi DO').tr(
+                                                context,
+                                              ),
+                                              hint: ('Ketik lalu Enter/Koma')
+                                                  .tr(context),
                                               colorTitle:
                                                   AppColors.labelSecondary,
                                               onSubmitted: (val) {
@@ -1382,7 +1429,7 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                                             const EdgeInsets.only(
                                                               bottom: 8,
                                                             ),
-                                                        child: Text(
+                                                        child: HrText(
                                                           'No Referensi dari Admin:',
                                                           style: context
                                                               .textStyle
@@ -1425,7 +1472,7 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                                             .toList(),
                                                       ),
                                                       const SizedBox(height: 8),
-                                                      Text(
+                                                      HrText(
                                                         'Klik nomor referensi untuk melihat detail DO',
                                                         style: TextStyle(
                                                           fontSize: 11,
@@ -1464,7 +1511,7 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                                       ),
                                                       const SizedBox(width: 8),
                                                       Expanded(
-                                                        child: Text(
+                                                        child: HrText(
                                                           'Belum ada referensi pengantaran (DO) yang ditetapkan admin.',
                                                           style: TextStyle(
                                                             fontSize: 12,
@@ -1502,7 +1549,7 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.stretch,
                                       children: [
-                                        Text(
+                                        HrText(
                                           'Bukti Kunjungan',
                                           style: context.textStyle.titleMedium!
                                               .copyWith(
@@ -1520,7 +1567,9 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                                         false)
                                                     ? fotoPrimary!.first.path
                                                     : null,
-                                                label: 'Foto Bukti',
+                                                label: ('Foto Bukti').tr(
+                                                  context,
+                                                ),
                                                 isLoading:
                                                     _isOpeningPrimaryPhoto,
                                                 isDisabled:
@@ -1561,7 +1610,8 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                                         false)
                                                     ? fotoSecondary!.first.path
                                                     : null,
-                                                label: 'Foto Pendukung / Nota',
+                                                label: ('Foto Pendukung / Nota')
+                                                    .tr(context),
                                                 isLoading:
                                                     _isOpeningSecondaryPhoto,
                                                 isDisabled:
@@ -1595,9 +1645,10 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                                         AppDimens.size3M.hSpace,
                                         TextFieldBasic(
                                           controller: catatan,
-                                          title: 'Catatan',
+                                          title: ('Catatan').tr(context),
                                           colorTitle: AppColors.labelSecondary,
-                                          hint: 'Masukan Catatan (Optional)',
+                                          hint: ('Masukan Catatan (Optional)')
+                                              .tr(context),
                                           multiline: true,
                                         ),
                                       ],
@@ -1631,9 +1682,10 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
             if (orderState.status.isLoaded) {
               await AppModalBottom.showDefault(
                 context,
-                contentTitle: 'Pemeriksaan Kunjungan Berhasil',
+                contentTitle: ('Pemeriksaan Kunjungan Berhasil').tr(context),
                 contentSubtitle:
-                    'Anda berhasil melakukan kunjungan di ${widget.tasks?.aktivitas?.apotikId?.namaApotik ?? ''}',
+                    ('Anda berhasil melakukan kunjungan di ${widget.tasks?.aktivitas?.apotikId?.namaApotik ?? ''}')
+                        .tr(context),
                 hasActionPop: true,
               );
 
@@ -1655,9 +1707,12 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                   if (_pendingOrderParams == null) {
                     await AppModalBottom.showDefault(
                       context,
-                      contentTitle: 'Pemeriksaan Kunjungan Berhasil',
+                      contentTitle: ('Pemeriksaan Kunjungan Berhasil').tr(
+                        context,
+                      ),
                       contentSubtitle:
-                          'Anda berhasil melakukan kunjungan di ${widget.tasks?.aktivitas?.apotikId?.namaApotik ?? ''}',
+                          ('Anda berhasil melakukan kunjungan di ${widget.tasks?.aktivitas?.apotikId?.namaApotik ?? ''}')
+                              .tr(context),
                       hasActionPop: true,
                     );
                     streamLocation.cancel();
@@ -1696,13 +1751,13 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                     }
 
                     if (mapState.typeState.isLoading) {
-                      Fluttertoast.showToast(msg: kMapWaiting);
+                      Fluttertoast.showToast(msg: (kMapWaiting).trCurrent());
                     } else if (mapState.typeState.isLoaded) {
                       if (widget.tasks?.aktivitas?.tujuanPenawaran == true &&
                           (tipeCall == null || tipeCall!.isEmpty)) {
                         Fluttertoast.showToast(
                           msg:
-                              'Tipe Call wajib diisi untuk kunjungan penawaran',
+                              ('Tipe Call wajib diisi untuk kunjungan penawaran').trCurrent(),
                         );
                         return;
                       }
@@ -1798,9 +1853,9 @@ class _DeliveryCheckingFormState extends State<DeliveryCheckingForm> {
                       );
                     }
                   },
-                  text: _submission.visitCompleted && !_submission.isComplete
-                      ? 'Coba Lagi Order'
-                      : 'Konfirmasi',
+                  text: (_submission.visitCompleted && !_submission.isComplete
+                      ? ('Coba Lagi Order').tr(context)
+                      : ('Konfirmasi').tr(context)),
                   isLoading:
                       _submission.value ||
                       _submission.isComplete ||

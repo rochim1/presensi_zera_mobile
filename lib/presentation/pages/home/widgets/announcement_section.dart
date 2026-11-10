@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -42,7 +43,7 @@ class AnnouncementSection extends StatelessWidget {
         ),
         actionsBuilder: (sheetContext) => AppButtonNew(
           onPressed: () => Navigator.of(sheetContext).pop(),
-          text: 'Tutup',
+          text: ('Tutup').tr(context),
           variant: AppButtonNewVariant.tertiary,
           style: AppButtonNewStyle.ghost,
         ),
@@ -116,7 +117,7 @@ class AnnouncementSection extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                            HrText(
                               'Pengumuman',
                               style: context.textStyle.titleMedium!.copyWith(
                                 fontWeight: FontWeight.bold,
@@ -124,7 +125,7 @@ class AnnouncementSection extends StatelessWidget {
                               ),
                             ),
                             AppDimens.sizeS.hSpace,
-                            Text(
+                            HrText(
                               'Cek pengumuman terbaru dari perusahaanmu',
                               style: context.textStyle.bodySmall!.copyWith(
                                 color: AppColors.labelSecondary,
@@ -226,7 +227,7 @@ class AnnouncementSection extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: AppDimens.h16),
-                        Text(
+                        HrText(
                           'Belum ada pengumuman',
                           style: context.textStyle.bodyMedium?.copyWith(
                             color: AppColors.labelSecondary,

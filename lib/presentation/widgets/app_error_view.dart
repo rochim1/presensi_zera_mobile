@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:presensi_data/core/_core.dart';
@@ -38,7 +39,7 @@ class AppErrorView extends StatelessWidget {
               height: AppDimens.h160,
             ),
 
-            Text(
+            HrText(
               failure.message,
               style: context.textStyle.titleMedium!.copyWith(
                 color: AppColors.labelSecondary,

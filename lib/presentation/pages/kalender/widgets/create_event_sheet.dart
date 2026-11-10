@@ -1,3 +1,5 @@
+import 'package:presensi_mobile/l10n/app_language_controller.dart';
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:presensi_data/presensi_data.dart';
@@ -224,7 +226,7 @@ class _CreateCalendarEventSheetState extends State<CreateCalendarEventSheet> {
           Row(
             children: [
               Expanded(
-                child: Text(
+                child: HrText(
                   widget.initialEvent == null ? 'Tambah Event' : 'Edit Event',
                   style: Theme.of(
                     context,
@@ -240,13 +242,13 @@ class _CreateCalendarEventSheetState extends State<CreateCalendarEventSheet> {
           if (widget.initialEvent?.isRecurring == true)
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 8),
-              child: Text(
+              child: HrText(
                 'Perubahan berlaku untuk seluruh rangkaian event. Tanggal di bawah adalah tanggal awal rangkaian.',
               ),
             ),
           TextFormField(
             controller: _title,
-            decoration: const InputDecoration(labelText: 'Judul *'),
+            decoration: InputDecoration(labelText: ('Judul *').tr(context)),
             validator: (v) =>
                 v == null || v.trim().isEmpty ? 'Judul wajib diisi' : null,
           ),
@@ -254,21 +256,23 @@ class _CreateCalendarEventSheetState extends State<CreateCalendarEventSheet> {
           TextFormField(
             controller: _description,
             maxLines: 2,
-            decoration: const InputDecoration(labelText: 'Deskripsi'),
+            decoration: InputDecoration(labelText: ('Deskripsi').tr(context)),
           ),
           const SizedBox(height: 12),
           DropdownButtonFormField<String>(
             initialValue: _eventType,
-            decoration: const InputDecoration(labelText: 'Tipe Event *'),
+            decoration: InputDecoration(
+              labelText: ('Tipe Event *').tr(context),
+            ),
             items: _types.entries
                 .map(
-                  (e) => DropdownMenuItem(value: e.key, child: Text(e.value)),
+                  (e) => DropdownMenuItem(value: e.key, child: HrText(e.value)),
                 )
                 .toList(),
             onChanged: (v) => setState(() => _eventType = v!),
           ),
           const SizedBox(height: 12),
-          Text('Warna', style: Theme.of(context).textTheme.labelLarge),
+          HrText('Warna', style: Theme.of(context).textTheme.labelLarge),
           const SizedBox(height: 8),
           Wrap(
             spacing: 10,
@@ -290,7 +294,7 @@ class _CreateCalendarEventSheetState extends State<CreateCalendarEventSheet> {
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: const Text('Seharian'),
+            title: const HrText('Seharian'),
             value: _allDay,
             onChanged: (v) => setState(() => _allDay = v),
           ),
@@ -298,15 +302,18 @@ class _CreateCalendarEventSheetState extends State<CreateCalendarEventSheet> {
             children: [
               Expanded(
                 child: _PickerTile(
-                  label: 'Tanggal Mulai *',
-                  value: DateFormat('dd MMM yyyy', 'id_ID').format(_startDate),
+                  label: ('Tanggal Mulai *').tr(context),
+                  value: DateFormat(
+                    'dd MMM yyyy',
+                    AppLanguageController.instance.effectiveLocale.languageCode,
+                  ).format(_startDate),
                   onTap: () => _pickDate(true),
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: _PickerTile(
-                  label: 'Tanggal Selesai',
+                  label: ('Tanggal Selesai').tr(context),
                   value: DateFormat(
                     'dd MMM yyyy',
                     'id_ID',
@@ -322,7 +329,7 @@ class _CreateCalendarEventSheetState extends State<CreateCalendarEventSheet> {
               children: [
                 Expanded(
                   child: _PickerTile(
-                    label: 'Waktu Mulai',
+                    label: ('Waktu Mulai').tr(context),
                     value: _time(_startTime) ?? 'Pilih',
                     onTap: () => _pickTime(true),
                   ),
@@ -330,7 +337,7 @@ class _CreateCalendarEventSheetState extends State<CreateCalendarEventSheet> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: _PickerTile(
-                    label: 'Waktu Selesai',
+                    label: ('Waktu Selesai').tr(context),
                     value: _time(_endTime) ?? 'Pilih',
                     onTap: () => _pickTime(false),
                   ),
@@ -340,7 +347,7 @@ class _CreateCalendarEventSheetState extends State<CreateCalendarEventSheet> {
           ],
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: const Text('Event Berulang'),
+            title: const HrText('Event Berulang'),
             value: _recurring,
             onChanged: (v) => setState(() {
               _recurring = v;
@@ -350,19 +357,19 @@ class _CreateCalendarEventSheetState extends State<CreateCalendarEventSheet> {
           if (_recurring) ...[
             DropdownButtonFormField<String>(
               initialValue: _recurringType,
-              decoration: const InputDecoration(
-                labelText: 'Tipe Pengulangan *',
+              decoration: InputDecoration(
+                labelText: ('Tipe Pengulangan *').tr(context),
               ),
               items: const [
-                DropdownMenuItem(value: 'yearly', child: Text('Tahunan')),
-                DropdownMenuItem(value: 'monthly', child: Text('Bulanan')),
-                DropdownMenuItem(value: 'weekly', child: Text('Mingguan')),
+                DropdownMenuItem(value: 'yearly', child: HrText('Tahunan')),
+                DropdownMenuItem(value: 'monthly', child: HrText('Bulanan')),
+                DropdownMenuItem(value: 'weekly', child: HrText('Mingguan')),
               ],
               onChanged: (v) => setState(() => _recurringType = v),
             ),
             const Padding(
               padding: EdgeInsets.only(top: 8),
-              child: Text(
+              child: HrText(
                 'Pengulangan mengikuti tanggal awal. Bulan atau tahun tanpa tanggal tersebut dilewati.',
               ),
             ),
@@ -370,7 +377,7 @@ class _CreateCalendarEventSheetState extends State<CreateCalendarEventSheet> {
           const SizedBox(height: 16),
           FilledButton(
             onPressed: _submitting ? null : _submit,
-            child: Text(
+            child: HrText(
               _submitting
                   ? 'Menyimpan...'
                   : widget.initialEvent == null
@@ -397,7 +404,7 @@ class _PickerTile extends StatelessWidget {
   Widget build(BuildContext context) => InkWell(
     onTap: onTap,
     child: InputDecorator(
-      decoration: InputDecoration(labelText: label),
+      decoration: InputDecoration(labelText: (label).tr(context)),
       child: Text(value),
     ),
   );

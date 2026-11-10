@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_domain/presensi_domain.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -41,7 +42,7 @@ class AttendanceTypeSelector extends StatelessWidget {
           const SizedBox(height: 4),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Text(
+            child: HrText(
               errorText!,
               style: context.textStyle.labelSmall?.copyWith(
                 color: AppColors.danger,
@@ -81,7 +82,7 @@ class AttendanceTypeSelector extends StatelessWidget {
             color: isSelected ? AppColors.primary : Colors.transparent,
             borderRadius: BorderRadius.circular(AppDimens.radiusSmall),
           ),
-          child: Text(
+          child: HrText(
             type.toName,
             textAlign: TextAlign.center,
             style: context.textStyle.bodySmall!.copyWith(

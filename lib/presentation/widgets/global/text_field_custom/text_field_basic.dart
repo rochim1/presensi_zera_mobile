@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -68,7 +69,7 @@ class TextFieldBasic extends StatelessWidget {
             padding: const EdgeInsets.only(left: AppDimens.size2S),
             child: RichText(
               text: TextSpan(
-                text: title!,
+                text: title!.tr(context),
                 style: AppTextStyle.fieldLabel.copyWith(
                   color: colorTitle ?? AppColors.labelPrimary,
                 ),
@@ -108,10 +109,10 @@ class TextFieldBasic extends StatelessWidget {
             decoration:
                 decoration ??
                 InputDecoration(
-                  hintText: hint,
+                  hintText: hint.tr(context),
                   hintStyle: AppTextStyle.fieldHint,
                   suffixText: suffixText,
-                  errorText: errorText,
+                  errorText: errorText?.tr(context),
                   prefixIcon: prefixIcon != null
                       ? Container(
                           padding: const EdgeInsets.all(
@@ -173,7 +174,9 @@ class TextFieldBasic extends StatelessWidget {
             enabled: enabled,
             maxLines: multiline ? 3 : 1,
             textInputAction: inputAction,
-            validator: validator,
+            validator: validator == null
+                ? null
+                : (value) => validator?.call(value)?.tr(context),
             autofocus: autofocus!,
             autovalidateMode: AutovalidateMode.onUserInteraction,
             obscureText: obscure,

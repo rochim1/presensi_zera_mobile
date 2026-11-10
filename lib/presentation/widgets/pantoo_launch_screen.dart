@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/widgets.dart';
 
 /// A shared surface while startup or the first authenticated route is pending.
@@ -15,7 +16,7 @@ class PantooLaunchScreen extends StatelessWidget {
           width: 160,
           height: 200,
           fit: BoxFit.contain,
-          semanticLabel: 'Pantoo HR',
+          semanticLabel: ('Pantoo HR').tr(context),
         ),
       ),
     ),

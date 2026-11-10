@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
 
@@ -14,7 +15,7 @@ class ListItemNote extends StatelessWidget {
       children: [
         Align(
           alignment: Alignment.centerLeft,
-          child: Text(
+          child: HrText(
             label,
             style: TextStyle(color: AppColors.grey.shade700, fontSize: 13),
           ),

@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,7 +33,7 @@ class LoanView extends StatelessWidget {
     final user = context.read<AppCubit>().state.user.data;
     return Scaffold(
       appBar: AppTopBar(
-        title: 'Pinjaman (Loan)',
+        title: ('Pinjaman (Loan)').tr(context),
         showBackButton: true,
         onBackTap: () => context.router.maybePop(),
         backgroundColor: AppColors.transparent,
@@ -76,7 +77,7 @@ class LoanView extends StatelessWidget {
               },
               backgroundColor: AppColors.primary,
               icon: const Icon(Icons.add, color: Colors.white),
-              label: const Text(
+              label: const HrText(
                 'Ajukan Pinjaman',
                 style: TextStyle(
                   color: Colors.white,

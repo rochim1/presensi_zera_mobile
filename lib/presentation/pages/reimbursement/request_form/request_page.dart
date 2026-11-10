@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -79,7 +80,7 @@ class ReimbursementRequestFormView extends StatelessWidget {
                 child: Column(
                   children: [
                     AppTopBar(
-                      title: 'Ajukan Reimbursement',
+                      title: ('Ajukan Reimbursement').tr(context),
                       useGradient: false,
                       backgroundColor: Colors.transparent,
                       titleColor: AppColors.white,
@@ -117,9 +118,9 @@ class ReimbursementRequestFormView extends StatelessWidget {
                                       CrossAxisAlignment.stretch,
                                   children: [
                                     AppDropdownField<ReimbursementCategory>(
-                                      label: 'Kategori',
+                                      label: ('Kategori').tr(context),
                                       isRequired: true,
-                                      hintText: 'Pilih Kategori',
+                                      hintText: ('Pilih Kategori').tr(context),
                                       selectedItem: state.form.category.value,
                                       items: categories,
                                       onChanged: cubit.onChangeCategory,
@@ -128,33 +129,36 @@ class ReimbursementRequestFormView extends StatelessWidget {
                                       itemAsString: (item) => item.label,
                                     ),
                                     AppTextField(
-                                      label: 'Judul',
+                                      label: ('Judul').tr(context),
                                       isRequired: true,
-                                      hintText: 'Masukkan judul reimbursement',
+                                      hintText: ('Masukkan judul reimbursement')
+                                          .tr(context),
                                       onChanged: cubit.onChangeTitle,
                                       errorText: state.form.title.errorMessage,
                                     ),
                                     AppTextField(
-                                      label: 'Deskripsi',
+                                      label: ('Deskripsi').tr(context),
                                       isRequired: true,
-                                      hintText: 'Masukkan deskripsi',
+                                      hintText: ('Masukkan deskripsi').tr(
+                                        context,
+                                      ),
                                       maxLines: 3,
                                       onChanged: cubit.onChangeDescription,
                                       errorText:
                                           state.form.description.errorMessage,
                                     ),
                                     AppDateTimeField(
-                                      label: 'Tanggal',
+                                      label: ('Tanggal').tr(context),
                                       isRequired: true,
-                                      hintText: 'Pilih Tanggal',
+                                      hintText: ('Pilih Tanggal').tr(context),
                                       value: state.form.date.value,
                                       onConfirmed: cubit.onChangeDate,
                                       errorText: state.form.date.errorMessage,
                                     ),
                                     AppDropdownField<CurrencySymbol>(
-                                      label: 'Mata Uang',
+                                      label: ('Mata Uang').tr(context),
                                       isRequired: true,
-                                      hintText: 'Pilih Mata Uang',
+                                      hintText: ('Pilih Mata Uang').tr(context),
                                       selectedItem: state.form.currency.value,
                                       items: CurrencySymbol.values,
                                       onChanged: cubit.onChangeCurrency,
@@ -163,9 +167,11 @@ class ReimbursementRequestFormView extends StatelessWidget {
                                       itemAsString: (item) => item.displayName,
                                     ),
                                     AppTextField(
-                                      label: 'Nominal',
+                                      label: ('Nominal').tr(context),
                                       isRequired: true,
-                                      hintText: 'Masukkan nominal',
+                                      hintText: ('Masukkan nominal').tr(
+                                        context,
+                                      ),
                                       keyboardType: TextInputType.number,
                                       initialValue:
                                           state.form.nominal.value == null
@@ -183,9 +189,10 @@ class ReimbursementRequestFormView extends StatelessWidget {
                                       },
                                     ),
                                     AppAttachmentField(
-                                      label: 'Bukti Pembayaran',
+                                      label: ('Bukti Pembayaran').tr(context),
                                       isRequired: true,
-                                      hintText: 'Tambahkan foto atau dokumen',
+                                      hintText: ('Tambahkan foto atau dokumen')
+                                          .tr(context),
                                       value: state.form.attachments.value
                                           .map((e) => e.name)
                                           .join(', '),
@@ -196,9 +203,10 @@ class ReimbursementRequestFormView extends StatelessWidget {
                                           state.form.attachments.errorMessage,
                                     ),
                                     AppTextField(
-                                      label: 'Catatan Tambahan',
+                                      label: ('Catatan Tambahan').tr(context),
                                       isRequired: false,
-                                      hintText: 'Tambahkan catatan (opsional)',
+                                      hintText: ('Tambahkan catatan (opsional)')
+                                          .tr(context),
                                       maxLines: 2,
                                       onChanged: cubit.onChangeNotes,
                                       errorText: state.form.notes.errorMessage,
@@ -217,7 +225,7 @@ class ReimbursementRequestFormView extends StatelessWidget {
             color: context.theme.scaffoldBackgroundColor,
             padding: EdgeInsets.all(AppDimens.w16),
             child: AppButtonNew(
-              text: 'Buat Request',
+              text: ('Buat Request').tr(context),
               onPressed: cubit.submit,
               isLoading: state.submit.isLoading,
             ),

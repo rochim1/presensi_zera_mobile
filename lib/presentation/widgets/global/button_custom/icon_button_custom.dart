@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
 
@@ -60,7 +61,7 @@ class IconButtonCustom extends StatelessWidget {
         ),
         if (label != null) ...[
           const SizedBox(height: AppDimens.size3S),
-          Text(
+          HrText(
             label!,
             style: context.textStyle.bodyMedium!.copyWith(
               color: AppColors.labelSecondary,

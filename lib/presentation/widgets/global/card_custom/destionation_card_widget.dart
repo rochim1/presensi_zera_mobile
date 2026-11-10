@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
 import 'package:presensi_mobile/presentation/_presentation.dart';
@@ -51,7 +52,7 @@ class DestionationCardWidget extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        HrText(
                           title ?? '-',
                           maxLines: 1,
                           style: context.textStyle.titleMedium!,
@@ -60,7 +61,7 @@ class DestionationCardWidget extends StatelessWidget {
                         ),
                         if (deliveryStatus != null) ...[
                           AppDimens.size2S.hSpace,
-                          Text(
+                          HrText(
                             subTitle ?? '-',
                             style: context.textStyle.bodyMedium!.copyWith(
                               color: AppColors.labelSecondary,
@@ -76,7 +77,7 @@ class DestionationCardWidget extends StatelessWidget {
                       value: deliveryStatus!.toName,
                     )
                   else
-                    Text(
+                    HrText(
                       subTitle ?? '-',
                       style: context.textStyle.bodyMedium!.copyWith(
                         color: AppColors.labelSecondary,

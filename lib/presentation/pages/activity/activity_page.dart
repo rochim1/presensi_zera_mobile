@@ -1,3 +1,5 @@
+import 'package:presensi_mobile/l10n/app_language_controller.dart';
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
@@ -130,16 +132,16 @@ class _ActivityPageState extends State<ActivityPage> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Hapus kegiatan?'),
-        content: Text('Kegiatan “${event.title}” akan dihapus.'),
+        title: const HrText('Hapus kegiatan?'),
+        content: HrText('Kegiatan “${event.title}” akan dihapus.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('Batal'),
+            child: const HrText('Batal'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text('Hapus'),
+            child: const HrText('Hapus'),
           ),
         ],
       ),
@@ -164,7 +166,7 @@ class _ActivityPageState extends State<ActivityPage> {
       initialDate: _month,
       firstDate: DateTime(2020),
       lastDate: DateTime(2100),
-      helpText: 'Pilih bulan kegiatan',
+      helpText: ('Pilih bulan kegiatan').tr(context),
     );
     if (selected == null) return;
     setState(() => _month = DateTime(selected.year, selected.month));
@@ -173,6 +175,7 @@ class _ActivityPageState extends State<ActivityPage> {
 
   @override
   Widget build(BuildContext context) {
+    hrLocale(context); // Rebuild formatted dates when the language changes.
     final user = context.select<AppCubit, dynamic>(
       (cubit) => cubit.state.user.data,
     );
@@ -187,9 +190,9 @@ class _ActivityPageState extends State<ActivityPage> {
 
     return Scaffold(
       backgroundColor: AppColors.bgPrimary,
-      appBar: const AppTopBar(
-        title: 'Kegiatan',
-        subtitle: 'Kelola kegiatan dan kehadiran',
+      appBar: AppTopBar(
+        title: ('Kegiatan').tr(context),
+        subtitle: ('Kelola kegiatan dan kehadiran').tr(context),
         backgroundColor: AppColors.transparent,
       ),
       floatingActionButton: canCreate
@@ -228,7 +231,13 @@ class _ActivityPageState extends State<ActivityPage> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        DateFormat('MMMM yyyy', 'id_ID').format(_month),
+                        DateFormat(
+                          'MMMM yyyy',
+                          AppLanguageController
+                              .instance
+                              .effectiveLocale
+                              .languageCode,
+                        ).format(_month),
                         style: Theme.of(context).textTheme.titleMedium
                             ?.copyWith(fontWeight: FontWeight.w700),
                       ),
@@ -254,7 +263,7 @@ class _ActivityPageState extends State<ActivityPage> {
                         padding: const EdgeInsets.only(right: 8),
                         child: ChoiceChip(
                           selected: selected,
-                          label: Text(entry.value),
+                          label: HrText(entry.value),
                           onSelected: (_) =>
                               setState(() => _filter = entry.key),
                           selectedColor: AppColors.primary,
@@ -310,7 +319,7 @@ class _ActivityPageState extends State<ActivityPage> {
   }) async {
     await AppBottomSheet.show<void>(
       context: context,
-      title: const AppBottomSheetTitle(title: 'Detail Kegiatan'),
+      title: AppBottomSheetTitle(title: ('Detail Kegiatan').tr(context)),
       child: _ActivityDetail(
         event: event,
         remote: _remote,
@@ -327,7 +336,7 @@ class _ActivityPageState extends State<ActivityPage> {
                   _delete(event);
                 },
                 icon: const Icon(Icons.delete_outline, color: AppColors.danger),
-                label: const Text(
+                label: const HrText(
                   'Hapus',
                   style: TextStyle(color: AppColors.danger),
                 ),
@@ -346,7 +355,7 @@ class _ActivityPageState extends State<ActivityPage> {
                   );
                 },
                 icon: const Icon(Icons.edit_outlined),
-                label: const Text('Edit'),
+                label: const HrText('Edit'),
               ),
             ),
           if (canUpdate) const SizedBox(width: 8),
@@ -354,7 +363,7 @@ class _ActivityPageState extends State<ActivityPage> {
             child: OutlinedButton.icon(
               onPressed: () => Navigator.pop(sheetContext),
               icon: const Icon(Icons.close),
-              label: const Text('Tutup'),
+              label: const HrText('Tutup'),
             ),
           ),
         ],
@@ -378,6 +387,7 @@ class _ActivityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    hrLocale(context); // Rebuild formatted dates when the language changes.
     final date = DateTime.tryParse(event.startDate);
     final status = switch (state) {
       'upcoming' => ('Akan Datang', AppColors.info, AppColors.infoBackground),
@@ -459,7 +469,7 @@ class _ActivityCard extends StatelessWidget {
                       color: status.$3,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Text(
+                    child: HrText(
                       status.$1,
                       style: TextStyle(
                         color: status.$2,
@@ -483,7 +493,13 @@ class _ActivityCard extends StatelessWidget {
                     child: Text(
                       date == null
                           ? event.startDate
-                          : DateFormat('dd MMM yyyy', 'id_ID').format(date),
+                          : DateFormat(
+                              'dd MMM yyyy',
+                              AppLanguageController
+                                  .instance
+                                  .effectiveLocale
+                                  .languageCode,
+                            ).format(date),
                     ),
                   ),
                   Icon(
@@ -496,7 +512,7 @@ class _ActivityCard extends StatelessWidget {
                         : AppColors.labelTertiary,
                   ),
                   const SizedBox(width: 6),
-                  Text(
+                  HrText(
                     event.attendanceEnabled ? 'QR aktif' : 'Tanpa presensi',
                     style: const TextStyle(color: AppColors.labelSecondary),
                   ),
@@ -514,7 +530,7 @@ class _ActivityCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Expanded(
-                      child: Text(
+                      child: HrText(
                         event.startTime == null
                             ? 'Seharian'
                             : '${event.startTime}${event.endTime == null ? '' : ' – ${event.endTime}'}',
@@ -576,6 +592,7 @@ class _ActivityDetailState extends State<_ActivityDetail> {
 
   @override
   Widget build(BuildContext context) {
+    hrLocale(context); // Rebuild formatted dates when the language changes.
     final event = widget.event;
     final date = DateTime.tryParse(event.startDate);
     return Column(
@@ -601,27 +618,30 @@ class _ActivityDetailState extends State<_ActivityDetail> {
         const SizedBox(height: 16),
         _DetailRow(
           icon: Icons.calendar_today_outlined,
-          label: 'Tanggal',
+          label: ('Tanggal').tr(context),
           value: date == null
               ? event.startDate
-              : DateFormat('EEEE, dd MMMM yyyy', 'id_ID').format(date),
+              : DateFormat(
+                  'EEEE, dd MMMM yyyy',
+                  AppLanguageController.instance.effectiveLocale.languageCode,
+                ).format(date),
         ),
         _DetailRow(
           icon: Icons.schedule,
-          label: 'Waktu',
+          label: ('Waktu').tr(context),
           value: event.startTime == null
               ? 'Seharian'
               : '${event.startTime}${event.endTime == null ? '' : ' – ${event.endTime}'}',
         ),
         _DetailRow(
           icon: Icons.qr_code_scanner,
-          label: 'Presensi',
+          label: ('Presensi').tr(context),
           value: event.attendanceEnabled ? 'QR aktif' : 'Tidak diaktifkan',
         ),
         if (event.attendanceLocationName != null)
           _DetailRow(
             icon: Icons.location_on_outlined,
-            label: 'Lokasi',
+            label: ('Lokasi').tr(context),
             value:
                 '${event.attendanceLocationName}${event.attendanceRadiusMeters == null ? '' : ' · radius ${event.attendanceRadiusMeters} m'}',
           ),
@@ -650,7 +670,7 @@ class _ActivityDetailState extends State<_ActivityDetail> {
                       }
                     },
                     icon: const Icon(Icons.qr_code_scanner),
-                    label: const Text('Scan Karyawan'),
+                    label: const HrText('Scan Karyawan'),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -665,7 +685,7 @@ class _ActivityDetailState extends State<_ActivityDetail> {
                       ),
                     ),
                     icon: const Icon(Icons.qr_code_2),
-                    label: const Text('Tampilkan Code'),
+                    label: const HrText('Tampilkan Code'),
                   ),
                 ),
               ],
@@ -693,12 +713,12 @@ class _ActivityDetailState extends State<_ActivityDetail> {
                 }
               },
               icon: const Icon(Icons.document_scanner_outlined),
-              label: const Text('Scan QR Kegiatan'),
+              label: const HrText('Scan QR Kegiatan'),
             ),
           ),
           const SizedBox(height: 16),
           if (widget.canViewAttendance) ...[
-            Text(
+            HrText(
               'Kehadiran',
               style: Theme.of(
                 context,
@@ -717,14 +737,14 @@ class _ActivityDetailState extends State<_ActivityDetail> {
                   );
                 }
                 if (snapshot.hasError) {
-                  return Text(
+                  return HrText(
                     'Gagal memuat kehadiran: ${snapshot.error}',
                     style: const TextStyle(color: AppColors.danger),
                   );
                 }
                 final rows = snapshot.data ?? const [];
                 if (rows.isEmpty) {
-                  return const Text(
+                  return const HrText(
                     'Belum ada peserta yang tercatat hadir.',
                     style: TextStyle(color: AppColors.labelSecondary),
                   );
@@ -746,7 +766,7 @@ class _ActivityDetailState extends State<_ActivityDetail> {
                         row.userName,
                         style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
-                      subtitle: Text(row.employeeNumber ?? 'Karyawan'),
+                      subtitle: HrText(row.employeeNumber ?? 'Karyawan'),
                       trailing: Text(
                         checkedAt == null
                             ? '-'
@@ -840,7 +860,7 @@ class _ActivityQrDisplayPageState extends State<ActivityQrDisplayPage> {
   Widget build(BuildContext context) => Scaffold(
     backgroundColor: AppColors.bgPrimary,
     appBar: AppTopBar(
-      title: 'QR ${widget.event.title}',
+      title: ('QR ${widget.event.title}').tr(context),
       backgroundColor: AppColors.white,
     ),
     body: Center(
@@ -864,7 +884,7 @@ class _ActivityQrDisplayPageState extends State<ActivityQrDisplayPage> {
                 ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
               ),
               const SizedBox(height: 6),
-              const Text(
+              const HrText(
                 'Peserta memindai kode ini dari menu Kegiatan',
                 textAlign: TextAlign.center,
                 style: TextStyle(color: AppColors.labelSecondary),
@@ -883,7 +903,7 @@ class _ActivityQrDisplayPageState extends State<ActivityQrDisplayPage> {
                     : _token != null
                     ? QrImageView(data: _token!, backgroundColor: Colors.white)
                     : Center(
-                        child: Text(
+                        child: HrText(
                           _error ?? 'QR tidak tersedia',
                           textAlign: TextAlign.center,
                           style: const TextStyle(color: AppColors.danger),
@@ -891,7 +911,7 @@ class _ActivityQrDisplayPageState extends State<ActivityQrDisplayPage> {
                       ),
               ),
               const SizedBox(height: 18),
-              Text(
+              HrText(
                 'Diperbarui dalam $_secondsLeft detik',
                 style: TextStyle(
                   color: _secondsLeft <= 10
@@ -904,7 +924,7 @@ class _ActivityQrDisplayPageState extends State<ActivityQrDisplayPage> {
                 TextButton.icon(
                   onPressed: _loadQr,
                   icon: const Icon(Icons.refresh),
-                  label: const Text('Coba lagi'),
+                  label: const HrText('Coba lagi'),
                 ),
             ],
           ),
@@ -996,7 +1016,7 @@ class _ActivitySelfScannerPageState extends State<ActivitySelfScannerPage> {
   Widget build(BuildContext context) => Scaffold(
     backgroundColor: Colors.black,
     appBar: AppTopBar(
-      title: 'Scan QR Kegiatan',
+      title: ('Scan QR Kegiatan').tr(context),
       backgroundColor: AppColors.white,
     ),
     body: Stack(
@@ -1023,7 +1043,7 @@ class _ActivitySelfScannerPageState extends State<ActivitySelfScannerPage> {
               color: Colors.black.withValues(alpha: .72),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: Text(
+            child: HrText(
               _processing
                   ? 'Memvalidasi kehadiran...'
                   : 'Arahkan kamera ke QR kegiatan',
@@ -1125,7 +1145,7 @@ class _ActivityScannerPageState extends State<ActivityScannerPage> {
   Widget build(BuildContext context) => Scaffold(
     backgroundColor: Colors.black,
     appBar: AppTopBar(
-      title: 'Scan ${widget.event.title}',
+      title: ('Scan ${widget.event.title}').tr(context),
       backgroundColor: AppColors.white,
     ),
     body: Stack(
@@ -1152,7 +1172,7 @@ class _ActivityScannerPageState extends State<ActivityScannerPage> {
               color: Colors.black.withValues(alpha: 0.7),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: Text(
+            child: HrText(
               _processing
                   ? 'Memvalidasi kehadiran...'
                   : 'Arahkan kamera ke QR karyawan',
@@ -1189,7 +1209,7 @@ class _DetailRow extends StatelessWidget {
         const SizedBox(width: 12),
         SizedBox(
           width: 72,
-          child: Text(
+          child: HrText(
             label,
             style: const TextStyle(color: AppColors.labelSecondary),
           ),
@@ -1232,7 +1252,7 @@ class _EmptyState extends StatelessWidget {
           color: AppColors.labelTertiary,
         ),
         SizedBox(height: 12),
-        Text(
+        HrText(
           'Belum ada kegiatan pada bulan ini.',
           style: TextStyle(color: AppColors.labelSecondary),
         ),
@@ -1256,13 +1276,13 @@ class _ErrorState extends StatelessWidget {
           color: AppColors.labelTertiary,
         ),
         const SizedBox(height: 12),
-        Text(
+        HrText(
           message,
           textAlign: TextAlign.center,
           style: const TextStyle(color: AppColors.labelSecondary),
         ),
         const SizedBox(height: 12),
-        OutlinedButton(onPressed: onRetry, child: const Text('Coba lagi')),
+        OutlinedButton(onPressed: onRetry, child: const HrText('Coba lagi')),
       ],
     ),
   );

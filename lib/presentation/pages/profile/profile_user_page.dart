@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -59,7 +60,7 @@ class ProfileUserPage extends StatelessWidget {
       ],
       child: Scaffold(
         backgroundColor: AppColors.bgPrimary,
-        appBar: const AppTopBar(title: 'Profil Pengguna'),
+        appBar: AppTopBar(title: ('Profil Pengguna').tr(context)),
         body: BlocBuilder<UserGetDataCubit, UserGetDataState>(
           builder: (ctxUser, stateData) {
             return BlocBuilder<UserGetLocalCubit, UserGetLocalState>(
@@ -105,7 +106,7 @@ class ProfileUserPage extends StatelessWidget {
                         // Card 1: Identitas Diri
                         AppCard(
                           showHeaderDivider: true,
-                          header: Text(
+                          header: HrText(
                             'Identitas Diri',
                             style: context.textStyle.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
@@ -116,27 +117,27 @@ class ProfileUserPage extends StatelessWidget {
                             children: [
                               _buildFieldRow(
                                 context,
-                                'Nama Lengkap',
+                                ('Nama Lengkap').tr(context),
                                 user?.name ?? '-',
                               ),
                               _buildFieldRow(
                                 context,
-                                'Username',
+                                ('Username').tr(context),
                                 user?.username ?? '-',
                               ),
                               _buildFieldRow(
                                 context,
-                                'Email',
+                                ('Email').tr(context),
                                 user?.email ?? '-',
                               ),
                               _buildFieldRow(
                                 context,
-                                'Jenis Kelamin',
-                                genderDisplay,
+                                ('Jenis Kelamin').tr(context),
+                                genderDisplay.tr(context),
                               ),
                               _buildFieldRow(
                                 context,
-                                'No. Telepon',
+                                ('No. Telepon').tr(context),
                                 AppUtility.nullHandler(
                                   user?.telpNumber,
                                   fallback: '-',
@@ -144,7 +145,7 @@ class ProfileUserPage extends StatelessWidget {
                               ),
                               _buildFieldRow(
                                 context,
-                                'Tanggal Lahir',
+                                ('Tanggal Lahir').tr(context),
                                 AppUtility.nullHandler(
                                   user?.dateOfBirth?.toDateTime?.yMMMMd,
                                   fallback: '-',
@@ -172,7 +173,7 @@ class ProfileUserPage extends StatelessWidget {
                         // Card 2: Alamat & Domisili
                         AppCard(
                           showHeaderDivider: true,
-                          header: Text(
+                          header: HrText(
                             'Alamat & Domisili',
                             style: context.textStyle.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
@@ -183,7 +184,7 @@ class ProfileUserPage extends StatelessWidget {
                             children: [
                               _buildFieldRow(
                                 context,
-                                'Alamat KTP',
+                                ('Alamat KTP').tr(context),
                                 AppUtility.nullHandler(
                                   user?.address,
                                   fallback: '-',
@@ -213,7 +214,7 @@ class ProfileUserPage extends StatelessWidget {
                         // Card 3: Pekerjaan & Status
                         AppCard(
                           showHeaderDivider: true,
-                          header: Text(
+                          header: HrText(
                             'Pekerjaan & Status',
                             style: context.textStyle.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
@@ -232,7 +233,7 @@ class ProfileUserPage extends StatelessWidget {
                               ),
                               _buildFieldRow(
                                 context,
-                                'Divisi',
+                                ('Divisi').tr(context),
                                 AppUtility.nullHandler(
                                   user?.divisiId?.namaDivisi,
                                   fallback: '-',
@@ -240,7 +241,7 @@ class ProfileUserPage extends StatelessWidget {
                               ),
                               _buildFieldRow(
                                 context,
-                                'Tanggal Bergabung',
+                                ('Tanggal Bergabung').tr(context),
                                 AppUtility.nullHandler(
                                   user?.dateJoin?.toDateTime?.yMMMMd,
                                   fallback: '-',
@@ -253,7 +254,7 @@ class ProfileUserPage extends StatelessWidget {
                               ),
                               _buildFieldRow(
                                 context,
-                                'Tanggal Resign',
+                                ('Tanggal Resign').tr(context),
                                 AppUtility.nullHandler(
                                   user?.dateResign?.toDateTime?.yMMMMd,
                                   fallback: '-',
@@ -261,7 +262,7 @@ class ProfileUserPage extends StatelessWidget {
                               ),
                               _buildFieldRow(
                                 context,
-                                'Status Karyawan',
+                                ('Status Karyawan').tr(context),
                                 statusDisplay,
                               ),
                             ],
@@ -288,7 +289,7 @@ class ProfileUserPage extends StatelessWidget {
         children: [
           Expanded(
             flex: 2,
-            child: Text(
+            child: HrText(
               title,
               style: context.textStyle.bodyMedium?.copyWith(
                 color: AppColors.labelSecondary,

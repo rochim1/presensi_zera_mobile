@@ -6,7 +6,8 @@ import 'incidental_report_state.dart';
 class IncidentalReportCubit extends Cubit<IncidentalReportState> {
   final GetIncidentalReportsUseCase getIncidentalReportsUseCase;
 
-  IncidentalReportCubit(this.getIncidentalReportsUseCase) : super(const IncidentalReportState());
+  IncidentalReportCubit(this.getIncidentalReportsUseCase)
+    : super(const IncidentalReportState());
 
   static const int _limit = 15;
 
@@ -30,7 +31,8 @@ class IncidentalReportCubit extends Cubit<IncidentalReportState> {
     final result = await getIncidentalReportsUseCase(_params(page: 0));
 
     result.fold(
-      (failure) => emit(state.copyWith(reports: BasePaginatedState.failure(failure))),
+      (failure) =>
+          emit(state.copyWith(reports: BasePaginatedState.failure(failure))),
       (data) => emit(
         state.copyWith(
           reports: BasePaginatedState.success(
@@ -45,40 +47,48 @@ class IncidentalReportCubit extends Cubit<IncidentalReportState> {
 
   Future<void> fetchNextPage() async {
     final current = state.reports;
-    if (current.hasReachedMax || current.isLoadingNext || current.isLoading) return;
+    if (current.hasReachedMax || current.isLoadingNext || current.isLoading)
+      return;
     if (current.data.isEmpty) return;
 
     final nextPage = current.currentPage + 1;
 
-    emit(state.copyWith(
-      reports: BasePaginatedState.loadingNext(
-        data: current.data,
-        page: nextPage,
-        hasReachedMax: current.hasReachedMax,
+    emit(
+      state.copyWith(
+        reports: BasePaginatedState.loadingNext(
+          data: current.data,
+          page: nextPage,
+          hasReachedMax: current.hasReachedMax,
+        ),
       ),
-    ));
+    );
 
     final result = await getIncidentalReportsUseCase(_params(page: nextPage));
 
     result.fold(
       (failure) {
-        emit(state.copyWith(
-          reports: BasePaginatedState.success(
-            data: current.data,
-            page: current.currentPage,
-            hasReachedMax: current.hasReachedMax,
+        emit(
+          state.copyWith(
+            reports: BasePaginatedState.success(
+              data: current.data,
+              page: current.currentPage,
+              hasReachedMax: current.hasReachedMax,
+            ),
           ),
-        ));
+        );
       },
       (value) {
-        final newList = List<IncidentalReport>.from(current.data)..addAll(value);
-        emit(state.copyWith(
-          reports: BasePaginatedState.success(
-            data: newList,
-            page: nextPage,
-            hasReachedMax: value.length < _limit,
+        final newList = List<IncidentalReport>.from(current.data)
+          ..addAll(value);
+        emit(
+          state.copyWith(
+            reports: BasePaginatedState.success(
+              data: newList,
+              page: nextPage,
+              hasReachedMax: value.length < _limit,
+            ),
           ),
-        ));
+        );
       },
     );
   }

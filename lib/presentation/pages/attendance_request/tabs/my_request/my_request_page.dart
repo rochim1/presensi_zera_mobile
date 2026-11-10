@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -60,15 +61,15 @@ class MyAttendanceRequestView extends StatelessWidget {
           void onTapAttendanceRequestCard(AttendanceRequest request) {
             AppBottomSheet.show(
               context: context,
-              title: const AppBottomSheetTitle(
-                title: 'Detail Request Presensi',
+              title: AppBottomSheetTitle(
+                title: ('Detail Request Presensi').tr(context),
               ),
               child: AttendanceRequestDetailView(request: request),
               actionsBuilder: (sheetContext) => AppFlatSheetActions(
                 actions: [
                   AppFlatSheetAction(
                     icon: Icons.delete_outline_rounded,
-                    label: 'Hapus',
+                    label: ('Hapus').tr(context),
                     color: AppColors.danger,
                     onTap: request.status == AttendanceRequestStatus.pending
                         ? () async {
@@ -76,20 +77,20 @@ class MyAttendanceRequestView extends StatelessWidget {
                             final confirmed = await showDialog<bool>(
                               context: context,
                               builder: (_) => AlertDialog(
-                                title: const Text('Hapus request presensi?'),
-                                content: const Text(
+                                title: const HrText('Hapus request presensi?'),
+                                content: const HrText(
                                   'Request yang dihapus tidak dapat dikembalikan.',
                                 ),
                                 actions: [
                                   TextButton(
                                     onPressed: () =>
                                         Navigator.pop(context, false),
-                                    child: const Text('Batal'),
+                                    child: const HrText('Batal'),
                                   ),
                                   TextButton(
                                     onPressed: () =>
                                         Navigator.pop(context, true),
-                                    child: const Text('Hapus'),
+                                    child: const HrText('Hapus'),
                                   ),
                                 ],
                               ),
@@ -101,7 +102,7 @@ class MyAttendanceRequestView extends StatelessWidget {
                               if (context.mounted && error != null) {
                                 AppBottomSheet.showError(
                                   context: context,
-                                  titleText: 'Gagal menghapus',
+                                  titleText: ('Gagal menghapus').tr(context),
                                   message: error,
                                 );
                               }
@@ -111,7 +112,7 @@ class MyAttendanceRequestView extends StatelessWidget {
                   ),
                   AppFlatSheetAction(
                     icon: Icons.edit_outlined,
-                    label: 'Edit',
+                    label: ('Edit').tr(context),
                     color: AppColors.primary,
                     onTap: request.status == AttendanceRequestStatus.pending
                         ? () async {
@@ -125,7 +126,7 @@ class MyAttendanceRequestView extends StatelessWidget {
                   ),
                   AppFlatSheetAction(
                     icon: Icons.close_rounded,
-                    label: 'Tutup',
+                    label: ('Tutup').tr(context),
                     color: AppColors.labelSecondary,
                     onTap: () => Navigator.of(sheetContext).pop(),
                   ),
@@ -161,7 +162,7 @@ class MyAttendanceRequestView extends StatelessWidget {
                       children: [
                         AppDimens.w8.wSpace,
                         AppFilterChip(
-                          label: 'Semua',
+                          label: ('Semua').tr(context),
                           isSelected: state.filterStatus == null,
                           onTap: () => cubit.onChangeFilterStatus(null),
                         ),

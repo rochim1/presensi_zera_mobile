@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -56,14 +57,14 @@ class HomeLogbookCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              HrText(
                 'Logbook Hari Ini',
                 style: context.textStyle.titleMedium?.copyWith(
                   fontWeight: FontWeight.w700,
                   color: AppColors.labelPrimary,
                 ),
               ),
-              Text(
+              HrText(
                 'Pantau aktivitas pekerjaanmu',
                 style: context.textStyle.bodySmall?.copyWith(
                   color: AppColors.labelSecondary,
@@ -74,7 +75,7 @@ class HomeLogbookCard extends StatelessWidget {
           ),
         ),
         IconButton(
-          tooltip: 'Buka Logbook Harian',
+          tooltip: ('Buka Logbook Harian').tr(context),
           visualDensity: VisualDensity.compact,
           onPressed: () => context.router.push(const LogbookPageRoute()),
           icon: Icon(
@@ -101,14 +102,14 @@ class HomeLogbookCard extends StatelessWidget {
             _buildSummary(
               context,
               value: '${entries.length}',
-              label: 'Aktivitas',
+              label: ('Aktivitas').tr(context),
               icon: PhosphorIcons.listChecks,
             ),
             const SizedBox(width: 8),
             _buildSummary(
               context,
               value: _formatDuration(totalMinutes),
-              label: 'Total durasi',
+              label: ('Total durasi').tr(context),
               icon: PhosphorIcons.timer,
             ),
           ],
@@ -122,7 +123,7 @@ class HomeLogbookCard extends StatelessWidget {
             padding: const EdgeInsets.only(top: 4),
             child: TextButton(
               onPressed: () => context.router.push(const LogbookPageRoute()),
-              child: Text(
+              child: HrText(
                 'Lihat ${entries.length - visibleEntries.length} aktivitas lainnya',
               ),
             ),
@@ -164,7 +165,7 @@ class HomeLogbookCard extends StatelessWidget {
                       fontWeight: FontWeight.w800,
                     ),
                   ),
-                  Text(
+                  HrText(
                     label,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -243,13 +244,13 @@ class HomeLogbookCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  HrText(
                     'Belum ada aktivitas',
                     style: context.textStyle.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  Text(
+                  HrText(
                     'Tambahkan logbook pekerjaan hari ini',
                     style: context.textStyle.bodySmall?.copyWith(
                       color: AppColors.labelSecondary,
@@ -270,7 +271,7 @@ class HomeLogbookCard extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: Text(
+          child: HrText(
             'Logbook hari ini belum dapat dimuat.',
             style: context.textStyle.bodySmall?.copyWith(
               color: AppColors.labelSecondary,
@@ -280,7 +281,7 @@ class HomeLogbookCard extends StatelessWidget {
         TextButton.icon(
           onPressed: () => context.read<LogbookCubit>().fetchLogbooks(),
           icon: const Icon(Icons.refresh, size: 17),
-          label: const Text('Coba Lagi'),
+          label: const HrText('Coba Lagi'),
         ),
       ],
     );

@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -69,7 +70,7 @@ class _ApotekSearchPageState extends State<ApotekSearchPage> {
               fontWeight: FontWeight.w500,
             ),
             decoration: InputDecoration(
-              hintText: 'Cari outlet...',
+              hintText: ('Cari outlet...').tr(context),
               enabledBorder: InputBorder.none,
               focusedBorder: InputBorder.none,
               hintStyle: const TextStyle(
@@ -161,9 +162,11 @@ class _ApotekSearchPageState extends State<ApotekSearchPage> {
   Widget _setList(BuildContext context, ApotekGetAllDataState state) {
     if (state.status.isLoaded) {
       if (state.apoteks!.isEmpty) {
-        return const FailureViewWidget(
+        return FailureViewWidget(
           emptyState: EmptyState.emptyList,
-          failure: NotFoundFailure(message: 'Outlet tidak ditemukan'),
+          failure: NotFoundFailure(
+            message: ('Outlet tidak ditemukan').tr(context),
+          ),
         );
       }
 

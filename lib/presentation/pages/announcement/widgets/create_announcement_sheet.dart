@@ -1,3 +1,5 @@
+import 'package:presensi_mobile/l10n/app_language_controller.dart';
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:presensi_domain/presensi_domain.dart';
@@ -155,8 +157,10 @@ class _CreateAnnouncementSheetState extends State<CreateAnnouncementSheet> {
     );
   }
 
-  String _format(DateTime value) =>
-      DateFormat('dd MMM yyyy, HH:mm', 'id_ID').format(value);
+  String _format(DateTime value) => DateFormat(
+    'dd MMM yyyy, HH:mm',
+    AppLanguageController.instance.effectiveLocale.languageCode,
+  ).format(value);
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -174,7 +178,7 @@ class _CreateAnnouncementSheetState extends State<CreateAnnouncementSheet> {
           Row(
             children: [
               Expanded(
-                child: Text(
+                child: HrText(
                   widget.initialAnnouncement == null
                       ? 'Tambah Pengumuman'
                       : 'Edit Pengumuman',
@@ -191,7 +195,7 @@ class _CreateAnnouncementSheetState extends State<CreateAnnouncementSheet> {
           ),
           TextFormField(
             controller: _title,
-            decoration: const InputDecoration(labelText: 'Judul *'),
+            decoration: InputDecoration(labelText: ('Judul *').tr(context)),
             validator: (v) =>
                 v == null || v.trim().isEmpty ? 'Judul wajib diisi' : null,
           ),
@@ -200,8 +204,8 @@ class _CreateAnnouncementSheetState extends State<CreateAnnouncementSheet> {
             controller: _content,
             minLines: 4,
             maxLines: 7,
-            decoration: const InputDecoration(
-              labelText: 'Isi Pengumuman *',
+            decoration: InputDecoration(
+              labelText: ('Isi Pengumuman *').tr(context),
               alignLabelWithHint: true,
             ),
             validator: (v) => v == null || v.trim().isEmpty
@@ -214,19 +218,24 @@ class _CreateAnnouncementSheetState extends State<CreateAnnouncementSheet> {
               Expanded(
                 child: DropdownButtonFormField<String>(
                   initialValue: _category,
-                  decoration: const InputDecoration(labelText: 'Kategori'),
+                  decoration: InputDecoration(
+                    labelText: ('Kategori').tr(context),
+                  ),
                   items: const [
-                    DropdownMenuItem(value: 'umum', child: Text('Umum')),
+                    DropdownMenuItem(value: 'umum', child: HrText('Umum')),
                     DropdownMenuItem(value: 'hr', child: Text('HR')),
                     DropdownMenuItem(
                       value: 'keuangan',
-                      child: Text('Keuangan'),
+                      child: HrText('Keuangan'),
                     ),
                     DropdownMenuItem(
                       value: 'operasional',
-                      child: Text('Operasional'),
+                      child: HrText('Operasional'),
                     ),
-                    DropdownMenuItem(value: 'lainnya', child: Text('Lainnya')),
+                    DropdownMenuItem(
+                      value: 'lainnya',
+                      child: HrText('Lainnya'),
+                    ),
                   ],
                   onChanged: (v) => setState(() => _category = v!),
                 ),
@@ -235,12 +244,14 @@ class _CreateAnnouncementSheetState extends State<CreateAnnouncementSheet> {
               Expanded(
                 child: DropdownButtonFormField<String>(
                   initialValue: _priority,
-                  decoration: const InputDecoration(labelText: 'Prioritas'),
+                  decoration: InputDecoration(
+                    labelText: ('Prioritas').tr(context),
+                  ),
                   items: const [
-                    DropdownMenuItem(value: 'rendah', child: Text('Rendah')),
-                    DropdownMenuItem(value: 'sedang', child: Text('Sedang')),
-                    DropdownMenuItem(value: 'tinggi', child: Text('Tinggi')),
-                    DropdownMenuItem(value: 'urgent', child: Text('Urgent')),
+                    DropdownMenuItem(value: 'rendah', child: HrText('Rendah')),
+                    DropdownMenuItem(value: 'sedang', child: HrText('Sedang')),
+                    DropdownMenuItem(value: 'tinggi', child: HrText('Tinggi')),
+                    DropdownMenuItem(value: 'urgent', child: HrText('Urgent')),
                   ],
                   onChanged: (v) => setState(() => _priority = v!),
                 ),
@@ -249,13 +260,13 @@ class _CreateAnnouncementSheetState extends State<CreateAnnouncementSheet> {
           ),
           const SizedBox(height: 12),
           _DateTimeTile(
-            label: 'Mulai *',
+            label: ('Mulai *').tr(context),
             value: _format(_start),
             onTap: () => _pickDate(true),
           ),
           const SizedBox(height: 12),
           _DateTimeTile(
-            label: 'Berakhir',
+            label: ('Berakhir').tr(context),
             value: _end == null ? 'Tidak ditentukan' : _format(_end!),
             onTap: () => _pickDate(false),
             onClear: _end == null ? null : () => setState(() => _end = null),
@@ -264,28 +275,28 @@ class _CreateAnnouncementSheetState extends State<CreateAnnouncementSheet> {
           TextFormField(
             controller: _link,
             keyboardType: TextInputType.url,
-            decoration: const InputDecoration(
-              labelText: 'Link Tujuan',
-              hintText: 'https://...',
+            decoration: InputDecoration(
+              labelText: ('Link Tujuan').tr(context),
+              hintText: ('https://...').tr(context),
             ),
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: const Text('Sematkan Pengumuman'),
-            subtitle: const Text('Tampilkan di bagian teratas'),
+            title: const HrText('Sematkan Pengumuman'),
+            subtitle: const HrText('Tampilkan di bagian teratas'),
             value: _pinned,
             onChanged: (v) => setState(() => _pinned = v),
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: const Text('Tampilkan sebagai Popup'),
+            title: const HrText('Tampilkan sebagai Popup'),
             value: _showPopup,
             onChanged: (v) => setState(() => _showPopup = v),
           ),
           const SizedBox(height: 16),
           FilledButton(
             onPressed: _submitting ? null : _submit,
-            child: Text(
+            child: HrText(
               _submitting
                   ? 'Menyimpan...'
                   : widget.initialAnnouncement == null
@@ -315,7 +326,7 @@ class _DateTimeTile extends StatelessWidget {
     onTap: onTap,
     child: InputDecorator(
       decoration: InputDecoration(
-        labelText: label,
+        labelText: (label).tr(context),
         suffixIcon: onClear == null
             ? const Icon(Icons.calendar_month)
             : IconButton(onPressed: onClear, icon: const Icon(Icons.close)),

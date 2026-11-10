@@ -1,3 +1,5 @@
+import 'package:presensi_mobile/l10n/app_language_controller.dart';
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:dartz/dartz.dart' hide State;
 import 'package:flutter/material.dart';
@@ -235,7 +237,7 @@ class _HomeRequestsSectionState extends State<HomeRequestsSection> {
               children: [
                 const Padding(
                   padding: EdgeInsets.all(16),
-                  child: Text(
+                  child: HrText(
                     'Pengajuan Saya',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                   ),
@@ -247,7 +249,7 @@ class _HomeRequestsSectionState extends State<HomeRequestsSection> {
                   (HomeRequestKind.reimbursement, 'Reimbursement'),
                 ])
                   ListTile(
-                    title: Text(item.$2),
+                    title: HrText(item.$2),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () {
                       Navigator.pop(sheetContext);
@@ -255,7 +257,7 @@ class _HomeRequestsSectionState extends State<HomeRequestsSection> {
                     },
                   ),
                 ListTile(
-                  title: const Text('Tukar shift'),
+                  title: const HrText('Tukar shift'),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () {
                     Navigator.pop(sheetContext);
@@ -263,7 +265,7 @@ class _HomeRequestsSectionState extends State<HomeRequestsSection> {
                   },
                 ),
                 ListTile(
-                  title: const Text('Pinjaman'),
+                  title: const HrText('Pinjaman'),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () {
                     Navigator.pop(sheetContext);
@@ -292,19 +294,24 @@ class _HomeRequestsSectionState extends State<HomeRequestsSection> {
         Row(
           children: [
             const Expanded(
-              child: Text(
+              child: HrText(
                 'Pengajuan Saya',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
             ),
             TextButton(
               onPressed: _showRequests,
-              child: const Text('Lihat semua'),
+              child: const HrText('Lihat semua'),
             ),
           ],
         ),
         Text(
-          'Ringkasan ${DateFormat('MMMM yyyy', 'id_ID').format(DateTime.now())}',
+          hrLocale(context).homeRequestsMonthlySummary(
+            DateFormat(
+              'MMMM yyyy',
+              AppLanguageController.instance.effectiveLocale.languageCode,
+            ).format(DateTime.now()),
+          ),
           style: const TextStyle(fontSize: 12, color: AppColors.labelSecondary),
         ),
         const SizedBox(height: 12),
@@ -326,7 +333,7 @@ class _HomeRequestsSectionState extends State<HomeRequestsSection> {
                 if (requests.isEmpty)
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: Text(
+                    child: HrText(
                       result == null || result.failedSources > 0
                           ? 'Ringkasan belum berhasil dimuat. Buka jenis pengajuan atau coba lagi.'
                           : 'Belum ada pengajuan bulan ini.',
@@ -344,7 +351,7 @@ class _HomeRequestsSectionState extends State<HomeRequestsSection> {
                   ),
                 if (result == null || result.failedSources > 0) ...[
                   if (requests.isNotEmpty)
-                    const Text(
+                    const HrText(
                       'Sebagian jenis pengajuan belum berhasil dimuat.',
                       style: TextStyle(
                         fontSize: 12,
@@ -354,7 +361,7 @@ class _HomeRequestsSectionState extends State<HomeRequestsSection> {
                   TextButton.icon(
                     onPressed: _refresh,
                     icon: const Icon(Icons.refresh, size: 18),
-                    label: const Text('Coba lagi'),
+                    label: const HrText('Coba lagi'),
                   ),
                 ],
               ],
@@ -382,7 +389,7 @@ class _HomeRequestsSectionState extends State<HomeRequestsSection> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        HrText(
                           'Pusat Persetujuan',
                           style: TextStyle(
                             fontSize: 14,
@@ -391,7 +398,7 @@ class _HomeRequestsSectionState extends State<HomeRequestsSection> {
                           ),
                         ),
                         SizedBox(height: 4),
-                        Text(
+                        HrText(
                           'Tinjau pengajuan sesuai kewenangan',
                           style: TextStyle(
                             fontSize: 12,
@@ -424,6 +431,7 @@ class _RequestRow extends StatelessWidget {
   const _RequestRow({required this.request, required this.onTap});
   @override
   Widget build(BuildContext context) {
+    hrLocale(context); // Rebuild formatted dates when the language changes.
     final status = request.status.toLowerCase();
     final (label, color) = switch (status) {
       'diterima' || 'approved' => ('Disetujui', AppColors.primary),
@@ -460,7 +468,13 @@ class _RequestRow extends StatelessWidget {
                   if (request.date != null) ...[
                     const SizedBox(height: 5),
                     Text(
-                      DateFormat('dd MMM yyyy', 'id_ID').format(request.date!),
+                      DateFormat(
+                        'dd MMM yyyy',
+                        AppLanguageController
+                            .instance
+                            .effectiveLocale
+                            .languageCode,
+                      ).format(request.date!),
                       style: const TextStyle(
                         fontSize: 12,
                         color: AppColors.labelSecondary,
@@ -472,7 +486,7 @@ class _RequestRow extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             Flexible(
-              child: Text(
+              child: HrText(
                 label,
                 style: TextStyle(
                   fontSize: 12,

@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,7 +20,7 @@ class ProfileAccountPage extends StatelessWidget {
 
     void handleSaveButtonPressed(ctx, state) {
       if (state.status.isLoading) {
-        Fluttertoast.showToast(msg: kMsgWaiting);
+        Fluttertoast.showToast(msg: (kMsgWaiting).trCurrent());
         return;
       }
 
@@ -32,7 +33,7 @@ class ProfileAccountPage extends StatelessWidget {
 
         ctx.read<UserPostCubit>().updateAccount(params);
       } else {
-        Fluttertoast.showToast(msg: kNotMatch);
+        Fluttertoast.showToast(msg: (kNotMatch).trCurrent());
       }
     }
 
@@ -49,7 +50,7 @@ class ProfileAccountPage extends StatelessWidget {
               final user = stateData.data?.user ?? stateLocal.data?.user;
               return Scaffold(
                 backgroundColor: AppColors.bgPrimary,
-                appBar: const AppTopBar(title: 'Pengaturan Akun'),
+                appBar: AppTopBar(title: ('Pengaturan Akun').tr(context)),
                 body: SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.all(AppDimens.paddingMedium),
@@ -58,7 +59,7 @@ class ProfileAccountPage extends StatelessWidget {
                       children: [
                         AppCard(
                           showHeaderDivider: true,
-                          header: Text(
+                          header: HrText(
                             'Informasi Akun',
                             style: context.textStyle.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
@@ -68,14 +69,14 @@ class ProfileAccountPage extends StatelessWidget {
                           content: Column(
                             children: [
                               ProfileFieldRow(
-                                title: 'Email',
+                                title: ('Email').tr(context),
                                 value: AppUtility.nullHandler(
                                   user?.email,
                                   fallback: '-',
                                 ),
                               ),
                               ProfileFieldRow(
-                                title: 'Username',
+                                title: ('Username').tr(context),
                                 value: AppUtility.nullHandler(
                                   user?.username,
                                   fallback: '-',
@@ -87,7 +88,7 @@ class ProfileAccountPage extends StatelessWidget {
                         AppDimens.paddingMedium.hSpace,
                         AppCard(
                           showHeaderDivider: true,
-                          header: Text(
+                          header: HrText(
                             'Ganti Password',
                             style: context.textStyle.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
@@ -97,20 +98,20 @@ class ProfileAccountPage extends StatelessWidget {
                           content: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                        AppDimens.size3M.hSpace,
-                        TextFieldPassword(
-                          controller: passwordController,
-                          title: 'Password Baru',
-                          hint: 'Masukan password baru',
-                          hasPrefixIcon: false,
-                        ),
-                        AppDimens.size3M.hSpace,
-                        TextFieldPassword(
-                          controller: passwordConfController,
-                          title: 'Konfirmasi Password',
-                          hint: 'Konfirmasi password baru',
-                          hasPrefixIcon: false,
-                        ),
+                              AppDimens.size3M.hSpace,
+                              TextFieldPassword(
+                                controller: passwordController,
+                                title: ('Password Baru').tr(context),
+                                hint: ('Masukan password baru').tr(context),
+                                hasPrefixIcon: false,
+                              ),
+                              AppDimens.size3M.hSpace,
+                              TextFieldPassword(
+                                controller: passwordConfController,
+                                title: ('Konfirmasi Password').tr(context),
+                                hint: ('Konfirmasi password baru').tr(context),
+                                hasPrefixIcon: false,
+                              ),
                             ],
                           ),
                         ),
@@ -134,9 +135,12 @@ class ProfileAccountPage extends StatelessWidget {
 
                             await AppModalBottom.showDefault(
                               context,
-                              contentTitle: 'Berhasil Ganti Kata Sandi',
+                              contentTitle: ('Berhasil Ganti Kata Sandi').tr(
+                                context,
+                              ),
                               contentSubtitle:
-                                  'Katasandi dari username ${user?.username} berhasil diganti',
+                                  ('Katasandi dari username ${user?.username} berhasil diganti')
+                                      .tr(context),
                               hasActionPop: true,
                             );
                             if (!context.mounted) return;
@@ -155,7 +159,7 @@ class ProfileAccountPage extends StatelessWidget {
                           return AppButton(
                             onPressed: () =>
                                 handleSaveButtonPressed(ctxPost, statePost),
-                            text: 'Simpan',
+                            text: ('Simpan').tr(context),
                             isLoading: statePost.typeState.isLoading,
                           );
                         },

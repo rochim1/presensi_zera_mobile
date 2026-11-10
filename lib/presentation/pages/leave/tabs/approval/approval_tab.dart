@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -116,8 +117,9 @@ class LeaveApprovalView extends StatelessWidget {
               if (isActionSelected) ...[
                 AppTextField(
                   label:
-                      'Alasan ${state.approvalAction.isApprove ? 'Persetujuan' : 'Penolakan'}',
-                  hintText: 'Masukkan alasan...',
+                      ('Alasan ${state.approvalAction.isApprove ? 'Persetujuan' : 'Penolakan'}')
+                          .tr(context),
+                  hintText: ('Masukkan alasan...').tr(context),
                   maxLines: 3,
                   isRequired: state.approvalAction.isReject,
                   onChanged: cubit.onChangeReason,
@@ -126,7 +128,7 @@ class LeaveApprovalView extends StatelessWidget {
                 SizedBox(height: AppDimens.h16),
                 AppButtonNew(
                   onPressed: () => cubit.submitApproval(request),
-                  text: 'Kirim',
+                  text: ('Kirim').tr(context),
                   variant: AppButtonNewVariant.primary,
                   style: AppButtonNewStyle.filled,
                   isLoading: state.approvalSubmit.isLoading,
@@ -136,7 +138,7 @@ class LeaveApprovalView extends StatelessWidget {
                   actions: [
                     AppFlatSheetAction(
                       icon: Icons.close_rounded,
-                      label: 'Tolak',
+                      label: ('Tolak').tr(context),
                       color: AppColors.danger,
                       onTap: () => cubit.onChangeApprovalAction(
                         LeaveApprovalAction.reject,
@@ -144,7 +146,7 @@ class LeaveApprovalView extends StatelessWidget {
                     ),
                     AppFlatSheetAction(
                       icon: Icons.check_rounded,
-                      label: 'Setujui',
+                      label: ('Setujui').tr(context),
                       color: AppColors.primary,
                       onTap: () => cubit.onChangeApprovalAction(
                         LeaveApprovalAction.approve,
@@ -169,9 +171,9 @@ class _LeaveApprovalDetailTitle extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Detail Cuti'),
+        const HrText('Detail Cuti'),
         SizedBox(height: AppDimens.h2),
-        Text(
+        HrText(
           'Informasi pengajuan cuti',
           style: context.textStyle.bodySmall?.copyWith(
             color: AppColors.labelSecondary,

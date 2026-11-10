@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -176,8 +177,8 @@ class _TakingOrderPageState extends State<TakingOrderPage> {
               SafeArea(
                 child: Column(
                   children: [
-                    const AppTopBar(
-                      title: 'Taking Order',
+                    AppTopBar(
+                      title: ('Taking Order').tr(context),
                       useGradient: false,
                       backgroundColor: Colors.transparent,
                       titleColor: AppColors.white,
@@ -224,7 +225,7 @@ class _TakingOrderPageState extends State<TakingOrderPage> {
                                       listener: (_, state) async {
                                         if (state.status.isNotLoaded) {
                                           await Fluttertoast.showToast(
-                                            msg: state.failure!.message,
+                                            msg: (state.failure!.message).trCurrent(),
                                           );
                                         }
                                       },
@@ -233,8 +234,10 @@ class _TakingOrderPageState extends State<TakingOrderPage> {
                                           return TextFieldDropdownSearch<
                                             ApotekEntity
                                           >(
-                                            title: 'Outlet / Customer',
-                                            hint: 'Pilih Outlet',
+                                            title: ('Outlet / Customer').tr(
+                                              context,
+                                            ),
+                                            hint: ('Pilih Outlet').tr(context),
                                             items: state.lstApotik!,
                                             selectedItem: apotek,
                                             required: true,
@@ -260,8 +263,10 @@ class _TakingOrderPageState extends State<TakingOrderPage> {
                                             }),
                                           );
                                         } else {
-                                          return const TextFieldShimmer(
-                                            title: 'Outlet / Customer',
+                                          return TextFieldShimmer(
+                                            title: ('Outlet / Customer').tr(
+                                              context,
+                                            ),
                                           );
                                         }
                                       },
@@ -275,16 +280,20 @@ class _TakingOrderPageState extends State<TakingOrderPage> {
 
                                     // ORDER DETAILS
                                     TextFieldDropdown<String>(
-                                      title: 'Tipe Order',
-                                      hint: 'Pilih Tipe Order',
+                                      title: ('Tipe Order').tr(context),
+                                      hint: ('Pilih Tipe Order').tr(context),
                                       required: true,
                                       items: const ['indent', 'canvas'],
                                       itemAsString: (item) {
                                         if (item == 'indent') {
-                                          return 'INDENT / PRE ORDER (PO)';
+                                          return ('INDENT / PRE ORDER (PO)').tr(
+                                            context,
+                                          );
                                         }
                                         if (item == 'canvas') {
-                                          return 'CANVAS (JUAL LANGSUNG)';
+                                          return ('CANVAS (JUAL LANGSUNG)').tr(
+                                            context,
+                                          );
                                         }
                                         return item
                                             .replaceAll('_', ' ')
@@ -301,8 +310,8 @@ class _TakingOrderPageState extends State<TakingOrderPage> {
                                     AppDimens.size3M.hSpace,
 
                                     TextFieldDropdown<String>(
-                                      title: 'Metode Pembayaran',
-                                      hint: 'Pilih Metode',
+                                      title: ('Metode Pembayaran').tr(context),
+                                      hint: ('Pilih Metode').tr(context),
                                       required: true,
                                       items: const [
                                         'cash',
@@ -343,11 +352,17 @@ class _TakingOrderPageState extends State<TakingOrderPage> {
                                     if (metodePembayaran == 'termin') ...[
                                       AppDimens.size3M.hSpace,
                                       TextFieldDropdown<int>(
-                                        title: 'Jumlah Termin (Bulan)',
-                                        hint: 'Pilih Jumlah Cicilan',
+                                        title: ('Jumlah Termin (Bulan)').tr(
+                                          context,
+                                        ),
+                                        hint: ('Pilih Jumlah Cicilan').tr(
+                                          context,
+                                        ),
                                         items: const [2, 3, 4, 5, 6],
                                         itemAsString: (item) =>
-                                            '$item Bulan / Termin',
+                                            ('$item Bulan / Termin').tr(
+                                              context,
+                                            ),
                                         onChanged: (val) {
                                           setState(() {
                                             jumlahTermin = val;
@@ -389,7 +404,7 @@ class _TakingOrderPageState extends State<TakingOrderPage> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Text(
+                                              HrText(
                                                 'Daftar Produk',
                                                 style: context
                                                     .textStyle
@@ -408,7 +423,7 @@ class _TakingOrderPageState extends State<TakingOrderPage> {
                                                   Icons.add_shopping_cart,
                                                   size: 16,
                                                 ),
-                                                label: const Text(
+                                                label: const HrText(
                                                   'Pilih Produk',
                                                 ),
                                               ),
@@ -447,7 +462,7 @@ class _TakingOrderPageState extends State<TakingOrderPage> {
                                                                           .w500,
                                                                 ),
                                                           ),
-                                                          Text(
+                                                          HrText(
                                                             '${item.qty?.toInt()} ${item.satuan} x Rp ${(item.harga ?? 0).toInt().textDecimalDigit}',
                                                             style:
                                                                 const TextStyle(
@@ -473,7 +488,7 @@ class _TakingOrderPageState extends State<TakingOrderPage> {
                                           ] else ...[
                                             AppDimens.size2X.hSpace,
                                             const Center(
-                                              child: Text(
+                                              child: HrText(
                                                 'Belum ada produk yang dipilih',
                                                 style: TextStyle(
                                                   color: Colors.grey,
@@ -488,7 +503,7 @@ class _TakingOrderPageState extends State<TakingOrderPage> {
                                     AppDimens.size3M.hSpace,
 
                                     TextFieldBasic(
-                                      title: 'Diskon (Rp)',
+                                      title: ('Diskon (Rp)').tr(context),
                                       colorTitle: AppColors.labelSecondary,
                                       hint: '0',
                                       controller: diskonController,
@@ -507,9 +522,11 @@ class _TakingOrderPageState extends State<TakingOrderPage> {
                                     AppDimens.size3M.hSpace,
 
                                     TextFieldBasic(
-                                      title: 'Catatan Order',
+                                      title: ('Catatan Order').tr(context),
                                       colorTitle: AppColors.labelSecondary,
-                                      hint: 'Tulis Catatan (Optional)',
+                                      hint: ('Tulis Catatan (Optional)').tr(
+                                        context,
+                                      ),
                                       controller: catatanController,
                                       multiline: true,
                                     ),
@@ -535,7 +552,7 @@ class _TakingOrderPageState extends State<TakingOrderPage> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
-                                              const Text('Total Produk'),
+                                              const HrText('Total Produk'),
                                               Text(
                                                 'Rp ${_calculateGrossAmount().toInt().textDecimalDigit}',
                                               ),
@@ -546,13 +563,13 @@ class _TakingOrderPageState extends State<TakingOrderPage> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
-                                              const Text(
+                                              const HrText(
                                                 'Diskon',
                                                 style: TextStyle(
                                                   color: Colors.red,
                                                 ),
                                               ),
-                                              Text(
+                                              HrText(
                                                 '- Rp ${((double.tryParse(diskonController.text.replaceAll('.', '')) ?? 0)).toInt().textDecimalDigit}',
                                                 style: const TextStyle(
                                                   color: Colors.red,
@@ -565,7 +582,7 @@ class _TakingOrderPageState extends State<TakingOrderPage> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
-                                              const Text(
+                                              const HrText(
                                                 'Grand Total',
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
@@ -609,9 +626,10 @@ class _TakingOrderPageState extends State<TakingOrderPage> {
                 if (state.status.isLoaded) {
                   await AppModalBottom.showDefault(
                     context,
-                    contentTitle: 'Order Berhasil Dibuat',
+                    contentTitle: ('Order Berhasil Dibuat').tr(context),
                     contentSubtitle:
-                        'Sales Order untuk ${apotek?.namaApotik ?? ''} berhasil disimpan.',
+                        ('Sales Order untuk ${apotek?.namaApotik ?? ''} berhasil disimpan.')
+                            .tr(context),
                     hasActionPop: true,
                   );
                   if (!context.mounted) return;
@@ -628,7 +646,7 @@ class _TakingOrderPageState extends State<TakingOrderPage> {
                     if (formKey.currentState!.validate()) {
                       if (selectedProducts.isEmpty) {
                         Fluttertoast.showToast(
-                          msg: 'Pilih minimal satu produk',
+                          msg: ('Pilih minimal satu produk').trCurrent(),
                         );
                         return;
                       }
@@ -662,7 +680,7 @@ class _TakingOrderPageState extends State<TakingOrderPage> {
                     }
                   },
                   isLoading: state.status.isLoading,
-                  text: 'Buat Order Sekarang',
+                  text: ('Buat Order Sekarang').tr(context),
                 );
               },
             ),

@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -95,7 +96,7 @@ class _DeliveryAddFormState extends State<DeliveryAddForm> {
           builder: (context) {
             return UnfocuserForm(
               child: Scaffold(
-                appBar: const AppTopBar(title: 'Tambah Kunjungan Baru'),
+                appBar: AppTopBar(title: ('Tambah Kunjungan Baru').tr(context)),
                 body: SingleChildScrollView(
                   padding: const EdgeInsets.all(AppDimens.paddingMediumX),
                   child: Form(
@@ -105,7 +106,7 @@ class _DeliveryAddFormState extends State<DeliveryAddForm> {
                         if (state.status.isNotLoaded &&
                             allowMobileChangeVisitVehicle) {
                           await Fluttertoast.showToast(
-                            msg: state.failure!.message,
+                            msg: (state.failure!.message).trCurrent(),
                           );
 
                           if (!context.mounted) return;
@@ -117,7 +118,7 @@ class _DeliveryAddFormState extends State<DeliveryAddForm> {
                           children: [
                             _buildCard(
                               context,
-                              title: 'Data Kunjungan',
+                              title: ('Data Kunjungan').tr(context),
                               children: [
                                 BlocConsumer<
                                   TasksGetAllApotikCubit,
@@ -126,7 +127,7 @@ class _DeliveryAddFormState extends State<DeliveryAddForm> {
                                   listener: (_, state) async {
                                     if (state.status.isNotLoaded) {
                                       await Fluttertoast.showToast(
-                                        msg: state.failure!.message,
+                                        msg: (state.failure!.message).trCurrent(),
                                       );
 
                                       if (!context.mounted) return;
@@ -138,8 +139,8 @@ class _DeliveryAddFormState extends State<DeliveryAddForm> {
                                       return TextFieldDropdownSearch<
                                         ApotekEntity
                                       >(
-                                        title: 'Outlet',
-                                        hint: 'Pilih Outlet',
+                                        title: ('Outlet').tr(context),
+                                        hint: ('Pilih Outlet').tr(context),
                                         items: const [],
                                         asyncItems: (String filter) async {
                                           final usecase =
@@ -192,8 +193,8 @@ class _DeliveryAddFormState extends State<DeliveryAddForm> {
                                       );
                                     } else if (state.status.isNotLoaded) {
                                       return TextFieldDropdownSearch<String>(
-                                        title: 'Outlet',
-                                        hint: 'Pilih Outlet',
+                                        title: ('Outlet').tr(context),
+                                        hint: ('Pilih Outlet').tr(context),
                                         required: true,
                                         colorTitle: AppColors.labelSecondary,
                                         items: const [],
@@ -208,8 +209,8 @@ class _DeliveryAddFormState extends State<DeliveryAddForm> {
                                         },
                                       );
                                     } else {
-                                      return const TextFieldShimmer(
-                                        title: 'Outlet',
+                                      return TextFieldShimmer(
+                                        title: ('Outlet').tr(context),
                                       );
                                     }
                                   },
@@ -221,8 +222,8 @@ class _DeliveryAddFormState extends State<DeliveryAddForm> {
                                 AppDimens.size3M.hSpace,
                                 TextFieldDatePicker(
                                   controller: tanggal,
-                                  title: 'Tanggal Kunjungan',
-                                  hint: 'Pilih Tanggal',
+                                  title: ('Tanggal Kunjungan').tr(context),
+                                  hint: ('Pilih Tanggal').tr(context),
                                   required: true,
                                 ),
                                 AppDimens.size3M.hSpace,
@@ -263,8 +264,10 @@ class _DeliveryAddFormState extends State<DeliveryAddForm> {
                                       return TextFieldDropdown<
                                         InventarisEntity
                                       >(
-                                        title: 'Jenis Kendaraan',
-                                        hint: 'Pilih Jenis Transportasi',
+                                        title: ('Jenis Kendaraan').tr(context),
+                                        hint: ('Pilih Jenis Transportasi').tr(
+                                          context,
+                                        ),
                                         required: true,
                                         colorTitle: AppColors.labelSecondary,
                                         selectedItem: inventaris,
@@ -286,8 +289,10 @@ class _DeliveryAddFormState extends State<DeliveryAddForm> {
                                       );
                                     } else if (invState.status.isNotLoaded) {
                                       return TextFieldDropdown<String>(
-                                        title: 'Jenis Kendaraan',
-                                        hint: 'Pilih Jenis Transportasi',
+                                        title: ('Jenis Kendaraan').tr(context),
+                                        hint: ('Pilih Jenis Transportasi').tr(
+                                          context,
+                                        ),
                                         required: true,
                                         colorTitle: AppColors.labelSecondary,
                                         items: const [],
@@ -302,8 +307,8 @@ class _DeliveryAddFormState extends State<DeliveryAddForm> {
                                         },
                                       );
                                     } else {
-                                      return const TextFieldShimmer(
-                                        title: 'Jenis Kendaraan',
+                                      return TextFieldShimmer(
+                                        title: ('Jenis Kendaraan').tr(context),
                                       );
                                     }
                                   },
@@ -313,10 +318,10 @@ class _DeliveryAddFormState extends State<DeliveryAddForm> {
                             AppDimens.size3M.hSpace,
                             _buildCard(
                               context,
-                              title: 'Tujuan Kunjungan',
+                              title: ('Tujuan Kunjungan').tr(context),
                               children: [
                                 CheckboxListTile(
-                                  title: const Text('Pengantaran (DO)'),
+                                  title: const HrText('Pengantaran (DO)'),
                                   value: tujuanPengantaran,
                                   onChanged: (val) => setState(
                                     () => tujuanPengantaran = val ?? false,
@@ -327,7 +332,7 @@ class _DeliveryAddFormState extends State<DeliveryAddForm> {
                                   visualDensity: VisualDensity.compact,
                                 ),
                                 CheckboxListTile(
-                                  title: const Text('Penawaran (SO)'),
+                                  title: const HrText('Penawaran (SO)'),
                                   value: tujuanPenawaran,
                                   onChanged: (val) => setState(
                                     () => tujuanPenawaran = val ?? false,
@@ -338,7 +343,7 @@ class _DeliveryAddFormState extends State<DeliveryAddForm> {
                                   visualDensity: VisualDensity.compact,
                                 ),
                                 CheckboxListTile(
-                                  title: const Text('Penagihan'),
+                                  title: const HrText('Penagihan'),
                                   value: tujuanPenagihan,
                                   onChanged: (val) => setState(
                                     () => tujuanPenagihan = val ?? false,
@@ -372,7 +377,7 @@ class _DeliveryAddFormState extends State<DeliveryAddForm> {
                                         ),
                                         const SizedBox(width: 8),
                                         Expanded(
-                                          child: Text(
+                                          child: HrText(
                                             'Mode Hybrid: Nominal transaksi & no referensi akan diinput manual saat pemeriksaan kunjungan.',
                                             style: TextStyle(
                                               fontSize: 12,
@@ -391,7 +396,7 @@ class _DeliveryAddFormState extends State<DeliveryAddForm> {
                                     _buildPickerTile(
                                       context,
                                       icon: Icons.local_shipping_outlined,
-                                      title: 'Surat Jalan (DO)',
+                                      title: ('Surat Jalan (DO)').tr(context),
                                       count: selectedDOs.length,
                                       onTap: () => _openDoPicker(context),
                                     ),
@@ -427,7 +432,7 @@ class _DeliveryAddFormState extends State<DeliveryAddForm> {
                                     _buildPickerTile(
                                       context,
                                       icon: Icons.receipt_long_outlined,
-                                      title: 'Tagihan / Invoice',
+                                      title: ('Tagihan / Invoice').tr(context),
                                       count: selectedInvoices.length,
                                       onTap: () => _openInvoicePicker(context),
                                     ),
@@ -468,12 +473,14 @@ class _DeliveryAddFormState extends State<DeliveryAddForm> {
                             AppDimens.size3M.hSpace,
                             _buildCard(
                               context,
-                              title: 'Tambahan',
+                              title: ('Tambahan').tr(context),
                               children: [
                                 TextFieldBasic(
-                                  title: 'Catatan',
+                                  title: ('Catatan').tr(context),
                                   colorTitle: AppColors.labelSecondary,
-                                  hint: 'Tulis Catatan (Optional)',
+                                  hint: ('Tulis Catatan (Optional)').tr(
+                                    context,
+                                  ),
                                   controller: catatan,
                                   multiline: true,
                                 ),
@@ -514,9 +521,10 @@ class _DeliveryAddFormState extends State<DeliveryAddForm> {
         if (state.status.isLoaded) {
           await AppModalBottom.showDefault(
             context,
-            contentTitle: 'Kunjungan berhasil ditambahkan',
+            contentTitle: ('Kunjungan berhasil ditambahkan').tr(context),
             contentSubtitle:
-                'Anda berhasil menambahkan kunjungan ke ${apotek?.namaApotik}.',
+                ('Anda berhasil menambahkan kunjungan ke ${apotek?.namaApotik}.')
+                    .tr(context),
             hasActionPop: true,
           );
           if (!mounted) return;
@@ -529,14 +537,18 @@ class _DeliveryAddFormState extends State<DeliveryAddForm> {
         onPressed: () {
           if (state.status.isLoading) return;
           if (!tujuanPengantaran && !tujuanPenawaran && !tujuanPenagihan) {
-            Fluttertoast.showToast(msg: 'Pilih minimal satu tujuan kunjungan.');
+            Fluttertoast.showToast(
+              msg: ('Pilih minimal satu tujuan kunjungan.').trCurrent(),
+            );
             return;
           }
           if (inventaris?.id == null) {
             Fluttertoast.showToast(
-              msg: allowMobileChangeVisitVehicle
-                  ? 'Pilih kendaraan untuk kunjungan.'
-                  : 'Kendaraan utama belum ditetapkan. Hubungi admin.',
+              msg: (allowMobileChangeVisitVehicle
+                  ? ('Pilih kendaraan untuk kunjungan.').trCurrent()
+                  : ('Kendaraan utama belum ditetapkan. Hubungi admin.').tr(
+                      context,
+                    )),
             );
             return;
           }
@@ -561,7 +573,7 @@ class _DeliveryAddFormState extends State<DeliveryAddForm> {
           );
         },
         isLoading: state.status.isLoading,
-        text: 'Simpan Kunjungan',
+        text: ('Simpan Kunjungan').tr(context),
       ),
     );
   }
@@ -589,7 +601,7 @@ class _DeliveryAddFormState extends State<DeliveryAddForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          HrText(
             title,
             style: context.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
@@ -627,7 +639,7 @@ class _DeliveryAddFormState extends State<DeliveryAddForm> {
             Icon(icon, color: AppColors.primary, size: 22),
             const SizedBox(width: 10),
             Expanded(
-              child: Text(
+              child: HrText(
                 count > 0 ? '$title ($count dipilih)' : 'Pilih $title',
                 style: TextStyle(
                   color: AppColors.primary,
@@ -676,7 +688,7 @@ class _DeliveryAddFormState extends State<DeliveryAddForm> {
         setState(() => selectedDOs = result);
       }
     } else if (cubitState is DeliveryOrderGetAllError) {
-      Fluttertoast.showToast(msg: cubitState.message);
+      Fluttertoast.showToast(msg: (cubitState.message).trCurrent());
     }
   }
 
@@ -707,7 +719,9 @@ class _DeliveryAddFormState extends State<DeliveryAddForm> {
       }
     } else if (cubitState.status.isNotLoaded) {
       Fluttertoast.showToast(
-        msg: cubitState.failure?.message ?? 'Gagal memuat tagihan',
+        msg:
+            (cubitState.failure?.message ??
+            ('Gagal memuat tagihan').trCurrent()),
       );
     }
   }

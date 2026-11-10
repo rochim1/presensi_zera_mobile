@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_domain/presensi_domain.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -48,7 +49,7 @@ class _ConsignmentResumeState extends State<ConsignmentResume> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      HrText(
                         'Rangkuman Perjalanan',
                         style: context.textStyle.titleMedium?.copyWith(
                           fontWeight: FontWeight.w600,
@@ -60,7 +61,7 @@ class _ConsignmentResumeState extends State<ConsignmentResume> {
                       ),
                       AppDimens.size2S.hSpace,
                       Text(
-                        "${widget.dateFilter.toEEEdMMMy}${isToday ? ' (Hari Ini)' : ''}",
+                        "${widget.dateFilter.toEEEdMMMy}${isToday ? (' (Hari Ini)').tr(context) : ''}",
                         style: context.textStyle.bodyMedium?.copyWith(
                           color: AppColors.labelSecondary,
                           fontSize: 14,
@@ -73,7 +74,9 @@ class _ConsignmentResumeState extends State<ConsignmentResume> {
                   ),
                 ),
                 Icon(
-                  _isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                  _isExpanded
+                      ? Icons.keyboard_arrow_up
+                      : Icons.keyboard_arrow_down,
                   color: AppColors.primary,
                 ),
               ],
@@ -86,7 +89,10 @@ class _ConsignmentResumeState extends State<ConsignmentResume> {
               children: [
                 AppDimens.size3M.hSpace,
                 // Divider
-                Container(height: 1, color: AppColors.primary.withValues(alpha: 0.2)),
+                Container(
+                  height: 1,
+                  color: AppColors.primary.withValues(alpha: 0.2),
+                ),
                 AppDimens.size3M.hSpace,
                 // detail section
                 Column(
@@ -97,8 +103,13 @@ class _ConsignmentResumeState extends State<ConsignmentResume> {
                         Expanded(
                           child: _buildDetailRow(
                             context,
-                            'Total Waktu Istirahat',
-                            widget.tasks?.totalWaktuIstirahat?.toTimeMinute?.isEmptyStrip ?? '-',
+                            ('Total Waktu Istirahat').tr(context),
+                            widget
+                                    .tasks
+                                    ?.totalWaktuIstirahat
+                                    ?.toTimeMinute
+                                    ?.isEmptyStrip ??
+                                '-',
                             Icons.coffee_rounded,
                           ),
                         ),
@@ -106,8 +117,13 @@ class _ConsignmentResumeState extends State<ConsignmentResume> {
                         Expanded(
                           child: _buildDetailRow(
                             context,
-                            'Total Waktu Realita',
-                            widget.tasks?.totalWaktuTempuh?.toTimeSecond?.isEmptyStrip ?? '-',
+                            ('Total Waktu Realita').tr(context),
+                            widget
+                                    .tasks
+                                    ?.totalWaktuTempuh
+                                    ?.toTimeSecond
+                                    ?.isEmptyStrip ??
+                                '-',
                             Icons.timer,
                           ),
                         ),
@@ -120,8 +136,13 @@ class _ConsignmentResumeState extends State<ConsignmentResume> {
                         Expanded(
                           child: _buildDetailRow(
                             context,
-                            'Total Waktu Estimasi',
-                            widget.tasks?.totalWaktuGmaps?.toTimeSecond?.isEmptyStrip ?? '-',
+                            ('Total Waktu Estimasi').tr(context),
+                            widget
+                                    .tasks
+                                    ?.totalWaktuGmaps
+                                    ?.toTimeSecond
+                                    ?.isEmptyStrip ??
+                                '-',
                             Icons.schedule,
                           ),
                         ),
@@ -129,8 +150,12 @@ class _ConsignmentResumeState extends State<ConsignmentResume> {
                         Expanded(
                           child: _buildDetailRow(
                             context,
-                            'Total Jarak Estimasi',
-                            widget.tasks?.countJarakFromAttendance?.toKilometer?.isEmptyStrip ??
+                            ('Total Jarak Estimasi').tr(context),
+                            widget
+                                    .tasks
+                                    ?.countJarakFromAttendance
+                                    ?.toKilometer
+                                    ?.isEmptyStrip ??
                                 '-',
                             Icons.route,
                           ),
@@ -144,8 +169,13 @@ class _ConsignmentResumeState extends State<ConsignmentResume> {
                         Expanded(
                           child: _buildDetailRow(
                             context,
-                            'Total Biaya Estimasi',
-                            widget.tasks?.biayaActually?.toCurrency.isEmptyStrip ?? '-',
+                            ('Total Biaya Estimasi').tr(context),
+                            widget
+                                    .tasks
+                                    ?.biayaActually
+                                    ?.toCurrency
+                                    .isEmptyStrip ??
+                                '-',
                             Icons.attach_money_outlined,
                           ),
                         ),
@@ -157,7 +187,9 @@ class _ConsignmentResumeState extends State<ConsignmentResume> {
                 ),
               ],
             ),
-            crossFadeState: _isExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+            crossFadeState: _isExpanded
+                ? CrossFadeState.showSecond
+                : CrossFadeState.showFirst,
             duration: const Duration(milliseconds: 300),
           ),
         ],
@@ -188,7 +220,7 @@ class _ConsignmentResumeState extends State<ConsignmentResume> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              HrText(
                 label,
                 style: context.textStyle.bodySmall?.copyWith(
                   color: AppColors.labelSecondary,
@@ -197,7 +229,7 @@ class _ConsignmentResumeState extends State<ConsignmentResume> {
                 ),
               ),
               const SizedBox(height: 2),
-              Text(
+              HrText(
                 value,
                 style: context.textStyle.bodyMedium?.copyWith(
                   color: AppColors.labelPrimary,

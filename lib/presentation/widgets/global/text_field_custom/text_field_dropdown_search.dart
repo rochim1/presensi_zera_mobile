@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -51,7 +52,7 @@ class TextFieldDropdownSearch<T> extends StatelessWidget {
             padding: const EdgeInsets.only(left: AppDimens.size2S),
             child: RichText(
               text: TextSpan(
-                text: title!,
+                text: title!.tr(context),
                 style: AppTextStyle.fieldLabel.copyWith(
                   color: colorTitle ?? AppColors.labelPrimary,
                 ),
@@ -80,10 +81,13 @@ class TextFieldDropdownSearch<T> extends StatelessWidget {
                     : (filter, loadProps) => items,
                 compareFn: (item, selectedItem) =>
                     compareFn!(item!, selectedItem),
-                itemAsString: (item) => itemAsString!(item!),
+                itemAsString: (item) =>
+                    hrOptionLabel(item, itemAsString!(item!), context),
                 onChanged: onChanged,
                 selectedItem: selectedItem,
-                validator: validator,
+                validator: validator == null
+                    ? null
+                    : (value) => validator?.call(value)?.tr(context),
                 autoValidateMode: AutovalidateMode.onUserInteraction,
                 popupProps: PopupProps.menu(
                   showSelectedItems: true,
@@ -106,7 +110,11 @@ class TextFieldDropdownSearch<T> extends StatelessWidget {
                         enabled: !isDisabled,
                         selected: isSelected,
                         title: Text(
-                          itemAsString?.call(item) ?? item.toString(),
+                          hrOptionLabel(
+                            item,
+                            itemAsString?.call(item) ?? item.toString(),
+                            context,
+                          ),
                         ),
                         trailing: isSelected
                             ? const Icon(
@@ -144,7 +152,7 @@ class TextFieldDropdownSearch<T> extends StatelessWidget {
                           AppDimens.radiusMedium,
                         ),
                       ),
-                      hintText: hintSearch,
+                      hintText: hintSearch?.tr(context),
                       prefixIcon: const Icon(Icons.search),
                       prefixIconColor: AppColors.labelSecondary,
                     ),
@@ -152,7 +160,7 @@ class TextFieldDropdownSearch<T> extends StatelessWidget {
                 ),
                 decoratorProps: DropDownDecoratorProps(
                   baseStyle: const TextStyle(fontSize: AppDimens.size3M),
-                  decoration: InputDecoration(hintText: hint),
+                  decoration: InputDecoration(hintText: hint?.tr(context)),
                 ),
               ),
             ),

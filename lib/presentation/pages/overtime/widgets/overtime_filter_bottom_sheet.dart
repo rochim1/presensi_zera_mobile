@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -161,7 +162,7 @@ class _OvertimeFilterBottomSheetState extends State<OvertimeFilterBottomSheet> {
                             ),
                           ),
                         ),
-                        child: Text(
+                        child: HrText(
                           months[index],
                           style: context.textStyle.bodySmall,
                           maxLines: 1,
@@ -213,7 +214,7 @@ class _OvertimeFilterBottomSheetState extends State<OvertimeFilterBottomSheet> {
               ),
             ),
 
-            Text(
+            HrText(
               'Filter Lembur',
               style: context.textStyle.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
@@ -226,7 +227,7 @@ class _OvertimeFilterBottomSheetState extends State<OvertimeFilterBottomSheet> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                HrText(
                   'Rentang Waktu',
                   style: context.textStyle.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
@@ -242,7 +243,7 @@ class _OvertimeFilterBottomSheetState extends State<OvertimeFilterBottomSheet> {
                     minimumSize: Size.zero,
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
-                  child: Text(
+                  child: HrText(
                     'Pilih Bulan',
                     style: context.textStyle.bodyMedium?.copyWith(
                       color: AppColors.primary,
@@ -268,7 +269,7 @@ class _OvertimeFilterBottomSheetState extends State<OvertimeFilterBottomSheet> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
+                    HrText(
                       (_startDate != null && _endDate != null)
                           ? '${DateFormat('dd MMM yyyy').format(_startDate!)} - ${DateFormat('dd MMM yyyy').format(_endDate!)}'
                           : 'Pilih Rentang Waktu',
@@ -290,7 +291,7 @@ class _OvertimeFilterBottomSheetState extends State<OvertimeFilterBottomSheet> {
             AppDimens.paddingLarge.hSpace,
 
             // Status
-            Text(
+            HrText(
               'Status',
               style: context.textStyle.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w600,
@@ -302,7 +303,7 @@ class _OvertimeFilterBottomSheetState extends State<OvertimeFilterBottomSheet> {
               children: _statusOptions.map((status) {
                 final isSelected = _status == status;
                 return ChoiceChip(
-                  label: Text(
+                  label: HrText(
                     status == 'Semua'
                         ? 'Semua'
                         : status[0].toUpperCase() + status.substring(1),
@@ -355,7 +356,7 @@ class _OvertimeFilterBottomSheetState extends State<OvertimeFilterBottomSheet> {
                         ),
                       ),
                     ),
-                    child: Text(
+                    child: HrText(
                       'Reset',
                       style: context.textStyle.bodyLarge?.copyWith(
                         color: AppColors.primary,
@@ -375,7 +376,7 @@ class _OvertimeFilterBottomSheetState extends State<OvertimeFilterBottomSheet> {
                         _status == 'Semua' ? null : _status,
                       );
                     },
-                    text: 'Terapkan',
+                    text: ('Terapkan').tr(context),
                   ),
                 ),
               ],

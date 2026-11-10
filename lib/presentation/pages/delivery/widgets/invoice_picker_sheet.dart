@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_domain/presensi_domain.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -39,7 +40,8 @@ class _InvoicePickerSheetState extends State<InvoicePickerSheet> {
         text: item.paymentAmount > 0
             ? item.paymentAmount.toInt().toString().replaceAllMapped(
                 RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-                (m) => '${m[1]}.')
+                (m) => '${m[1]}.',
+              )
             : '',
       );
       _paymentControllers[key] = controller;
@@ -54,16 +56,19 @@ class _InvoicePickerSheetState extends State<InvoicePickerSheet> {
     super.dispose();
   }
 
-  String _itemKey(SalesOrderEntity item) =>
-      item.id ?? item.noOrder ?? '';
+  String _itemKey(SalesOrderEntity item) => item.id ?? item.noOrder ?? '';
 
   int get _selectedCount => _items.where((e) => e.isSelected).length;
 
   double get _totalAmount {
     if (!widget.showAmountInput) {
-      return _items.where((e) => e.isSelected).fold(0.0, (sum, e) => sum + (e.sisaTagihan ?? 0));
+      return _items
+          .where((e) => e.isSelected)
+          .fold(0.0, (sum, e) => sum + (e.sisaTagihan ?? 0));
     }
-    return _items.where((e) => e.isSelected).fold(0.0, (sum, e) => sum + e.paymentAmount);
+    return _items
+        .where((e) => e.isSelected)
+        .fold(0.0, (sum, e) => sum + e.paymentAmount);
   }
 
   bool get _isValid {
@@ -103,7 +108,9 @@ class _InvoicePickerSheetState extends State<InvoicePickerSheet> {
 
     // Format the value with dots as thousand separator
     final formatted = sisa.toInt().toString().replaceAllMapped(
-        RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.');
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (m) => '${m[1]}.',
+    );
 
     _paymentControllers[key]?.text = formatted;
     _paymentControllers[key]?.selection = TextSelection.collapsed(
@@ -183,14 +190,14 @@ class _InvoicePickerSheetState extends State<InvoicePickerSheet> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    HrText(
                       'Pilih Tagihan',
                       style: context.textStyle.titleLarge!.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text(
+                    HrText(
                       '${_items.length} tagihan tersedia',
                       style: context.textStyle.bodySmall?.copyWith(
                         color: AppColors.grey,
@@ -212,10 +219,13 @@ class _InvoicePickerSheetState extends State<InvoicePickerSheet> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.receipt_long_outlined,
-                            size: 48, color: AppColors.grey.shade300),
+                        Icon(
+                          Icons.receipt_long_outlined,
+                          size: 48,
+                          color: AppColors.grey.shade300,
+                        ),
                         const SizedBox(height: 8),
-                        Text(
+                        HrText(
                           'Tidak ada tagihan tersedia',
                           style: context.textStyle.bodyMedium?.copyWith(
                             color: AppColors.grey,
@@ -245,8 +255,9 @@ class _InvoicePickerSheetState extends State<InvoicePickerSheet> {
                                 : AppColors.borderGrey,
                             width: item.isSelected ? 1.5 : 1,
                           ),
-                          borderRadius:
-                              BorderRadius.circular(AppDimens.radiusMediumX),
+                          borderRadius: BorderRadius.circular(
+                            AppDimens.radiusMediumX,
+                          ),
                         ),
                         child: Column(
                           children: [
@@ -254,13 +265,14 @@ class _InvoicePickerSheetState extends State<InvoicePickerSheet> {
                             InkWell(
                               onTap: () => _toggleSelection(index),
                               borderRadius: BorderRadius.circular(
-                                  AppDimens.radiusMediumX),
+                                AppDimens.radiusMediumX,
+                              ),
                               child: Padding(
                                 padding: const EdgeInsets.all(
-                                    AppDimens.paddingMediumX),
+                                  AppDimens.paddingMediumX,
+                                ),
                                 child: Row(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     // Checkbox
                                     SizedBox(
@@ -272,8 +284,9 @@ class _InvoicePickerSheetState extends State<InvoicePickerSheet> {
                                             _toggleSelection(index),
                                         activeColor: AppColors.primary,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(4),
+                                          borderRadius: BorderRadius.circular(
+                                            4,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -291,39 +304,40 @@ class _InvoicePickerSheetState extends State<InvoicePickerSheet> {
                                                 child: Text(
                                                   item.noOrder ?? '-',
                                                   style: context
-                                                      .textStyle.titleSmall
+                                                      .textStyle
+                                                      .titleSmall
                                                       ?.copyWith(
-                                                    fontWeight:
-                                                        FontWeight.bold,
-                                                  ),
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
                                                 ),
                                               ),
                                               Container(
-                                                padding: const EdgeInsets
-                                                    .symmetric(
-                                                  horizontal: 8,
-                                                  vertical: 3,
-                                                ),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 3,
+                                                    ),
                                                 decoration: BoxDecoration(
                                                   color:
                                                       _statusPembayaranBgColor(
-                                                          item.statusPembayaran),
+                                                        item.statusPembayaran,
+                                                      ),
                                                   borderRadius:
                                                       BorderRadius.circular(
-                                                          AppDimens
-                                                              .radiusSmall),
+                                                        AppDimens.radiusSmall,
+                                                      ),
                                                 ),
                                                 child: Text(
-                                                  (item.statusPembayaran ??
-                                                          '-')
+                                                  (item.statusPembayaran ?? '-')
                                                       .toUpperCase(),
                                                   style: TextStyle(
                                                     color:
                                                         _statusPembayaranColor(
-                                                            item.statusPembayaran),
+                                                          item.statusPembayaran,
+                                                        ),
                                                     fontSize: 10,
-                                                    fontWeight:
-                                                        FontWeight.bold,
+                                                    fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
                                               ),
@@ -333,24 +347,26 @@ class _InvoicePickerSheetState extends State<InvoicePickerSheet> {
                                           // Total order
                                           Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment
-                                                    .spaceBetween,
+                                                MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Text(
+                                              HrText(
                                                 'Total Order',
                                                 style: context
-                                                    .textStyle.bodySmall
+                                                    .textStyle
+                                                    .bodySmall
                                                     ?.copyWith(
-                                                  color: AppColors.grey,
-                                                ),
+                                                      color: AppColors.grey,
+                                                    ),
                                               ),
                                               Text(
                                                 'Rp ${(item.totalOrder?.toInt() ?? 0).textDecimalDigit}',
                                                 style: context
-                                                    .textStyle.bodySmall
+                                                    .textStyle
+                                                    .bodySmall
                                                     ?.copyWith(
-                                                  fontWeight: FontWeight.w600,
-                                                ),
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
                                               ),
                                             ],
                                           ),
@@ -358,25 +374,27 @@ class _InvoicePickerSheetState extends State<InvoicePickerSheet> {
                                           // Sisa tagihan
                                           Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment
-                                                    .spaceBetween,
+                                                MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Text(
+                                              HrText(
                                                 'Sisa Tagihan',
                                                 style: context
-                                                    .textStyle.bodySmall
+                                                    .textStyle
+                                                    .bodySmall
                                                     ?.copyWith(
-                                                  color: AppColors.grey,
-                                                ),
+                                                      color: AppColors.grey,
+                                                    ),
                                               ),
                                               Text(
                                                 'Rp ${(item.sisaTagihan?.toInt() ?? 0).textDecimalDigit}',
                                                 style: context
-                                                    .textStyle.bodySmall
+                                                    .textStyle
+                                                    .bodySmall
                                                     ?.copyWith(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: AppColors.red,
-                                                ),
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: AppColors.red,
+                                                    ),
                                               ),
                                             ],
                                           ),
@@ -399,10 +417,8 @@ class _InvoicePickerSheetState extends State<InvoicePickerSheet> {
                                   children: [
                                     Expanded(
                                       child: TextField(
-                                        controller:
-                                            _paymentControllers[key],
-                                        keyboardType:
-                                            TextInputType.number,
+                                        controller: _paymentControllers[key],
+                                        keyboardType: TextInputType.number,
                                         inputFormatters: [
                                           IdrTextInputFormatter(),
                                         ],
@@ -412,25 +428,27 @@ class _InvoicePickerSheetState extends State<InvoicePickerSheet> {
                                             color: AppColors.primary,
                                             fontWeight: FontWeight.w600,
                                           ),
-                                          hintText: 'Masukkan nominal',
+                                          hintText: ('Masukkan nominal').tr(
+                                            context,
+                                          ),
                                           hintStyle: TextStyle(
                                             color: AppColors.grey.shade400,
                                             fontSize: 13,
                                           ),
                                           contentPadding:
                                               const EdgeInsets.symmetric(
-                                            horizontal: 12,
-                                            vertical: 10,
-                                          ),
+                                                horizontal: 12,
+                                                vertical: 10,
+                                              ),
                                           border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(
-                                                    AppDimens.radiusMedium),
+                                            borderRadius: BorderRadius.circular(
+                                              AppDimens.radiusMedium,
+                                            ),
                                           ),
                                           focusedBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(
-                                                    AppDimens.radiusMedium),
+                                            borderRadius: BorderRadius.circular(
+                                              AppDimens.radiusMedium,
+                                            ),
                                             borderSide: BorderSide(
                                               color: AppColors.primary,
                                               width: 1.5,
@@ -439,30 +457,29 @@ class _InvoicePickerSheetState extends State<InvoicePickerSheet> {
                                           isDense: true,
                                         ),
                                         onChanged: (val) =>
-                                            _updatePaymentAmount(
-                                                index, val),
+                                            _updatePaymentAmount(index, val),
                                       ),
                                     ),
                                     const SizedBox(width: 8),
                                     SizedBox(
                                       height: 40,
                                       child: OutlinedButton(
-                                        onPressed: () =>
-                                            _setLunas(index),
+                                        onPressed: () => _setLunas(index),
                                         style: OutlinedButton.styleFrom(
                                           foregroundColor: AppColors.primary,
                                           side: BorderSide(
                                             color: AppColors.primary,
                                           ),
                                           shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(
-                                                    AppDimens.radiusMedium),
+                                            borderRadius: BorderRadius.circular(
+                                              AppDimens.radiusMedium,
+                                            ),
                                           ),
-                                          padding: const EdgeInsets
-                                              .symmetric(horizontal: 12),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                          ),
                                         ),
-                                        child: const Text(
+                                        child: const HrText(
                                           'Lunas',
                                           style: TextStyle(
                                             fontWeight: FontWeight.w600,
@@ -482,7 +499,14 @@ class _InvoicePickerSheetState extends State<InvoicePickerSheet> {
           ),
           // Bottom bar
           Container(
-            padding: EdgeInsets.fromLTRB(AppDimens.paddingMediumX, AppDimens.paddingMediumX, AppDimens.paddingMediumX, AppDimens.paddingMediumX + MediaQuery.viewInsetsOf(context).bottom + MediaQuery.paddingOf(context).bottom),
+            padding: EdgeInsets.fromLTRB(
+              AppDimens.paddingMediumX,
+              AppDimens.paddingMediumX,
+              AppDimens.paddingMediumX,
+              AppDimens.paddingMediumX +
+                  MediaQuery.viewInsetsOf(context).bottom +
+                  MediaQuery.paddingOf(context).bottom,
+            ),
             decoration: BoxDecoration(
               color: Colors.white,
               border: Border(
@@ -506,8 +530,10 @@ class _InvoicePickerSheetState extends State<InvoicePickerSheet> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          widget.showAmountInput ? 'Total Pembayaran' : 'Total Sisa Tagihan',
+                        HrText(
+                          widget.showAmountInput
+                              ? 'Total Pembayaran'
+                              : 'Total Sisa Tagihan',
                           style: context.textStyle.bodyMedium?.copyWith(
                             color: AppColors.grey,
                           ),
@@ -523,7 +549,7 @@ class _InvoicePickerSheetState extends State<InvoicePickerSheet> {
                     ),
                   ),
                   AppButton(
-                    text: 'Konfirmasi ($_selectedCount tagihan)',
+                    text: ('Konfirmasi ($_selectedCount tagihan)').tr(context),
                     onPressed: _isValid
                         ? () {
                             final selected = _items

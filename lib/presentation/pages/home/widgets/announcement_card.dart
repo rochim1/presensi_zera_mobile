@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:presensi_domain/presensi_domain.dart';
@@ -24,6 +25,7 @@ class AnnouncementCard extends StatefulWidget {
 class _AnnouncementCardState extends State<AnnouncementCard> {
   @override
   Widget build(BuildContext context) {
+    hrLocale(context); // Refresh relative timestamps when the language changes.
     if (widget.isLoading) return _buildShimmer(context);
 
     final announcement = widget.item!;
@@ -82,7 +84,7 @@ class _AnnouncementCardState extends State<AnnouncementCard> {
                     ),
                     const SizedBox(width: 5),
                     Text(
-                      announcement.prioritas.name,
+                      announcement.prioritas.name.capitalize.tr(context),
                       style: TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.w600,

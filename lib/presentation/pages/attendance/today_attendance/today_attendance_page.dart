@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,10 +17,9 @@ class TodayAttendancePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final today = DateTime.now();
     return BlocProvider(
-      create: (_) => sl<AttendancesCubit>()..applyFilters(
-        startDate: today,
-        endDate: today,
-      ),
+      create: (_) =>
+          sl<AttendancesCubit>()
+            ..applyFilters(startDate: today, endDate: today),
       child: const TodayAttendanceView(),
     );
   }
@@ -32,7 +32,7 @@ class TodayAttendanceView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppTopBar(
-        title: 'Presensi Hari Ini',
+        title: ('Presensi Hari Ini').tr(context),
         showBackButton: true,
         onBackTap: () => context.router.maybePop(),
         backgroundColor: AppColors.transparent,

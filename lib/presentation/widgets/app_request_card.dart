@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:presensi_mobile/core/themes/pantoo_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
@@ -216,7 +217,7 @@ class AppRequestDateRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (title != null && title!.isNotEmpty) ...[
-          Text(
+          HrText(
             title!,
             style: context.theme.textTheme.bodySmall?.copyWith(
               color: AppColors.labelSecondary,
@@ -234,7 +235,7 @@ class AppRequestDateRow extends StatelessWidget {
             ),
             SizedBox(width: AppDimens.w6),
             Expanded(
-              child: Text(
+              child: HrText(
                 value,
                 style: context.theme.textTheme.bodySmall?.copyWith(
                   color: AppColors.labelPrimary,

@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_domain/presensi_domain.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -86,7 +87,7 @@ class ItemCardConsignment extends StatelessWidget {
               child: Column(
                 children: [
                   ListComponentWidget(
-                    label: 'Kendaraan',
+                    label: ('Kendaraan').tr(context),
                     value: tasks
                         ?.inventaris
                         ?.jenisKendaraan
@@ -95,30 +96,30 @@ class ItemCardConsignment extends StatelessWidget {
                   ),
                   const Divider(),
                   ListComponentWidget(
-                    label: 'Status',
+                    label: ('Status').tr(context),
                     value: tasks?.aktivitas?.statusTask?.toStatusTask?.toName,
                     textColor:
                         tasks?.aktivitas?.statusTask?.toStatusTask?.toColor,
                   ),
                   const Divider(),
                   ListComponentWidget(
-                    label: 'Waktu Realita',
+                    label: ('Waktu Realita').tr(context),
                     value: tasks?.aktivitas?.estimasiWaktuTempuh?.toTimeSecond,
                   ),
                   const Divider(),
                   ListComponentWidget(
-                    label: 'Waktu Estimasi',
+                    label: ('Waktu Estimasi').tr(context),
                     value: tasks?.aktivitas?.estimasiWaktuGmaps?.toTimeSecond,
                   ),
                   const Divider(),
                   ListComponentWidget(
-                    label: 'Jarak Estimasi',
+                    label: ('Jarak Estimasi').tr(context),
                     value:
                         tasks?.aktivitas?.distanceFromAttendance?.toKilometer,
                   ),
                   const Divider(),
                   ListComponentWidget(
-                    label: 'Biaya Estimasi',
+                    label: ('Biaya Estimasi').tr(context),
                     value: tasks?.aktivitas?.estimasiBiayaPerTask?.toCurrency,
                   ),
                 ],
@@ -172,7 +173,7 @@ class _DestinationItem extends StatelessWidget {
             ? CrossAxisAlignment.end
             : CrossAxisAlignment.start,
         children: [
-          Text(
+          HrText(
             isRight ? 'Sampai' : 'Dari',
             textAlign: isRight ? TextAlign.right : TextAlign.left,
             style: context.textStyle.bodySmall!.copyWith(

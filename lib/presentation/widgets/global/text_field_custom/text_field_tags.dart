@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -39,7 +40,9 @@ class TextFieldTagsCustom extends StatelessWidget {
               controller ?? TextfieldTagsController<String>(),
           initialTags: initialTags,
           textSeparators: const [',', '.', ' '],
-          validator: validator,
+          validator: validator == null
+              ? null
+              : (value) => validator?.call(value)?.tr(context),
           inputFieldBuilder: (context, dynamic values) {
             return TextFormField(
               controller: values.textEditingController,
@@ -65,9 +68,11 @@ class TextFieldTagsCustom extends StatelessWidget {
                 ),
                 alignLabelWithHint: true,
                 floatingLabelBehavior: FloatingLabelBehavior.never,
-                hintText: values.tags.isNotEmpty ? 'Masukan lagi' : hint,
-                errorText: values.error,
-                helperText: 'Boleh di kosongkan',
+                hintText: (values.tags.isNotEmpty
+                    ? ('Masukan lagi').tr(context)
+                    : hint),
+                errorText: (values.error as String?)?.tr(context),
+                helperText: ('Boleh di kosongkan').tr(context),
                 helperStyle: context.textStyle.bodySmall!.copyWith(
                   color: AppColors.blue,
                 ),
@@ -102,11 +107,11 @@ class _TitleBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (tooltip.isEmpty) return Text(title, textAlign: TextAlign.left);
+    if (tooltip.isEmpty) return HrText(title, textAlign: TextAlign.left);
 
     return Row(
       children: [
-        Text(title, textAlign: TextAlign.left),
+        HrText(title, textAlign: TextAlign.left),
         AppDimens.size2S.wSpace,
         Tooltip(
           message: tooltip,

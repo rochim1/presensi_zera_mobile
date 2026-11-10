@@ -1,3 +1,5 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
+import 'package:presensi_mobile/l10n/app_language_controller.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -57,6 +59,7 @@ class _AppClockState extends State<AppClock> {
 
   @override
   Widget build(BuildContext context) {
+    hrLocale(context); // Rebuild formatted dates when the language changes.
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: widget.textAlign == TextAlign.center
@@ -76,7 +79,10 @@ class _AppClockState extends State<AppClock> {
         ),
         if (widget.showDate)
           Text(
-            DateFormat('EEEE, dd MMMM yyyy', 'id').format(_currentTime),
+            DateFormat(
+              'EEEE, dd MMMM yyyy',
+              AppLanguageController.instance.effectiveLocale.languageCode,
+            ).format(_currentTime),
             style: context.textStyle.labelMedium?.copyWith(
               color: AppColors.labelSecondary,
             ),

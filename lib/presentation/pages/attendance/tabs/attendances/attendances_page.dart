@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:presensi_mobile/presentation/bloc/app/app_cubit.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,7 @@ class AttendancesPage extends StatelessWidget {
     if (context.watch<AppCubit>().state.setting.data?.canViewTeamAttendance !=
         true) {
       return const Center(
-        child: Text("Presensi tim tidak diizinkan oleh admin."),
+        child: HrText("Presensi tim tidak diizinkan oleh admin."),
       );
     }
     return BlocProvider(

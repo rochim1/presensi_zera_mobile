@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -49,7 +50,7 @@ class AttendanceDetailView extends StatelessWidget {
                 attendance.user?.id == currentUser.userId;
 
             return Scaffold(
-              appBar: const AppTopBar(title: 'Detail Presensi'),
+              appBar: AppTopBar(title: ('Detail Presensi').tr(context)),
               body: detailState.attendance.when(
                 initial: () => const SizedBox.shrink(),
                 loading: () => _buildLoading(context),
@@ -73,7 +74,7 @@ class AttendanceDetailView extends StatelessWidget {
                         vertical: AppDimens.paddingMedium,
                       ),
                       child: AppButtonNew(
-                        text: 'Request Edit Presensi',
+                        text: ('Request Edit Presensi').tr(context),
                         onPressed: () {
                           context.router.push(
                             AttendanceRequestFormPageRoute(
@@ -206,7 +207,7 @@ class AttendanceDetailView extends StatelessWidget {
             _PresenceTabs(
               masukKerja: _buildPresenceSection(
                 context,
-                title: 'Masuk Kerja',
+                title: ('Masuk Kerja').tr(context),
                 time: attendance.jamMasuk,
                 addressState: state.checkInAddress,
                 location: attendance.locationCheckIn,
@@ -217,7 +218,7 @@ class AttendanceDetailView extends StatelessWidget {
               ),
               pulangKerja: _buildPresenceSection(
                 context,
-                title: 'Pulang Kerja',
+                title: ('Pulang Kerja').tr(context),
                 time: attendance.jamPulang,
                 addressState: state.checkOutAddress,
                 location: attendance.locationCheckOut,
@@ -262,18 +263,18 @@ class AttendanceDetailView extends StatelessWidget {
     final isToday = attendance.date?.isToday ?? false;
     return _card(
       context,
-      title: 'Informasi Utama',
+      title: ('Informasi Utama').tr(context),
       icon: PhosphorIcons.identificationCardFill,
       children: [
         _infoRow(
           context,
-          label: 'Tanggal',
+          label: ('Tanggal').tr(context),
           value:
-              '${attendance.date?.format(pattern: 'EE, dd MMM yyyy')}${isToday ? " (Hari Ini)" : ""}',
+              '${attendance.date?.format(pattern: 'EE, dd MMM yyyy')}${isToday ? (" (Hari Ini)").tr(context) : ""}',
         ),
         _infoRow(
           context,
-          label: 'Status',
+          label: ('Status').tr(context),
           valueWidget: AppChip(
             label: attendance.status.toDisplayName,
             color: attendance.status.toDisplayColor,
@@ -282,17 +283,17 @@ class AttendanceDetailView extends StatelessWidget {
         ),
         _infoRow(
           context,
-          label: 'Tipe Presensi',
+          label: ('Tipe Presensi').tr(context),
           value: attendance.type.toName,
         ),
         _infoRow(
           context,
-          label: 'Check In',
+          label: ('Check In').tr(context),
           value: attendance.jamMasuk?.format(pattern: 'HH:mm:ss') ?? '--:--:--',
         ),
         _infoRow(
           context,
-          label: 'Check Out',
+          label: ('Check Out').tr(context),
           value:
               attendance.jamPulang?.format(pattern: 'HH:mm:ss') ?? '--:--:--',
         ),
@@ -304,17 +305,17 @@ class AttendanceDetailView extends StatelessWidget {
   Widget _buildDurationCard(BuildContext context, Attendance attendance) {
     return _card(
       context,
-      title: 'Durasi Kerja',
+      title: ('Durasi Kerja').tr(context),
       icon: PhosphorIcons.timerFill,
       children: [
         _infoRow(
           context,
-          label: 'Total Kerja',
+          label: ('Total Kerja').tr(context),
           value: attendance.totalKerja?.timeDuration() ?? '--:--',
         ),
         _infoRow(
           context,
-          label: 'Total Istirahat',
+          label: ('Total Istirahat').tr(context),
           value: attendance.totalIstirahat?.timeDuration() ?? '--:--',
         ),
       ],
@@ -336,7 +337,7 @@ class AttendanceDetailView extends StatelessWidget {
       final hours = totalSeconds ~/ 3600;
       final minutes = (totalSeconds % 3600) ~/ 60;
       final seconds = totalSeconds % 60;
-      
+
       final prefix = value < 0 ? '-' : '+';
       if (hours > 0) return '$prefix${hours}j ${minutes}m ${seconds}d';
       if (minutes > 0) return '$prefix${minutes}m ${seconds}d';
@@ -345,19 +346,27 @@ class AttendanceDetailView extends StatelessWidget {
 
     return _card(
       context,
-      title: 'Waktu Standar',
+      title: ('Waktu Standar').tr(context),
       icon: PhosphorIcons.clockCounterClockwiseFill,
       children: [
-        _infoRow(context, label: 'Masuk Standar', value: masukStandar),
         _infoRow(
           context,
-          label: 'Selisih Jam Masuk',
+          label: ('Masuk Standar').tr(context),
+          value: masukStandar,
+        ),
+        _infoRow(
+          context,
+          label: ('Selisih Jam Masuk').tr(context),
           value: formatSelisih(attendance.jarakCheckInToStandar),
         ),
-        _infoRow(context, label: 'Pulang Standar', value: pulangStandar),
         _infoRow(
           context,
-          label: 'Selisih Jam Pulang',
+          label: ('Pulang Standar').tr(context),
+          value: pulangStandar,
+        ),
+        _infoRow(
+          context,
+          label: ('Selisih Jam Pulang').tr(context),
           value: formatSelisih(attendance.jarakCheckOutToStandar),
         ),
       ],
@@ -393,7 +402,7 @@ class AttendanceDetailView extends StatelessWidget {
             ),
           ],
         ),
-        child: Text(
+        child: HrText(
           'Belum ada data ${title.toLowerCase()}',
           style: context.textTheme.bodyMedium?.copyWith(
             color: AppColors.labelSecondary,
@@ -458,7 +467,7 @@ class AttendanceDetailView extends StatelessWidget {
                   Expanded(
                     child: _buildFilePreview(
                       context,
-                      label: 'Foto Presensi',
+                      label: ('Foto Presensi').tr(context),
                       url: photoUrl,
                     ),
                   ),
@@ -466,7 +475,7 @@ class AttendanceDetailView extends StatelessWidget {
                   Expanded(
                     child: _buildFilePreview(
                       context,
-                      label: 'Foto Pendukung',
+                      label: ('Foto Pendukung').tr(context),
                       url: pendukungUrl,
                     ),
                   ),
@@ -474,24 +483,24 @@ class AttendanceDetailView extends StatelessWidget {
             ),
           _infoRow(
             context,
-            label: 'Waktu $title',
+            label: ('Waktu $title').tr(context),
             value: time?.format(pattern: 'HH:mm:ss') ?? '--:--:--',
           ),
           if (location != null)
             _infoRow(
               context,
-              label: 'Lokasi $title',
+              label: ('Lokasi $title').tr(context),
               valueWidget: addressState != null
                   ? addressState.when(
                       initial: () => const Text('-'),
-                      loading: () => Text(
+                      loading: () => HrText(
                         'Memuat alamat...',
                         style: context.textTheme.bodyMedium?.copyWith(
                           color: AppColors.labelSecondary,
                           fontStyle: FontStyle.italic,
                         ),
                       ),
-                      success: (addr) => Text(
+                      success: (addr) => HrText(
                         addr.address.isNotEmpty
                             ? addr.address
                             : 'Alamat tidak tersedia',
@@ -500,7 +509,7 @@ class AttendanceDetailView extends StatelessWidget {
                           color: AppColors.labelPrimary,
                         ),
                       ),
-                      failure: (fail) => Text(
+                      failure: (fail) => HrText(
                         'Gagal memuat alamat (${location.lat.toStringAsFixed(6)}, ${location.long.toStringAsFixed(6)})',
                         style: context.textTheme.bodyMedium?.copyWith(
                           color: AppColors.red,
@@ -511,7 +520,7 @@ class AttendanceDetailView extends StatelessWidget {
                   : const Text('-'),
             ),
           if (note != null && note.isNotEmpty)
-            _infoRow(context, label: 'Catatan', value: note),
+            _infoRow(context, label: ('Catatan').tr(context), value: note),
         ],
       ),
     );
@@ -529,7 +538,7 @@ class AttendanceDetailView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       spacing: AppDimens.h8,
       children: [
-        Text(
+        HrText(
           label,
           style: context.textTheme.bodySmall?.copyWith(
             fontWeight: FontWeight.w600,
@@ -557,7 +566,7 @@ class AttendanceDetailView extends StatelessWidget {
                     size: 48,
                   ),
                   SizedBox(height: AppDimens.h8),
-                  Text(
+                  HrText(
                     'Lihat PDF',
                     style: context.textTheme.labelSmall?.copyWith(
                       color: AppColors.primary,
@@ -598,7 +607,7 @@ class AttendanceDetailView extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
+                HrText(
                   'Buka Tautan File',
                   style: context.textTheme.bodySmall?.copyWith(
                     color: AppColors.primary,
@@ -630,7 +639,7 @@ class AttendanceDetailView extends StatelessWidget {
   Widget _buildAktivitasCard(BuildContext context, Attendance attendance) {
     return _card(
       context,
-      title: 'Daftar Aktivitas',
+      title: ('Daftar Aktivitas').tr(context),
       icon: PhosphorIcons.listChecksFill,
       children: attendance.activities.asMap().entries.map((entry) {
         final index = entry.key;
@@ -724,7 +733,7 @@ class AttendanceDetailView extends StatelessWidget {
                   ),
                   if (activity.isLate)
                     AppChip(
-                      label: 'Terlambat',
+                      label: ('Terlambat').tr(context),
                       color: AppColors.red,
                       borderRadius: AppDimens.r8,
                     ),
@@ -759,7 +768,7 @@ class AttendanceDetailView extends StatelessWidget {
           Icon(icon, size: 20, color: AppColors.primary),
           SizedBox(width: AppDimens.w10),
           Expanded(
-            child: Text(
+            child: HrText(
               title,
               style: context.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
@@ -790,7 +799,7 @@ class AttendanceDetailView extends StatelessWidget {
         children: [
           Expanded(
             flex: 2,
-            child: Text(
+            child: HrText(
               label,
               style: context.textTheme.bodyMedium?.copyWith(
                 color: AppColors.labelSecondary,

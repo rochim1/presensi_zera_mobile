@@ -15,9 +15,7 @@ class OrderGetAllSalesOrdersState extends Equatable {
   });
 
   factory OrderGetAllSalesOrdersState.initial() {
-    return const OrderGetAllSalesOrdersState(
-      status: TypeState.initial,
-    );
+    return const OrderGetAllSalesOrdersState(status: TypeState.initial);
   }
 
   OrderGetAllSalesOrdersState copyWith({

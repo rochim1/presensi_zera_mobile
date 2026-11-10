@@ -65,7 +65,7 @@
           android:resource="@color/ic_color_primary" />
         <meta-data
           android:name="com.google.firebase.messaging.default_notification_channel_id"
-          android:value="bpb" />
+          android:value="pantoo" />
         <!-- Remove AD when load google analytics -->
         <meta-data
           android:name="google_analytics_adid_collection_enabled"

@@ -1,5 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter/foundation.dart';
+import 'package:presensi_mobile/l10n/app_language_controller.dart';
+import 'package:presensi_mobile/l10n/generated/app_localizations.dart';
 import 'package:presensi_mobile/presentation/widgets/pantoo_launch_screen.dart';
 import 'package:presensi_mobile/service/startup_metrics.dart';
 
@@ -61,7 +63,9 @@ class _StartupGateState extends State<StartupGate> {
                       child: Semantics(
                         liveRegion: true,
                         child: Text(
-                          'Pantoo HR belum dapat dibuka. Tutup lalu buka kembali aplikasi. Data tersimpan tidak dihapus.',
+                          lookupAppLocalizations(
+                            AppLanguageController.instance.effectiveLocale,
+                          ).hr8baa1fa352,
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             color: Color(0xFF173D3A),

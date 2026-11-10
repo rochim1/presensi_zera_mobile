@@ -1,3 +1,5 @@
+import 'package:presensi_mobile/l10n/app_language_controller.dart';
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -178,7 +180,7 @@ class _ActivityFormSheetState extends State<ActivityFormSheet> {
       if (end <= start) {
         AppBottomSheet.showError(
           context: context,
-          message: 'Jam selesai harus setelah jam mulai.',
+          message: ('Jam selesai harus setelah jam mulai.').tr(context),
         );
         return;
       }
@@ -189,7 +191,7 @@ class _ActivityFormSheetState extends State<ActivityFormSheet> {
         !_attendanceCloseAt!.isAfter(_attendanceOpenAt!)) {
       AppBottomSheet.showError(
         context: context,
-        message: 'Waktu tutup presensi harus setelah waktu buka.',
+        message: ('Waktu tutup presensi harus setelah waktu buka.').tr(context),
       );
       return;
     }
@@ -205,7 +207,8 @@ class _ActivityFormSheetState extends State<ActivityFormSheet> {
         AppBottomSheet.showError(
           context: context,
           message:
-              'Waktu tutup presensi tidak boleh lebih awal dari waktu selesai kegiatan.',
+              ('Waktu tutup presensi tidak boleh lebih awal dari waktu selesai kegiatan.')
+                  .tr(context),
         );
         return;
       }
@@ -215,7 +218,7 @@ class _ActivityFormSheetState extends State<ActivityFormSheet> {
         (_latitude == null || _longitude == null)) {
       AppBottomSheet.showError(
         context: context,
-        message: 'Pilih titik lokasi kegiatan terlebih dahulu.',
+        message: ('Pilih titik lokasi kegiatan terlebih dahulu.').tr(context),
       );
       return;
     }
@@ -302,7 +305,7 @@ class _ActivityFormSheetState extends State<ActivityFormSheet> {
           Row(
             children: [
               Expanded(
-                child: Text(
+                child: HrText(
                   widget.initialEvent == null
                       ? 'Tambah Kegiatan'
                       : 'Edit Kegiatan',
@@ -319,7 +322,9 @@ class _ActivityFormSheetState extends State<ActivityFormSheet> {
           ),
           TextFormField(
             controller: _title,
-            decoration: const InputDecoration(labelText: 'Judul kegiatan *'),
+            decoration: InputDecoration(
+              labelText: ('Judul kegiatan *').tr(context),
+            ),
             validator: (value) => value == null || value.trim().isEmpty
                 ? 'Judul wajib diisi'
                 : null,
@@ -328,12 +333,15 @@ class _ActivityFormSheetState extends State<ActivityFormSheet> {
           TextFormField(
             controller: _description,
             maxLines: 3,
-            decoration: const InputDecoration(labelText: 'Keterangan'),
+            decoration: InputDecoration(labelText: ('Keterangan').tr(context)),
           ),
           const SizedBox(height: 12),
           _PickerTile(
-            label: 'Tanggal kegiatan *',
-            value: DateFormat('dd MMMM yyyy', 'id_ID').format(_date),
+            label: ('Tanggal kegiatan *').tr(context),
+            value: DateFormat(
+              'dd MMMM yyyy',
+              AppLanguageController.instance.effectiveLocale.languageCode,
+            ).format(_date),
             onTap: _pickDate,
           ),
           const SizedBox(height: 12),
@@ -341,7 +349,7 @@ class _ActivityFormSheetState extends State<ActivityFormSheet> {
             children: [
               Expanded(
                 child: _PickerTile(
-                  label: 'Jam mulai',
+                  label: ('Jam mulai').tr(context),
                   value: _time(_startTime) ?? 'Opsional',
                   onTap: () => _pickTime(true),
                 ),
@@ -349,7 +357,7 @@ class _ActivityFormSheetState extends State<ActivityFormSheet> {
               const SizedBox(width: 12),
               Expanded(
                 child: _PickerTile(
-                  label: 'Jam selesai',
+                  label: ('Jam selesai').tr(context),
                   value: _time(_endTime) ?? 'Opsional',
                   onTap: () => _pickTime(false),
                 ),
@@ -360,8 +368,8 @@ class _ActivityFormSheetState extends State<ActivityFormSheet> {
             contentPadding: EdgeInsets.zero,
             value: _attendanceEnabled,
             onChanged: (value) => setState(() => _attendanceEnabled = value),
-            title: const Text('Aktifkan presensi QR'),
-            subtitle: const Text(
+            title: const HrText('Aktifkan presensi QR'),
+            subtitle: const HrText(
               'Kehadiran dicatat oleh petugas melalui QR karyawan.',
             ),
           ),
@@ -370,7 +378,7 @@ class _ActivityFormSheetState extends State<ActivityFormSheet> {
               children: [
                 Expanded(
                   child: _PickerTile(
-                    label: 'Buka presensi',
+                    label: ('Buka presensi').tr(context),
                     value: _attendanceOpenAt == null
                         ? 'Opsional'
                         : DateFormat(
@@ -383,7 +391,7 @@ class _ActivityFormSheetState extends State<ActivityFormSheet> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: _PickerTile(
-                    label: 'Tutup presensi',
+                    label: ('Tutup presensi').tr(context),
                     value: _attendanceCloseAt == null
                         ? 'Opsional'
                         : DateFormat(
@@ -399,18 +407,20 @@ class _ActivityFormSheetState extends State<ActivityFormSheet> {
               contentPadding: EdgeInsets.zero,
               value: _locationEnabled,
               onChanged: (value) => setState(() => _locationEnabled = value),
-              title: const Text('Validasi lokasi petugas'),
+              title: const HrText('Validasi lokasi petugas'),
             ),
             if (_locationEnabled) ...[
               TextFormField(
                 controller: _locationName,
-                decoration: const InputDecoration(labelText: 'Nama lokasi'),
+                decoration: InputDecoration(
+                  labelText: ('Nama lokasi').tr(context),
+                ),
               ),
               const SizedBox(height: 12),
               OutlinedButton.icon(
                 onPressed: _pickLocation,
                 icon: const Icon(Icons.location_on_outlined),
-                label: Text(
+                label: HrText(
                   _latitude == null
                       ? 'Pilih titik lokasi'
                       : '${_latitude!.toStringAsFixed(5)}, ${_longitude!.toStringAsFixed(5)}',
@@ -418,12 +428,14 @@ class _ActivityFormSheetState extends State<ActivityFormSheet> {
               ),
               DropdownButtonFormField<int>(
                 initialValue: _radius,
-                decoration: const InputDecoration(labelText: 'Radius validasi'),
+                decoration: InputDecoration(
+                  labelText: ('Radius validasi').tr(context),
+                ),
                 items: const [25, 50, 100, 200, 500]
                     .map(
                       (value) => DropdownMenuItem(
                         value: value,
-                        child: Text('$value meter'),
+                        child: HrText('$value meter'),
                       ),
                     )
                     .toList(),
@@ -434,7 +446,7 @@ class _ActivityFormSheetState extends State<ActivityFormSheet> {
           const SizedBox(height: 20),
           FilledButton(
             onPressed: _submitting ? null : _submit,
-            child: Text(_submitting ? 'Menyimpan...' : 'Simpan Kegiatan'),
+            child: HrText(_submitting ? 'Menyimpan...' : 'Simpan Kegiatan'),
           ),
         ],
       ),
@@ -459,7 +471,7 @@ class _PickerTile extends StatelessWidget {
     borderRadius: BorderRadius.circular(12),
     child: InputDecorator(
       decoration: InputDecoration(
-        labelText: label,
+        labelText: (label).tr(context),
         suffixIcon: const Icon(Icons.chevron_right),
       ),
       child: Text(value, maxLines: 1, overflow: TextOverflow.ellipsis),

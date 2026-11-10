@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:presensi_domain/presensi_domain.dart';
@@ -78,7 +79,7 @@ class _ProductSelectionSheetState extends State<ProductSelectionSheet> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Edit Harga Manual'),
+          title: const HrText('Edit Harga Manual'),
           content: TextField(
             controller: controller,
             keyboardType: TextInputType.number,
@@ -91,7 +92,7 @@ class _ProductSelectionSheetState extends State<ProductSelectionSheet> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Batal'),
+              child: const HrText('Batal'),
             ),
             ElevatedButton(
               onPressed: () {
@@ -131,7 +132,7 @@ class _ProductSelectionSheetState extends State<ProductSelectionSheet> {
                 }
                 Navigator.pop(context);
               },
-              child: const Text('Simpan'),
+              child: const HrText('Simpan'),
             ),
           ],
         );
@@ -157,7 +158,7 @@ class _ProductSelectionSheetState extends State<ProductSelectionSheet> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                HrText(
                   'Pilih Produk',
                   style: context.textStyle.titleLarge!.copyWith(
                     fontWeight: FontWeight.bold,
@@ -173,7 +174,7 @@ class _ProductSelectionSheetState extends State<ProductSelectionSheet> {
             TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Cari produk/SKU...',
+                hintText: ('Cari produk/SKU...').tr(context),
                 prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppDimens.radiusMedium),
@@ -194,7 +195,7 @@ class _ProductSelectionSheetState extends State<ProductSelectionSheet> {
                     return const Center(child: CircularProgressIndicator());
                   } else if (state.status.isNotLoaded) {
                     return Center(
-                      child: Text(
+                      child: HrText(
                         state.failure?.message ?? 'Gagal memuat produk',
                       ),
                     );
@@ -221,7 +222,7 @@ class _ProductSelectionSheetState extends State<ProductSelectionSheet> {
 
                   if (products.isEmpty) {
                     return const Center(
-                      child: Text('Tidak ada produk tersedia'),
+                      child: HrText('Tidak ada produk tersedia'),
                     );
                   }
 
@@ -274,7 +275,7 @@ class _ProductSelectionSheetState extends State<ProductSelectionSheet> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const SizedBox(height: 4),
-                                Text(
+                                HrText(
                                   'SKU: ${product.sku ?? product.kodeInventaris ?? '-'}',
                                   style: const TextStyle(
                                     color: Colors.grey,
@@ -296,7 +297,7 @@ class _ProductSelectionSheetState extends State<ProductSelectionSheet> {
                                           : null,
                                       child: Row(
                                         children: [
-                                          Text(
+                                          HrText(
                                             'Rp ${currentPrice.toInt().textDecimalDigit} / ${product.unit ?? product.baseUnit ?? '-'}',
                                             style: TextStyle(
                                               color: Theme.of(
@@ -352,7 +353,7 @@ class _ProductSelectionSheetState extends State<ProductSelectionSheet> {
                                   ],
                                 ),
                                 const SizedBox(height: 8),
-                                Text(
+                                HrText(
                                   'Subtotal: Rp ${(existingItem?.subtotal ?? 0).toInt().textDecimalDigit}',
                                   style: const TextStyle(
                                     fontWeight: FontWeight.w500,
@@ -365,7 +366,7 @@ class _ProductSelectionSheetState extends State<ProductSelectionSheet> {
                               crossAxisAlignment: CrossAxisAlignment.end,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text(
+                                HrText(
                                   'Stok: ${product.stok ?? 0}',
                                   style: TextStyle(
                                     color: (product.stok ?? 0) > 0
@@ -451,7 +452,7 @@ class _ProductSelectionSheetState extends State<ProductSelectionSheet> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      const HrText(
                         'Total Pesanan',
                         style: TextStyle(color: Colors.grey),
                       ),
@@ -462,7 +463,7 @@ class _ProductSelectionSheetState extends State<ProductSelectionSheet> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Text(
+                      HrText(
                         '${currentItems.length} produk',
                         style: const TextStyle(
                           fontSize: 12,
@@ -474,7 +475,7 @@ class _ProductSelectionSheetState extends State<ProductSelectionSheet> {
                   SizedBox(
                     width: 140,
                     child: AppButton(
-                      text: 'Simpan',
+                      text: ('Simpan').tr(context),
                       onPressed: () {
                         Navigator.of(context).pop(currentItems);
                       },

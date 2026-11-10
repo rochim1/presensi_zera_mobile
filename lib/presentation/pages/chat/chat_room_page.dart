@@ -1,3 +1,5 @@
+import 'package:presensi_mobile/l10n/app_language_controller.dart';
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -91,6 +93,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
 
   @override
   Widget build(BuildContext context) {
+    hrLocale(context); // Rebuild formatted dates when the language changes.
     final currentUserId = context.read<AppCubit>().state.user.data?.id;
     final firstLetter = widget.chatTitle.isNotEmpty
         ? widget.chatTitle[0].toUpperCase()
@@ -201,14 +204,14 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                           ),
                         ),
                         AppDimens.h12.hSpace,
-                        Text(
+                        HrText(
                           'Belum ada pesan',
                           style: context.textStyle.titleSmall?.copyWith(
                             color: AppColors.labelSecondary,
                           ),
                         ),
                         AppDimens.h4.hSpace,
-                        Text(
+                        HrText(
                           'Kirim pesan pertama Anda!',
                           style: context.textStyle.bodySmall?.copyWith(
                             color: AppColors.labelSecondary,
@@ -316,7 +319,10 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
         date.day == yesterday.day) {
       label = 'Kemarin';
     } else {
-      label = DateFormat('dd MMMM yyyy', 'id').format(date);
+      label = DateFormat(
+        'dd MMMM yyyy',
+        AppLanguageController.instance.effectiveLocale.languageCode,
+      ).format(date);
     }
 
     return Padding(
@@ -328,7 +334,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
             color: AppColors.labelSecondary.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(AppDimens.r100),
           ),
-          child: Text(
+          child: HrText(
             label,
             style: TextStyle(
               fontSize: 11,
@@ -455,7 +461,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                               : AppColors.primary,
                         ),
                         const SizedBox(width: 4),
-                        Text(
+                        HrText(
                           '${message.threadCount} balasan',
                           style: TextStyle(
                             fontSize: 12,
@@ -515,7 +521,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                       ),
                       child: Row(
                         children: [
-                          Text(
+                          HrText(
                             'Thread Balasan',
                             style: context.textStyle.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
@@ -631,7 +637,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
             child: TextField(
               controller: threadController,
               decoration: InputDecoration(
-                hintText: 'Balas di thread...',
+                hintText: ('Balas di thread...').tr(context),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
                   borderSide: BorderSide.none,
@@ -737,7 +743,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                 child: TextField(
                   controller: _messageController,
                   decoration: InputDecoration(
-                    hintText: 'Ketik pesan...',
+                    hintText: ('Ketik pesan...').tr(context),
                     hintStyle: TextStyle(
                       color: AppColors.labelSecondary,
                       fontSize: 14,

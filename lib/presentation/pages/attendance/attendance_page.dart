@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'widgets/attendance_period_filter.dart';
 import 'package:presensi_mobile/presentation/bloc/app/app_cubit.dart';
 import 'dart:async';
@@ -96,12 +97,14 @@ class _AttendanceViewState extends State<AttendanceView>
             appState.setting.data?.canViewTeamAttendance == true;
         return Scaffold(
           appBar: AppTopBar(
-            title: 'Presensi',
+            title: ('Presensi').tr(context),
             centerTitle: false,
-            subtitle: 'Kelola kehadiran dan riwayat presensi Anda',
+            subtitle: ('Kelola kehadiran dan riwayat presensi Anda').tr(
+              context,
+            ),
             actions: [
               IconButton(
-                tooltip: 'Perbarui pengaturan presensi',
+                tooltip: ('Perbarui pengaturan presensi').tr(context),
                 style: IconButton.styleFrom(
                   foregroundColor: AppColors.white,
                   disabledForegroundColor: AppColors.white.withValues(
@@ -134,7 +137,7 @@ class _AttendanceViewState extends State<AttendanceView>
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                    child: Text(
+                    child: HrText(
                       _refreshing
                           ? 'Memperbarui izin presensi…'
                           : !_verified

@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
 
@@ -22,7 +23,7 @@ class TextFieldSearch extends StatelessWidget {
           borderSide: const BorderSide(color: AppColors.secondary, width: 1.5),
           borderRadius: BorderRadius.circular(AppDimens.sizeXL),
         ),
-        hintText: hint,
+        hintText: hint.tr(context),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppDimens.size2S,
         ),

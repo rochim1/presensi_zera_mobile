@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_domain/presensi_domain.dart';
 
@@ -131,7 +132,7 @@ class _PresenceCardWidgetState extends State<PresenceCardWidget> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
+                                  HrText(
                                     'CHECK IN',
                                     style: context.textStyle.labelSmall!
                                         .copyWith(
@@ -238,7 +239,7 @@ class _PresenceCardWidgetState extends State<PresenceCardWidget> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
+                                  HrText(
                                     'CHECK OUT',
                                     style: context.textStyle.labelSmall!
                                         .copyWith(
@@ -346,7 +347,7 @@ class _PresenceCardWidgetState extends State<PresenceCardWidget> {
                     color: isSelected ? AppColors.primary : Colors.transparent,
                     borderRadius: BorderRadius.circular(AppDimens.radiusSmall),
                   ),
-                  child: Text(
+                  child: HrText(
                     presenceType.toName,
                     textAlign: TextAlign.center,
                     style: context.textStyle.bodySmall!.copyWith(

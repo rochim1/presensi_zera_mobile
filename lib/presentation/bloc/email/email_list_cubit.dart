@@ -33,27 +33,38 @@ class EmailListCubit extends Cubit<EmailListState> {
 
   Future<void> fetchUnreadCount() async {
     final result = await getUnreadEmailCountUseCase(NoParams());
-    result.fold(
-      (failure) => null,
-      (count) {
-        if (state is EmailListLoaded) {
-          emit(EmailListLoaded((state as EmailListLoaded).emails, unreadCount: count));
-        } else if (state is EmailListLoading) {
-          emit(EmailListLoading(unreadCount: count));
-        } else if (state is EmailListError) {
-          emit(EmailListError((state as EmailListError).message, unreadCount: count));
-        } else {
-          emit(EmailListInitial(unreadCount: count));
-        }
-      },
-    );
+    result.fold((failure) => null, (count) {
+      if (state is EmailListLoaded) {
+        emit(
+          EmailListLoaded(
+            (state as EmailListLoaded).emails,
+            unreadCount: count,
+          ),
+        );
+      } else if (state is EmailListLoading) {
+        emit(EmailListLoading(unreadCount: count));
+      } else if (state is EmailListError) {
+        emit(
+          EmailListError((state as EmailListError).message, unreadCount: count),
+        );
+      } else {
+        emit(EmailListInitial(unreadCount: count));
+      }
+    });
   }
 
   Future<void> fetchEmails() async {
     emit(EmailListLoading(unreadCount: state.unreadCount));
-    final failureOrEmails = await getAllEmailUsecase(const GetAllEmailParams(limit: 50, offset: 0));
+    final failureOrEmails = await getAllEmailUsecase(
+      const GetAllEmailParams(limit: 50, offset: 0),
+    );
     failureOrEmails.fold(
-      (failure) => emit(EmailListError(failure.message ?? 'Terjadi kesalahan tidak terduga', unreadCount: state.unreadCount)),
+      (failure) => emit(
+        EmailListError(
+          failure.message ?? 'Terjadi kesalahan tidak terduga',
+          unreadCount: state.unreadCount,
+        ),
+      ),
       (emails) => emit(EmailListLoaded(emails, unreadCount: state.unreadCount)),
     );
   }
@@ -63,12 +74,12 @@ class EmailListCubit extends Cubit<EmailListState> {
       final currentState = state as EmailListLoaded;
       final emailList = currentState.emails;
       final emailIndex = emailList.indexWhere((e) => e.id == emailId);
-      
+
       if (emailIndex != -1 && emailList[emailIndex].isRead != true) {
         // Optimistic UI update
         final updatedEmails = List<EmailEntity>.from(emailList);
         final unreadCount = (state.unreadCount > 0) ? state.unreadCount - 1 : 0;
-        
+
         // We don't have copyWith on EmailEntity, so we might not be able to easily update the isRead property if it's immutable
         // Usually, we'd do: updatedEmails[emailIndex] = updatedEmails[emailIndex].copyWith(isRead: true);
         // Let's just refetch after calling the API
@@ -76,13 +87,10 @@ class EmailListCubit extends Cubit<EmailListState> {
     }
 
     final result = await readEmailUsecase(emailId);
-    result.fold(
-      (l) => null,
-      (r) {
-        fetchUnreadCount();
-        fetchEmails();
-      }
-    );
+    result.fold((l) => null, (r) {
+      fetchUnreadCount();
+      fetchEmails();
+    });
   }
 
   @override

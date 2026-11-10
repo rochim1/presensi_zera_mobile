@@ -1,3 +1,5 @@
+import 'package:presensi_mobile/l10n/app_language_controller.dart';
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:presensi_mobile/core/_core.dart';
@@ -35,8 +37,11 @@ class AttendancePeriodFilter extends StatelessWidget {
     final period = start == null || end == null
         ? 'Bulan Ini'
         : fullMonth
-        ? DateFormat('MMMM yyyy', 'id_ID').format(start)
-        : '${DateFormat('dd MMM yyyy', 'id_ID').format(start)} – ${DateFormat('dd MMM yyyy', 'id_ID').format(end)}';
+        ? DateFormat(
+            'MMMM yyyy',
+            AppLanguageController.instance.effectiveLocale.languageCode,
+          ).format(start)
+        : '${DateFormat('dd MMM yyyy', AppLanguageController.instance.effectiveLocale.languageCode).format(start)} – ${DateFormat('dd MMM yyyy', AppLanguageController.instance.effectiveLocale.languageCode).format(end)}';
     return [
       period,
       if (type?.isNotEmpty == true)
@@ -85,7 +90,7 @@ class AttendancePeriodFilter extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Expanded(
-                      child: Text(
+                      child: HrText(
                         summary,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -108,7 +113,7 @@ class AttendancePeriodFilter extends StatelessWidget {
           ),
           Container(width: 1, height: 24, color: AppColors.divider),
           IconButton(
-            tooltip: 'Filter presensi lainnya',
+            tooltip: ('Filter presensi lainnya').tr(context),
             constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
             icon: const Icon(Icons.tune, size: 20, color: AppColors.primary),
             onPressed: () => showModalBottomSheet<void>(

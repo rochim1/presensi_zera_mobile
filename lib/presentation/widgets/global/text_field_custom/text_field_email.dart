@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
 
@@ -45,7 +46,7 @@ class TextFieldEmail extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (title != null)
-          Text(
+          HrText(
             title!,
             textAlign: TextAlign.left,
             style: TextStyle(color: colorTitle ?? AppColors.labelPrimary),
@@ -57,7 +58,7 @@ class TextFieldEmail extends StatelessWidget {
           initialValue: initialValue,
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
-            hintText: hint,
+            hintText: hint.tr(context),
             prefixIcon: Icon(
               Icons.person_outline_rounded,
               size: AppDimens.sizeL,
@@ -67,7 +68,9 @@ class TextFieldEmail extends StatelessWidget {
           enabled: enabled,
           maxLines: multiline ? 4 : 1,
           textInputAction: inputAction,
-          validator: validator,
+          validator: validator == null
+              ? null
+              : (value) => validator?.call(value)?.tr(context),
           autovalidateMode: AutovalidateMode.onUserInteraction,
           obscureText: obscure,
           onChanged: onChanged,

@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -108,7 +109,7 @@ class AppBottomSheet extends StatelessWidget {
             height: AppDimens.h160,
           ),
           SizedBox(height: AppDimens.h24),
-          Text(
+          HrText(
             titleText ?? 'Berhasil!',
             style: context.theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
@@ -117,7 +118,7 @@ class AppBottomSheet extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           SizedBox(height: AppDimens.h12),
-          Text(
+          HrText(
             message ?? 'Permintaan Anda telah berhasil diproses.',
             style: context.theme.textTheme.bodyMedium?.copyWith(
               color: AppColors.labelSecondary,
@@ -160,7 +161,7 @@ class AppBottomSheet extends StatelessWidget {
             height: AppDimens.h160,
           ),
           SizedBox(height: AppDimens.h24),
-          Text(
+          HrText(
             titleText ?? 'Ups!',
             style: context.theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
@@ -169,7 +170,7 @@ class AppBottomSheet extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           SizedBox(height: AppDimens.h12),
-          Text(
+          HrText(
             message ?? 'Terjadi kesalahan saat memproses permintaan Anda.',
             style: context.theme.textTheme.bodyMedium?.copyWith(
               color: AppColors.labelSecondary,

@@ -34,8 +34,8 @@ void main() {
         ),
       ),
     );
-    await tester.ensureVisible(find.text('Reset'));
-    await tester.tap(find.text('Reset'));
+    await tester.ensureVisible(find.text('Atur Ulang'));
+    await tester.tap(find.text('Atur Ulang'));
     await tester.pump();
     await tester.tap(find.text('Terapkan'));
     final now = DateTime.now();

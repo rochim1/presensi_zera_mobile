@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi_mobile/core/_core.dart';
 import 'package:presensi_mobile/presentation/widgets/_widgets.dart';
@@ -124,7 +125,7 @@ class _PayrollFilterBottomSheetState extends State<PayrollFilterBottomSheet> {
                             ),
                           ),
                         ),
-                        child: Text(
+                        child: HrText(
                           months[index],
                           style: context.textStyle.bodySmall,
                           maxLines: 1,
@@ -189,7 +190,7 @@ class _PayrollFilterBottomSheetState extends State<PayrollFilterBottomSheet> {
                 ),
               ),
             ),
-            Text(
+            HrText(
               'Filter Slip Gaji',
               style: context.textStyle.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
@@ -197,7 +198,7 @@ class _PayrollFilterBottomSheetState extends State<PayrollFilterBottomSheet> {
               ),
             ),
             AppDimens.paddingLarge.hSpace,
-            Text(
+            HrText(
               'Bulan',
               style: context.textStyle.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w600,
@@ -219,7 +220,7 @@ class _PayrollFilterBottomSheetState extends State<PayrollFilterBottomSheet> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
+                    HrText(
                       (_month != null && _year != null)
                           ? '${monthsStr[_month! - 1]} $_year'
                           : 'Pilih Bulan & Tahun',
@@ -258,7 +259,7 @@ class _PayrollFilterBottomSheetState extends State<PayrollFilterBottomSheet> {
                         ),
                       ),
                     ),
-                    child: Text(
+                    child: HrText(
                       'Reset',
                       style: context.textStyle.bodyLarge?.copyWith(
                         color: AppColors.primary,
@@ -274,7 +275,7 @@ class _PayrollFilterBottomSheetState extends State<PayrollFilterBottomSheet> {
                       Navigator.pop(context);
                       widget.onApply(_month, _year);
                     },
-                    text: 'Terapkan',
+                    text: ('Terapkan').tr(context),
                   ),
                 ),
               ],

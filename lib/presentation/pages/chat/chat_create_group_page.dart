@@ -1,3 +1,4 @@
+import 'package:presensi_mobile/l10n/hr_localization.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -61,7 +62,7 @@ class _ChatCreateGroupPageState extends State<ChatCreateGroupPage> {
           SmartDialog.dismiss();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(
+              content: HrText(
                 createStatus.failure?.message ?? 'Gagal membuat grup',
               ),
             ),
@@ -87,7 +88,7 @@ class _ChatCreateGroupPageState extends State<ChatCreateGroupPage> {
       },
       child: Scaffold(
         appBar: AppTopBar(
-          title: 'Buat Grup Baru',
+          title: ('Buat Grup Baru').tr(context),
           backgroundColor: AppColors.transparent,
         ),
         body: Column(
@@ -126,7 +127,7 @@ class _ChatCreateGroupPageState extends State<ChatCreateGroupPage> {
                                 child: TextField(
                                   controller: _nameController,
                                   decoration: InputDecoration(
-                                    hintText: 'Nama Grup (Wajib)',
+                                    hintText: ('Nama Grup (Wajib)').tr(context),
                                     hintStyle: context.textStyle.bodyMedium
                                         ?.copyWith(
                                           color: AppColors.labelSecondary,
@@ -156,7 +157,9 @@ class _ChatCreateGroupPageState extends State<ChatCreateGroupPage> {
                           TextField(
                             controller: _descController,
                             decoration: InputDecoration(
-                              hintText: 'Deskripsi Grup (Opsional)',
+                              hintText: ('Deskripsi Grup (Opsional)').tr(
+                                context,
+                              ),
                               hintStyle: context.textStyle.bodyMedium?.copyWith(
                                 color: AppColors.labelSecondary,
                               ),
@@ -193,7 +196,7 @@ class _ChatCreateGroupPageState extends State<ChatCreateGroupPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
+                          HrText(
                             'Pilih Anggota',
                             style: context.textStyle.titleSmall?.copyWith(
                               fontWeight: FontWeight.bold,
@@ -204,7 +207,7 @@ class _ChatCreateGroupPageState extends State<ChatCreateGroupPage> {
                             ChatCreateGroupState
                           >(
                             builder: (context, state) {
-                              return Text(
+                              return HrText(
                                 '${state.selectedUsers.length} Dipilih',
                                 style: context.textStyle.labelSmall?.copyWith(
                                   color: AppColors.primary,
@@ -234,7 +237,7 @@ class _ChatCreateGroupPageState extends State<ChatCreateGroupPage> {
                           return Padding(
                             padding: EdgeInsets.all(AppDimens.h16),
                             child: Center(
-                              child: Text(
+                              child: HrText(
                                 'Gagal memuat pengguna',
                                 style: context.textStyle.bodySmall?.copyWith(
                                   color: AppColors.danger,
@@ -249,7 +252,7 @@ class _ChatCreateGroupPageState extends State<ChatCreateGroupPage> {
                           return Padding(
                             padding: EdgeInsets.all(AppDimens.h16),
                             child: Center(
-                              child: Text(
+                              child: HrText(
                                 'Tidak ada pengguna tersedia',
                                 style: context.textStyle.bodySmall?.copyWith(
                                   color: AppColors.labelSecondary,
@@ -395,7 +398,7 @@ class _ChatCreateGroupPageState extends State<ChatCreateGroupPage> {
                             );
                           }
                         : () {},
-                    text: 'Buat Grup',
+                    text: ('Buat Grup').tr(context),
                     isLoading:
                         state.createStatus.isLoading ||
                         state.createStatus.isSuccess,
