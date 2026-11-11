@@ -168,10 +168,6 @@
         "source": "com.pantoo.presensi.app-appcompat-1.7.1-37:/drawable-xxxhdpi-v4/abc_scrubber_control_to_pressed_mtrl_000.png"
     },
     {
-        "merged": "com.pantoo.presensi.app-productionRelease-79:/drawable-mdpi_ic_notif.png.flat",
-        "source": "com.pantoo.presensi.app-main-69:/drawable-mdpi/ic_notif.png"
-    },
-    {
         "merged": "com.pantoo.presensi.app-productionRelease-79:/layout_browser_actions_context_menu_page.xml.flat",
         "source": "com.pantoo.presensi.app-browser-1.9.0-38:/layout/browser_actions_context_menu_page.xml"
     },
@@ -266,10 +262,6 @@
     {
         "merged": "com.pantoo.presensi.app-productionRelease-79:/drawable_btn_checkbox_unchecked_to_checked_mtrl_animation.xml.flat",
         "source": "com.pantoo.presensi.app-appcompat-1.7.1-37:/drawable/btn_checkbox_unchecked_to_checked_mtrl_animation.xml"
-    },
-    {
-        "merged": "com.pantoo.presensi.app-productionRelease-79:/drawable-xxhdpi_ic_notif.png.flat",
-        "source": "com.pantoo.presensi.app-main-69:/drawable-xxhdpi/ic_notif.png"
     },
     {
         "merged": "com.pantoo.presensi.app-productionRelease-79:/drawable-hdpi-v4_abc_list_pressed_holo_light.9.png.flat",
@@ -532,10 +524,6 @@
         "source": "com.pantoo.presensi.app-appcompat-1.7.1-37:/drawable-hdpi-v4/abc_list_pressed_holo_dark.9.png"
     },
     {
-        "merged": "com.pantoo.presensi.app-productionRelease-79:/drawable-hdpi_ic_notif.png.flat",
-        "source": "com.pantoo.presensi.app-main-69:/drawable-hdpi/ic_notif.png"
-    },
-    {
         "merged": "com.pantoo.presensi.app-productionRelease-79:/drawable-xhdpi-v4_abc_btn_switch_to_on_mtrl_00012.9.png.flat",
         "source": "com.pantoo.presensi.app-appcompat-1.7.1-37:/drawable-xhdpi-v4/abc_btn_switch_to_on_mtrl_00012.9.png"
     },
@@ -706,10 +694,6 @@
     {
         "merged": "com.pantoo.presensi.app-productionRelease-79:/drawable-xhdpi-v4_abc_spinner_mtrl_am_alpha.9.png.flat",
         "source": "com.pantoo.presensi.app-appcompat-1.7.1-37:/drawable-xhdpi-v4/abc_spinner_mtrl_am_alpha.9.png"
-    },
-    {
-        "merged": "com.pantoo.presensi.app-productionRelease-79:/drawable-xxxhdpi_ic_notif.png.flat",
-        "source": "com.pantoo.presensi.app-main-69:/drawable-xxxhdpi/ic_notif.png"
     },
     {
         "merged": "com.pantoo.presensi.app-productionRelease-79:/drawable-hdpi-v4_abc_text_select_handle_left_mtrl.png.flat",
@@ -1301,7 +1285,7 @@
     },
     {
         "merged": "com.pantoo.presensi.app-productionRelease-79:/raw_keep.xml.flat",
-        "source": "com.pantoo.presensi.app-release-101:/raw/keep.xml"
+        "source": "com.pantoo.presensi.app-main-69:/raw/keep.xml"
     },
     {
         "merged": "com.pantoo.presensi.app-productionRelease-79:/drawable-xhdpi-v4_abc_scrubber_control_off_mtrl_alpha.png.flat",
@@ -1386,6 +1370,10 @@
     {
         "merged": "com.pantoo.presensi.app-productionRelease-79:/drawable-xxxhdpi-v4_abc_btn_switch_to_on_mtrl_00012.9.png.flat",
         "source": "com.pantoo.presensi.app-appcompat-1.7.1-37:/drawable-xxxhdpi-v4/abc_btn_switch_to_on_mtrl_00012.9.png"
+    },
+    {
+        "merged": "com.pantoo.presensi.app-productionRelease-79:/drawable_ic_notif.xml.flat",
+        "source": "com.pantoo.presensi.app-main-69:/drawable/ic_notif.xml"
     },
     {
         "merged": "com.pantoo.presensi.app-productionRelease-79:/drawable_ucrop_vector_loader_animated.xml.flat",
@@ -2018,10 +2006,6 @@
     {
         "merged": "com.pantoo.presensi.app-productionRelease-79:/drawable-ldrtl-xxxhdpi-v17_abc_spinner_mtrl_am_alpha.9.png.flat",
         "source": "com.pantoo.presensi.app-appcompat-1.7.1-37:/drawable-ldrtl-xxxhdpi-v17/abc_spinner_mtrl_am_alpha.9.png"
-    },
-    {
-        "merged": "com.pantoo.presensi.app-productionRelease-79:/drawable-xhdpi_ic_notif.png.flat",
-        "source": "com.pantoo.presensi.app-main-69:/drawable-xhdpi/ic_notif.png"
     },
     {
         "merged": "com.pantoo.presensi.app-productionRelease-79:/layout_notification_template_custom_big.xml.flat",
